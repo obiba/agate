@@ -1,0 +1,684 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.obiba.agate</groupId>
+  <artifactId>agate</artifactId>
+  <version>0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>1.0.2.RELEASE</version>
+  </parent>
+
+  <modules>
+    <module>agate-core</module>
+    <module>agate-rest</module>
+    <module>agate-web-model</module>
+    <module>agate-webapp</module>
+  </modules>
+
+  <profiles>
+
+    <profile>
+      <id>dev</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <!-- Spring profile to use -->
+        <spring.profiles.active>dev</spring.profiles.active>
+        <!-- log configuration -->
+        <logback.loglevel>DEBUG</logback.loglevel>
+        <logback.logDir>${project.build.directory}/logs</logback.logDir>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>prod</id>
+      <properties>
+        <!-- Spring profile to use -->
+        <spring.profiles.active>prod</spring.profiles.active>
+        <!-- log configuration -->
+        <logback.loglevel>INFO</logback.loglevel>
+        <logback.appender>CONSOLE</logback.appender>
+        <logback.logDir>/var/logs/agate</logback.logDir>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.github.trecloux</groupId>
+            <artifactId>yeoman-maven-plugin</artifactId>
+            <version>0.2</version>
+            <configuration>
+              <yeomanProjectDirectory>${project.basedir}/agate-webapp</yeomanProjectDirectory>
+            </configuration>
+            <executions>
+              <execution>
+                <id>run-grunt</id>
+                <phase>generate-resources</phase>
+                <goals>
+                  <goal>build</goal>
+                </goals>
+                <configuration>
+                  <gruntBuildArgs>--force</gruntBuildArgs>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <artifactId>maven-clean-plugin</artifactId>
+            <configuration>
+              <filesets>
+                <fileset>
+                  <directory>.tmp</directory>
+                </fileset>
+                <fileset>
+                  <directory>node_modules</directory>
+                </fileset>
+              </filesets>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <configuration>
+              <arguments>
+                <argument>--spring.profiles.active=prod</argument>
+              </arguments>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+  </profiles>
+
+  <properties>
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <java.version>1.8</java.version>
+
+    <assertj-core.version>1.6.0</assertj-core.version>
+    <awaitility.version>1.4.0</awaitility.version>
+    <commons-io.version>2.4</commons-io.version>
+    <commons-lang.version>2.6</commons-lang.version>
+    <ehcache-core.version>2.6.8</ehcache-core.version>
+    <embed-mongo.version>1.45</embed-mongo.version>
+    <guava.version>17.0</guava.version>
+    <geronimo-javamail_1.4_mail.version>1.8.3</geronimo-javamail_1.4_mail.version>
+    <gson.version>2.2.4</gson.version>
+    <javax.inject.version>1</javax.inject.version>
+    <jersey.version>2.8</jersey.version>
+    <jgit.version>3.3.1.201403241930-r</jgit.version>
+    <jhipsterloaded.version>0.7</jhipsterloaded.version>
+    <json-path.version>0.9.1</json-path.version>
+    <jsr305.version>2.0.3</jsr305.version>
+    <metrics-spring.version>3.0.0</metrics-spring.version>
+    <mongeez.version>0.9.4</mongeez.version>
+    <nosqlunit.version>0.7.9</nosqlunit.version>
+    <obiba-commons.version>1.6-SNAPSHOT</obiba-commons.version>
+    <protobuf.version>2.5.0</protobuf.version>
+    <protobuf-java-format.version>1.2.1-obiba</protobuf-java-format.version>
+    <shiro.version>1.2.3</shiro.version>
+    <shiro-extras.version>1.0.3-obiba</shiro-extras.version>
+
+    <maven-assertj-generator-plugin.version>1.2.0</maven-assertj-generator-plugin.version>
+    <maven-buildnumber-plugin.version>1.2</maven-buildnumber-plugin.version>
+    <maven-dependency-plugin.version>2.1</maven-dependency-plugin.version>
+    <maven-enforcer-plugin.version>1.3.1</maven-enforcer-plugin.version>
+    <maven-findbugs-plugin.version>2.5.3</maven-findbugs-plugin.version>
+    <maven-pmd-plugin.version>3.1</maven-pmd-plugin.version>
+    <maven-sonar-plugin.version>2.2</maven-sonar-plugin.version>
+
+  </properties>
+
+  <repositories>
+    <repository>
+      <id>obiba.org</id>
+      <name>Obiba Maven 2.x Repository</name>
+      <url>http://repo.obiba.org/repo</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>obiba</id>
+      <url>http://repo.obiba.org/repo</url>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <prerequisites>
+    <maven>3.0.0</maven>
+  </prerequisites>
+
+  <distributionManagement>
+
+    <repository>
+      <id>obiba-releases</id>
+      <url>http://repo.obiba.org/libs-release-local</url>
+    </repository>
+
+    <snapshotRepository>
+      <id>obiba-snapshots</id>
+      <url>http://repo.obiba.org/libs-snapshot-local</url>
+    </snapshotRepository>
+
+  </distributionManagement>
+
+  <scm>
+    <connection>scm:git:git://github.com/obiba/agate.git</connection>
+    <developerConnection>scm:git:https://github.com/obiba/agate.git</developerConnection>
+    <url>https://github.com/obiba/agate</url>
+  </scm>
+
+  <issueManagement>
+    <system>JIRA</system>
+    <url>http://jira.obiba.org</url>
+  </issueManagement>
+
+  <ciManagement>
+    <system>Jenkins</system>
+    <url>http://ci.obiba.org/view/OMica/job/agate</url>
+  </ciManagement>
+
+  <mailingLists>
+    <mailingList>
+      <name>OBiBa Users</name>
+      <post>obiba-users@googlegroups.com</post>
+      <archive>https://groups.google.com/forum/?fromgroups#!forum/obiba-users</archive>
+    </mailingList>
+  </mailingLists>
+
+  <dependencyManagement>
+    <dependencies>
+
+      <dependency>
+        <groupId>org.obiba.agate</groupId>
+        <artifactId>agate-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.obiba.agate</groupId>
+        <artifactId>agate-core</artifactId>
+        <version>${project.version}</version>
+        <classifier>tests</classifier>
+      </dependency>
+      <dependency>
+        <groupId>org.obiba.agate</groupId>
+        <artifactId>agate-web-model</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.obiba.agate</groupId>
+        <artifactId>agate-rest</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.codahale.metrics</groupId>
+        <artifactId>metrics-ehcache</artifactId>
+        <version>${codahale-metrics.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.codahale.metrics</groupId>
+        <artifactId>metrics-json</artifactId>
+        <version>${codahale-metrics.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.codahale.metrics</groupId>
+        <artifactId>metrics-jvm</artifactId>
+        <version>${codahale-metrics.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.codahale.metrics</groupId>
+        <artifactId>metrics-servlet</artifactId>
+        <version>${codahale-metrics.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.codahale.metrics</groupId>
+        <artifactId>metrics-servlets</artifactId>
+        <version>${codahale-metrics.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>com.codahale.metrics</groupId>
+            <artifactId>metrics-healthchecks</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.datatype</groupId>
+        <artifactId>jackson-datatype-json-org</artifactId>
+        <version>${jackson.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.datatype</groupId>
+        <artifactId>jackson-datatype-hppc</artifactId>
+        <version>${jackson.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.ryantenney.metrics</groupId>
+        <artifactId>metrics-spring</artifactId>
+        <version>${metrics-spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>${commons-lang.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>${commons-io.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.inject</groupId>
+        <artifactId>javax.inject</artifactId>
+        <version>${javax.inject.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.geronimo.javamail</groupId>
+        <artifactId>geronimo-javamail_1.4_mail</artifactId>
+        <version>${geronimo-javamail_1.4_mail.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-autoconfigure</artifactId>
+        <version>${spring-boot.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-loader-tools</artifactId>
+        <version>${spring-boot.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>io.github.jhipster.loaded</groupId>
+        <artifactId>core</artifactId>
+        <version>${jhipsterloaded.version}</version>
+      </dependency>
+
+      <!-- Test dependencies -->
+      <dependency>
+        <groupId>com.jayway.awaitility</groupId>
+        <artifactId>awaitility</artifactId>
+        <version>${awaitility.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.jayway.jsonpath</groupId>
+        <artifactId>json-path</artifactId>
+        <version>${json-path.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+
+      <dependency>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-core</artifactId>
+        <version>${assertj-core.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${guava.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.google.code.findbugs</groupId>
+        <artifactId>jsr305</artifactId>
+        <version>${jsr305.version}</version>
+        <scope>compile</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.mongeez</groupId>
+        <artifactId>mongeez</artifactId>
+        <version>${mongeez.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>com.google.protobuf</groupId>
+        <artifactId>protobuf-java</artifactId>
+        <version>${protobuf.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.glassfish.jersey</groupId>
+        <artifactId>jersey-bom</artifactId>
+        <version>${jersey.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>${jackson.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.jaxrs</groupId>
+        <artifactId>jackson-jaxrs-json-provider</artifactId>
+        <version>${jackson.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.obiba.commons</groupId>
+        <artifactId>obiba-shiro</artifactId>
+        <version>${obiba-commons.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.obiba.commons</groupId>
+        <artifactId>obiba-shiro-web</artifactId>
+        <version>${obiba-commons.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.obiba.commons</groupId>
+        <artifactId>obiba-jersey-protobuf</artifactId>
+        <version>${obiba-commons.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.obiba.commons</groupId>
+        <artifactId>obiba-jersey-shiro</artifactId>
+        <version>${obiba-commons.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.obiba.commons</groupId>
+        <artifactId>obiba-jersey</artifactId>
+        <version>${obiba-commons.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.obiba.commons</groupId>
+        <artifactId>obiba-git</artifactId>
+        <version>${obiba-commons.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.shiro</groupId>
+        <artifactId>shiro-core</artifactId>
+        <version>${shiro.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.shiro</groupId>
+        <artifactId>shiro-web</artifactId>
+        <version>${shiro.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.shiro</groupId>
+        <artifactId>shiro-spring</artifactId>
+        <version>${shiro.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.shiro</groupId>
+        <artifactId>shiro-ehcache</artifactId>
+        <version>${shiro.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>eu.flatwhite.shiro</groupId>
+        <artifactId>shiro-extras</artifactId>
+        <version>${shiro-extras.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.shiro.tools</groupId>
+        <artifactId>shiro-tools-hasher</artifactId>
+        <version>${shiro.version}</version>
+        <scope>runtime</scope>
+        <classifier>cli</classifier>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-cli</groupId>
+            <artifactId>commons-cli</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>net.sf.ehcache</groupId>
+        <artifactId>ehcache-core</artifactId>
+        <version>${ehcache-core.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.google.code.gson</groupId>
+        <artifactId>gson</artifactId>
+        <version>${gson.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.eclipse.jgit</groupId>
+        <artifactId>org.eclipse.jgit</artifactId>
+        <version>${jgit.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>de.flapdoodle.embed</groupId>
+        <artifactId>de.flapdoodle.embed.mongo</artifactId>
+        <version>${embed-mongo.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+    </dependencies>
+
+  </dependencyManagement>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.code.findbugs</groupId>
+      <artifactId>jsr305</artifactId>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.assertj</groupId>
+          <artifactId>assertj-assertions-generator-maven-plugin</artifactId>
+          <version>${maven-assertj-generator-plugin.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${maven-enforcer-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>enforce-versions</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <message>You are running an older version of Maven. Mica requires at least Maven 3.0</message>
+                  <version>[3.0.0,)</version>
+                </requireMavenVersion>
+                <requireJavaVersion>
+                  <message>You are running an older version of Java. Mica requires at least JDK 1.7</message>
+                  <version>[1.7.0,)</version>
+                </requireJavaVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <argLine>-XX:MaxPermSize=128m -Xmx256m</argLine>
+          <forkCount>1</forkCount>
+          <reuseForks>false</reuseForks>
+          <!-- Force alphabetical order to have a reproducible build -->
+          <runOrder>alphabetical</runOrder>
+          <classpathDependencyExcludes>
+            <classpathDependencyExclude>org.springsource.loaded:springloaded</classpathDependencyExclude>
+          </classpathDependencyExcludes>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>sonar-maven-plugin</artifactId>
+        <version>${maven-sonar-plugin.version}</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>${maven-dependency-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>copy</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>io.github.jhipster.loaded</groupId>
+                  <artifactId>agent</artifactId>
+                  <version>${jhipsterloaded.version}</version>
+                  <type>jar</type>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>spring_loaded</outputDirectory>
+                  <destFileName>springloaded-jhipster.jar</destFileName>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <version>${maven-findbugs-plugin.version}</version>
+        <configuration>
+          <failOnError>false</failOnError>
+        </configuration>
+      </plugin>
+
+      <!-- JAVA 8 is not supported yet by PMD -->
+      <!--<plugin>-->
+      <!--<artifactId>maven-pmd-plugin</artifactId>-->
+      <!--<version>${maven-pmd-plugin.version}</version>-->
+      <!--<configuration>-->
+      <!--<linkXref>false</linkXref>-->
+      <!--<sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>-->
+      <!--<minimumTokens>30</minimumTokens>-->
+      <!--<targetJdk>${java.version}</targetJdk>-->
+      <!--<excludeRoots>-->
+      <!--<excludeRoot>target/generated-sources</excludeRoot>-->
+      <!--</excludeRoots>-->
+      <!--<rulesets>-->
+      <!--<ruleset>http://github.com/obiba/conventions/raw/master/obiba-pmd-ruleset.xml</ruleset>-->
+      <!--</rulesets>-->
+      <!--</configuration>-->
+      <!--</plugin>-->
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>buildnumber-maven-plugin</artifactId>
+        <version>${maven-buildnumber-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>createBuildNumber</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>create</goal>
+            </goals>
+            <configuration>
+              <format>{0,date,yyyyMMddHHmmss}</format>
+              <items>
+                <item>timestamp</item>
+              </items>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+
+  </build>
+
+  <licenses>
+    <license>
+      <name>GNU Public License version 3</name>
+      <url>http://www.obiba.org/node/62</url>
+    </license>
+  </licenses>
+
+</project>

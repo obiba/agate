@@ -1,0 +1,36 @@
+<div>
+
+  <h2 translate>config.title</h2>
+
+  <table class="table table-striped">
+    <tbody>
+    <tr>
+      <td translate>config.name</td>
+      <td>{{agateConfig.name}}</td>
+    </tr>
+    <tr>
+      <td translate>config.publicUrl</td>
+      <td>{{agateConfig.publicUrl}}</td>
+    </tr>
+    <tr>
+      <td translate>config.languages</td>
+      <td>
+        <ul class="list-inline">
+          <li ng-repeat="lang in agateConfig.languages">
+            <span class="badge">{{lang}}</span> {{availableLanguages[lang]}}
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td translate>config.defaultCharSet</td>
+      <td>{{agateConfig.defaultCharSet}}</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <a href="#/config/edit" class="btn btn-primary btn-lg">
+    <i class="fa fa-pencil-square-o"></i> <span translate>edit</span>
+  </a>
+
+</div>

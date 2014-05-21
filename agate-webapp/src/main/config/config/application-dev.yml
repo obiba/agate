@@ -1,0 +1,48 @@
+server:
+    port: 8080
+    address: localhost
+
+spring:
+    profiles: dev
+
+    mongodb:
+        url: localhost:27017
+        databaseName: agate
+        username:
+        password:
+
+    thymeleaf:
+        mode: XHTML
+        cache: false
+
+shiro:
+  password:
+    nbHashIterations: 10000
+    salt: agate
+
+git:
+  repo-path: target/git-repo
+
+metrics:
+    jmx.enabled: true
+    graphite:
+        enabled: false
+        host: localhost
+        port: 2003
+
+cache:
+    timeToLiveSeconds: 3600
+
+# You can add as many as folders to watch
+# You just need to add a dash + the directory to watch
+hotReload:
+    enabled: true
+    package:
+      project: org.obiba.agatee
+      domain: org.obiba.agatee.domain
+      restdto: org.obiba.agatee.web.rest.dto
+    liquibase:
+      defaultCatalogName: 
+      defaultSchema:
+    watchdir:
+      - target/classes

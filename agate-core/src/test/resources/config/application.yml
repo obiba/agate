@@ -1,0 +1,33 @@
+server:
+    port: 10344
+    address: localhost
+
+
+# security configuration (this key should be unique for your application, and kept secret)
+jhipster.security.rememberme.key: agate
+
+async:
+    corePoolSize: 2
+    maxPoolSize: 50
+    queueCapacity: 10000
+
+spring:
+  profiles: dev
+
+  mongodb:
+      url: ${embeddedMongoDbBindIp}:${embeddedMongoDbPort}
+      databaseName: agate-test
+      username:
+      password:
+
+  mail:
+    host: localhost
+    port: 25
+    user:
+    password:
+    protocol: smtp
+    tls: false
+    auth: false
+
+metrics:
+    jmx.enabled: false

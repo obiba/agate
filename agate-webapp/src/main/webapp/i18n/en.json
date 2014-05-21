@@ -1,0 +1,431 @@
+{
+  "language": {
+    "en": "English",
+    "fr": "French"
+  },
+  "global": {
+    "title": "JHipster",
+    "browsehappy": "You are using an <strong>outdated</strong> browser. Please <a href=\"http://browsehappy.com/\">upgrade your browser</a> to improve your experience.",
+    "menu": {
+      "home": "Home",
+      "account": {
+        "main": "Account",
+        "settings": "Settings",
+        "password": "Password",
+        "sessions": "Sessions",
+        "tracker": "User tracker",
+        "metrics": "Metrics",
+        "logs": "Logs",
+        "audits": "Audits",
+        "login": "Authenticate",
+        "logout": "Log out"
+      },
+      "admin": "Administration",
+      "language": "Language"
+    },
+    "language": {
+      "en": "English",
+      "fr": "French",
+      "de": "German"
+    }
+  },
+  "main": {
+    "title": "Welcome to Agate!",
+    "subtitle": "This is your homepage",
+    "logged": {
+      "message": "You are logged in as user \"{{username}}\".",
+      "authenticated": "If you want to <a href=\"#/login\">authenticate</a>, you can try the default accounts:<br/>- Admnistrator (login=\"admin\" and password=\"admin\") <br/>- User (login=\"user\" and password=\"user\")."
+    },
+    "question": "If you have any question on JHipster:",
+    "link": {
+      "homepage": "JHipster homepage",
+      "stackoverflow": "JHipster on Stack Overflow",
+      "bugtracker": "JHipster bug tracker",
+      "contact": "contact @java_hipster on Twitter"
+    },
+    "like": "If you like JHipster, don't forget to give us a star on",
+    "github": "Github"
+  },
+  "login": {
+    "title": "Authentication",
+    "form": {
+      "username": "Login",
+      "username.placeholder": "Your login",
+      "password": "Password",
+      "password.placeholder": "Your password",
+      "rememberme": "Automatic Login",
+      "button": "Authenticate"
+    },
+    "messages": {
+      "error": {
+        "authentication": "<strong>Authentication failed!</strong> Please check your credentials and try again."
+      }
+    }
+  },
+  "settings": {
+    "title": "User settings for [<b>{{username}}</b>]",
+    "form": {
+      "firstname": "First Name",
+      "firstname.placeholder": "Your first name",
+      "lastname": "Last Name",
+      "lastname.placeholder": "Your last name",
+      "email": "E-mail",
+      "email.placeholder": "Your e-mail",
+      "button": "Save"
+    },
+    "messages": {
+      "error": "<strong>An error has occured!</strong> Settings could not be saved.",
+      "success": "<strong>Settings saved!</strong>",
+      "validate": {
+        "firstname": {
+          "required": "Your first name is required.",
+          "minlength": "Your first name is required to be at least 1 character",
+          "maxlength": "Your first name cannot be longer than 50 characters"
+        },
+        "lastname": {
+          "required": "Your last name is required.",
+          "minlength": "Your last name is required to be at least 1 character",
+          "maxlength": "Your last name cannot be longer than 50 characters"
+        },
+        "email": {
+          "required": "Your e-mail is required.",
+          "invalid": "Your e-mail is invalid.",
+          "minlength": "Your e-mail is required to be at least 1 character",
+          "maxlength": "Your e-mail cannot be longer than 50 characters"
+        }
+      }
+    }
+  },
+  "password": {
+    "title": "Password for [<b>{{username}}</b>]",
+    "form": {
+      "newpassword": "New password",
+      "newpassword.placeholder": "New password",
+      "confirmpassword": "New password confirmation",
+      "confirmpassword.placeholder": "Confirm the new password",
+      "button": "Save"
+    },
+    "messages": {
+      "error": {
+        "global": "<strong>An error has occured!</strong> The password could not be changed.",
+        "dontmatch": "The password and its confirmation do not match!"
+      },
+      "success": "<strong>Password changed!</strong>",
+      "validate": {
+        "newpassword": {
+          "required": "Your password is required.",
+          "minlength": "Your password is required to be at least 5 characters",
+          "maxlength": "Your password cannot be longer than 50 characters",
+          "strength": "Password strength:"
+        },
+        "confirmpassword": {
+          "required": "Your confirm password is required.",
+          "minlength": "Your confirm password is required to be at least 5 character",
+          "maxlength": "Your confirm password cannot be longer than 50 characters"
+        }
+      }
+    }
+  },
+  "sessions": {
+    "title": "Active sessions for [<b>{{username}}</b>]",
+    "table": {
+      "ipaddress": "IP address",
+      "useragent": "User Agent",
+      "date": "Date",
+      "button": "Invalidate"
+    },
+    "messages": {
+      "success": "<strong>Session invalidated!</strong>",
+      "error": "<strong>An error has occured!</strong> The session could not be invalidated."
+    }
+
+  },
+  "tracker": {
+    "title": "Real-time user activities",
+    "table": {
+      "userlogin": "User",
+      "ipaddress": "IP Address",
+      "userAgent": "User agent",
+      "page": "Current page",
+      "time": "Time"
+    }
+  },
+  "metrics": {
+    "title": "Application Metrics",
+    "refresh.button": "Refresh",
+    "health": {
+      "title": "Heath checks",
+      "database": "Database: ",
+      "email": "Email: ",
+      "stacktrace": "Stacktrace"
+    },
+    "jvm": {
+      "title": "JVM Metrics",
+      "memory": {
+        "title": "Memory",
+        "total": "Total Memory",
+        "heap": "Heap Memory",
+        "nonheap": "Non-Heap Memory"
+      },
+      "threads": {
+        "title": "Threads",
+        "all": "All",
+        "runnable": "Runnable",
+        "timedwaiting": "Timed waiting",
+        "waiting": "Waiting",
+        "blocked": "Blocked",
+        "dump": {
+          "title": "Threads dump",
+          "id": "Id: ",
+          "blockedtime": "Blocked Time",
+          "blockedcount": "Blocked Count",
+          "waitedtime": "Waited Time",
+          "waitedcount": "Waited Count",
+          "lockname": "Lock name",
+          "stacktrace": "Stacktrace",
+          "show": "Show",
+          "hide": "Hide"
+        }
+      },
+      "gc": {
+        "title": "Garbage collections",
+        "marksweepcount": "Mark Sweep count",
+        "marksweeptime": "Mark Sweep time",
+        "scavengecount": "Scavenge count",
+        "scavengetime": "Scavenge time"
+      },
+      "http": {
+        "title": "HTTP requests (events per second)",
+        "active": "Active requests:",
+        "total": "Total requests:",
+        "table": {
+          "code": "Code",
+          "count": "Count",
+          "mean": "Mean",
+          "average": "Average"
+        },
+        "code": {
+          "ok": "Ok",
+          "notfound": "Not found",
+          "servererror": "Server Error"
+        }
+      }
+    },
+    "servicesstats": {
+      "title": "Services statistics (time in millisecond)",
+      "table": {
+        "name": "Service name",
+        "count": "Count",
+        "mean": "Mean",
+        "min": "Min",
+        "max": "Max",
+        "p50": "p50",
+        "p75": "p75",
+        "p95": "p95",
+        "p99": "p99"
+      }
+    },
+    "ehcache": {
+      "title": "Ehcache statistics",
+      "cachename": "Cache name",
+      "objects": "Objects",
+      "hits": "Hits",
+      "misses": "Misses",
+      "evictioncount": "Eviction count",
+      "mean": "Mean get time (ms)"
+    }
+  },
+  "logs": {
+    "title": "Logs",
+    "nbloggers": "There are {{ total }} loggers.",
+    "filter": "Filter",
+    "table": {
+      "name": "Name",
+      "level": "Level"
+    }
+  },
+  "audits": {
+    "title": "Audits",
+    "filter": {
+      "title": "Filter per date",
+      "from": "from",
+      "to": "to",
+      "button": {
+        "weeks": "Weeks",
+        "today": "today",
+        "clear": "clear",
+        "close": "close"
+      }
+    },
+    "table": {
+      "header": {
+        "principal": "User",
+        "date": "Date",
+        "status": "State",
+        "data": "Extra data"
+      },
+      "data": {
+        "remoteAddress": "Remote Address:"
+      }
+    }
+
+  },
+  "errors": {
+    "title": "Error page!",
+    "403": "You are not authorized to access the page."
+  },
+  "footer": "This is your footer",
+  "config": {
+    "short-title": "Configuration",
+    "title": "General Configuration",
+    "title-edit": "Edit General Configuration",
+    "name": "Name",
+    "name-help": "Name of your organization",
+    "publicUrl": "Public URL",
+    "publicUrl-help": "Public base URL of the server (not the web-interface one) that will be used when sending notification emails on report generation",
+    "defaultCharSet": "Default Character Set",
+    "languages": "Languages",
+    "languages-help": "Supported languages for studies and networks description"
+  },
+  "publish": {
+    "not-published" : "Not published",
+    "published-out-of-date" : "Published, out of date",
+    "published" : "Published",
+    "revisions-ahead": "Revisions ahead"
+  },
+  "studies": "Studies",
+  "study": {
+    "add": "Add Study",
+    "label": "Study",
+    "label-edit": "Edit Study",
+    "details": "Details",
+    "general-info": "General Information",
+    "methods": "Methods",
+    "name": "Name",
+    "name-help": "Official study name",
+    "acronym": "Acronym",
+    "acronym-help": "Acronym of the study if applicable",
+    "objectives": "Objectives",
+    "description": "Description",
+    "objectives-help": "What are the principal objectives of the study?",
+    "website": "Website",
+    "investigators": "Investigators",
+    "add-investigator": "Add Investigator",
+    "contacts": "Contacts",
+    "add-contact": "Add Contact",
+    "start-year": "Start Year",
+    "end-year": "End Year",
+    "general-design": "General Design",
+    "design": "Study Design",
+    "follow-up": "Follow Up",
+    "recruitment-target": "Recruitment target",
+    "target-number": {
+      "participants": "Target number of participants",
+      "sample": "Target number of participants with biological samples",
+      "no-limit": "No Limit",
+      "suppl-info": "Supplementary information about target number of participants"
+    },
+    "access": {
+      "label": "Access",
+      "for": "Access to external researchers or third parties provided or foreseen for"
+    },
+    "marker-paper": "Marker Paper",
+    "pubmed-id": "Pubmed ID",
+    "documents": "Documents",
+    "timeline": "Study Timeline",
+    "populations": "Populations",
+    "authorization": {
+      "label": "Authorization",
+      "authorized": {
+        "true": "Authorized",
+        "false": "Not authorized"
+      },
+      "maelstrom": "Authorization from contributors to the Maelstrom catalogues",
+      "specific": "Authorization from contributors to the [specific network] catalogues"
+    },
+    "selection-criteria": {
+      "label": "Selection criteria",
+      "gender": {
+        "label": "Gender",
+        "men": "Men",
+        "women": "Women"
+      },
+      "age": "Age",
+      "country": "Country",
+      "territory": "Territory",
+      "ethnic-origin": "Ethnic Origin",
+      "health-status": "Health Status"
+    },
+    "recruitment-sources": {
+      "label": "Sources of recruitment",
+      "general-population": "General Population",
+      "specific-population": "Specific Population",
+      "studies": "Participants from existing studies"
+    },
+    "participants-number": {
+      "participant": "Number of participants",
+      "sample": "Number of participants with biological samples"
+    },
+    "data-collection-events": "Data Collection Events",
+    "start": "Start",
+    "end": "End",
+    "save-error": "Error while saving study",
+    "publication": {
+      "not-published": "Not published",
+      "published-out-of-date": "Published, out of date",
+      "published": "Published",
+      "revisions-ahead": "Revisions ahead"
+    }
+  },
+  "contact": {
+    "label": "Contact",
+    "delete": {
+      "contact": {
+        "title": "Delete Contact",
+        "confirm": "Are you sure you want to delete contact {{name}}?"
+      },
+      "investigator": {
+        "title": "Delete Investigator",
+        "confirm": "Are you sure you want to delete investigator {{name}}?"
+      }
+    },
+    "edit": {
+      "contact": "Edit Contact",
+      "investigator": "Edit Investigator"
+    },
+    "title": "Title",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "phone": "Phone",
+    "dataAccessCommitteeMember": "Data Access Committee Member",
+    "institution": "Institution",
+    "department": "Department"
+  },
+  "address": {
+    "label": "Address",
+    "city": "City",
+    "zip": "Postal Code",
+    "state": "State",
+    "country": "Country"
+  },
+  "networks": "Networks",
+  "name": "Name",
+  "edit": "Edit",
+  "view": "View",
+  "delete": "Delete",
+  "cancel": "Cancel",
+  "ok": "OK",
+  "confirmation": "Confirmation",
+  "close": "Close",
+  "save": "Save",
+  "on": "On",
+  "by": "By",
+  "other": "Other",
+  "notification": "Notification",
+  "required": "Required",
+  "suppl-info": "Supplementary information",
+  "fix-error": "Please fix errors bellow",
+  "dnd-reorder": "Drag and drop to reorder",
+  "loading": "Loading..."
+}
