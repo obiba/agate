@@ -1,5 +1,7 @@
-skipTests=false
-mvn_exec=mvn -Dmaven.test.skip=${skipTests}
+skipTests = false
+mvn_exec = mvn -Dmaven.test.skip=${skipTests}
+current_dir = $(shell pwd)
+agate_home = target/agate_home
 
 help:
 	@echo
@@ -7,6 +9,8 @@ help:
 	@echo
 	@echo "Available make targets:"
 	@echo "  all         : Clean & install all modules"
+	@echo "  clean       : Clean all modules"
+	@echo "  do-install  : Install all modules"
 	@echo "  core        : Install core module"
 	@echo "  rest        : Install rest module"
 	@echo
@@ -23,8 +27,13 @@ help:
 	@echo "  plugins-update      : Check for new plugin updates"
 	@echo
 
-all:
-	${mvn_exec} clean install
+all: clean do-install
+
+clean:
+	${mvn_exec} clean
+
+do-install:
+	${mvn_exec} install
 
 core:
 	cd agate-core && ${mvn_exec} install
@@ -33,11 +42,11 @@ rest:
 	cd agate-rest && ${mvn_exec} install
 
 run:
-	cd agate-webapp && ${mvn_exec} spring-boot:run
+	cd agate-webapp && ${mvn_exec} spring-boot:run -DAGATE_HOME="${agate_home}"
 
 debug:
 	export MAVEN_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,address=8000,suspend=n && \
-	cd agate-webapp && ${mvn_exec} spring-boot:run
+	cd agate-webapp && ${mvn_exec} spring-boot:run -DAGATE_HOME="${agate_home}"
 
 grunt:
 	cd agate-webapp && grunt server

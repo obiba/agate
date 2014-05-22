@@ -20,9 +20,6 @@ shiro:
     nbHashIterations: 10000
     salt: agate
 
-git:
-  repo-path: target/git-repo
-
 metrics:
     jmx.enabled: true
     graphite:

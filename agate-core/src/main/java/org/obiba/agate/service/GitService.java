@@ -24,9 +24,6 @@ import org.obiba.git.command.AbstractGitWriteCommand;
 import org.obiba.git.command.AddFilesCommand;
 import org.obiba.git.command.GitCommandHandler;
 import org.obiba.git.command.ReadFileCommand;
-import org.springframework.boot.bind.RelaxedPropertyResolver;
-import org.springframework.context.EnvironmentAware;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
@@ -37,25 +34,22 @@ import com.google.gson.stream.JsonWriter;
 import static com.google.common.base.Charsets.UTF_8;
 
 @Component
-public class GitService implements EnvironmentAware {
+public class GitService {
+
+  public static final String PATH_DATA = "${AGATE_HOME}/data/git";
 
   @Inject
   private GitCommandHandler gitCommandHandler;
 
-  private RelaxedPropertyResolver propertyResolver;
+  private Gson gson = new GsonBuilder().create();
 
   private File repositoriesRoot;
 
-  private final Gson gson = new GsonBuilder().create();
-
   @PostConstruct
   public void init() {
-    if(repositoriesRoot == null) repositoriesRoot = new File(propertyResolver.getProperty("repo-path"));
-  }
-
-  @Override
-  public void setEnvironment(Environment environment) {
-    propertyResolver = new RelaxedPropertyResolver(environment, "git.");
+    if(repositoriesRoot == null) {
+      repositoriesRoot = new File(PATH_DATA.replace("${AGATE_HOME}", System.getProperty("AGATE_HOME")));
+    }
   }
 
   public void setRepositoriesRoot(File repositoriesRoot) {
@@ -65,7 +59,7 @@ public class GitService implements EnvironmentAware {
   public void save(String id, Object obj) {
     try {
 
-      File jsonFile = File.createTempFile("agate", "json");
+      File jsonFile = File.createTempFile("mica", "json");
       jsonFile.deleteOnExit();
       String jsonFileName = getJsonFileName(obj.getClass());
 
@@ -131,7 +125,7 @@ public class GitService implements EnvironmentAware {
     private int newTag = 1;
 
     private IncrementTagCommand(@NotNull File repositoryPath) {
-      super(repositoryPath, null);
+      super(repositoryPath, null, null);
     }
 
     @Override

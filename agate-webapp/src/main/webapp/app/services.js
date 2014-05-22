@@ -104,8 +104,8 @@ agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$cookieSto
   function ($rootScope, $http, $cookieStore, authService, Session, Account) {
     return {
       login: function (param) {
-        var data = "j_username=" + param.username + "&j_password=" + param.password + "&_spring_security_remember_me=" + param.rememberMe + "&submit=Login";
-        $http.post('ws/authentication', data, {
+        var data = "username=" + param.username + "&password=" + param.password;
+        $http.post('ws/auth/sessions', data, {
           headers: {
             "Content-Type": "application/x-www-form-urlencoded"
           },
