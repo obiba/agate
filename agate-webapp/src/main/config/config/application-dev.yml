@@ -1,5 +1,5 @@
 server:
-    port: 8080
+    port: 8888
     address: localhost
 
 spring:
@@ -37,7 +37,7 @@ hotReload:
     package:
       project: org.obiba.agatee
       domain: org.obiba.agatee.domain
-      restdto: org.obiba.agatee.web.rest.dto
+      restdto: org.obiba.agate.web.rest.dto
     liquibase:
       defaultCatalogName: 
       defaultSchema:
