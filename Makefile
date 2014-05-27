@@ -42,10 +42,12 @@ rest:
 	cd agate-rest && ${mvn_exec} install
 
 run:
+	mkdir -p agate-webapp/target/${agate_home} && \
 	cd agate-webapp && ${mvn_exec} spring-boot:run -DAGATE_HOME="${agate_home}"
 
 debug:
 	export MAVEN_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,address=8001,suspend=n && \
+	mkdir -p agate-webapp/target/${agate_home} && \
 	cd agate-webapp && ${mvn_exec} spring-boot:run -DAGATE_HOME="${agate_home}"
 
 grunt:
@@ -68,3 +70,8 @@ dependencies-update:
 
 plugins-update:
 	mvn versions:display-plugin-updates
+
+keystore:
+	rm -f keystore.p12
+	keytool -genkey -alias tomcat -keystore keystore.p12 -storepass changeit -validity 365 -keyalg RSA -keysize 2048 -storetype pkcs12 -dname "CN=Server, OU=Agate, O=OBiBa, L=Montreal, ST=Quebec, C=QC"
+	@echo "Generated keystore file:" `pwd`/keystore.p12

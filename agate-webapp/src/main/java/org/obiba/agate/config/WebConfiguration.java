@@ -1,6 +1,8 @@
 package org.obiba.agate.config;
 
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 
 import javax.inject.Inject;
@@ -10,18 +12,29 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.obiba.agate.web.filter.CachingHttpHeadersFilter;
 import org.obiba.agate.web.filter.StaticResourcesProductionFilter;
 import org.obiba.agate.web.filter.gzip.GZipServletFilter;
 import org.obiba.shiro.web.filter.AuthenticationFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
+import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.boot.context.embedded.ServletContextInitializer;
+import org.springframework.boot.context.embedded.jetty.JettyEmbeddedServletContainerFactory;
+import org.springframework.boot.context.embedded.jetty.JettyServerCustomizer;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.Resource;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.servlet.InstrumentedFilter;
@@ -41,7 +54,7 @@ import static org.obiba.agate.web.rest.config.JerseyConfiguration.WS_ROOT;
 @ComponentScan({ "org.obiba.agate", "org.obiba.shiro" })
 @PropertySource("classpath:agate-webapp.properties")
 @AutoConfigureAfter(SecurityConfiguration.class)
-public class WebConfiguration implements ServletContextInitializer {
+public class WebConfiguration implements ServletContextInitializer, JettyServerCustomizer {
 
   private static final Logger log = LoggerFactory.getLogger(WebConfiguration.class);
 
@@ -53,6 +66,55 @@ public class WebConfiguration implements ServletContextInitializer {
 
   @Inject
   private AuthenticationFilter authenticationFilter;
+
+  private static final int MAX_IDLE_TIME = 30000;
+
+  private static final int REQUEST_HEADER_SIZE = 8192;
+
+  @Value("${https.port}")
+  private int httpsPort;
+
+  @Value("${https.keystore.file}")
+  private Resource keystoreFile;
+
+  @Value("${https.keystore.password}")
+  private String keystorePass;
+
+  @Bean
+  EmbeddedServletContainerCustomizer containerCustomizer() throws Exception {
+    return (ConfigurableEmbeddedServletContainer container) -> {
+      JettyEmbeddedServletContainerFactory jetty = (JettyEmbeddedServletContainerFactory) container;
+      jetty.setServerCustomizers(Collections.singleton(this));
+    };
+  }
+
+  @Override
+  public void customize(Server server) {
+    customizeSsl(server);
+  }
+
+  private void customizeSsl(Server server) {
+    SslContextFactory jettySsl = new SslContextFactory();
+    jettySsl.setWantClientAuth(true);
+    jettySsl.setNeedClientAuth(false);
+    jettySsl.setValidateCerts(false);
+    jettySsl.setValidatePeerCerts(false);
+
+    try {
+      jettySsl.setKeyStorePath(keystoreFile.getFile().getAbsolutePath());
+      jettySsl.setKeyStorePassword(keystorePass);
+      jettySsl.setKeyStoreType("PKCS12");
+    } catch(IOException e) {
+      log.error("Failed to set jetty server keystore: {}", e.getMessage(), e);
+    }
+
+    Connector sslConnector = new SslSelectChannelConnector(jettySsl);
+    sslConnector.setPort(httpsPort);
+    sslConnector.setMaxIdleTime(MAX_IDLE_TIME);
+    sslConnector.setRequestHeaderSize(REQUEST_HEADER_SIZE);
+
+    server.addConnector(sslConnector);
+  }
 
   @Override
   public void onStartup(ServletContext servletContext) throws ServletException {
