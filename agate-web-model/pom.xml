@@ -27,6 +27,10 @@
       <groupId>com.google.protobuf</groupId>
       <artifactId>protobuf-java</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.obiba.commons</groupId>
+      <artifactId>obiba-mongodb</artifactId>
+    </dependency>
   </dependencies>
 
   <build>

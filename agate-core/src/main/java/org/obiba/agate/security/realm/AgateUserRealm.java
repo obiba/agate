@@ -43,9 +43,9 @@ import org.springframework.core.env.Environment;
  */
 //@Component
 //@Transactional
-public class MicaUserRealm extends AuthorizingRealm {
+public class AgateUserRealm extends AuthorizingRealm {
 
-  public static final String MICA_REALM = "agate-user-realm";
+  public static final String AGATE_REALM = "agate-user-realm";
 
   @Inject
   private UserRepository userRepository;
@@ -76,7 +76,7 @@ public class MicaUserRealm extends AuthorizingRealm {
 
   @Override
   public String getName() {
-    return MICA_REALM;
+    return AGATE_REALM;
   }
 
   @Override

@@ -6,9 +6,9 @@ import eu.flatwhite.shiro.spatial.SpatialPermissionResolver;
 import eu.flatwhite.shiro.spatial.finite.NodeRelationProvider;
 import eu.flatwhite.shiro.spatial.finite.NodeResolver;
 
-public class MicaPermissionResolver extends SpatialPermissionResolver {
+public class AgatePermissionResolver extends SpatialPermissionResolver {
 
-  public MicaPermissionResolver() {
+  public AgatePermissionResolver() {
     super(new SingleSpaceResolver(/*new SpatialRealm.RestSpace()*/null), new NodeResolver(),
         new SingleSpaceRelationProvider(new NodeRelationProvider()));
   }

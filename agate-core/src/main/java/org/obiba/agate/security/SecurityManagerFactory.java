@@ -36,7 +36,7 @@ import org.apache.shiro.session.mgt.ExecutorServiceSessionValidationScheduler;
 import org.apache.shiro.session.mgt.SessionValidationScheduler;
 import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
 import org.apache.shiro.util.LifecycleUtils;
-import org.obiba.agate.security.realm.MicaPermissionResolver;
+import org.obiba.agate.security.realm.AgatePermissionResolver;
 import org.obiba.shiro.SessionStorageEvaluator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +72,7 @@ public class SecurityManagerFactory implements FactoryBean<SecurityManager> {
   @Inject
   private CacheManager cacheManager;
 
-  private final PermissionResolver permissionResolver = new MicaPermissionResolver();
+  private final PermissionResolver permissionResolver = new AgatePermissionResolver();
 
   private SecurityManager securityManager;
 

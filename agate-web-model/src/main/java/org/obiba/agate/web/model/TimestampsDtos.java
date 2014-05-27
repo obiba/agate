@@ -1,6 +1,6 @@
 package org.obiba.agate.web.model;
 
-import org.obiba.agate.domain.Timestamped;
+import org.obiba.mongodb.domain.Timestamped;
 
 class TimestampsDtos {
 

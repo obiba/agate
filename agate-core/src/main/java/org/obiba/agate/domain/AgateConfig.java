@@ -7,6 +7,7 @@ import java.util.Locale;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.obiba.mongodb.domain.AbstractAuditableDocument;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.google.common.base.Objects;

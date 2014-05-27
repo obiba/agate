@@ -38,8 +38,10 @@ public class AuthenticationInterceptor implements ContainerResponseFilter {
       responseContext.getHeaders().putSingle(HttpHeaders.SET_COOKIE,
           new NewCookie(AGATE_SESSION_ID_COOKIE_NAME, session.getId().toString(), "/", null, null, timeout, false));
     } else {
-      responseContext.getHeaders().putSingle(HttpHeaders.SET_COOKIE,
-          new NewCookie(AGATE_SESSION_ID_COOKIE_NAME, null, "/", null, "Agate session deleted", 0, false));
+      if(responseContext.getHeaders().get(HttpHeaders.SET_COOKIE) == null) {
+        responseContext.getHeaders().putSingle(HttpHeaders.SET_COOKIE,
+            new NewCookie(AGATE_SESSION_ID_COOKIE_NAME, null, "/", null, "Agate session deleted", 0, false));
+      }
     }
   }
 

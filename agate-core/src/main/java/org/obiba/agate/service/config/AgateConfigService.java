@@ -1,4 +1,4 @@
-package org.obiba.agate.service;
+package org.obiba.agate.service.config;
 
 import javax.inject.Inject;
 import javax.validation.Valid;

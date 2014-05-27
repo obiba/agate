@@ -180,6 +180,10 @@
 
     <dependency>
       <groupId>org.obiba.commons</groupId>
+      <artifactId>obiba-mongodb</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.obiba.commons</groupId>
       <artifactId>obiba-git</artifactId>
     </dependency>
     <dependency>
