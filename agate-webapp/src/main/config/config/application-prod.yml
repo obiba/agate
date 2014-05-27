@@ -5,15 +5,15 @@ server:
 spring:
     profiles: prod
 
-    mongodb:
-        url: localhost:27017
-        databaseName: agate
-        username:
-        password:
-
     thymeleaf:
         mode: XHTML
         cache: true
+
+mongodb:
+    url: localhost:27017
+    databaseName: agate
+    username:
+    password:
 
 shiro:
   password:
