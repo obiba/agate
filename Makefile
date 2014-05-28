@@ -73,5 +73,5 @@ plugins-update:
 
 keystore:
 	rm -f keystore.p12
-	keytool -genkey -alias tomcat -keystore keystore.p12 -storepass changeit -validity 365 -keyalg RSA -keysize 2048 -storetype pkcs12 -dname "CN=Server, OU=Agate, O=OBiBa, L=Montreal, ST=Quebec, C=QC"
+	keytool -genkey -alias tomcat -keystore keystore.p12 -storepass changeit -validity 365 -keyalg RSA -keysize 2048 -storetype pkcs12 -dname "CN=Agate, O=Maelstrom, OU=OBiBa, L=Montreal, ST=Quebec, C=CA"
 	@echo "Generated keystore file:" `pwd`/keystore.p12

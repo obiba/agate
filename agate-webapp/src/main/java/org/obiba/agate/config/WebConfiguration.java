@@ -80,6 +80,9 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
   @Value("${https.keystore.password}")
   private String keystorePass;
 
+  @Value("${https.keystore.type}")
+  private String keystoreType;
+
   @Bean
   EmbeddedServletContainerCustomizer containerCustomizer() throws Exception {
     return (ConfigurableEmbeddedServletContainer container) -> {
@@ -97,15 +100,13 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
     SslContextFactory jettySsl = new SslContextFactory();
     jettySsl.setWantClientAuth(true);
     jettySsl.setNeedClientAuth(false);
-    jettySsl.setValidateCerts(false);
-    jettySsl.setValidatePeerCerts(false);
 
     try {
       jettySsl.setKeyStorePath(keystoreFile.getFile().getAbsolutePath());
       jettySsl.setKeyStorePassword(keystorePass);
-      jettySsl.setKeyStoreType("PKCS12");
+      jettySsl.setKeyStoreType(keystoreType);
     } catch(IOException e) {
-      log.error("Failed to set jetty server keystore: {}", e.getMessage(), e);
+      throw new RuntimeException("Failed to set jetty server keystore: " + e.getMessage(), e);
     }
 
     Connector sslConnector = new SslSelectChannelConnector(jettySsl);
