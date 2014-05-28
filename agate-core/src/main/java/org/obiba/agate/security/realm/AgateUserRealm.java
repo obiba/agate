@@ -11,7 +11,6 @@ package org.obiba.agate.security.realm;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -32,23 +31,24 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.util.SimpleByteSource;
-import org.obiba.agate.domain.Authority;
 import org.obiba.agate.domain.User;
-import org.obiba.agate.repository.UserRepository;
+import org.obiba.agate.service.UserService;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Realm for users defined in opal's own users database.
  */
-//@Component
-//@Transactional
+@Component
 public class AgateUserRealm extends AuthorizingRealm {
 
   public static final String AGATE_REALM = "agate-user-realm";
 
   @Inject
-  private UserRepository userRepository;
+  private UserService userService;
 
   @Inject
   private Environment env;
@@ -65,12 +65,13 @@ public class AgateUserRealm extends AuthorizingRealm {
 
     setCacheManager(new MemoryConstrainedCacheManager());
 
+    RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "shiro.password.");
+    nbHashIterations = propertyResolver.getProperty("nbHashIterations", Integer.class);
+
     HashedCredentialsMatcher credentialsMatcher = new HashedCredentialsMatcher(Sha512Hash.ALGORITHM_NAME);
     credentialsMatcher.setHashIterations(nbHashIterations);
     setCredentialsMatcher(credentialsMatcher);
 
-    RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "shiro.password.");
-    nbHashIterations = propertyResolver.getProperty("nbHashIterations", Integer.class);
     salt = propertyResolver.getProperty("salt");
   }
 
@@ -89,8 +90,8 @@ public class AgateUserRealm extends AuthorizingRealm {
       throw new AccountException("Null usernames are not allowed by this realm.");
     }
 
-    User user = userRepository.findOne(username);
-    if(user == null /*|| !subjectCredentials.isEnabled()*/) {
+    User user = userService.findByUsername(username);
+    if(user == null || !user.isEnabled()) {
       throw new UnknownAccountException("No account found for user [" + username + "]");
     }
     SimpleAuthenticationInfo authInfo = new SimpleAuthenticationInfo(username, user.getPassword(), getName());
@@ -105,10 +106,10 @@ public class AgateUserRealm extends AuthorizingRealm {
       Object primary = thisPrincipals.iterator().next();
       PrincipalCollection simplePrincipals = new SimplePrincipalCollection(primary, getName());
       String username = (String) getAvailablePrincipal(simplePrincipals);
-      User user = userRepository.findOne(username);
+      User user = userService.findByUsername(username);
       return new SimpleAuthorizationInfo(user == null
           ? Collections.emptySet()
-          : user.getAuthorities().stream().map(Authority::getName).collect(Collectors.toSet()));
+          : ImmutableSet.<String>builder().add(user.getRole()).build());
     }
     return new SimpleAuthorizationInfo();
 

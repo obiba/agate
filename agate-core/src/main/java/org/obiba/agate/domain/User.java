@@ -1,54 +1,48 @@
 package org.obiba.agate.domain;
 
-import java.io.Serializable;
 import java.util.Set;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
-import org.springframework.data.annotation.Id;
+import org.obiba.agate.security.Roles;
+import org.obiba.mongodb.domain.AbstractAuditableDocument;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.base.Objects;
 
 /**
  * A user.
  */
-@Document(collection = "T_USER")
-public class User implements Serializable {
+@Document
+public class User extends AbstractAuditableDocument {
 
   @NotNull
-  @Size(min = 0, max = 50)
-  @Id
-  private String login;
+  @Indexed
+  private String name;
 
-  @JsonIgnore
-  @Size(min = 0, max = 100)
   private String password;
 
-  @Size(min = 0, max = 50)
-  @Field("first_name")
   private String firstName;
 
-  @Size(min = 0, max = 50)
-  @Field("last_name")
   private String lastName;
 
   @Email
-  @Size(min = 0, max = 100)
   private String email;
 
-  @JsonIgnore
-  private Set<Authority> authorities;
+  private boolean enabled = true;
 
-  public String getLogin() {
-    return login;
+  private String role = Roles.AGATE_USER.toString();
+
+  private Set<String> groups;
+
+  public String getName() {
+    return name;
   }
 
-  public void setLogin(String login) {
-    this.login = login;
+  public void setName(String name) {
+    this.name = name;
   }
 
   public String getPassword() {
@@ -83,12 +77,32 @@ public class User implements Serializable {
     this.email = email;
   }
 
-  public Set<Authority> getAuthorities() {
-    return authorities;
+  public boolean isEnabled() {
+    return enabled;
   }
 
-  public void setAuthorities(Set<Authority> authorities) {
-    this.authorities = authorities;
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
+  }
+
+  public String getRole() {
+    return role;
+  }
+
+  public void setRole(String role) {
+    this.role = role;
+  }
+
+  public void setRole(Roles role) {
+    this.role = role.toString();
+  }
+
+  public Set<String> getGroups() {
+    return groups;
+  }
+
+  public void setGroups(Set<String> groups) {
+    this.groups = groups;
   }
 
   @Override
@@ -102,7 +116,7 @@ public class User implements Serializable {
 
     User user = (User) o;
 
-    if(!login.equals(user.login)) {
+    if(!name.equals(user.name)) {
       return false;
     }
 
@@ -111,17 +125,14 @@ public class User implements Serializable {
 
   @Override
   public int hashCode() {
-    return login.hashCode();
+    return name.hashCode();
   }
 
   @Override
-  public String toString() {
-    return "User{" +
-        "login='" + login + '\'' +
-        ", password='" + password + '\'' +
-        ", firstName='" + firstName + '\'' +
-        ", lastName='" + lastName + '\'' +
-        ", email='" + email + '\'' +
-        "}";
+  protected Objects.ToStringHelper toStringHelper() {
+    return super.toStringHelper().add("name", name) //
+        .add("firstName", firstName) //
+        .add("lastName", lastName) //
+        .add("email", email);
   }
 }

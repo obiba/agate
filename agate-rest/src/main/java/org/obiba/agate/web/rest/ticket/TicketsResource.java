@@ -19,6 +19,7 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
@@ -30,10 +31,12 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
-import org.obiba.agate.domain.GrantingTicket;
-import org.obiba.agate.service.cas.GrantingTicketService;
+import org.obiba.agate.domain.SubjectTicket;
+import org.obiba.agate.domain.User;
+import org.obiba.agate.service.UserService;
+import org.obiba.agate.service.ticket.SubjectTicketService;
 import org.obiba.agate.web.rest.config.JerseyConfiguration;
-import org.obiba.agate.web.rest.security.SessionResource;
+import org.obiba.web.model.AuthDtos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -42,7 +45,7 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component
-@Path("/")
+@Path("/tickets")
 public class TicketsResource {
 
   private static final Logger log = LoggerFactory.getLogger(TicketsResource.class);
@@ -60,10 +63,12 @@ public class TicketsResource {
   private static final int LONG_TERM_TICKET_TIMEOUT = 3 * 30 * 24 * 3600;
 
   @Inject
-  private GrantingTicketService grantingTicketService;
+  private SubjectTicketService subjectTicketService;
+
+  @Inject
+  private UserService userService;
 
   @POST
-  @Path("/login")
   public Response login(@SuppressWarnings("TypeMayBeWeakened") @Context HttpServletRequest servletRequest,
       @QueryParam("rememberMe") @DefaultValue("false") boolean rememberMe,
       @QueryParam("renew") @DefaultValue("false") boolean renew, @FormParam("username") String username,
@@ -73,22 +78,22 @@ public class TicketsResource {
       subject.login(new UsernamePasswordToken(username, password));
       subject.logout();
 
-      GrantingTicket ticket;
-      List<GrantingTicket> tickets = grantingTicketService.findByUsername(username);
-      if (renew) grantingTicketService.deleteAll(tickets);
+      SubjectTicket ticket;
+      List<SubjectTicket> tickets = subjectTicketService.findByUsername(username);
+      if(renew) subjectTicketService.deleteAll(tickets);
       if(renew || tickets == null || tickets.isEmpty()) {
-        ticket = new GrantingTicket();
+        ticket = new SubjectTicket();
         ticket.setUsername(username);
       } else {
         ticket = tickets.get(0);
       }
       ticket.setRemembered(rememberMe);
-      grantingTicketService.save(ticket);
-      NewCookie cookie = new NewCookie(TICKET_COOKIE_NAME, ticket.getCASId(), "/", null, null,
+      subjectTicketService.save(ticket);
+      NewCookie cookie = new NewCookie(TICKET_COOKIE_NAME, ticket.getId(), "/", null, null,
           rememberMe ? LONG_TERM_TICKET_TIMEOUT : SHORT_TERM_TICKET_TIMEOUT, false);
-      log.info("Successful Granting Ticket creation for user '{}' with CAS ID: {}", username, ticket.getCASId());
-      return Response.created(
-          UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(SessionResource.class).build(ticket.getCASId()))
+      log.info("Successful Granting Ticket creation for user '{}' with CAS ID: {}", username, ticket.getId());
+      return Response
+          .created(UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(TicketResource.class).build(ticket.getId()))
           .header(HttpHeaders.SET_COOKIE, cookie).build();
 
     } catch(AuthenticationException e) {
@@ -100,10 +105,14 @@ public class TicketsResource {
   }
 
   @GET
-  @Path("/validate")
-  public Response validate(@QueryParam("ticket") String ticket) {
-    GrantingTicket grantingTicket = grantingTicketService.findById(ticket);
-    return Response.ok().entity(grantingTicket.getUsername()).build();
+  @Path("/subject/{username}")
+  public AuthDtos.SubjectDto get(@PathParam("username") String username) {
+    AuthDtos.SubjectDto.Builder builder = AuthDtos.SubjectDto.newBuilder().setUsername(username);
+    User user = userService.findByUsername(username);
+    if(user != null) {
+      builder.addAllGroups(user.getGroups());
+    }
+    return builder.build();
   }
 
 }

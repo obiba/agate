@@ -8,20 +8,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.obiba.agate.service.cas;
+package org.obiba.agate.service.ticket;
 
 import java.util.NoSuchElementException;
 
-public class NoSuchGrantingTicketException extends NoSuchElementException {
+public class NoSuchSubjectTicketException extends NoSuchElementException {
 
   private static final long serialVersionUID = 458553132519693383L;
 
-  private NoSuchGrantingTicketException(String s) {
+  private NoSuchSubjectTicketException(String s) {
     super(s);
   }
 
-  public static NoSuchGrantingTicketException withId(String id) {
-    return new NoSuchGrantingTicketException("Granting Ticket with id '" + id + "' does not exist");
+  public static NoSuchSubjectTicketException withId(String id) {
+    return new NoSuchSubjectTicketException("Subject Ticket with id '" + id + "' does not exist");
   }
 
 }

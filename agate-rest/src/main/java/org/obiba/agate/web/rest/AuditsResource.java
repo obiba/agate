@@ -35,7 +35,7 @@ public class AuditsResource {
 
 //  @GET
 //  @Path("/byDates")
-//  @RolesAllowed(AuthoritiesConstants.ADMIN)
+//  @RolesAllowed(AuthoritiesConstants.AGATE_ADMIN)
 //  public List<AuditEvent> findByDates(@QueryParam("fromDate") LocalDateTime fromDate,
 //      @QueryParam("toDate") LocalDateTime toDate) {
 //    return auditEventService.findByDates(fromDate, toDate);

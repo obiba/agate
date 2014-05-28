@@ -4,8 +4,8 @@ import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
 import org.obiba.agate.domain.AgateConfig;
-import org.obiba.agate.domain.GrantingTicket;
-import org.obiba.agate.service.cas.GrantingTicketService;
+import org.obiba.agate.domain.SubjectTicket;
+import org.obiba.agate.service.ticket.SubjectTicketService;
 import org.springframework.stereotype.Component;
 
 import static org.obiba.agate.web.model.Agate.AgateConfigDto;
@@ -16,7 +16,7 @@ import static org.obiba.agate.web.model.Agate.AgateConfigDtoOrBuilder;
 public class Dtos {
 
   @Inject
-  private GrantingTicketService grantingTicketService;
+  private SubjectTicketService subjectTicketService;
 
   @Inject
   private GrantingTicketDtos grantingTicketDtos;
@@ -25,7 +25,7 @@ public class Dtos {
   private AgateConfigDtos agateConfigDtos;
 
   @NotNull
-  public Agate.GrantingTicketDto asDto(@NotNull GrantingTicket ticket) {
+  public Agate.GrantingTicketDto asDto(@NotNull SubjectTicket ticket) {
     return grantingTicketDtos.asDto(ticket);
   }
 

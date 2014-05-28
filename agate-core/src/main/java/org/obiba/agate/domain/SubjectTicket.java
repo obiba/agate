@@ -10,8 +10,6 @@
 
 package org.obiba.agate.domain;
 
-import javax.validation.constraints.NotNull;
-
 import org.obiba.mongodb.domain.AbstractAuditableDocument;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -19,20 +17,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import com.google.common.base.Objects;
 
 @Document
-public class GrantingTicket extends AbstractAuditableDocument {
+public class SubjectTicket extends AbstractAuditableDocument {
 
   private static final long serialVersionUID = -1309201668631219671L;
-
-  public static final String CAS_PREFIX = "TGT-";
 
   @Indexed
   private String username;
 
   private boolean remembered = false;
-
-  public String getCASId() {
-    return CAS_PREFIX + getId();
-  }
 
   public String getUsername() {
     return username;
@@ -48,19 +40,6 @@ public class GrantingTicket extends AbstractAuditableDocument {
 
   public void setRemembered(boolean remembered) {
     this.remembered = remembered;
-  }
-
-  /**
-   * Remove the CAS prefix if any.
-   * @param id
-   * @return
-   */
-  public static String toId(@NotNull String id) {
-    String gtId = id;
-    if (id.startsWith(CAS_PREFIX)) {
-      gtId = id.substring(CAS_PREFIX.length());
-    }
-    return gtId;
   }
 
   @Override

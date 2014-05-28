@@ -93,21 +93,20 @@ public class AccountResourceTest {
     authorities.add(authority);
 
     User user = new User();
-    user.setLogin("test");
+    user.setName("test");
     user.setFirstName("john");
     user.setLastName("doe");
     user.setEmail("john.doe@jhipter.com");
-    user.setAuthorities(authorities);
     when(userService.getUserWithAuthorities()).thenReturn(user);
 
     restUserMockMvc.perform(get("/ws/account").accept(MediaType.APPLICATION_JSON)) //
         .andExpect(status().isOk()) //
         .andExpect(content().contentType(MediaType.APPLICATION_JSON)) //
-        .andExpect(jsonPath("$.login").value("test")) //
+        .andExpect(jsonPath("$.name").value("test")) //
         .andExpect(jsonPath("$.firstName").value("john")) //
         .andExpect(jsonPath("$.lastName").value("doe")) //
         .andExpect(jsonPath("$.email").value("john.doe@jhipter.com")) //
-        .andExpect(jsonPath("$.roles").value("ROLE_ADMIN"));
+        .andExpect(jsonPath("$.role").value("AGATE_USER"));
   }
 
   @Test

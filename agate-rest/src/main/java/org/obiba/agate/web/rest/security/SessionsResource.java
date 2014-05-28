@@ -33,11 +33,6 @@ public class SessionsResource {
 
   private static final Logger log = LoggerFactory.getLogger(SessionsResource.class);
 
-//  private static final String ENSURED_PROFILE = "ensuredProfile";
-
-//  @Autowired
-//  private SubjectProfileService subjectProfileService;
-
   @POST
   @Path("/sessions")
   public Response createSession(@SuppressWarnings("TypeMayBeWeakened") @Context HttpServletRequest servletRequest,
@@ -46,7 +41,6 @@ public class SessionsResource {
       Subject subject = SecurityUtils.getSubject();
       subject.login(new UsernamePasswordToken(username, password));
       ThreadContext.bind(subject);
-      ensureProfile(subject);
       String sessionId = SecurityUtils.getSubject().getSession().getId().toString();
       log.info("Successful session creation for user '{}' session ID is '{}'.", username, sessionId);
       return Response.created(
@@ -59,25 +53,6 @@ public class SessionsResource {
       // When a request contains credentials and they are invalid, the a 403 (Forbidden) should be returned.
       return Response.status(Response.Status.FORBIDDEN).cookie().build();
     }
-  }
-
-  private void ensureProfile(Subject subject) {
-    Object principal = subject.getPrincipal();
-
-//    if(!subjectProfileService.supportProfile(principal)) {
-//      return;
-//    }
-//
-//    Session subjectSession = subject.getSession(false);
-//    boolean ensuredProfile = subjectSession != null && subjectSession.getAttribute(ENSURED_PROFILE) != null;
-//    if(!ensuredProfile) {
-//      String username = principal.toString();
-//      log.info("Ensure HOME folder for {}", username);
-//      subjectProfileService.ensureProfile(subject.getPrincipals());
-//      if(subjectSession != null) {
-//        subjectSession.setAttribute(ENSURED_PROFILE, true);
-//      }
-//    }
   }
 }
 

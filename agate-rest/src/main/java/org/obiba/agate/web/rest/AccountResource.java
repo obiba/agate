@@ -20,7 +20,6 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.InvalidSessionException;
-import org.obiba.agate.domain.Authority;
 import org.obiba.agate.domain.PersistentToken;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.repository.PersistentTokenRepository;
@@ -72,8 +71,8 @@ public class AccountResource {
   public UserDTO getAccount() {
     log.info(">> get the current user");
     User user = userService.getUserWithAuthorities();
-    List<String> roles = user.getAuthorities().stream().map(Authority::getName).collect(Collectors.toList());
-    UserDTO userDTO = new UserDTO(user.getLogin(), user.getFirstName(), user.getLastName(), user.getEmail(), roles);
+    List<String> roles = user.getGroups().stream().collect(Collectors.toList());
+    UserDTO userDTO = new UserDTO(user.getName(), user.getFirstName(), user.getLastName(), user.getEmail(), roles);
     log.info(">> current userDTO: {}", userDTO);
     return userDTO;
   }

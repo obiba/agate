@@ -1,4 +1,4 @@
-package org.obiba.agate.service.cas;
+package org.obiba.agate.service.ticket;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,8 +12,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.obiba.agate.domain.GrantingTicket;
-import org.obiba.agate.repository.GrantingTicketRepository;
+import org.obiba.agate.domain.SubjectTicket;
+import org.obiba.agate.repository.SubjectTicketRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -38,17 +38,17 @@ import static org.obiba.agate.assertj.Assertions.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestExecutionListeners(DependencyInjectionTestExecutionListener.class)
-@ContextConfiguration(classes = GrantingTicketServiceTest.Config.class)
+@ContextConfiguration(classes = SubjectTicketServiceTest.Config.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class GrantingTicketServiceTest {
+public class SubjectTicketServiceTest {
 
-  private static final Logger log = LoggerFactory.getLogger(GrantingTicketServiceTest.class);
-
-  @Inject
-  private GrantingTicketService ticketService;
+  private static final Logger log = LoggerFactory.getLogger(SubjectTicketServiceTest.class);
 
   @Inject
-  private GrantingTicketRepository grantingTicketRepository;
+  private SubjectTicketService ticketService;
+
+  @Inject
+  private SubjectTicketRepository subjectTicketRepository;
 
   @Inject
   private MongoTemplate mongoTemplate;
@@ -66,17 +66,16 @@ public class GrantingTicketServiceTest {
   @Test
   public void test_create_and_load_new_ticket() throws Exception {
 
-    GrantingTicket ticket = new GrantingTicket();
+    SubjectTicket ticket = new SubjectTicket();
     ticket.setUsername("pwel");
     ticketService.save(ticket);
 
-    List<GrantingTicket> tickets = grantingTicketRepository.findAll();
+    List<SubjectTicket> tickets = subjectTicketRepository.findAll();
     log.info(">>> tickets: {}", tickets);
     assertThat(tickets).hasSize(1);
 
-    GrantingTicket ticketSaved = tickets.get(0);
+    SubjectTicket ticketSaved = tickets.get(0);
     assertThat(ticket.getId()).isNotEmpty();
-    assertThat(ticket.getCASId().startsWith("TGT")).isTrue();
     assertThat(ticket.isRemembered()).isFalse();
     assertThat(ticketSaved.getUsername()).isEqualTo(ticket.getUsername());
   }
@@ -97,8 +96,8 @@ public class GrantingTicketServiceTest {
     }
 
     @Bean
-    public GrantingTicketService studyService() {
-      return new GrantingTicketService();
+    public SubjectTicketService subjectTicketService() {
+      return new SubjectTicketService();
     }
 
     @Override
