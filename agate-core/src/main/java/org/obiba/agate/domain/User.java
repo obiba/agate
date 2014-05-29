@@ -18,6 +18,8 @@ import com.google.common.base.Objects;
 @Document
 public class User extends AbstractAuditableDocument {
 
+  private static final long serialVersionUID = 688200108221675323L;
+
   @NotNull
   @Indexed
   private String name;

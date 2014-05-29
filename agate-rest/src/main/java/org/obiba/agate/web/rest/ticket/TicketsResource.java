@@ -15,6 +15,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -47,7 +48,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Path("/tickets")
-public class TicketsResource {
+public class TicketsResource extends BaseTicketResource {
 
   private static final Logger log = LoggerFactory.getLogger(TicketsResource.class);
 
@@ -73,23 +74,15 @@ public class TicketsResource {
       @QueryParam("rememberMe") @DefaultValue("false") boolean rememberMe,
       @QueryParam("renew") @DefaultValue("false") boolean renew, @QueryParam("application") String application,
       @QueryParam("key") String key, @FormParam("username") String username, @FormParam("password") String password) {
+
+    validateApplication(application, key);
+
     try {
       Subject subject = SecurityUtils.getSubject();
       subject.login(new UsernamePasswordToken(username, password));
       subject.logout();
 
-      Ticket ticket;
-      List<Ticket> tickets = ticketService.findByUsername(username);
-      if(renew) ticketService.deleteAll(tickets);
-      if(renew || tickets == null || tickets.isEmpty()) {
-        ticket = new Ticket();
-        ticket.setUsername(username);
-      } else {
-        ticket = tickets.get(0);
-      }
-      ticket.setRemembered(rememberMe);
-      ticket.addLog(application, "login");
-      ticketService.save(ticket);
+      Ticket ticket = createTicket(username, renew, rememberMe, application);
       int timeout = rememberMe ? shortTermTicketHours : longTermTicketHours;
       NewCookie cookie = new NewCookie(TICKET_COOKIE_NAME, ticket.getId(), "/", domain, null, timeout * 3600, false);
       log.info("Successful Granting Ticket creation for user '{}' with CAS ID: {}", username, ticket.getId());
@@ -101,7 +94,7 @@ public class TicketsResource {
       log.info("Authentication failure of user '{}' at ip: '{}': {}", username, servletRequest.getRemoteAddr(),
           e.getMessage());
       // When a request contains credentials and they are invalid, the a 403 (Forbidden) should be returned.
-      return Response.status(Response.Status.FORBIDDEN).cookie().build();
+      throw new ForbiddenException();
     }
   }
 
@@ -109,12 +102,31 @@ public class TicketsResource {
   @Path("/subject/{username}")
   public AuthDtos.SubjectDto get(@PathParam("username") String username, @QueryParam("application") String application,
       @QueryParam("key") String key) {
+    validateApplication(application, key);
+
     AuthDtos.SubjectDto.Builder builder = AuthDtos.SubjectDto.newBuilder().setUsername(username);
     User user = userService.findByUsername(username);
     if(user != null) {
       builder.addAllGroups(user.getGroups());
     }
     return builder.build();
+  }
+
+  private Ticket createTicket(String username, boolean renew, boolean rememberMe, String application) {
+    Ticket ticket;
+    List<Ticket> tickets = ticketService.findByUsername(username);
+    if(renew) ticketService.deleteAll(tickets);
+    if(renew || tickets == null || tickets.isEmpty()) {
+      ticket = new Ticket();
+      ticket.setUsername(username);
+    } else {
+      ticket = tickets.get(0);
+    }
+    ticket.setRemembered(rememberMe);
+    ticket.addLog(application, "login");
+    ticketService.save(ticket);
+
+    return ticket;
   }
 
 }

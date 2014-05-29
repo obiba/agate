@@ -20,8 +20,8 @@ import javax.ws.rs.core.Response;
 
 import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
-import org.obiba.agate.service.UserService;
 import org.obiba.agate.service.TicketService;
+import org.obiba.agate.service.UserService;
 import org.obiba.web.model.AuthDtos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +32,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Path("/ticket/{ticket}")
-public class TicketResource {
+public class TicketResource extends BaseTicketResource {
 
   private static final Logger log = LoggerFactory.getLogger(TicketResource.class);
 
@@ -45,9 +45,12 @@ public class TicketResource {
   @Inject
   private UserService userService;
 
+
   @GET
   @Path("/subject")
   public AuthDtos.SubjectDto get(@QueryParam("application") String application, @QueryParam("key") String key) {
+    validateApplication(application, key);
+
     Ticket ticket = ticketService.findById(this.ticket);
     ticket.addLog(application, "subject");
     ticketService.save(ticket);
@@ -62,6 +65,8 @@ public class TicketResource {
   @GET
   @Path("/username")
   public Response getUsername(@QueryParam("application") String application, @QueryParam("key") String key) {
+    validateApplication(application, key);
+
     Ticket ticket = ticketService.findById(this.ticket);
     ticket.addLog(application, "validate");
     ticketService.save(ticket);

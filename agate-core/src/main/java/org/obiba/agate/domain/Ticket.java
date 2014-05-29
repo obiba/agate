@@ -20,6 +20,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
+/**
+ * Ticket is the token granted to a user for performing single sign-on.
+ */
 @Document
 public class Ticket extends AbstractAuditableDocument {
 

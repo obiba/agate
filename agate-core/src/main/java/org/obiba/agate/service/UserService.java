@@ -35,28 +35,23 @@ public class UserService {
 
   public User findByUsername(@NotNull String username) {
     List<User> users = userRepository.findByName(username);
-    return (users == null || users.isEmpty()) ? null : users.get(0);
+    return users == null || users.isEmpty() ? null : users.get(0);
   }
 
-  public void updateUserInformation(String firstName, String lastName, String email) {
-    User currentUser = userRepository.findOne(SecurityUtils.getSubject().getPrincipal().toString());
+  public void updateCurrentUser(String firstName, String lastName, String email) {
+    User currentUser = getCurrentUser();
     currentUser.setFirstName(firstName);
     currentUser.setLastName(lastName);
     currentUser.setEmail(email);
     userRepository.save(currentUser);
-    log.debug("Changed Information for User: {}", currentUser);
+    log.debug("Changed information for User: {}", currentUser);
   }
 
-  public User getUserWithAuthorities() {
-    User currentUser = userRepository.findOne(SecurityUtils.getSubject().getPrincipal().toString());
-    currentUser.getGroups().size(); // eagerly load the association
-    return currentUser;
-  }
-
-  public User getUserWithAuthorities(String username) {
-    User currentUser = userRepository.findOne(username);
-    currentUser.getGroups().size(); // eagerly load the association
-    return currentUser;
+  public void chnageCurrentUserPassword(String password) {
+    User currentUser = getCurrentUser();
+    currentUser.setPassword(hashPassword(password));
+    userRepository.save(currentUser);
+    log.debug("Changed password for User: {}", currentUser);
   }
 
   public void save(@NotNull User user) {
@@ -67,6 +62,13 @@ public class UserService {
     RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "shiro.password.");
     return new Sha512Hash(password, propertyResolver.getProperty("salt"),
         propertyResolver.getProperty("nbHashIterations", Integer.class)).toString();
+  }
+
+  public User getCurrentUser() {
+    String username = SecurityUtils.getSubject().getPrincipal().toString();
+    User currentUser = findByUsername(username);
+    if (currentUser == null) throw NoSuchUserException.withName(username);
+    return currentUser;
   }
 
 }
