@@ -33,12 +33,13 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
-import org.obiba.agate.service.UserService;
 import org.obiba.agate.service.TicketService;
+import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.rest.config.JerseyConfiguration;
 import org.obiba.web.model.AuthDtos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -52,6 +53,15 @@ public class TicketsResource {
 
   public static final String TICKET_COOKIE_NAME = "obibaid";
 
+  @Value("${ticket.domain}")
+  private String domain;
+
+  @Value("${ticket.timeout.short}")
+  private int shortTermTicketHours;
+
+  @Value("${ticket.timeout.long}")
+  private int longTermTicketHours;
+
   @Inject
   private TicketService ticketService;
 
@@ -61,8 +71,8 @@ public class TicketsResource {
   @POST
   public Response login(@SuppressWarnings("TypeMayBeWeakened") @Context HttpServletRequest servletRequest,
       @QueryParam("rememberMe") @DefaultValue("false") boolean rememberMe,
-      @QueryParam("renew") @DefaultValue("false") boolean renew, @FormParam("username") String username,
-      @FormParam("password") String password) {
+      @QueryParam("renew") @DefaultValue("false") boolean renew, @QueryParam("application") String application,
+      @QueryParam("key") String key, @FormParam("username") String username, @FormParam("password") String password) {
     try {
       Subject subject = SecurityUtils.getSubject();
       subject.login(new UsernamePasswordToken(username, password));
@@ -78,9 +88,10 @@ public class TicketsResource {
         ticket = tickets.get(0);
       }
       ticket.setRemembered(rememberMe);
+      ticket.addLog(application, "login");
       ticketService.save(ticket);
-      NewCookie cookie = new NewCookie(TICKET_COOKIE_NAME, ticket.getId(), "/", null, null,
-          rememberMe ? TicketService.LONG_TERM_TICKET_TIMEOUT : TicketService.SHORT_TERM_TICKET_TIMEOUT, false);
+      int timeout = rememberMe ? shortTermTicketHours : longTermTicketHours;
+      NewCookie cookie = new NewCookie(TICKET_COOKIE_NAME, ticket.getId(), "/", domain, null, timeout * 3600, false);
       log.info("Successful Granting Ticket creation for user '{}' with CAS ID: {}", username, ticket.getId());
       return Response
           .created(UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(TicketResource.class).build(ticket.getId()))
@@ -96,7 +107,8 @@ public class TicketsResource {
 
   @GET
   @Path("/subject/{username}")
-  public AuthDtos.SubjectDto get(@PathParam("username") String username) {
+  public AuthDtos.SubjectDto get(@PathParam("username") String username, @QueryParam("application") String application,
+      @QueryParam("key") String key) {
     AuthDtos.SubjectDto.Builder builder = AuthDtos.SubjectDto.newBuilder().setUsername(username);
     User user = userService.findByUsername(username);
     if(user != null) {

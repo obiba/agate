@@ -15,6 +15,7 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 import org.obiba.agate.domain.Ticket;
@@ -46,11 +47,13 @@ public class TicketResource {
 
   @GET
   @Path("/subject")
-  public AuthDtos.SubjectDto get() {
+  public AuthDtos.SubjectDto get(@QueryParam("application") String application, @QueryParam("key") String key) {
     Ticket ticket = ticketService.findById(this.ticket);
+    ticket.addLog(application, "subject");
+    ticketService.save(ticket);
     AuthDtos.SubjectDto.Builder builder = AuthDtos.SubjectDto.newBuilder().setUsername(ticket.getUsername());
     User user = userService.findByUsername(ticket.getUsername());
-    if (user != null) {
+    if(user != null) {
       builder.addAllGroups(user.getGroups());
     }
     return builder.build();
@@ -58,8 +61,10 @@ public class TicketResource {
 
   @GET
   @Path("/username")
-  public Response getUsername() {
+  public Response getUsername(@QueryParam("application") String application, @QueryParam("key") String key) {
     Ticket ticket = ticketService.findById(this.ticket);
+    ticket.addLog(application, "validate");
+    ticketService.save(ticket);
     return Response.ok().entity(ticket.getUsername()).build();
   }
 

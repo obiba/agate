@@ -14,12 +14,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.repository.TicketRepository;
-import org.obiba.agate.service.TicketService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
@@ -46,9 +43,6 @@ public class TicketServiceTest {
   private static final Logger log = LoggerFactory.getLogger(TicketServiceTest.class);
 
   @Inject
-  private TicketService ticketService;
-
-  @Inject
   private TicketRepository ticketRepository;
 
   @Inject
@@ -69,7 +63,7 @@ public class TicketServiceTest {
 
     Ticket ticket = new Ticket();
     ticket.setUsername("pwel");
-    ticketService.save(ticket);
+    ticketRepository.save(ticket);
 
     List<Ticket> tickets = ticketRepository.findAll();
     log.info(">>> tickets: {}", tickets);
@@ -89,16 +83,6 @@ public class TicketServiceTest {
 
     static {
       BASE_REPO.deleteOnExit();
-    }
-
-    @Bean
-    public PropertySourcesPlaceholderConfigurer placeHolderConfigurer() {
-      return new PropertySourcesPlaceholderConfigurer();
-    }
-
-    @Bean
-    public TicketService subjectTicketService() {
-      return new TicketService();
     }
 
     @Override

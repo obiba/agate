@@ -10,11 +10,15 @@
 
 package org.obiba.agate.domain;
 
+import java.util.List;
+
+import org.joda.time.DateTime;
 import org.obiba.mongodb.domain.AbstractAuditableDocument;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
 @Document
 public class Ticket extends AbstractAuditableDocument {
@@ -25,6 +29,8 @@ public class Ticket extends AbstractAuditableDocument {
   private String username;
 
   private boolean remembered = false;
+
+  private List<Log> logs;
 
   public String getUsername() {
     return username;
@@ -42,10 +48,62 @@ public class Ticket extends AbstractAuditableDocument {
     this.remembered = remembered;
   }
 
+  public List<Log> getLogs() {
+    return logs == null ? logs = Lists.newArrayList() : logs;
+  }
+
+  public void setLogs(List<Log> logs) {
+    this.logs = logs;
+  }
+
+  public void addLog(String application, String action) {
+    getLogs().add(new Log(application, action));
+  }
+
   @Override
   protected Objects.ToStringHelper toStringHelper() {
     return super.toStringHelper().add("username", username) //
         .add("remembered", remembered);
+  }
+
+  public static class Log {
+    private String application;
+
+    private String action;
+
+    private DateTime time = DateTime.now();
+
+    public Log() {
+    }
+
+    public Log(String application, String action) {
+      this.application = application;
+      this.action = action;
+    }
+
+    public String getApplication() {
+      return application;
+    }
+
+    public void setApplication(String application) {
+      this.application = application;
+    }
+
+    public String getAction() {
+      return action;
+    }
+
+    public void setAction(String action) {
+      this.action = action;
+    }
+
+    public DateTime getTime() {
+      return time;
+    }
+
+    public void setTime(DateTime time) {
+      this.time = time;
+    }
   }
 
 }

@@ -11,6 +11,7 @@ import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.repository.TicketRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -19,13 +20,9 @@ public class TicketService {
 
   private static final Logger log = LoggerFactory.getLogger(TicketService.class);
 
-  private static final int SHORT_TERM_TICKET_HOURS = 8;
+  private int shortTermTicketHours;
 
-  public static final int SHORT_TERM_TICKET_TIMEOUT = SHORT_TERM_TICKET_HOURS * 3600;
-
-  private static final int LONG_TERM_TICKET_HOURS = 3 * 30 * 24;
-
-  public static final int LONG_TERM_TICKET_TIMEOUT = LONG_TERM_TICKET_HOURS * 3600;
+  private int longTermTicketHours;
 
   @Inject
   private TicketRepository ticketRepository;
@@ -62,8 +59,8 @@ public class TicketService {
    */
   @Scheduled(cron = "0 0 0 * * ?")
   public void removeExpiredRemembered() {
-    removeExpired(
-        ticketRepository.findByCreatedDateBeforeAndRemembered(DateTime.now().minusHours(LONG_TERM_TICKET_HOURS), true));
+    removeExpired(ticketRepository
+        .findByCreatedDateBeforeAndRemembered(DateTime.now().minusHours(longTermTicketHours * 3600), true));
   }
 
   /**
@@ -73,7 +70,17 @@ public class TicketService {
   @Scheduled(cron = "0 * 0 * * ?")
   public void removeExpiredNotRemembered() {
     removeExpired(ticketRepository
-        .findByCreatedDateBeforeAndRemembered(DateTime.now().minusHours(SHORT_TERM_TICKET_HOURS), false));
+        .findByCreatedDateBeforeAndRemembered(DateTime.now().minusHours(shortTermTicketHours * 3600), false));
+  }
+
+  @Value("${ticket.timeout.short}")
+  public void setShortTermTicketHours(int shortTermTicketHours) {
+    this.shortTermTicketHours = shortTermTicketHours;
+  }
+
+  @Value("${ticket.timeout.long}")
+  public void setLongTermTicketHours(int longTermTicketHours) {
+    this.longTermTicketHours = longTermTicketHours;
   }
 
   private void removeExpired(List<Ticket> tickets) {
