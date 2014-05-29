@@ -8,10 +8,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.joda.time.LocalDate;
-import org.obiba.agate.domain.PersistentToken;
-import org.obiba.agate.domain.SubjectTicket;
 import org.obiba.agate.domain.User;
-import org.obiba.agate.repository.PersistentTokenRepository;
 import org.obiba.agate.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,9 +29,6 @@ public class UserService {
 
   @Inject
   private UserRepository userRepository;
-
-  @Inject
-  private PersistentTokenRepository persistentTokenRepository;
 
   @Inject
   private Environment env;
@@ -75,21 +69,4 @@ public class UserService {
         propertyResolver.getProperty("nbHashIterations", Integer.class)).toString();
   }
 
-  /**
-   * Persistent Token are used for providing automatic authentication, they should be automatically deleted after
-   * 30 days.
-   * <p/>
-   * <p>
-   * This is scheduled to get fired everyday, at midnight.
-   * </p>
-   */
-  @Scheduled(cron = "0 0 0 * * ?")
-  public void removeOldPersistentTokens() {
-    LocalDate now = new LocalDate();
-    List<PersistentToken> tokens = persistentTokenRepository.findByTokenDateBefore(now.minusMonths(1));
-    for(PersistentToken token : tokens) {
-      log.debug("Deleting token {}", token.getSeries());
-      persistentTokenRepository.delete(token);
-    }
-  }
 }

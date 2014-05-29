@@ -31,10 +31,10 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
-import org.obiba.agate.domain.SubjectTicket;
+import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.service.UserService;
-import org.obiba.agate.service.ticket.SubjectTicketService;
+import org.obiba.agate.service.TicketService;
 import org.obiba.agate.web.rest.config.JerseyConfiguration;
 import org.obiba.web.model.AuthDtos;
 import org.slf4j.Logger;
@@ -52,18 +52,8 @@ public class TicketsResource {
 
   public static final String TICKET_COOKIE_NAME = "obibaid";
 
-  /**
-   * 8 hours
-   */
-  private static final int SHORT_TERM_TICKET_TIMEOUT = 8 * 3600;
-
-  /**
-   * 3 months
-   */
-  private static final int LONG_TERM_TICKET_TIMEOUT = 3 * 30 * 24 * 3600;
-
   @Inject
-  private SubjectTicketService subjectTicketService;
+  private TicketService ticketService;
 
   @Inject
   private UserService userService;
@@ -78,19 +68,19 @@ public class TicketsResource {
       subject.login(new UsernamePasswordToken(username, password));
       subject.logout();
 
-      SubjectTicket ticket;
-      List<SubjectTicket> tickets = subjectTicketService.findByUsername(username);
-      if(renew) subjectTicketService.deleteAll(tickets);
+      Ticket ticket;
+      List<Ticket> tickets = ticketService.findByUsername(username);
+      if(renew) ticketService.deleteAll(tickets);
       if(renew || tickets == null || tickets.isEmpty()) {
-        ticket = new SubjectTicket();
+        ticket = new Ticket();
         ticket.setUsername(username);
       } else {
         ticket = tickets.get(0);
       }
       ticket.setRemembered(rememberMe);
-      subjectTicketService.save(ticket);
+      ticketService.save(ticket);
       NewCookie cookie = new NewCookie(TICKET_COOKIE_NAME, ticket.getId(), "/", null, null,
-          rememberMe ? LONG_TERM_TICKET_TIMEOUT : SHORT_TERM_TICKET_TIMEOUT, false);
+          rememberMe ? TicketService.LONG_TERM_TICKET_TIMEOUT : TicketService.SHORT_TERM_TICKET_TIMEOUT, false);
       log.info("Successful Granting Ticket creation for user '{}' with CAS ID: {}", username, ticket.getId());
       return Response
           .created(UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(TicketResource.class).build(ticket.getId()))

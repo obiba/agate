@@ -36,7 +36,6 @@ import org.apache.shiro.session.mgt.ExecutorServiceSessionValidationScheduler;
 import org.apache.shiro.session.mgt.SessionValidationScheduler;
 import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
 import org.apache.shiro.util.LifecycleUtils;
-import org.obiba.agate.security.realm.AgatePermissionResolver;
 import org.obiba.shiro.SessionStorageEvaluator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,8 +44,6 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.ImmutableList;
-
-import static org.obiba.agate.security.AuthoritiesConstants.ADMIN;
 
 @Component
 public class SecurityManagerFactory implements FactoryBean<SecurityManager> {
@@ -196,28 +193,28 @@ public class SecurityManagerFactory implements FactoryBean<SecurityManager> {
 
     @SuppressWarnings("OverlyLongMethod")
     private void configureUrl(@SuppressWarnings("TypeMayBeWeakened") Ini.Section urls) {
-      urls.put("/ws/logs/**", ADMIN);
-      urls.put("/websocket/tracker", ADMIN);
-      urls.put("/metrics*", ADMIN);
-      urls.put("/metrics/**", ADMIN);
-      urls.put("/health*", ADMIN);
-      urls.put("/health/**", ADMIN);
-      urls.put("/trace*", ADMIN);
-      urls.put("/trace/**", ADMIN);
-      urls.put("/dump*", ADMIN);
-      urls.put("/dump/**", ADMIN);
-      urls.put("/shutdown*", ADMIN);
-      urls.put("/shutdown/**", ADMIN);
-      urls.put("/beans*", ADMIN);
-      urls.put("/beans/**", ADMIN);
-      urls.put("/info*", ADMIN);
-      urls.put("/info/**", ADMIN);
-      urls.put("/autoconfig*", ADMIN);
-      urls.put("/autoconfig/**", ADMIN);
-      urls.put("/env*", ADMIN);
-      urls.put("/env/**", ADMIN);
-      urls.put("/trace*", ADMIN);
-      urls.put("/trace/**", ADMIN);
+      urls.put("/ws/logs/**", Roles.AGATE_ADMIN.name());
+      urls.put("/websocket/tracker", Roles.AGATE_ADMIN.name());
+      urls.put("/metrics*", Roles.AGATE_ADMIN.name());
+      urls.put("/metrics/**", Roles.AGATE_ADMIN.name());
+      urls.put("/health*", Roles.AGATE_ADMIN.name());
+      urls.put("/health/**", Roles.AGATE_ADMIN.name());
+      urls.put("/trace*", Roles.AGATE_ADMIN.name());
+      urls.put("/trace/**", Roles.AGATE_ADMIN.name());
+      urls.put("/dump*", Roles.AGATE_ADMIN.name());
+      urls.put("/dump/**", Roles.AGATE_ADMIN.name());
+      urls.put("/shutdown*", Roles.AGATE_ADMIN.name());
+      urls.put("/shutdown/**", Roles.AGATE_ADMIN.name());
+      urls.put("/beans*", Roles.AGATE_ADMIN.name());
+      urls.put("/beans/**", Roles.AGATE_ADMIN.name());
+      urls.put("/info*", Roles.AGATE_ADMIN.name());
+      urls.put("/info/**", Roles.AGATE_ADMIN.name());
+      urls.put("/autoconfig*", Roles.AGATE_ADMIN.name());
+      urls.put("/autoconfig/**", Roles.AGATE_ADMIN.name());
+      urls.put("/env*", Roles.AGATE_ADMIN.name());
+      urls.put("/env/**", Roles.AGATE_ADMIN.name());
+      urls.put("/trace*", Roles.AGATE_ADMIN.name());
+      urls.put("/trace/**", Roles.AGATE_ADMIN.name());
     }
   }
 

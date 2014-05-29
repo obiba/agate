@@ -17,10 +17,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
-import org.obiba.agate.domain.SubjectTicket;
+import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.service.UserService;
-import org.obiba.agate.service.ticket.SubjectTicketService;
+import org.obiba.agate.service.TicketService;
 import org.obiba.web.model.AuthDtos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +39,7 @@ public class TicketResource {
   private String ticket;
 
   @Inject
-  private SubjectTicketService subjectTicketService;
+  private TicketService ticketService;
 
   @Inject
   private UserService userService;
@@ -47,9 +47,9 @@ public class TicketResource {
   @GET
   @Path("/subject")
   public AuthDtos.SubjectDto get() {
-    SubjectTicket subjectTicket = subjectTicketService.findById(ticket);
-    AuthDtos.SubjectDto.Builder builder = AuthDtos.SubjectDto.newBuilder().setUsername(subjectTicket.getUsername());
-    User user = userService.findByUsername(subjectTicket.getUsername());
+    Ticket ticket = ticketService.findById(this.ticket);
+    AuthDtos.SubjectDto.Builder builder = AuthDtos.SubjectDto.newBuilder().setUsername(ticket.getUsername());
+    User user = userService.findByUsername(ticket.getUsername());
     if (user != null) {
       builder.addAllGroups(user.getGroups());
     }
@@ -59,13 +59,13 @@ public class TicketResource {
   @GET
   @Path("/username")
   public Response getUsername() {
-    SubjectTicket subjectTicket = subjectTicketService.findById(ticket);
-    return Response.ok().entity(subjectTicket.getUsername()).build();
+    Ticket ticket = ticketService.findById(this.ticket);
+    return Response.ok().entity(ticket.getUsername()).build();
   }
 
   @DELETE
   public Response logout() {
-    subjectTicketService.delete(ticket);
+    ticketService.delete(ticket);
     return Response.noContent().build();
   }
 

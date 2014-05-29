@@ -8,20 +8,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.obiba.agate.service.ticket;
+package org.obiba.agate.service;
 
 import java.util.NoSuchElementException;
 
-public class NoSuchSubjectTicketException extends NoSuchElementException {
+public class NoSuchTicketException extends NoSuchElementException {
 
   private static final long serialVersionUID = 458553132519693383L;
 
-  private NoSuchSubjectTicketException(String s) {
+  private NoSuchTicketException(String s) {
     super(s);
   }
 
-  public static NoSuchSubjectTicketException withId(String id) {
-    return new NoSuchSubjectTicketException("Subject Ticket with id '" + id + "' does not exist");
+  public static NoSuchTicketException withId(String id) {
+    return new NoSuchTicketException("Ticket with id '" + id + "' does not exist");
   }
 
 }

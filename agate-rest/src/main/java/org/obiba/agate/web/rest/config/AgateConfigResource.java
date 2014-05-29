@@ -11,7 +11,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
-import org.obiba.agate.service.config.AgateConfigService;
+import org.obiba.agate.service.AgateConfigService;
 import org.obiba.agate.web.model.Agate;
 import org.obiba.agate.web.model.Dtos;
 

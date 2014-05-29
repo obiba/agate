@@ -1,4 +1,4 @@
-package org.obiba.agate.security.realm;
+package org.obiba.agate.security;
 
 import eu.flatwhite.shiro.spatial.SingleSpaceRelationProvider;
 import eu.flatwhite.shiro.spatial.SingleSpaceResolver;

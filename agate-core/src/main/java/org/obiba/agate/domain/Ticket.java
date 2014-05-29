@@ -17,7 +17,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import com.google.common.base.Objects;
 
 @Document
-public class SubjectTicket extends AbstractAuditableDocument {
+public class Ticket extends AbstractAuditableDocument {
 
   private static final long serialVersionUID = -1309201668631219671L;
 

@@ -12,8 +12,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.obiba.agate.domain.SubjectTicket;
-import org.obiba.agate.repository.SubjectTicketRepository;
+import org.obiba.agate.domain.Ticket;
+import org.obiba.agate.repository.TicketRepository;
+import org.obiba.agate.service.TicketService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -38,17 +39,17 @@ import static org.obiba.agate.assertj.Assertions.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestExecutionListeners(DependencyInjectionTestExecutionListener.class)
-@ContextConfiguration(classes = SubjectTicketServiceTest.Config.class)
+@ContextConfiguration(classes = TicketServiceTest.Config.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class SubjectTicketServiceTest {
+public class TicketServiceTest {
 
-  private static final Logger log = LoggerFactory.getLogger(SubjectTicketServiceTest.class);
-
-  @Inject
-  private SubjectTicketService ticketService;
+  private static final Logger log = LoggerFactory.getLogger(TicketServiceTest.class);
 
   @Inject
-  private SubjectTicketRepository subjectTicketRepository;
+  private TicketService ticketService;
+
+  @Inject
+  private TicketRepository ticketRepository;
 
   @Inject
   private MongoTemplate mongoTemplate;
@@ -66,15 +67,15 @@ public class SubjectTicketServiceTest {
   @Test
   public void test_create_and_load_new_ticket() throws Exception {
 
-    SubjectTicket ticket = new SubjectTicket();
+    Ticket ticket = new Ticket();
     ticket.setUsername("pwel");
     ticketService.save(ticket);
 
-    List<SubjectTicket> tickets = subjectTicketRepository.findAll();
+    List<Ticket> tickets = ticketRepository.findAll();
     log.info(">>> tickets: {}", tickets);
     assertThat(tickets).hasSize(1);
 
-    SubjectTicket ticketSaved = tickets.get(0);
+    Ticket ticketSaved = tickets.get(0);
     assertThat(ticket.getId()).isNotEmpty();
     assertThat(ticket.isRemembered()).isFalse();
     assertThat(ticketSaved.getUsername()).isEqualTo(ticket.getUsername());
@@ -96,8 +97,8 @@ public class SubjectTicketServiceTest {
     }
 
     @Bean
-    public SubjectTicketService subjectTicketService() {
-      return new SubjectTicketService();
+    public TicketService subjectTicketService() {
+      return new TicketService();
     }
 
     @Override

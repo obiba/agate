@@ -1,4 +1,4 @@
 /**
- * Spring Security configuration.
+ * Shiro configuration.
  */
 package org.obiba.agate.security;
