@@ -7,7 +7,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.obiba.agate.web.rest.security;
+package org.obiba.agate.web.rest;
 
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.core.Response;

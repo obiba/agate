@@ -55,7 +55,7 @@ public class TicketResource extends BaseTicketResource {
     ticket.addLog(application, "subject");
     ticketService.save(ticket);
     AuthDtos.SubjectDto.Builder builder = AuthDtos.SubjectDto.newBuilder().setUsername(ticket.getUsername());
-    User user = userService.findByUsername(ticket.getUsername());
+    User user = userService.findUser(ticket.getUsername());
     if(user != null) {
       builder.addAllGroups(user.getGroups());
     }

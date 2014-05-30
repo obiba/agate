@@ -7,11 +7,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
-class GrantingTicketDtos {
+class TicketDtos {
 
   @NotNull
-  Agate.GrantingTicketDto asDto(@NotNull Ticket ticket) {
-    Agate.GrantingTicketDto.Builder builder = Agate.GrantingTicketDto.newBuilder();
+  Agate.TicketDto asDto(@NotNull Ticket ticket) {
+    Agate.TicketDto.Builder builder = Agate.TicketDto.newBuilder();
     builder.setId(ticket.getId()) //
         .setTimestamps(TimestampsDtos.asDto(ticket));
     return builder.build();

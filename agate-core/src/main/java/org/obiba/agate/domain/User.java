@@ -1,5 +1,6 @@
 package org.obiba.agate.domain;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.validation.constraints.NotNull;
@@ -11,6 +12,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 
 /**
  * A user.
@@ -21,7 +23,7 @@ public class User extends AbstractAuditableDocument {
   private static final long serialVersionUID = 688200108221675323L;
 
   @NotNull
-  @Indexed
+  @Indexed(unique = true)
   private String name;
 
   private String password;
@@ -38,6 +40,14 @@ public class User extends AbstractAuditableDocument {
   private String role = Roles.AGATE_USER.toString();
 
   private Set<String> groups;
+
+  public User() {
+  }
+
+  public User(String name, String password) {
+    this.name = name;
+    this.password = password;
+  }
 
   public String getName() {
     return name;
@@ -136,5 +146,62 @@ public class User extends AbstractAuditableDocument {
         .add("firstName", firstName) //
         .add("lastName", lastName) //
         .add("email", email);
+  }
+
+  public static Builder newBuilder() {
+    return new Builder();
+  }
+
+  public static class Builder {
+
+    User user;
+
+    private Builder() {
+      user = new User();
+    }
+
+    public Builder name(String name) {
+      user.setName(name);
+      return this;
+    }
+
+    public Builder password(String pwd) {
+      user.setPassword(pwd);
+      return this;
+    }
+
+    public Builder role(String name) {
+      user.setRole(name);
+      return this;
+    }
+
+    public Builder firstName(String name) {
+      user.setFirstName(name);
+      return this;
+    }
+
+    public Builder lastName(String name) {
+      user.setLastName(name);
+      return this;
+    }
+
+    public Builder email(String email) {
+      user.setEmail(email);
+      return this;
+    }
+
+    public Builder disabled() {
+      user.setEnabled(false);
+      return this;
+    }
+
+    public Builder groups(List<String> groups) {
+      user.setGroups(Sets.newHashSet(groups));
+      return this;
+    }
+
+    public User build() {
+      return user;
+    }
   }
 }

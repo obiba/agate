@@ -1,0 +1,98 @@
+/*
+ * Copyright (c) 2014 OBiBa. All rights reserved.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v3.0.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package org.obiba.agate.domain;
+
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+
+import org.obiba.mongodb.domain.AbstractAuditableDocument;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Strings;
+
+/**
+ * A group.
+ */
+@Document(collection = "usergroup") // group is a reserved word in mongodb
+public class Group extends AbstractAuditableDocument {
+
+  private static final long serialVersionUID = -2028848270265682755L;
+
+  @NotNull
+  @Indexed(unique = true)
+  private String name;
+
+  private String description;
+
+  public Group() {
+  }
+
+  public Group(@NotNull String name) {
+    this(name, null);
+  }
+
+  public Group(@NotNull String name, @Nullable String description) {
+    this.name = name;
+    this.description = description;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public boolean hasDescription() {
+    return !Strings.isNullOrEmpty(description);
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if(this == o) {
+      return true;
+    }
+    if(o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    Group group = (Group) o;
+
+    if(!name.equals(group.name)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    return name.hashCode();
+  }
+
+  @Override
+  protected Objects.ToStringHelper toStringHelper() {
+    return super.toStringHelper().add("name", name) //
+        .add("description", description);
+  }
+
+}

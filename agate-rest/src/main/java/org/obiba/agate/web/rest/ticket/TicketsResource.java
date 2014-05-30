@@ -105,7 +105,7 @@ public class TicketsResource extends BaseTicketResource {
     validateApplication(application, key);
 
     AuthDtos.SubjectDto.Builder builder = AuthDtos.SubjectDto.newBuilder().setUsername(username);
-    User user = userService.findByUsername(username);
+    User user = userService.findUser(username);
     if(user != null) {
       builder.addAllGroups(user.getGroups());
     }

@@ -19,7 +19,10 @@ import javax.inject.Inject;
 import net.sf.ehcache.CacheManager;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AbstractAuthenticator;
 import org.apache.shiro.authc.credential.PasswordMatcher;
+import org.apache.shiro.authc.pam.FirstSuccessfulStrategy;
+import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
 import org.apache.shiro.authz.ModularRealmAuthorizer;
 import org.apache.shiro.authz.permission.PermissionResolver;
 import org.apache.shiro.authz.permission.PermissionResolverAware;
@@ -128,6 +131,7 @@ public class SecurityManagerFactory implements FactoryBean<SecurityManager> {
       initializeSessionManager(dsm);
       initializeSubjectDAO(dsm);
       initializeAuthorizer(dsm);
+      initializeAuthenticator(dsm);
 
 //      ((AbstractAuthenticator) dsm.getAuthenticator()).setAuthenticationListeners(authenticationListeners);
 
@@ -164,6 +168,12 @@ public class SecurityManagerFactory implements FactoryBean<SecurityManager> {
       if(dsm.getAuthorizer() instanceof ModularRealmAuthorizer) {
 //        ((RolePermissionResolverAware) dsm.getAuthorizer()).setRolePermissionResolver(rolePermissionResolver);
         ((PermissionResolverAware) dsm.getAuthorizer()).setPermissionResolver(permissionResolver);
+      }
+    }
+
+    private void initializeAuthenticator(DefaultSecurityManager dsm) {
+      if(dsm.getAuthenticator() instanceof ModularRealmAuthenticator) {
+        ((ModularRealmAuthenticator) dsm.getAuthenticator()).setAuthenticationStrategy(new FirstSuccessfulStrategy());
       }
     }
 

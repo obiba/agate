@@ -2,7 +2,7 @@ package obiba.agate;
 
 option java_package = "org.obiba.agate.web.model";
 
-message GrantingTicketDto {
+message TicketDto {
   required string id = 1;
   optional TimestampsDto timestamps = 2;
   required string username = 3;
@@ -19,4 +19,24 @@ message AgateConfigDto {
   repeated string languages = 2;
   required string defaultCharSet = 3;
   optional string publicUrl = 4;
+}
+
+message UserDto {
+  required string id = 1;
+  required string name = 2;
+  optional string password = 3;
+  optional string firstName = 4;
+  optional string lastName = 5;
+  optional string email = 6;
+  required string role = 7;
+  required bool enabled = 8;
+  repeated string groups = 9;
+  optional TimestampsDto timestamps = 10;
+}
+
+message GroupDto {
+  required string id = 1;
+  required string name = 2;
+  optional string description = 3;
+  optional TimestampsDto timestamps = 4;
 }

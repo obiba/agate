@@ -90,7 +90,7 @@ public class AgateUserRealm extends AuthorizingRealm {
       throw new AccountException("Null usernames are not allowed by this realm.");
     }
 
-    User user = userService.findByUsername(username);
+    User user = userService.findUser(username);
     if(user == null || !user.isEnabled()) {
       throw new UnknownAccountException("No account found for user [" + username + "]");
     }
@@ -106,7 +106,7 @@ public class AgateUserRealm extends AuthorizingRealm {
       Object primary = thisPrincipals.iterator().next();
       PrincipalCollection simplePrincipals = new SimplePrincipalCollection(primary, getName());
       String username = (String) getAvailablePrincipal(simplePrincipals);
-      User user = userService.findByUsername(username);
+      User user = userService.findUser(username);
       return new SimpleAuthorizationInfo(user == null
           ? Collections.emptySet()
           : ImmutableSet.<String>builder().add(user.getRole()).build());
