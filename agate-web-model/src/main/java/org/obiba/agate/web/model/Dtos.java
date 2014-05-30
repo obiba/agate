@@ -8,6 +8,7 @@ import org.obiba.agate.domain.Group;
 import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.service.TicketService;
+import org.obiba.web.model.AuthDtos;
 import org.springframework.stereotype.Component;
 
 import static org.obiba.agate.web.model.Agate.AgateConfigDto;
@@ -37,6 +38,11 @@ public class Dtos {
   @NotNull
   public Agate.UserDto asDto(@NotNull User user) {
     return userDtos.asDto(user);
+  }
+
+  @NotNull
+  public AuthDtos.SubjectDto asDto(@NotNull User user, boolean withAttributes) {
+    return userDtos.asDto(user, withAttributes);
   }
 
   @NotNull

@@ -408,6 +408,11 @@
         <artifactId>obiba-git</artifactId>
         <version>${obiba-commons.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.obiba.commons</groupId>
+        <artifactId>obiba-web-model</artifactId>
+        <version>${obiba-commons.version}</version>
+      </dependency>
 
       <dependency>
         <groupId>org.apache.shiro</groupId>

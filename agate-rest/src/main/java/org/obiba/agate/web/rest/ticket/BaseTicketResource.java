@@ -14,11 +14,15 @@ import javax.inject.Inject;
 import javax.ws.rs.ForbiddenException;
 
 import org.obiba.agate.service.ApplicationService;
+import org.obiba.agate.web.model.Dtos;
 
 public class BaseTicketResource {
 
   @Inject
   private ApplicationService applicationService;
+
+  @Inject
+  protected Dtos dtos;
 
   protected void validateApplication(String name, String key) {
     if(!applicationService.isValid(name, key)) throw new ForbiddenException();

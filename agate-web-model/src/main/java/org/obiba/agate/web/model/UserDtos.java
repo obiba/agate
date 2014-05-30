@@ -14,6 +14,7 @@ import javax.validation.constraints.NotNull;
 
 import org.obiba.agate.domain.Group;
 import org.obiba.agate.domain.User;
+import org.obiba.web.model.AuthDtos;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
@@ -35,7 +36,20 @@ class UserDtos {
     if(!Strings.isNullOrEmpty(user.getLastName())) builder.setLastName(user.getLastName());
     if(!Strings.isNullOrEmpty(user.getEmail())) builder.setEmail(user.getEmail());
     if(!user.getGroups().isEmpty()) builder.addAllGroups(user.getGroups());
-    
+
+    return builder.build();
+  }
+
+  AuthDtos.SubjectDto asDto(@NotNull User user, boolean withAttributes) {
+    AuthDtos.SubjectDto.Builder builder = AuthDtos.SubjectDto.newBuilder().setUsername(user.getName());
+    if(!user.getGroups().isEmpty()) builder.addAllGroups(user.getGroups());
+
+    if(withAttributes) {
+      addAttribute(builder, "firstName", user.getFirstName());
+      addAttribute(builder, "lastName", user.getLastName());
+      addAttribute(builder, "email", user.getEmail());
+    }
+
     return builder.build();
   }
 
@@ -49,6 +63,11 @@ class UserDtos {
     if(group.hasDescription()) builder.setDescription(group.getDescription());
 
     return builder.build();
+  }
+
+  private void addAttribute(AuthDtos.SubjectDto.Builder builder, String key, String value) {
+    builder
+        .addAttributes(AuthDtos.SubjectDto.AttributeDto.newBuilder().setKey(key).setValue(value == null ? "" : value));
   }
 
 }

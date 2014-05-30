@@ -45,7 +45,6 @@ public class TicketResource extends BaseTicketResource {
   @Inject
   private UserService userService;
 
-
   @GET
   @Path("/subject")
   public AuthDtos.SubjectDto get(@QueryParam("application") String application, @QueryParam("key") String key) {
@@ -54,12 +53,15 @@ public class TicketResource extends BaseTicketResource {
     Ticket ticket = ticketService.findById(this.ticket);
     ticket.addLog(application, "subject");
     ticketService.save(ticket);
-    AuthDtos.SubjectDto.Builder builder = AuthDtos.SubjectDto.newBuilder().setUsername(ticket.getUsername());
+
     User user = userService.findUser(ticket.getUsername());
+    AuthDtos.SubjectDto subject;
     if(user != null) {
-      builder.addAllGroups(user.getGroups());
+      subject = dtos.asDto(user, true);
+    } else {
+      subject = AuthDtos.SubjectDto.newBuilder().setUsername(ticket.getUsername()).build();
     }
-    return builder.build();
+    return subject;
   }
 
   @GET

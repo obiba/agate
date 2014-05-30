@@ -103,13 +103,14 @@ public class TicketsResource extends BaseTicketResource {
   public AuthDtos.SubjectDto get(@PathParam("username") String username, @QueryParam("application") String application,
       @QueryParam("key") String key) {
     validateApplication(application, key);
-
-    AuthDtos.SubjectDto.Builder builder = AuthDtos.SubjectDto.newBuilder().setUsername(username);
     User user = userService.findUser(username);
+    AuthDtos.SubjectDto subject;
     if(user != null) {
-      builder.addAllGroups(user.getGroups());
+      subject = dtos.asDto(user, true);
+    } else {
+      subject = AuthDtos.SubjectDto.newBuilder().setUsername(username).build();
     }
-    return builder.build();
+    return subject;
   }
 
   private Ticket createTicket(String username, boolean renew, boolean rememberMe, String application) {
