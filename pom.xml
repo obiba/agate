@@ -16,7 +16,8 @@
     <module>agate-core</module>
     <module>agate-rest</module>
     <module>agate-web-model</module>
-    <module>agate-webapp</module>
+    <module>agate-angularjs-client</module>
+    <module>agate-server</module>
   </modules>
 
   <profiles>
@@ -109,15 +110,14 @@
     <embed-mongo.version>1.45</embed-mongo.version>
     <guava.version>17.0</guava.version>
     <geronimo-javamail_1.4_mail.version>1.8.3</geronimo-javamail_1.4_mail.version>
-    <gson.version>2.2.4</gson.version>
     <javax.inject.version>1</javax.inject.version>
     <jersey.version>2.8</jersey.version>
-    <jgit.version>3.3.1.201403241930-r</jgit.version>
     <jhipsterloaded.version>0.7</jhipsterloaded.version>
     <json-path.version>0.9.1</json-path.version>
     <jsr305.version>2.0.3</jsr305.version>
     <metrics-spring.version>3.0.0</metrics-spring.version>
     <mongeez.version>0.9.4</mongeez.version>
+    <newrelic.version>3.4.2</newrelic.version>
     <nosqlunit.version>0.7.9</nosqlunit.version>
     <obiba-commons.version>1.7-SNAPSHOT</obiba-commons.version>
     <protobuf.version>2.5.0</protobuf.version>
@@ -221,6 +221,12 @@
         <groupId>org.obiba.agate</groupId>
         <artifactId>agate-rest</artifactId>
         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.obiba.agate</groupId>
+        <artifactId>agate-angularjs-client</artifactId>
+        <version>${project.version}</version>
+        <type>war</type>
       </dependency>
 
       <dependency>
@@ -405,13 +411,19 @@
       </dependency>
       <dependency>
         <groupId>org.obiba.commons</groupId>
-        <artifactId>obiba-git</artifactId>
+        <artifactId>obiba-web-model</artifactId>
         <version>${obiba-commons.version}</version>
       </dependency>
       <dependency>
         <groupId>org.obiba.commons</groupId>
-        <artifactId>obiba-web-model</artifactId>
+        <artifactId>obiba-password-hasher</artifactId>
         <version>${obiba-commons.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.obiba.commons</groupId>
+        <artifactId>obiba-password-hasher</artifactId>
+        <version>${obiba-commons.version}</version>
+        <classifier>cli</classifier>
       </dependency>
 
       <dependency>
@@ -464,22 +476,17 @@
       </dependency>
 
       <dependency>
-        <groupId>com.google.code.gson</groupId>
-        <artifactId>gson</artifactId>
-        <version>${gson.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.eclipse.jgit</groupId>
-        <artifactId>org.eclipse.jgit</artifactId>
-        <version>${jgit.version}</version>
-      </dependency>
-
-      <dependency>
         <groupId>de.flapdoodle.embed</groupId>
         <artifactId>de.flapdoodle.embed.mongo</artifactId>
         <version>${embed-mongo.version}</version>
         <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>com.newrelic.agent.java</groupId>
+        <artifactId>newrelic-agent</artifactId>
+        <version>${newrelic.version}</version>
+        <scope>runtime</scope>
       </dependency>
 
     </dependencies>
