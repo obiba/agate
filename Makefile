@@ -46,7 +46,6 @@ angular:
 	cd agate-angularjs-client && ${mvn_exec} install
 
 run:
-	mkdir -p ${agate_home}
 	cd agate-server && ${mvn_exec} spring-boot:run -DAGATE_HOME="${agate_home}" -DAGATE_LOG="${agate_log}"
 
 debug:
@@ -54,7 +53,7 @@ debug:
 	cd agate-server && ${mvn_exec} spring-boot:run -DAGATE_HOME="${agate_home}" -DAGATE_LOG="${agate_log}"
 
 grunt:
-	cd agate-server && grunt server
+	cd agate-angularjs-client && grunt server
 
 npm-install:
 	cd agate-server && npm install

@@ -70,27 +70,27 @@ module.exports = function (grunt) {
         {
           context: '/ws',
           host: 'localhost',
-          port: 8080,
+          port: 8081,
           https: false,
           changeOrigin: false
         },
         {
           context: '/metrics',
           host: 'localhost',
-          port: 8080,
+          port: 8081,
           https: false,
           changeOrigin: false
         },
         {
           context: '/dump',
           host: 'localhost',
-          port: 8080,
+          port: 8081,
           https: false,
           changeOrigin: false
         }
       ],
       options: {
-        port: 9000,
+        port: 9001,
         // Change this to 'localhost' to deny access to the server from outside.
         hostname: '0.0.0.0',
         livereload: 35729

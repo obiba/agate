@@ -22,7 +22,7 @@ public class ApplicationWebXml extends SpringBootServletInitializer {
    * Set a default profile if it has not been set.
    * <p/>
    * <p>
-   * Please use -Dspring.profiles.active=dev
+   * Please use -Dspring.profiles.active=prod
    * </p>
    */
   private String addDefaultProfile() {
@@ -33,6 +33,6 @@ public class ApplicationWebXml extends SpringBootServletInitializer {
     }
 
     log.warn("No Spring profile configured, running with default configuration");
-    return Constants.SPRING_PROFILE_DEVELOPMENT;
+    return Constants.SPRING_PROFILE_PRODUCTION;
   }
 }
