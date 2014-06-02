@@ -1,6 +1,6 @@
 'use strict';
 
-agate.publish
+mica.publish
   .directive('publishStatus', [function () {
     return {
       restrict: 'AE',

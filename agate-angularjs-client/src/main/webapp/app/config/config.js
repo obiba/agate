@@ -1,7 +1,8 @@
 'use strict';
 
-agate.config = angular.module('agate.config', [
-  'agate.form',
+mica.config = angular.module('mica.config', [
+  'obiba.form',
   'ngResource',
   'ngRoute',
-  'pascalprecht.translate']);
+  'pascalprecht.translate'
+]);

@@ -56,7 +56,7 @@ grunt:
 	cd agate-angularjs-client && grunt server
 
 npm-install:
-	cd agate-server && npm install
+	cd agate-angularjs-client && npm install
 
 clear-log:
 	rm -f agate-server/target/agate.log*

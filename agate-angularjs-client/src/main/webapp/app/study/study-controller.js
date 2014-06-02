@@ -1,6 +1,11 @@
 'use strict';
 
-agate.study
+mica.study
+
+  .constant('STUDY_EVENTS', {
+    studyUpdated: 'event:study-updated'
+  })
+
   .controller('StudyListController', ['$scope', 'DraftStudySummariesResource', 'DraftStudyResource',
 
     function ($scope, DraftStudySummariesResource, DraftStudyResource) {
@@ -16,29 +21,33 @@ agate.study
       };
 
     }])
-  .controller('StudyViewController', ['$rootScope', '$scope', '$routeParams', '$log', '$locale', '$location', '$translate', 'DraftStudySummaryResource','DraftStudyResource', 'DraftStudyPublicationResource', 'AgateConfigResource',
+  .controller('StudyViewController', ['$rootScope', '$scope', '$routeParams', '$log', '$locale', '$location', 'DraftStudySummaryResource', 'DraftStudyResource', 'DraftStudyPublicationResource', 'MicaConfigResource', 'STUDY_EVENTS', 'NOTIFICATION_EVENTS', 'CONTACT_EVENTS',
 
-    function ($rootScope, $scope, $routeParams, $log, $locale, $location, $translate, DraftStudySummaryResource, DraftStudyResource, DraftStudyPublicationResource, AgateConfigResource) {
+    function ($rootScope, $scope, $routeParams, $log, $locale, $location, DraftStudySummaryResource, DraftStudyResource, DraftStudyPublicationResource, MicaConfigResource, STUDY_EVENTS, NOTIFICATION_EVENTS, CONTACT_EVENTS) {
 
-      AgateConfigResource.get(function (agateConfig) {
+      MicaConfigResource.get(function (micaConfig) {
         $scope.tabs = [];
-        agateConfig.languages.forEach(function (lang) {
-          $scope.tabs.push({ lang: lang, labelKey: 'language.' + lang });
+        micaConfig.languages.forEach(function (lang) {
+          $scope.tabs.push({lang: lang});
         });
       });
 
       $scope.study = DraftStudyResource.get(
         {id: $routeParams.id},
         function (study) {
-          new $.AgateTimeline(new $.StudyDtoParser()).create("#timeline", study).addLegend();
+          new $.MicaTimeline(new $.StudyDtoParser()).create('#timeline', study).addLegend();
         });
 
       $scope.studySummary = DraftStudySummaryResource.get({id: $routeParams.id});
 
       $scope.months = $locale.DATETIME_FORMATS.MONTH;
 
-      $scope.$on('studyUpdatedEvent', function (event, studyUpdated) {
-        if (studyUpdated == $scope.study) {
+      $scope.emitStudyUpdated = function () {
+        $scope.$emit(STUDY_EVENTS.studyUpdated, $scope.study);
+      };
+
+      $scope.$on(STUDY_EVENTS.studyUpdated, function (event, studyUpdated) {
+        if (studyUpdated === $scope.study) {
           $log.debug('save study', studyUpdated);
 
           $scope.study.$save(function () {
@@ -46,84 +55,90 @@ agate.study
             },
             function (response) {
               $log.error('Error on study save:', response);
-              $translate("study.save-error")
-                .then(function (translation) {
-                  $rootScope.$broadcast('showNotificationDialogEvent', {
-                    "iconClass": "fa-exclamation-triangle",
-                    "title": translation,
-                    "message": response.data ? response.data : angular.fromJson(response)
-                  });
-                });
+              $rootScope.$broadcast(NOTIFICATION_EVENTS.showNotificationDialog, {
+                message: response.data ? response.data : angular.fromJson(response)
+              });
             });
         }
       });
       $scope.publish = function () {
-        DraftStudyPublicationResource.publish({id: $scope.study.id}, function() {
+        DraftStudyPublicationResource.publish({id: $scope.study.id}, function () {
           $scope.studySummary = DraftStudySummaryResource.get({id: $routeParams.id});
         });
-
       };
 
       $scope.sortableOptions = {
-        stop: function (e, ui) {
-          $scope.$emit('studyUpdatedEvent', $scope.study);
+        stop: function () {
+          $scope.emitStudyUpdated();
         }
       };
 
-      $scope.$on('addInvestigatorEvent', function (event, study, contact) {
-        if (study == $scope.study) {
-          if (!$scope.study.investigators) $scope.study.investigators = [];
+      $scope.$on(CONTACT_EVENTS.addInvestigator, function (event, study, contact) {
+        if (study === $scope.study) {
+          if (!$scope.study.investigators) {
+            $scope.study.investigators = [];
+          }
           $scope.study.investigators.push(contact);
-          $scope.$emit('studyUpdatedEvent', $scope.study);
+          $scope.emitStudyUpdated();
         }
       });
 
-      $scope.$on('addContactEvent', function (event, study, contact) {
-        if (study == $scope.study) {
-          if (!$scope.study.contacts) $scope.study.contacts = [];
+      $scope.$on(CONTACT_EVENTS.addContact, function (event, study, contact) {
+        if (study === $scope.study) {
+          if (!$scope.study.contacts) {
+            $scope.study.contacts = [];
+          }
           $scope.study.contacts.push(contact);
-          $scope.$emit('studyUpdatedEvent', $scope.study);
+          $scope.emitStudyUpdated();
         }
       });
 
-      $scope.$on('contactUpdatedEvent', function (event, study, contact) {
-        if (study == $scope.study) {
-          $scope.$emit('studyUpdatedEvent', $scope.study);
+      $scope.$on(CONTACT_EVENTS.contactUpdated, function (event, study) {
+        if (study === $scope.study) {
+          $scope.emitStudyUpdated();
         }
       });
 
-      $scope.$on('contactEditionCanceledEvent', function (event, study) {
-        if (study == $scope.study) {
+      $scope.$on(CONTACT_EVENTS.contactEditionCanceled, function (event, study) {
+        if (study === $scope.study) {
           $scope.study = DraftStudyResource.get({id: $scope.study.id});
         }
       });
 
-      $scope.$on('contactDeletedEvent', function (event, study, contact, isInvestigator) {
-        if (study == $scope.study) {
+      $scope.$on(CONTACT_EVENTS.contactDeleted, function (event, study, contact, isInvestigator) {
+        if (study === $scope.study) {
           if (isInvestigator) {
             var investigatorsIndex = $scope.study.investigators.indexOf(contact);
-            if (investigatorsIndex != -1) $scope.study.investigators.splice(investigatorsIndex, 1);
+            if (investigatorsIndex !== -1) {
+              $scope.study.investigators.splice(investigatorsIndex, 1);
+            }
           } else {
             var contactsIndex = $scope.study.contacts.indexOf(contact);
-            if (contactsIndex != -1) $scope.study.contacts.splice(contactsIndex, 1);
+            if (contactsIndex !== -1) {
+              $scope.study.contacts.splice(contactsIndex, 1);
+            }
           }
-          $scope.$emit('studyUpdatedEvent', $scope.study);
+          $scope.emitStudyUpdated();
         }
       });
 
+
+
     }])
 
-  .controller('StudyEditController', ['$scope', '$routeParams', '$log', '$location', 'DraftStudyResource', 'DraftStudySummariesResource', 'AgateConfigResource',
+  .controller('StudyEditController', ['$rootScope', '$scope', '$routeParams', '$log', '$location', 'DraftStudyResource', 'DraftStudiesResource', 'MicaConfigResource', 'StringUtils', 'FormServerValidation',
 
-    function ($scope, $routeParams, $log, $location, DraftStudyResource, DraftStudySummariesResource, AgateConfigResource) {
+    function ($rootScope, $scope, $routeParams, $log, $location, DraftStudyResource, DraftStudiesResource, MicaConfigResource, StringUtils, FormServerValidation) {
 
       $scope.study = $routeParams.id ? DraftStudyResource.get({id: $routeParams.id}) : {};
       $log.debug('Edit study', $scope.study);
 
-      AgateConfigResource.get(function (agateConfig) {
+      MicaConfigResource.get(function (micaConfig) {
         $scope.tabs = [];
-        agateConfig.languages.forEach(function (lang) {
-          $scope.tabs.push({ lang: lang, labelKey: 'language.' + lang });
+        $scope.languages = [];
+        micaConfig.languages.forEach(function (lang) {
+          $scope.tabs.push({ lang: lang });
+          $scope.languages.push(lang);
         });
       });
 
@@ -133,49 +148,33 @@ agate.study
           return;
         }
         if ($scope.study.id) {
-          $scope.updateStudy();
+          updateStudy();
         } else {
-          $scope.createStudy()
+          createStudy();
         }
       };
 
-      $scope.createStudy = function () {
+      var createStudy = function () {
         $log.debug('Create new study', $scope.study);
-        DraftStudySummariesResource.save($scope.study,
+        DraftStudiesResource.save($scope.study,
           function (resource, getResponseHeaders) {
             var parts = getResponseHeaders().location.split('/');
             $location.path('/study/' + parts[parts.length - 1]).replace();
           },
-          function (response) {
-            $log.error('Error on study save:', response);
-            $translate("study.save-error")
-              .then(function (translation) {
-                $rootScope.$broadcast('showNotificationDialogEvent', {
-                  "iconClass": "fa-exclamation-triangle",
-                  "title": translation,
-                  "message": response.data ? response.data : angular.fromJson(response)
-                });
-              });
-          })
+          saveErrorHandler);
       };
 
-      $scope.updateStudy = function () {
+      var updateStudy = function () {
         $log.debug('Update study', $scope.study);
         $scope.study.$save(
           function (study) {
             $location.path('/study/' + study.id).replace();
           },
-          function (response) {
-            $log.debug('error response:', response);
-            $scope.errors = [];
-            response.data.forEach(function (error) {
-              //$log.debug('error: ', error);
-              var field = error.path.substring(error.path.indexOf('.') + 1);
-              $scope.form[field].$dirty = true;
-              $scope.form[field].$setValidity('server', false);
-              $scope.errors[field] = error.message;
-            });
-          });
+          saveErrorHandler);
+      };
+
+      var saveErrorHandler = function (response) {
+        FormServerValidation.error(response, $scope.form, $scope.languages);
       };
 
       $scope.cancel = function () {

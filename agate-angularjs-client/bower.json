@@ -22,7 +22,6 @@
     "jquery": "2.0.3",
     "jquery-ui": "~1.10.4",
     "json3": "3.3.0",
-    "mica-study-timeline": "git@github.com:obiba/agate-study-timeline.git",
     "modernizr": "2.7.1",
     "swagger-ui": "2.0.16"
   },

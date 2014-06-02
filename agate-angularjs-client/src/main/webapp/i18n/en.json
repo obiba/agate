@@ -30,7 +30,7 @@
     }
   },
   "main": {
-    "title": "Welcome to Agate!",
+    "title": "Welcome to Micado!",
     "subtitle": "This is your homepage",
     "logged": {
       "message": "You are logged in as user \"{{username}}\".",
@@ -288,9 +288,9 @@
     "languages-help": "Supported languages for studies and networks description"
   },
   "publish": {
-    "not-published" : "Not published",
-    "published-out-of-date" : "Published, out of date",
-    "published" : "Published",
+    "not-published": "Not published",
+    "published-out-of-date": "Published, out of date",
+    "published": "Published",
     "revisions-ahead": "Revisions ahead"
   },
   "studies": "Studies",
@@ -427,5 +427,6 @@
   "suppl-info": "Supplementary information",
   "fix-error": "Please fix errors bellow",
   "dnd-reorder": "Drag and drop to reorder",
-  "loading": "Loading..."
+  "loading": "Loading...",
+  "error": "Error"
 }

@@ -1,8 +1,17 @@
 'use strict';
 
-agate.contact
-  .controller('ContactController', ['$rootScope', '$scope', '$modal', '$translate', '$log',
-    function ($rootScope, $scope, $modal, $translate, $log) {
+mica.contact
+
+  .constant('CONTACT_EVENTS', {
+    contactUpdated: 'event:contact-updated',
+    contactEditionCanceled: 'event:contact-edition-canceled',
+    addInvestigator: 'event:add-investigator',
+    addContact: 'event:add-contact',
+    contactDeleted: 'event:contact-deleted'
+  })
+
+  .controller('ContactController', ['$rootScope', '$scope', '$modal', '$translate', 'CONTACT_EVENTS', 'NOTIFICATION_EVENTS',
+    function ($rootScope, $scope, $modal, $translate, CONTACT_EVENTS, NOTIFICATION_EVENTS) {
 
       $scope.viewContact = function (contact) {
         $modal.open({
@@ -39,9 +48,9 @@ agate.contact
             }
           })
           .result.then(function (contact) {
-            $scope.$emit('contactUpdatedEvent', contactable, contact);
+            $scope.$emit(CONTACT_EVENTS.contactUpdated, contactable, contact);
           }, function () {
-            $scope.$emit('contactEditionCanceledEvent', contactable);
+            $scope.$emit(CONTACT_EVENTS.contactEditionCanceled, contactable);
           });
       };
 
@@ -69,12 +78,12 @@ agate.contact
           })
           .result.then(function (contact) {
             if (isInvestigator) {
-              $scope.$emit('addInvestigatorEvent', contactable, contact);
+              $scope.$emit(CONTACT_EVENTS.addInvestigator, contactable, contact);
             } else {
-              $scope.$emit('addContactEvent', contactable, contact);
+              $scope.$emit(CONTACT_EVENTS.addContact, contactable, contact);
             }
           }, function () {
-            $scope.$emit('contactEditionCanceledEvent', contactable);
+            $scope.$emit(CONTACT_EVENTS.contactEditionCanceled, contactable);
           });
       };
 
@@ -90,29 +99,30 @@ agate.contact
 
         var titleKey = 'contact.delete.' + (isInvestigator ? 'investigator' : 'contact') + '.title';
         var messageKey = 'contact.delete.' + (isInvestigator ? 'investigator' : 'contact') + '.confirm';
-        $translate([titleKey, messageKey], { name: contact.title + " " + contact.firstName + " " + contact.lastName })
+        $translate([titleKey, messageKey], { name: contact.title + ' ' + contact.firstName + ' ' + contact.lastName })
           .then(function (translation) {
-            $rootScope.$broadcast('showConfirmDialogEvent',
-              {"title": translation[titleKey], "message": translation[messageKey]},
+            $rootScope.$broadcast(NOTIFICATION_EVENTS.showConfirmDialog,
+              {title: translation[titleKey], message: translation[messageKey]},
               contact);
           });
 
-        $scope.$on('confirmDialogAcceptedEvent', function (event, contactConfirmed) {
-          if (contactConfirmed == contact) {
-            $scope.$emit('contactDeletedEvent', contactable, contact, isInvestigator);
+        $scope.$on(NOTIFICATION_EVENTS.confirmDialogAccepted, function (event, contactConfirmed) {
+          if (contactConfirmed === contact) {
+            $scope.$emit(CONTACT_EVENTS.contactDeleted, contactable, contact, isInvestigator);
           }
         });
       };
 
     }])
-  .controller('ContactViewModalController', ['$scope', '$modalInstance', '$log', 'AgateConfigResource', 'contact',
-    function ($scope, $modalInstance, $log, AgateConfigResource, contact) {
+
+  .controller('ContactViewModalController', ['$scope', '$modalInstance', '$log', 'MicaConfigResource', 'contact',
+    function ($scope, $modalInstance, $log, MicaConfigResource, contact) {
 
       $scope.contact = contact;
 
-      AgateConfigResource.get(function (agateConfig) {
+      MicaConfigResource.get(function (micaConfig) {
         $scope.tabs = [];
-        agateConfig.languages.forEach(function (lang) {
+        micaConfig.languages.forEach(function (lang) {
           $scope.tabs.push({ lang: lang, labelKey: 'language.' + lang });
         });
       });
@@ -122,15 +132,16 @@ agate.contact
       };
 
     }])
-  .controller('ContactEditModalController', ['$scope', '$modalInstance', '$log', 'AgateConfigResource', 'contact', 'isInvestigator',
-    function ($scope, $modalInstance, $log, AgateConfigResource, contact, isInvestigator) {
+
+  .controller('ContactEditModalController', ['$scope', '$modalInstance', '$log', 'MicaConfigResource', 'contact', 'isInvestigator',
+    function ($scope, $modalInstance, $log, MicaConfigResource, contact, isInvestigator) {
 
       $scope.contact = contact;
       $scope.isInvestigator = isInvestigator;
 
-      AgateConfigResource.get(function (agateConfig) {
+      MicaConfigResource.get(function (micaConfig) {
         $scope.tabs = [];
-        agateConfig.languages.forEach(function (lang) {
+        micaConfig.languages.forEach(function (lang) {
           $scope.tabs.push({ lang: lang, labelKey: 'language.' + lang });
         });
       });

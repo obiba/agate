@@ -1,6 +1,6 @@
 'use strict';
 
-agate.config.factory('AgateConfigResource', ['$resource',
+mica.config.factory('MicaConfigResource', ['$resource',
   function ($resource) {
     return $resource('ws/config', {}, {
       // override $resource.save method because it uses POST by default

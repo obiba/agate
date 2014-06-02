@@ -1,15 +1,15 @@
 'use strict';
 
-agate.config
+mica.config
   .config(['$routeProvider',
     function ($routeProvider) {
       $routeProvider
         .when('/config', {
           templateUrl: 'app/config/config-view.html',
-          controller: 'AgateConfigController'
+          controller: 'MicaConfigController'
         })
         .when('/config/edit', {
           templateUrl: 'app/config/config-form.html',
-          controller: 'AgateConfigEditController'
-        })
+          controller: 'MicaConfigEditController'
+        });
     }]);

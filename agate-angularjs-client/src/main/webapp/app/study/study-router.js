@@ -1,6 +1,6 @@
 'use strict';
 
-agate.study
+mica.study
   .config(['$routeProvider',
     function ($routeProvider) {
       $routeProvider
@@ -19,5 +19,5 @@ agate.study
         .when('/study/:id/edit', {
           templateUrl: 'app/study/views/study-form.html',
           controller: 'StudyEditController'
-        })
+        });
     }]);

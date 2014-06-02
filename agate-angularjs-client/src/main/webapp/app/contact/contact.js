@@ -1,9 +1,10 @@
 'use strict';
 
-agate.contact = angular.module('agate.contact', [
-  'agate.config',
-  'agate.notification',
-  'agate.form',
-  'agate.localized',
+mica.contact = angular.module('mica.contact', [
+  'mica.config',
+  'obiba.notification',
+  'obiba.form',
+  'mica.localized',
   'pascalprecht.translate',
-  'ui.bootstrap']);
+  'ui.bootstrap'
+]);

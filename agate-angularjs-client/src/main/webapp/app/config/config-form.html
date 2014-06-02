@@ -5,10 +5,10 @@
   <form name="form" role="form" novalidate
       class="ng-scope ng-invalid ng-invalid-required ng-dirty" ng-submit="save()">
 
-    <div form-input name="name" model="agateConfig.name" label="config.name" required="true"
+    <div form-input name="name" model="micaConfig.name" label="config.name" required="true"
         help="config.name-help"></div>
 
-    <div form-input name="publicUrl" model="agateConfig.publicUrl" label="config.publicUrl-help"
+    <div form-input name="publicUrl" model="micaConfig.publicUrl" label="config.publicUrl-help"
         help="config.publicUrl-help"></div>
 
     <div class="form-group"
@@ -16,7 +16,7 @@
     <label for="languages" class="control-label">
         <span translat>config.languages</span> *
       </label>
-      <select chosen multiple id="languages" name="languages" ng-model="agateConfig.languages"
+      <select chosen multiple id="languages" name="languages" ng-model="micaConfig.languages"
           ng-options="code as name for (code, name) in availableLanguages" class="chosen-select" required>
       </select>
       <p class="input-error" ng-show="form.languages.$dirty && form.languages.$invalid">
@@ -26,7 +26,7 @@
       <p class="help-block" translate>config.languages-help</p>
     </div>
 
-    <div form-input name="defaultCharSet" model="agateConfig.defaultCharSet" label="config.defaultCharSet"
+    <div form-input name="defaultCharSet" model="micaConfig.defaultCharSet" label="config.defaultCharSet"
         required="true"></div>
 
     <a href="#/config" class="btn btn-default">

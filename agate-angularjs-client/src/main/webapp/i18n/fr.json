@@ -29,7 +29,7 @@
     "title": "index"
   },
   "main": {
-    "title": "Bienvenue chez Agate!",
+    "title": "Bienvenue chez Micado!",
     "subtitle": "Ceci est votre page d'accueil",
     "logged": {
       "message": "Vous êtes connecté en tant que \"{{username}}\".",

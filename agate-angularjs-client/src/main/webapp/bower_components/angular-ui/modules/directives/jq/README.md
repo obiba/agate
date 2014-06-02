@@ -95,9 +95,9 @@ Because we're awesome, if your `ui.config` options is an object and your `ui-opt
 Sometimes you need to call the same jQuery method / plugin multiple times on the same element during an app lifecycle:
 
 ```js
-// every time the name modal is shown, focus on the username field
+// every time the login modal is shown, focus on the username field
 $('.modal').on('show', function(){
-  $('.name-username').focus()
+  $('.login-username').focus()
 })
 ```
 

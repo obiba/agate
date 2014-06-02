@@ -1,5 +1,6 @@
 'use strict';
 
-agate.publish = angular.module('agate.publish', [
+mica.publish = angular.module('mica.publish', [
   'pascalprecht.translate',
-  'ui.bootstrap']);
+  'ui.bootstrap'
+]);

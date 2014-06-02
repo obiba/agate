@@ -2,26 +2,20 @@
 
 /* Controllers */
 
-agate.controller('MainController', ['$scope',
-  function ($scope) {
-  }]);
+mica.controller('MainController', [ function () {} ]);
 
-agate.controller('AdminController', ['$scope',
-  function ($scope) {
-  }]);
+mica.controller('AdminController', [ function () {} ]);
 
-agate.controller('LanguageController', ['$scope', '$translate',
+mica.controller('LanguageController', ['$scope', '$translate',
   function ($scope, $translate) {
     $scope.changeLanguage = function (languageKey) {
       $translate.use(languageKey);
     };
   }]);
 
-agate.controller('MenuController', ['$scope',
-  function ($scope) {
-  }]);
+mica.controller('MenuController', [ function () {} ]);
 
-agate.controller('LoginController', ['$scope', '$location', 'AuthenticationSharedService',
+mica.controller('LoginController', ['$scope', '$location', 'AuthenticationSharedService',
   function ($scope, $location, AuthenticationSharedService) {
     $scope.rememberMe = true;
     $scope.login = function () {
@@ -32,11 +26,11 @@ agate.controller('LoginController', ['$scope', '$location', 'AuthenticationShare
         success: function () {
           $location.path('');
         }
-      })
-    }
+      });
+    };
   }]);
 
-agate.controller('LogoutController', ['$location', 'AuthenticationSharedService',
+mica.controller('LogoutController', ['$location', 'AuthenticationSharedService',
   function ($location, AuthenticationSharedService) {
     AuthenticationSharedService.logout({
       success: function () {
@@ -45,7 +39,7 @@ agate.controller('LogoutController', ['$location', 'AuthenticationSharedService'
     });
   }]);
 
-agate.controller('SettingsController', ['$scope', 'Account',
+mica.controller('SettingsController', ['$scope', 'Account',
   function ($scope, Account) {
     $scope.success = null;
     $scope.error = null;
@@ -53,61 +47,61 @@ agate.controller('SettingsController', ['$scope', 'Account',
 
     $scope.save = function () {
       Account.save($scope.settingsAccount,
-        function (value, responseHeaders) {
+        function () {
           $scope.error = null;
           $scope.success = 'OK';
           $scope.settingsAccount = Account.get();
         },
-        function (httpResponse) {
+        function () {
           $scope.success = null;
-          $scope.error = "ERROR";
+          $scope.error = 'ERROR';
         });
     };
   }]);
 
-agate.controller('PasswordController', ['$scope', 'Password',
+mica.controller('PasswordController', ['$scope', 'Password',
   function ($scope, Password) {
     $scope.success = null;
     $scope.error = null;
     $scope.doNotMatch = null;
     $scope.changePassword = function () {
-      if ($scope.password != $scope.confirmPassword) {
-        $scope.doNotMatch = "ERROR";
+      if ($scope.password !== $scope.confirmPassword) {
+        $scope.doNotMatch = 'ERROR';
       } else {
         $scope.doNotMatch = null;
         Password.save($scope.password,
-          function (value, responseHeaders) {
+          function () {
             $scope.error = null;
             $scope.success = 'OK';
           },
-          function (httpResponse) {
+          function () {
             $scope.success = null;
-            $scope.error = "ERROR";
+            $scope.error = 'ERROR';
           });
       }
     };
   }]);
 
-agate.controller('SessionsController', ['$scope', 'resolvedSessions', 'Sessions',
+mica.controller('SessionsController', ['$scope', 'resolvedSessions', 'Sessions',
   function ($scope, resolvedSessions, Sessions) {
     $scope.success = null;
     $scope.error = null;
     $scope.sessions = resolvedSessions;
     $scope.invalidate = function (series) {
       Sessions.delete({series: encodeURIComponent(series)},
-        function (value, responseHeaders) {
+        function () {
           $scope.error = null;
-          $scope.success = "OK";
+          $scope.success = 'OK';
           $scope.sessions = Sessions.get();
         },
-        function (httpResponse) {
+        function () {
           $scope.success = null;
-          $scope.error = "ERROR";
+          $scope.error = 'ERROR';
         });
     };
   }]);
 
-agate.controller('MetricsController', ['$scope', 'MetricsService', 'HealthCheckService', 'ThreadDumpService',
+mica.controller('MetricsController', ['$scope', 'MetricsService', 'HealthCheckService', 'ThreadDumpService',
   function ($scope, MetricsService, HealthCheckService, ThreadDumpService) {
 
     $scope.refresh = function () {
@@ -122,17 +116,17 @@ agate.controller('MetricsController', ['$scope', 'MetricsService', 'HealthCheckS
         $scope.servicesStats = {};
         $scope.cachesStats = {};
         angular.forEach(items.timers, function (value, key) {
-          if (key.indexOf("web.rest") != -1) {
+          if (key.indexOf('web.rest') !== -1) {
             $scope.servicesStats[key] = value;
           }
 
-          if (key.indexOf("net.sf.ehcache.Cache") != -1) {
+          if (key.indexOf('net.sf.ehcache.Cache') !== -1) {
             // remove gets or puts
-            var index = key.lastIndexOf(".");
+            var index = key.lastIndexOf('.');
             var newKey = key.substr(0, index);
 
             // Keep the name of the domain
-            index = newKey.lastIndexOf(".");
+            index = newKey.lastIndexOf('.');
             $scope.cachesStats[newKey] = {
               'name': newKey.substr(index + 1),
               'value': value
@@ -147,20 +141,19 @@ agate.controller('MetricsController', ['$scope', 'MetricsService', 'HealthCheckS
     $scope.threadDump = function () {
       ThreadDumpService.dump().then(function (data) {
         $scope.threadDump = data;
-
         $scope.threadDumpRunnable = 0;
         $scope.threadDumpWaiting = 0;
         $scope.threadDumpTimedWaiting = 0;
         $scope.threadDumpBlocked = 0;
 
-        angular.forEach(data, function (value, key) {
-          if (value.threadState == 'RUNNABLE') {
+        angular.forEach(data, function (value) {
+          if (value.threadState === 'RUNNABLE') {
             $scope.threadDumpRunnable += 1;
-          } else if (value.threadState == 'WAITING') {
+          } else if (value.threadState === 'WAITING') {
             $scope.threadDumpWaiting += 1;
-          } else if (value.threadState == 'TIMED_WAITING') {
+          } else if (value.threadState === 'TIMED_WAITING') {
             $scope.threadDumpTimedWaiting += 1;
-          } else if (value.threadState == 'BLOCKED') {
+          } else if (value.threadState === 'BLOCKED') {
             $scope.threadDumpBlocked += 1;
           }
         });
@@ -172,19 +165,22 @@ agate.controller('MetricsController', ['$scope', 'MetricsService', 'HealthCheckS
     };
 
     $scope.getLabelClass = function (threadState) {
-      if (threadState == 'RUNNABLE') {
-        return "label-success";
-      } else if (threadState == 'WAITING') {
-        return "label-info";
-      } else if (threadState == 'TIMED_WAITING') {
-        return "label-warning";
-      } else if (threadState == 'BLOCKED') {
-        return "label-danger";
+      if (threadState === 'RUNNABLE') {
+        return 'label-success';
+      }
+      if (threadState === 'WAITING') {
+        return 'label-info';
+      }
+      if (threadState === 'TIMED_WAITING') {
+        return 'label-warning';
+      }
+      if (threadState === 'BLOCKED') {
+        return 'label-danger';
       }
     };
   }]);
 
-agate.controller('LogsController', ['$scope', 'resolvedLogs', 'LogsService',
+mica.controller('LogsController', ['$scope', 'resolvedLogs', 'LogsService',
   function ($scope, resolvedLogs, LogsService) {
     $scope.loggers = resolvedLogs;
 
@@ -192,10 +188,10 @@ agate.controller('LogsController', ['$scope', 'resolvedLogs', 'LogsService',
       LogsService.changeLevel({name: name, level: level}, function () {
         $scope.loggers = LogsService.findAll();
       });
-    }
+    };
   }]);
 
-agate.controller('AuditsController', ['$scope', '$translate', '$filter', 'AuditsService',
+mica.controller('AuditsController', ['$scope', '$translate', '$filter', 'AuditsService',
   function ($scope, $translate, $filter, AuditsService) {
     $scope.onChangeDate = function () {
       AuditsService.findByDates($scope.fromDate, $scope.toDate).then(function (data) {
@@ -209,18 +205,18 @@ agate.controller('AuditsController', ['$scope', '$translate', '$filter', 'Audits
       var today = new Date();
       var tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1); // create new increased date
 
-      $scope.toDate = $filter('date')(tomorrow, "yyyy-MM-dd");
+      $scope.toDate = $filter('date')(tomorrow, 'yyyy-MM-dd');
     };
 
     $scope.previousMonth = function () {
       var fromDate = new Date();
-      if (fromDate.getMonth() == 0) {
+      if (fromDate.getMonth() === 0) {
         fromDate = new Date(fromDate.getFullYear() - 1, 0, fromDate.getDate());
       } else {
         fromDate = new Date(fromDate.getFullYear(), fromDate.getMonth() - 1, fromDate.getDate());
       }
 
-      $scope.fromDate = $filter('date')(fromDate, "yyyy-MM-dd");
+      $scope.fromDate = $filter('date')(fromDate, 'yyyy-MM-dd');
     };
 
     $scope.today();
