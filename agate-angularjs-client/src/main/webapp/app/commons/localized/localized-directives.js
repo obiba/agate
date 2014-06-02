@@ -1,6 +1,6 @@
 'use strict';
 
-mica.localized
+agate.localized
 
   .directive('localized', [function () {
     return {

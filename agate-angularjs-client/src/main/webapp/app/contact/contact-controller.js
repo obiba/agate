@@ -1,6 +1,6 @@
 'use strict';
 
-mica.contact
+agate.contact
 
   .constant('CONTACT_EVENTS', {
     contactUpdated: 'event:contact-updated',
@@ -115,14 +115,14 @@ mica.contact
 
     }])
 
-  .controller('ContactViewModalController', ['$scope', '$modalInstance', '$log', 'MicaConfigResource', 'contact',
-    function ($scope, $modalInstance, $log, MicaConfigResource, contact) {
+  .controller('ContactViewModalController', ['$scope', '$modalInstance', '$log', 'AgateConfigResource', 'contact',
+    function ($scope, $modalInstance, $log, AgateConfigResource, contact) {
 
       $scope.contact = contact;
 
-      MicaConfigResource.get(function (micaConfig) {
+      AgateConfigResource.get(function (agateConfig) {
         $scope.tabs = [];
-        micaConfig.languages.forEach(function (lang) {
+        agateConfig.languages.forEach(function (lang) {
           $scope.tabs.push({ lang: lang, labelKey: 'language.' + lang });
         });
       });
@@ -133,15 +133,15 @@ mica.contact
 
     }])
 
-  .controller('ContactEditModalController', ['$scope', '$modalInstance', '$log', 'MicaConfigResource', 'contact', 'isInvestigator',
-    function ($scope, $modalInstance, $log, MicaConfigResource, contact, isInvestigator) {
+  .controller('ContactEditModalController', ['$scope', '$modalInstance', '$log', 'AgateConfigResource', 'contact', 'isInvestigator',
+    function ($scope, $modalInstance, $log, AgateConfigResource, contact, isInvestigator) {
 
       $scope.contact = contact;
       $scope.isInvestigator = isInvestigator;
 
-      MicaConfigResource.get(function (micaConfig) {
+      AgateConfigResource.get(function (agateConfig) {
         $scope.tabs = [];
-        micaConfig.languages.forEach(function (lang) {
+        agateConfig.languages.forEach(function (lang) {
           $scope.tabs.push({ lang: lang, labelKey: 'language.' + lang });
         });
       });

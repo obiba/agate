@@ -2,33 +2,33 @@
 
 /* Services */
 
-mica.factory('Account', ['$resource',
+agate.factory('Account', ['$resource',
   function ($resource) {
     return $resource('ws/account', {}, {
     });
   }]);
 
-mica.factory('Password', ['$resource',
+agate.factory('Password', ['$resource',
   function ($resource) {
     return $resource('ws/account/change_password', {}, {
     });
   }]);
 
-mica.factory('Sessions', ['$resource',
+agate.factory('Sessions', ['$resource',
   function ($resource) {
     return $resource('ws/account/sessions/:series', {}, {
       'get': { method: 'GET', isArray: true}
     });
   }]);
 
-mica.factory('MetricsService', ['$resource',
+agate.factory('MetricsService', ['$resource',
   function ($resource) {
     return $resource('metrics/metrics', {}, {
       'get': { method: 'GET'}
     });
   }]);
 
-mica.factory('ThreadDumpService', ['$http',
+agate.factory('ThreadDumpService', ['$http',
   function ($http) {
     return {
       dump: function () {
@@ -39,7 +39,7 @@ mica.factory('ThreadDumpService', ['$http',
     };
   }]);
 
-mica.factory('HealthCheckService', ['$rootScope', '$http',
+agate.factory('HealthCheckService', ['$rootScope', '$http',
   function ($rootScope, $http) {
     return {
       check: function () {
@@ -50,7 +50,7 @@ mica.factory('HealthCheckService', ['$rootScope', '$http',
     };
   }]);
 
-mica.factory('LogsService', ['$resource',
+agate.factory('LogsService', ['$resource',
   function ($resource) {
     return $resource('ws/logs', {}, {
       'findAll': { method: 'GET', isArray: true},
@@ -58,7 +58,7 @@ mica.factory('LogsService', ['$resource',
     });
   }]);
 
-mica.factory('AuditsService', ['$http',
+agate.factory('AuditsService', ['$http',
   function ($http) {
     return {
       findAll: function () {
@@ -74,7 +74,7 @@ mica.factory('AuditsService', ['$http',
     };
   }]);
 
-mica.factory('Session', ['$cookieStore',
+agate.factory('Session', ['$cookieStore',
   function ($cookieStore) {
     this.create = function (login, firstName, lastName, email, userRoles) {
       this.login = login;
@@ -94,13 +94,13 @@ mica.factory('Session', ['$cookieStore',
     return this;
   }]);
 
-mica.constant('USER_ROLES', {
+agate.constant('USER_ROLES', {
   all: '*',
   admin: 'ROLE_ADMIN',
   user: 'ROLE_USER'
 });
 
-mica.factory('AuthenticationSharedService', ['$rootScope', '$http', '$cookieStore', 'authService', 'Session', 'Account',
+agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$cookieStore', 'authService', 'Session', 'Account',
   function ($rootScope, $http, $cookieStore, authService, Session, Account) {
     return {
       login: function (param) {

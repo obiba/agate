@@ -1,6 +1,6 @@
 'use strict';
 
-mica.study
+agate.study
 
   .constant('STUDY_EVENTS', {
     studyUpdated: 'event:study-updated'
@@ -21,13 +21,13 @@ mica.study
       };
 
     }])
-  .controller('StudyViewController', ['$rootScope', '$scope', '$routeParams', '$log', '$locale', '$location', 'DraftStudySummaryResource', 'DraftStudyResource', 'DraftStudyPublicationResource', 'MicaConfigResource', 'STUDY_EVENTS', 'NOTIFICATION_EVENTS', 'CONTACT_EVENTS',
+  .controller('StudyViewController', ['$rootScope', '$scope', '$routeParams', '$log', '$locale', '$location', 'DraftStudySummaryResource', 'DraftStudyResource', 'DraftStudyPublicationResource', 'AgateConfigResource', 'STUDY_EVENTS', 'NOTIFICATION_EVENTS', 'CONTACT_EVENTS',
 
-    function ($rootScope, $scope, $routeParams, $log, $locale, $location, DraftStudySummaryResource, DraftStudyResource, DraftStudyPublicationResource, MicaConfigResource, STUDY_EVENTS, NOTIFICATION_EVENTS, CONTACT_EVENTS) {
+    function ($rootScope, $scope, $routeParams, $log, $locale, $location, DraftStudySummaryResource, DraftStudyResource, DraftStudyPublicationResource, AgateConfigResource, STUDY_EVENTS, NOTIFICATION_EVENTS, CONTACT_EVENTS) {
 
-      MicaConfigResource.get(function (micaConfig) {
+      AgateConfigResource.get(function (agateConfig) {
         $scope.tabs = [];
-        micaConfig.languages.forEach(function (lang) {
+        agateConfig.languages.forEach(function (lang) {
           $scope.tabs.push({lang: lang});
         });
       });
@@ -35,7 +35,7 @@ mica.study
       $scope.study = DraftStudyResource.get(
         {id: $routeParams.id},
         function (study) {
-          new $.MicaTimeline(new $.StudyDtoParser()).create('#timeline', study).addLegend();
+          new $.AgateTimeline(new $.StudyDtoParser()).create('#timeline', study).addLegend();
         });
 
       $scope.studySummary = DraftStudySummaryResource.get({id: $routeParams.id});
@@ -126,17 +126,17 @@ mica.study
 
     }])
 
-  .controller('StudyEditController', ['$rootScope', '$scope', '$routeParams', '$log', '$location', 'DraftStudyResource', 'DraftStudiesResource', 'MicaConfigResource', 'StringUtils', 'FormServerValidation',
+  .controller('StudyEditController', ['$rootScope', '$scope', '$routeParams', '$log', '$location', 'DraftStudyResource', 'DraftStudiesResource', 'AgateConfigResource', 'StringUtils', 'FormServerValidation',
 
-    function ($rootScope, $scope, $routeParams, $log, $location, DraftStudyResource, DraftStudiesResource, MicaConfigResource, StringUtils, FormServerValidation) {
+    function ($rootScope, $scope, $routeParams, $log, $location, DraftStudyResource, DraftStudiesResource, AgateConfigResource, StringUtils, FormServerValidation) {
 
       $scope.study = $routeParams.id ? DraftStudyResource.get({id: $routeParams.id}) : {};
       $log.debug('Edit study', $scope.study);
 
-      MicaConfigResource.get(function (micaConfig) {
+      AgateConfigResource.get(function (agateConfig) {
         $scope.tabs = [];
         $scope.languages = [];
-        micaConfig.languages.forEach(function (lang) {
+        agateConfig.languages.forEach(function (lang) {
           $scope.tabs.push({ lang: lang });
           $scope.languages.push(lang);
         });

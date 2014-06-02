@@ -1,7 +1,7 @@
 'use strict';
 
-mica.localized = angular.module('mica.localized', [
-  'mica.config',
+agate.localized = angular.module('agate.localized', [
+  'agate.config',
   'obiba.notification',
   'pascalprecht.translate'
 ]);

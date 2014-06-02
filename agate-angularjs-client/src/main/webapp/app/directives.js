@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('mica')
+angular.module('agate')
 
   .directive('activeMenu', ['$translate', '$locale', 'tmhDynamicLocale', function ($translate, $locale, tmhDynamicLocale) {
     return {

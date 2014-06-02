@@ -2,13 +2,13 @@
 
 /* App Module */
 
-var mica = angular.module('mica', [
+var agate = angular.module('agate', [
   'angular-loading-bar',
   'http-auth-interceptor',
   'localytics.directives',
-  'mica.config',
+  'agate.config',
   'ngObiba',
-  'mica.study',
+  'agate.study',
   'ngAnimate',
   'ngCookies',
   'ngResource',
@@ -18,7 +18,7 @@ var mica = angular.module('mica', [
   'ui.bootstrap'
 ]);
 
-mica
+agate
   .config(['$routeProvider', '$httpProvider', '$translateProvider', 'tmhDynamicLocaleProvider', 'USER_ROLES',
     function ($routeProvider, $httpProvider, $translateProvider, tmhDynamicLocaleProvider, USER_ROLES) {
       $routeProvider

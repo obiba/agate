@@ -1,6 +1,6 @@
 'use strict';
 
-mica.config = angular.module('mica.config', [
+agate.config = angular.module('agate.config', [
   'obiba.form',
   'ngResource',
   'ngRoute',

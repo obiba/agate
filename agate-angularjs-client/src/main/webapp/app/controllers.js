@@ -2,20 +2,20 @@
 
 /* Controllers */
 
-mica.controller('MainController', [ function () {} ]);
+agate.controller('MainController', [ function () {} ]);
 
-mica.controller('AdminController', [ function () {} ]);
+agate.controller('AdminController', [ function () {} ]);
 
-mica.controller('LanguageController', ['$scope', '$translate',
+agate.controller('LanguageController', ['$scope', '$translate',
   function ($scope, $translate) {
     $scope.changeLanguage = function (languageKey) {
       $translate.use(languageKey);
     };
   }]);
 
-mica.controller('MenuController', [ function () {} ]);
+agate.controller('MenuController', [ function () {} ]);
 
-mica.controller('LoginController', ['$scope', '$location', 'AuthenticationSharedService',
+agate.controller('LoginController', ['$scope', '$location', 'AuthenticationSharedService',
   function ($scope, $location, AuthenticationSharedService) {
     $scope.rememberMe = true;
     $scope.login = function () {
@@ -30,7 +30,7 @@ mica.controller('LoginController', ['$scope', '$location', 'AuthenticationShared
     };
   }]);
 
-mica.controller('LogoutController', ['$location', 'AuthenticationSharedService',
+agate.controller('LogoutController', ['$location', 'AuthenticationSharedService',
   function ($location, AuthenticationSharedService) {
     AuthenticationSharedService.logout({
       success: function () {
@@ -39,7 +39,7 @@ mica.controller('LogoutController', ['$location', 'AuthenticationSharedService',
     });
   }]);
 
-mica.controller('SettingsController', ['$scope', 'Account',
+agate.controller('SettingsController', ['$scope', 'Account',
   function ($scope, Account) {
     $scope.success = null;
     $scope.error = null;
@@ -59,7 +59,7 @@ mica.controller('SettingsController', ['$scope', 'Account',
     };
   }]);
 
-mica.controller('PasswordController', ['$scope', 'Password',
+agate.controller('PasswordController', ['$scope', 'Password',
   function ($scope, Password) {
     $scope.success = null;
     $scope.error = null;
@@ -82,7 +82,7 @@ mica.controller('PasswordController', ['$scope', 'Password',
     };
   }]);
 
-mica.controller('SessionsController', ['$scope', 'resolvedSessions', 'Sessions',
+agate.controller('SessionsController', ['$scope', 'resolvedSessions', 'Sessions',
   function ($scope, resolvedSessions, Sessions) {
     $scope.success = null;
     $scope.error = null;
@@ -101,7 +101,7 @@ mica.controller('SessionsController', ['$scope', 'resolvedSessions', 'Sessions',
     };
   }]);
 
-mica.controller('MetricsController', ['$scope', 'MetricsService', 'HealthCheckService', 'ThreadDumpService',
+agate.controller('MetricsController', ['$scope', 'MetricsService', 'HealthCheckService', 'ThreadDumpService',
   function ($scope, MetricsService, HealthCheckService, ThreadDumpService) {
 
     $scope.refresh = function () {
@@ -180,7 +180,7 @@ mica.controller('MetricsController', ['$scope', 'MetricsService', 'HealthCheckSe
     };
   }]);
 
-mica.controller('LogsController', ['$scope', 'resolvedLogs', 'LogsService',
+agate.controller('LogsController', ['$scope', 'resolvedLogs', 'LogsService',
   function ($scope, resolvedLogs, LogsService) {
     $scope.loggers = resolvedLogs;
 
@@ -191,7 +191,7 @@ mica.controller('LogsController', ['$scope', 'resolvedLogs', 'LogsService',
     };
   }]);
 
-mica.controller('AuditsController', ['$scope', '$translate', '$filter', 'AuditsService',
+agate.controller('AuditsController', ['$scope', '$translate', '$filter', 'AuditsService',
   function ($scope, $translate, $filter, AuditsService) {
     $scope.onChangeDate = function () {
       AuditsService.findByDates($scope.fromDate, $scope.toDate).then(function (data) {

@@ -1,6 +1,6 @@
 'use strict';
 
-mica.study
+agate.study
   .factory('DraftStudySummariesResource', ['$resource',
     function ($resource) {
       return $resource('ws/draft/study-summaries');

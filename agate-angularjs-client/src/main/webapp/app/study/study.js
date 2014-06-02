@@ -1,12 +1,12 @@
 'use strict';
 
-mica.study = angular.module('mica.study', [
-  'mica.config',
+agate.study = angular.module('agate.study', [
+  'agate.config',
   'obiba.form',
-  'mica.localized',
+  'agate.localized',
   'obiba.notification',
-  'mica.publish',
-  'mica.contact',
+  'agate.publish',
+  'agate.contact',
   'ngResource',
   'ngRoute',
   'ui.bootstrap',

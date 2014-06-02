@@ -1,6 +1,6 @@
 'use strict';
 
-mica.study
+agate.study
   .config(['$routeProvider',
     function ($routeProvider) {
       $routeProvider

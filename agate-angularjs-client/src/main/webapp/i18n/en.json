@@ -30,7 +30,7 @@
     }
   },
   "main": {
-    "title": "Welcome to Micado!",
+    "title": "Welcome to Agate!",
     "subtitle": "This is your homepage",
     "logged": {
       "message": "You are logged in as user \"{{username}}\".",
