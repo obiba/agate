@@ -2,6 +2,12 @@ package obiba.agate;
 
 option java_package = "org.obiba.agate.web.model";
 
+message SessionDto {
+  required string username = 1;
+  required string role = 2;
+  required string realm = 3;
+}
+
 message TicketDto {
   required string id = 1;
   optional TimestampsDto timestamps = 2;
@@ -16,9 +22,8 @@ message TimestampsDto {
 
 message AgateConfigDto {
   required string name = 1;
-  repeated string languages = 2;
-  required string defaultCharSet = 3;
-  optional string publicUrl = 4;
+  optional string domain = 2;
+  optional string publicUrl = 3;
 }
 
 message UserDto {
@@ -39,4 +44,12 @@ message GroupDto {
   required string name = 2;
   optional string description = 3;
   optional TimestampsDto timestamps = 4;
+}
+
+message ApplicationDto {
+  required string id = 1;
+  required string name = 2;
+  optional string key = 3;
+  optional string description = 4;
+  optional TimestampsDto timestamps = 5;
 }

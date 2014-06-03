@@ -1,18 +1,11 @@
 package org.obiba.agate.domain;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.obiba.mongodb.domain.AbstractAuditableDocument;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+import com.google.common.base.Strings;
 
 @Document
 public class AgateConfig extends AbstractAuditableDocument {
@@ -21,18 +14,10 @@ public class AgateConfig extends AbstractAuditableDocument {
 
   public static final String DEFAULT_NAME = "Agate";
 
-  public static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
-
-  public static final String DEFAULT_CHARSET = "UTF-8";
-
   @NotBlank
   private String name = DEFAULT_NAME;
 
-  @NotEmpty
-  private List<Locale> locales = new ArrayList<>();
-
-  @NotBlank
-  private String defaultCharacterSet = DEFAULT_CHARSET;
+  private String domain;
 
   private String publicUrl;
 
@@ -44,26 +29,16 @@ public class AgateConfig extends AbstractAuditableDocument {
     this.name = name;
   }
 
-  public List<Locale> getLocales() {
-    return locales == null ? (locales = new ArrayList<>()) : locales;
+  public String getDomain() {
+    return domain;
   }
 
-  public List<String> getLocalesAsString() {
-    List<String> list = Lists.newArrayList(Iterables.transform(getLocales(), Locale::getLanguage));
-    Collections.sort(list);
-    return list;
+  public void setDomain(String domain) {
+    this.domain = domain;
   }
 
-  public void setLocales(List<Locale> locales) {
-    this.locales = locales;
-  }
-
-  public String getDefaultCharacterSet() {
-    return defaultCharacterSet;
-  }
-
-  public void setDefaultCharacterSet(String defaultCharacterSet) {
-    this.defaultCharacterSet = defaultCharacterSet;
+  public boolean hasDomain() {
+    return !Strings.isNullOrEmpty(domain);
   }
 
   public String getPublicUrl() {
@@ -74,11 +49,14 @@ public class AgateConfig extends AbstractAuditableDocument {
     this.publicUrl = publicUrl;
   }
 
+  public boolean hasPublicUrl() {
+    return !Strings.isNullOrEmpty(publicUrl);
+  }
+
   @Override
   protected Objects.ToStringHelper toStringHelper() {
     return super.toStringHelper().add("name", name) //
-        .add("locales", locales) //
-        .add("defaultCharacterSet", defaultCharacterSet) //
+        .add("domain", domain) //
         .add("publicUrl", publicUrl);
   }
 }

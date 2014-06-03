@@ -1,0 +1,29 @@
+<div>
+
+  <h2 translate>administration.config.title-edit</h2>
+
+  <form name="form" role="form" novalidate
+      class="ng-scope ng-invalid ng-invalid-required ng-dirty" ng-submit="save()">
+
+    <div form-input name="name" model="agateConfig.name" label="administration.config.name" required="true"
+        help="administration.config.name-help"></div>
+
+    <div form-input name="publicUrl" model="agateConfig.domain" label="administration.config.domain"
+        help="administration.config.domain-help"></div>
+
+    <div form-input name="publicUrl" model="agateConfig.publicUrl" label="administration.config.publicUrl"
+        help="administration.config.publicUrl-help"></div>
+
+    <a href="#/config" class="btn btn-default">
+      <span class="glyphicon glyphicon-ban-circle"></span> <span translate>cancel</span>
+    </a>
+
+    <button type="submit" class="btn btn-primary">
+      <span class="glyphicon glyphicon-save"></span> <span translate>save</span>
+    </button>
+
+  </form>
+
+</div>
+
+

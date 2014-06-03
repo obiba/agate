@@ -1,118 +1,59 @@
 'use strict';
 
+agate.constant('USER_ROLES', {
+  all: '*',
+  admin: 'AGATE_ADMIN',
+  user: 'AGATE_USER'
+});
+
 /* Services */
+
+agate.factory('CurrentSession', ['$resource',
+  function ($resource) {
+    return $resource('ws/auth/session/_current');
+  }]);
 
 agate.factory('Account', ['$resource',
   function ($resource) {
-    return $resource('ws/account', {}, {
+    return $resource('ws/user/_current', {}, {
     });
   }]);
 
 agate.factory('Password', ['$resource',
   function ($resource) {
-    return $resource('ws/account/change_password', {}, {
+    return $resource('ws/user/_current/password', {}, {
     });
-  }]);
-
-agate.factory('Sessions', ['$resource',
-  function ($resource) {
-    return $resource('ws/account/sessions/:series', {}, {
-      'get': { method: 'GET', isArray: true}
-    });
-  }]);
-
-agate.factory('MetricsService', ['$resource',
-  function ($resource) {
-    return $resource('metrics/metrics', {}, {
-      'get': { method: 'GET'}
-    });
-  }]);
-
-agate.factory('ThreadDumpService', ['$http',
-  function ($http) {
-    return {
-      dump: function () {
-        return $http.get('dump').then(function (response) {
-          return response.data;
-        });
-      }
-    };
-  }]);
-
-agate.factory('HealthCheckService', ['$rootScope', '$http',
-  function ($rootScope, $http) {
-    return {
-      check: function () {
-        return $http.get('health').then(function (response) {
-          return response.data;
-        });
-      }
-    };
-  }]);
-
-agate.factory('LogsService', ['$resource',
-  function ($resource) {
-    return $resource('ws/logs', {}, {
-      'findAll': { method: 'GET', isArray: true},
-      'changeLevel': { method: 'PUT'}
-    });
-  }]);
-
-agate.factory('AuditsService', ['$http',
-  function ($http) {
-    return {
-      findAll: function () {
-        return $http.get('ws/audits/all').then(function (response) {
-          return response.data;
-        });
-      },
-      findByDates: function (fromDate, toDate) {
-        return $http.get('ws/audits/byDates', {params: {fromDate: fromDate, toDate: toDate}}).then(function (response) {
-          return response.data;
-        });
-      }
-    };
   }]);
 
 agate.factory('Session', ['$cookieStore',
   function ($cookieStore) {
-    this.create = function (login, firstName, lastName, email, userRoles) {
+    this.create = function (login, role) {
       this.login = login;
-      this.firstName = firstName;
-      this.lastName = lastName;
-      this.email = email;
-      this.userRoles = userRoles;
+      this.role = role;
     };
     this.destroy = function () {
       this.login = null;
-      this.firstName = null;
-      this.lastName = null;
-      this.email = null;
-      this.roles = null;
+      this.role = null;
       $cookieStore.remove('account');
+      $cookieStore.remove('agatesid');
+      $cookieStore.remove('obibaid');
     };
     return this;
   }]);
 
-agate.constant('USER_ROLES', {
-  all: '*',
-  admin: 'ROLE_ADMIN',
-  user: 'ROLE_USER'
-});
-
-agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$cookieStore', 'authService', 'Session', 'Account',
-  function ($rootScope, $http, $cookieStore, authService, Session, Account) {
+agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$cookieStore', 'authService', 'Session', 'CurrentSession',
+  function ($rootScope, $http, $cookieStore, authService, Session, CurrentSession) {
     return {
       login: function (param) {
-        var data = 'j_username=' + param.username + '&j_password=' + param.password + '&_spring_security_remember_me=' + param.rememberMe + '&submit=Login';
-        $http.post('ws/authentication', data, {
+        var data = 'username=' + param.username + '&password=' + param.password;
+        $http.post('ws/auth/sessions', data, {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
           },
           ignoreAuthModule: 'ignoreAuthModule'
         }).success(function () {
-          Account.get(function (data) {
-            Session.create(data.login, data.firstName, data.lastName, data.email, data.roles);
+          CurrentSession.get(function (data) {
+            Session.create(data.username, data.role);
             $cookieStore.put('account', JSON.stringify(Session));
             authService.loginConfirmed(data);
           });
@@ -125,8 +66,7 @@ agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$cookieSto
           // check if the user has a cookie
           if ($cookieStore.get('account') !== null) {
             var account = JSON.parse($cookieStore.get('account'));
-            Session.create(account.login, account.firstName, account.lastName,
-              account.email, account.userRoles);
+            Session.create(account.login, account.role);
             $rootScope.account = Session;
           }
         }
@@ -145,7 +85,7 @@ agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$cookieSto
 
         angular.forEach(authorizedRoles, function (authorizedRole) {
           var authorized = (!!Session.login &&
-            Session.userRoles.indexOf(authorizedRole) !== -1);
+            Session.role === authorizedRole);
 
           if (authorized || authorizedRole === '*') {
             isAuthorized = true;
@@ -156,7 +96,7 @@ agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$cookieSto
       },
       logout: function () {
         $rootScope.authenticationError = false;
-        $http.get('ws/logout')
+        $http.delete('ws/auth/session/_current')
           .success(function () {
             Session.destroy();
             authService.loginCancelled();

@@ -5,11 +5,17 @@ agate.config
     function ($routeProvider) {
       $routeProvider
         .when('/config', {
-          templateUrl: 'app/config/config-view.html',
-          controller: 'AgateConfigController'
+          templateUrl: 'app/config/views/config-view.html',
+          controller: 'AgateConfigController',
+          access: {
+            authorizedRoles: ['AGATE_ADMIN']
+          }
         })
         .when('/config/edit', {
-          templateUrl: 'app/config/config-form.html',
-          controller: 'AgateConfigEditController'
+          templateUrl: 'app/config/views/config-form.html',
+          controller: 'AgateConfigEditController',
+          access: {
+            authorizedRoles: ['AGATE_ADMIN']
+          }
         });
     }]);

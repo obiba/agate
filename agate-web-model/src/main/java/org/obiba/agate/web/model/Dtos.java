@@ -4,6 +4,7 @@ import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
 import org.obiba.agate.domain.AgateConfig;
+import org.obiba.agate.domain.Application;
 import org.obiba.agate.domain.Group;
 import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
@@ -28,6 +29,9 @@ public class Dtos {
   private UserDtos userDtos;
 
   @Inject
+  private ApplicationDtos applicationDtos;
+
+  @Inject
   private AgateConfigDtos agateConfigDtos;
 
   @NotNull
@@ -48,6 +52,11 @@ public class Dtos {
   @NotNull
   public Agate.GroupDto asDto(@NotNull Group group) {
     return userDtos.asDto(group);
+  }
+
+  @NotNull
+  public Agate.ApplicationDto asDto(@NotNull Application application) {
+    return applicationDtos.asDto(application);
   }
 
   @NotNull

@@ -15,15 +15,10 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.obiba.agate.domain.Application;
-import org.obiba.agate.domain.User;
 import org.obiba.agate.repository.ApplicationRepository;
-import org.obiba.agate.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +37,10 @@ public class ApplicationService {
 
   @Inject
   private Environment env;
+
+  public List<Application> findAll() {
+    return applicationRepository.findAll();
+  }
 
   public Application findByName(@NotNull String name) {
     List<Application> applications = applicationRepository.findByName(name);

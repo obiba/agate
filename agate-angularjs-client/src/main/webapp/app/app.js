@@ -8,7 +8,9 @@ var agate = angular.module('agate', [
   'localytics.directives',
   'agate.config',
   'ngObiba',
-  'agate.study',
+  'agate.application',
+  'agate.user',
+  'agate.group',
   'ngAnimate',
   'ngCookies',
   'ngResource',
@@ -35,9 +37,9 @@ agate
             authorizedRoles: [USER_ROLES.all]
           }
         })
-        .when('/settings', {
-          templateUrl: 'app/views/settings.html',
-          controller: 'SettingsController',
+        .when('/profile', {
+          templateUrl: 'app/views/profile.html',
+          controller: 'ProfileController',
           access: {
             authorizedRoles: [USER_ROLES.all]
           }
@@ -49,55 +51,11 @@ agate
             authorizedRoles: [USER_ROLES.all]
           }
         })
-        .when('/sessions', {
-          templateUrl: 'app/views/sessions.html',
-          controller: 'SessionsController',
-          resolve: {
-            resolvedSessions: ['Sessions', function (Sessions) {
-              return Sessions.get();
-            }]
-          },
-          access: {
-            authorizedRoles: [USER_ROLES.all]
-          }
-        })
-        .when('/metrics', {
-          templateUrl: 'app/views/metrics.html',
-          controller: 'MetricsController',
-          access: {
-            authorizedRoles: [USER_ROLES.admin]
-          }
-        })
-        .when('/logs', {
-          templateUrl: 'app/views/logs.html',
-          controller: 'LogsController',
-          resolve: {
-            resolvedLogs: ['LogsService', function (LogsService) {
-              return LogsService.findAll();
-            }]
-          },
-          access: {
-            authorizedRoles: [USER_ROLES.admin]
-          }
-        })
-        .when('/audits', {
-          templateUrl: 'app/views/audits.html',
-          controller: 'AuditsController',
-          access: {
-            authorizedRoles: [USER_ROLES.admin]
-          }
-        })
         .when('/logout', {
           templateUrl: 'app/views/main.html',
           controller: 'LogoutController',
           access: {
             authorizedRoles: [USER_ROLES.all]
-          }
-        })
-        .when('/docs', {
-          templateUrl: 'app/views/docs.html',
-          access: {
-            authorizedRoles: [USER_ROLES.admin]
           }
         })
         .otherwise({
@@ -158,9 +116,9 @@ agate
     function ($rootScope, $location, $http, AuthenticationSharedService, Session, USER_ROLES) {
       $rootScope.$on('$routeChangeStart', function (event, next) {
         $rootScope.authenticated = AuthenticationSharedService.isAuthenticated();
-        $rootScope.isAuthorized = AuthenticationSharedService.isAuthorized;
+        $rootScope.hasRole = AuthenticationSharedService.isAuthorized;
         $rootScope.userRoles = USER_ROLES;
-        $rootScope.account = Session;
+        $rootScope.subject = Session;
 
         var authorizedRoles = next.access.authorizedRoles;
         if (!AuthenticationSharedService.isAuthorized(authorizedRoles)) {
@@ -208,6 +166,7 @@ agate
 
       // Call when the user logs out
       $rootScope.$on('event:auth-loginCancelled', function () {
-        $location.path('');
+        $rootScope.authenticated = undefined;
+        $location.path('/login');
       });
     }]);

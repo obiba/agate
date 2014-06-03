@@ -38,6 +38,14 @@ public class UserService {
   private Environment env;
 
   /**
+   * Find all {@link org.obiba.agate.domain.User}.
+   * @return
+   */
+  public List<User> findUsers() {
+    return userRepository.findAll();
+  }
+
+  /**
    * Find a {@link org.obiba.agate.domain.User} by its name.
    * @param username
    * @return null if not found
@@ -130,6 +138,14 @@ public class UserService {
   //
   // Group methods
   //
+
+  /**
+   * Find all {@link org.obiba.agate.domain.Group}.
+   * @return
+   */
+  public List<Group> findGroups() {
+    return groupRepository.findAll();
+  }
 
   /**
    * Find a {@link org.obiba.agate.domain.Group} by its name.

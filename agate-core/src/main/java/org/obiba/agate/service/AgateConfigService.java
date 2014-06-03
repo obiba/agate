@@ -30,7 +30,6 @@ public class AgateConfigService {
   private AgateConfig getOrCreateMicaConfig() {
     if(agateConfigRepository.count() == 0) {
       AgateConfig agateConfig = new AgateConfig();
-      agateConfig.getLocales().add(AgateConfig.DEFAULT_LOCALE);
       agateConfigRepository.save(agateConfig);
       return getConfig();
     }

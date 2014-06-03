@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
@@ -24,10 +25,13 @@ import javax.ws.rs.core.UriBuilder;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.service.UserService;
+import org.obiba.agate.web.model.Agate;
+import org.obiba.agate.web.model.Dtos;
 import org.obiba.agate.web.rest.config.JerseyConfiguration;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 
 @Component
 @RequiresRoles("AGATE_ADMIN")
@@ -38,6 +42,18 @@ public class UsersResource {
 
   @Inject
   private UserService userService;
+
+  @Inject
+  private Dtos dtos;
+
+  @GET
+  public List<Agate.UserDto> get() {
+    ImmutableList.Builder<Agate.UserDto> builder = ImmutableList.builder();
+    for(User user : userService.findUsers()) {
+      builder.add(dtos.asDto(user));
+    }
+    return builder.build();
+  }
 
   @POST
   public Response create(@FormParam("username") String username, @FormParam("password") String password,

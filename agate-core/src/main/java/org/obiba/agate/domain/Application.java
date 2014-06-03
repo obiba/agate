@@ -14,6 +14,7 @@ import org.obiba.mongodb.domain.AbstractAuditableDocument;
 import org.springframework.data.mongodb.core.index.Indexed;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Strings;
 
 public class Application extends AbstractAuditableDocument {
 
@@ -21,6 +22,8 @@ public class Application extends AbstractAuditableDocument {
 
   @Indexed
   private String name;
+
+  private String description;
 
   private String key;
 
@@ -38,6 +41,18 @@ public class Application extends AbstractAuditableDocument {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public boolean hasDescription() {
+    return !Strings.isNullOrEmpty(description);
   }
 
   public String getKey() {

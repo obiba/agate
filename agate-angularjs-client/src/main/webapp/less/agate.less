@@ -3,8 +3,6 @@
 // copied from bootswatch flatly to allows override
 @import "variables";
 
-// bootswatch
-@import "../bower_components/bootswatch/flatly/bootswatch";
 // bootstrap
 @import "../bower_components/bootstrap/less/mixins";
 @import "../bower_components/bootstrap/less/normalize";
@@ -44,8 +42,8 @@
 @import "../bower_components/bootstrap/less/utilities";
 @import "../bower_components/bootstrap/less/responsive-utilities";
 
-
-
+// bootswatch
+@import "../bower_components/bootswatch/flatly/bootswatch";
 
 // font-awesome
 // copied from font-awesome to allows @fa-font-path override
@@ -70,6 +68,30 @@ body {
   background: #fafafa;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   color: #333;
+}
+
+.inline {
+  display: inline;
+}
+
+.page-header {
+  margin-top: 50px;
+}
+
+footer {
+  margin: 40px 0;
+  padding: 20px 0;
+  border-top: solid 1px #EEEEEE;
+
+  font-size: 0.8em;
+}
+
+.table {
+  margin-top: 5px;
+}
+
+.table thead {
+  background-color: #EEEEEE;
 }
 
 .development {

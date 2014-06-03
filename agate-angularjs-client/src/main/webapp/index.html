@@ -38,29 +38,37 @@
     </div>
     <div class="navbar-collapse collapse" id="navbar-main" ng-switch="authenticated">
       <ul class="nav navbar-nav">
-        <li>
-          <a href="#/applications">Applications</a>
+        <li ng-hide="!hasRole('AGATE_ADMIN')">
+          <a href="#/applications">
+            <span translate>global.menu.applications</span>
+          </a>
         </li>
-        <li>
-          <a href="#/users">Users</a>
+        <li ng-hide="!hasRole('AGATE_ADMIN')">
+          <a href="#/users">
+            <span translate>global.menu.users</span>
+          </a>
         </li>
-        <li>
-          <a href="#/groups">Groups</a>
+        <li ng-hide="!hasRole('AGATE_ADMIN')">
+          <a href="#/groups">
+            <span translate>global.menu.groups</span>
+          </a>
         </li>
-        <li>
+        <li ng-hide="!hasRole('AGATE_ADMIN')">
           <a href="#/config">
-            <span translate>administration.title</span>
+            <span translate>global.menu.admin</span>
           </a>
         </li>
       </ul>
 
-      <ul class="nav navbar-nav navbar-right">
+      <ul class="nav navbar-nav navbar-right" ng-hide="!authenticated">
         <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">
-          <span class="glyphicon glyphicon-user"></span> xxx <span class="caret"></span></a>
+          <span class="glyphicon glyphicon-user"></span>
+          {{subject.login}}
+          <span class="caret"></span></a>
           <ul class="dropdown-menu pull-right">
-            <li><a href="#/profile"><i class="fa fa-cog"></i> My Profile</a></li>
+            <li><a href="#/profile"><i class="fa fa-cog"></i> <span translate>global.menu.myProfile</span></a></li>
             <li class="divider"></li>
-            <li><a href="#/logout"><i class="fa fa-sign-out"></i> Logout</a></li>
+            <li><a href="#/logout"><i class="fa fa-sign-out"></i> <span translate>global.menu.logout</span></a></li>
           </ul>
         </li>
       </ul>
@@ -78,9 +86,21 @@
 
   <div ng-view=""></div>
 
-  <div class="footer">
-    <p translate>footer</p>
-  </div>
+  <footer ng-hide="!authenticated">
+    <div class="row">
+      <div class="col-lg-12">
+        <ul class="list-unstyled list-inline">
+          <li class="pull-right">0.1-SNAPSHOT</li>
+          <li>© 2014</li>
+          <li><a href="http://obiba.org" target="_blank"> OBiBa </a></li>
+          <li><a href="http://wiki.obiba.org/display/AGATEDOC" target="_blank">
+            Documentation </a></li>
+          <li><a href="https://github.com/obiba/agate" target="_blank"> Sources
+          </a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
 </div>
 
 <!-- Google Analytics: uncomment and change UA-XXXXX-X to be your site's ID.
@@ -126,14 +146,21 @@
 <script src="app/config/config-service.js"></script>
 <script src="app/commons/localized/localized.js"></script>
 <script src="app/commons/localized/localized-directives.js"></script>
-<script src="app/contact/contact.js"></script>
-<script src="app/contact/contact-controller.js"></script>
-<script src="app/publish/publish.js"></script>
-<script src="app/publish/publish-directives.js"></script>
-<script src="app/study/study.js"></script>
-<script src="app/study/study-router.js"></script>
-<script src="app/study/study-controller.js"></script>
-<script src="app/study/study-service.js"></script>
+
+<script src="app/application/application.js"></script>
+<script src="app/application/application-router.js"></script>
+<script src="app/application/application-controller.js"></script>
+<script src="app/application/application-service.js"></script>
+
+<script src="app/user/user.js"></script>
+<script src="app/user/user-router.js"></script>
+<script src="app/user/user-controller.js"></script>
+<script src="app/user/user-service.js"></script>
+
+<script src="app/group/group.js"></script>
+<script src="app/group/group-router.js"></script>
+<script src="app/group/group-controller.js"></script>
+<script src="app/group/group-service.js"></script>
 <!-- endbuild -->
 </body>
 </html>

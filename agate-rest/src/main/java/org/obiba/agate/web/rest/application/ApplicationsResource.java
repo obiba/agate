@@ -8,7 +8,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.obiba.agate.web.rest.user;
+package org.obiba.agate.web.rest.application;
 
 import java.util.List;
 
@@ -22,11 +22,14 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
 import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.obiba.agate.domain.Application;
 import org.obiba.agate.domain.Group;
+import org.obiba.agate.service.ApplicationService;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.model.Agate;
 import org.obiba.agate.web.model.Dtos;
 import org.obiba.agate.web.rest.config.JerseyConfiguration;
+import org.obiba.agate.web.rest.user.GroupResource;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
@@ -34,32 +37,20 @@ import com.google.common.collect.ImmutableList;
 
 @Component
 @RequiresRoles("AGATE_ADMIN")
-@Path("/groups")
-public class GroupsResource {
+@Path("/applications")
+public class ApplicationsResource {
 
   @Inject
-  private UserService userService;
+  private ApplicationService applicationService;
 
   @Inject
   private Dtos dtos;
 
-  @POST
-  public Response create(@FormParam("name") String name, @FormParam("description") String description) {
-    if(Strings.isNullOrEmpty(name)) throw new BadRequestException("Group name cannot be empty");
-    Group group = userService.findGroup(name);
-    if(group != null) throw new BadRequestException("Group already exists: " + name);
-
-    userService.save(new Group(name, description));
-    return Response
-        .created(UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(GroupResource.class).build(group.getId()))
-        .build();
-  }
-
   @GET
-  public List<Agate.GroupDto> get() {
-    ImmutableList.Builder<Agate.GroupDto> builder = ImmutableList.builder();
-    for(Group group : userService.findGroups()) {
-      builder.add(dtos.asDto(group));
+  public List<Agate.ApplicationDto> get() {
+    ImmutableList.Builder<Agate.ApplicationDto> builder = ImmutableList.builder();
+    for(Application application : applicationService.findAll()) {
+      builder.add(dtos.asDto(application));
     }
     return builder.build();
   }
