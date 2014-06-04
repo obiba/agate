@@ -10,13 +10,13 @@ agate.user
 
     function ($scope, UsersResource) {
 
-      $scope.users = UsersResource.query();
+      $scope.users = UsersResource.get();
 
       $scope.deleteStudy = function (id) {
         //TODO ask confirmation
         UserResource.delete({id: id},
           function () {
-            $scope.users = UsersResource.query();
+            $scope.users = UsersResource.get();
           });
       };
 

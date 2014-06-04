@@ -16,13 +16,13 @@ agate.application
 
     function ($scope, ApplicationsResource) {
 
-      $scope.applications = ApplicationsResource.query();
+      $scope.applications = ApplicationsResource.get();
 
       $scope.deleteApplication = function (id) {
         //TODO ask confirmation
         ApplicationResource.delete({id: id},
           function () {
-            $scope.applications = ApplicationsResource.query();
+            $scope.applications = ApplicationsResource.get();
           });
       };
 

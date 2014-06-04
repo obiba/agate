@@ -14,12 +14,14 @@ agate.application
 
   .factory('ApplicationsResource', ['$resource',
     function ($resource) {
-      return $resource('ws/applications');
+      return $resource('ws/applications', {}, {
+        'get': {method: 'GET', errorHandler: true}
+      });
     }])
 
   .factory('ApplicationResource', ['$resource',
     function ($resource) {
       return $resource('ws/application/:id', {}, {
-        'get': {method: 'GET'}
+        'get': {method: 'GET', params: {id: '@id'}}
       });
     }]);

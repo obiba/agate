@@ -96,11 +96,15 @@ agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$cookieSto
       },
       logout: function () {
         $rootScope.authenticationError = false;
-        $http.delete('ws/auth/session/_current')
+        $http({method: 'DELETE', url: 'ws/auth/session/_current', errorHandler: true})
           .success(function () {
             Session.destroy();
-            authService.loginCancelled();
-          });
+            authService.loginCancelled(null, 'logout');
+          }).error(function () {
+            Session.destroy();
+            authService.loginCancelled(null, 'logout failure');
+          }
+        );
       }
     };
   }]);

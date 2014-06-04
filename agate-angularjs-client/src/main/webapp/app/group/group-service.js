@@ -14,12 +14,14 @@ agate.group
 
   .factory('GroupsResource', ['$resource',
     function ($resource) {
-      return $resource('ws/groups');
+      return $resource('ws/groups', {}, {
+        'get': {method: 'GET', errorHandler: true}
+      });
     }])
 
   .factory('GroupResource', ['$resource',
     function ($resource) {
       return $resource('ws/group/:id', {}, {
-        'get': {method: 'GET'}
+        'get': {method: 'GET', params: {id: '@id'}}
       });
     }]);

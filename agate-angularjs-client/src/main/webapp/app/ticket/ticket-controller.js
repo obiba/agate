@@ -16,13 +16,13 @@ agate.ticket
 
     function ($scope, TicketsResource) {
 
-      $scope.tickets = TicketsResource.query();
+      $scope.tickets = TicketsResource.get();
 
       $scope.deleteTicket = function (id) {
         //TODO ask confirmation
         TicketResource.delete({id: id},
           function () {
-            $scope.tickets = TicketsResource.query();
+            $scope.tickets = TicketsResource.get();
           });
       };
 

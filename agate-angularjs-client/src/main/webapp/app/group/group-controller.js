@@ -16,13 +16,13 @@ agate.group
 
     function ($scope, GroupsResource) {
 
-      $scope.groups = GroupsResource.query();
+      $scope.groups = GroupsResource.get();
 
       $scope.deleteGroup = function (id) {
         //TODO ask confirmation
         GroupResource.delete({id: id},
           function () {
-            $scope.groups = GroupsResource.query();
+            $scope.groups = GroupsResource.get();
           });
       };
 
