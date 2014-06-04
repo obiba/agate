@@ -6,11 +6,12 @@
   "global": {
     "browsehappy": "You are using an <strong>outdated</strong> browser. Please <a href=\"http://browsehappy.com/\">upgrade your browser</a> to improve your experience.",
     "menu": {
-      "applications": "Applications",
-      "users": "Users",
-      "groups": "Groups",
       "admin": "Administration",
+      "applications": "Applications",
       "configuration": "Configuration",
+      "groups": "Groups",
+      "tickets": "Tickets",
+      "users": "Users",
       "myProfile": "My Profile",
       "logout": "Sign Out",
 
@@ -32,18 +33,8 @@
     "subtitle": "Agate allows you to manage your own account and, for those with administrator rights, other users accounts, groups and integrated applications.",
     "logged": {
       "userMessage": "You are logged in as user \"{{username}}\".",
-      "adminMessage": "You are logged in as user \"{{username}}\" with administrator rights.",
-      "authenticated": "If you want to <a href=\"#/login\">authenticate</a>, you can try the default accounts:<br/>- Admnistrator (login=\"admin\" and password=\"admin\") <br/>- User (login=\"user\" and password=\"user\")."
-    },
-    "question": "If you have any question on JHipster:",
-    "link": {
-      "homepage": "JHipster homepage",
-      "stackoverflow": "JHipster on Stack Overflow",
-      "bugtracker": "JHipster bug tracker",
-      "contact": "contact @java_hipster on Twitter"
-    },
-    "like": "If you like JHipster, don't forget to give us a star on",
-    "github": "Github"
+      "adminMessage": "You are logged in as user \"{{username}}\" with administrator rights."
+    }
   },
   "login": {
     "title": "Authentication",
@@ -160,6 +151,31 @@
       "longTimeout-help": "Ticket expiration timeout in hours when \"remember me\" option is selected"
     }
   },
+  "applications": "Applications",
+  "application": {
+    "add": "Add Application",
+    "actions": "Actions",
+    "name": "Name",
+    "description": "Description",
+    "key": "Key"
+  },
+  "groups": "Groups",
+  "group": {
+    "add": "Add Group",
+    "actions": "Actions",
+    "name": "Name",
+    "description": "Description"
+  },
+  "tickets": "Tickets",
+  "ticket": {
+    "actions": "Actions",
+    "created": "Created",
+    "events": "Events",
+    "expires": "Expires",
+    "none": "No ticket.",
+    "remembered": "Remember-me",
+    "username": "User Name"
+  },
   "users": "Users",
   "user": {
     "add": "Add User",
@@ -174,21 +190,6 @@
     "groups": "Groups",
     "AGATE_ADMIN": "Administrator",
     "AGATE_USER": "User"
-  },
-  "groups": "Groups",
-  "group": {
-    "add": "Add Group",
-    "actions": "Actions",
-    "name": "Name",
-    "description": "Description"
-  },
-  "applications": "Applications",
-  "application": {
-    "add": "Add Application",
-    "actions": "Actions",
-    "name": "Name",
-    "description": "Description",
-    "key": "Key"
   },
   "name": "Name",
   "edit": "Edit",

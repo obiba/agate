@@ -38,6 +38,11 @@
     </div>
     <div class="navbar-collapse collapse" id="navbar-main" ng-switch="authenticated">
       <ul class="nav navbar-nav">
+        <li ng-hide="!hasRole('AGATE_ADMIN')">
+          <a href="#/tickets">
+            <span translate>global.menu.tickets</span>
+          </a>
+        </li>
         <li class="dropdown" ng-hide="!hasRole('AGATE_ADMIN')">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">
             <span translate>global.menu.admin</span>
@@ -145,6 +150,8 @@
 <script src="bower_components/angular-ui/build/angular-ui.min.js"></script>
 <script src="bower_components/angular-loading-bar/build/loading-bar.min.js"></script>
 <script src="bower_components/ng-obiba/dist/ng-obiba.js"></script>
+<script src="bower_components/moment/moment.js"></script>
+<script src="bower_components/angular-moment/angular-moment.js"></script>
 <script src="app/http-auth-interceptor.js"></script>
 <script src="app/app.js"></script>
 <script src="app/controllers.js"></script>
@@ -171,6 +178,12 @@
 <script src="app/group/group-router.js"></script>
 <script src="app/group/group-controller.js"></script>
 <script src="app/group/group-service.js"></script>
+
+
+<script src="app/ticket/ticket.js"></script>
+<script src="app/ticket/ticket-router.js"></script>
+<script src="app/ticket/ticket-controller.js"></script>
+<script src="app/ticket/ticket-service.js"></script>
 <!-- endbuild -->
 </body>
 </html>

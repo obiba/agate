@@ -1,0 +1,64 @@
+<!--
+  ~ Copyright (c) 2014 OBiBa. All rights reserved.
+  ~
+  ~ This program and the accompanying materials
+  ~ are made available under the terms of the GNU Public License v3.0.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<div>
+
+  <h2 translate>tickets</h2>
+
+  <span ng-hide="tickets.length > 0" translate>ticket.none</span>
+
+  <div class="table-responsive" ng-hide="tickets.length == 0">
+    <table class="table table-striped table-hover table-bordered">
+      <thead>
+      <tr>
+        <th translate>ticket.username</th>
+        <th translate>ticket.remembered</th>
+        <th translate>ticket.created</th>
+        <th translate>ticket.expires</th>
+        <th translate>ticket.events</th>
+        <th translate>ticket.actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr ng-repeat="ticket in tickets">
+        <td>
+          {{ticket.username}}
+        </td>
+        <td>
+          <i class="fa fa-check-square-o" ng-hide="!ticket.remembered"></i>
+          <i class="fa fa-square-o" ng-hide="ticket.remembered"></i>
+        </td>
+        <td>
+          <span>{{ticket.timestamps.created | amDateFormat:'YYYY-MM-DD HH:mm:ss'}}</span>
+          (<span am-time-ago="ticket.timestamps.created"></span>)
+        </td>
+        <td>
+          <span>{{ticket.expires | amDateFormat:'YYYY-MM-DD HH:mm:ss'}}</span>
+          (<span am-time-ago="ticket.expires"></span>)
+        </td>
+        <td>
+          <span class="badge">{{ticket.logs.length}}</span>
+        </td>
+        <td>
+          <ul class="list-inline">
+            <li>
+              <a ng-href="#/ticket/{{ticket.id}}" translate>view</a>
+            </li>
+            <li>
+              <a ng-href="#/ticket/{{ticket.id}}/delete" translate>delete</a>
+            </li>
+          </ul>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

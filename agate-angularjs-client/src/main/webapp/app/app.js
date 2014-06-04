@@ -9,6 +9,7 @@ var agate = angular.module('agate', [
   'agate.config',
   'ngObiba',
   'agate.application',
+  'agate.ticket',
   'agate.user',
   'agate.group',
   'ngAnimate',

@@ -9,10 +9,17 @@ message SessionDto {
 }
 
 message TicketDto {
+  message Log {
+    required string application = 1;
+    required string action = 2;
+    required string time = 3;
+  }
   required string id = 1;
   optional TimestampsDto timestamps = 2;
   required string username = 3;
   required bool remembered = 4;
+  repeated Log logs = 5;
+  optional string expires = 6;
 }
 
 message TimestampsDto {

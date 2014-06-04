@@ -26,6 +26,14 @@ public class TicketService {
   @Inject
   private ConfigurationService configurationService;
 
+  /**
+   * Find all {@link org.obiba.agate.domain.Ticket}.
+   * @return
+   */
+  public List<Ticket> findAll() {
+    return ticketRepository.findAll();
+  }
+
   @NotNull
   public Ticket findById(@NotNull String id) throws NoSuchTicketException {
     Ticket ticket = ticketRepository.findOne(id);

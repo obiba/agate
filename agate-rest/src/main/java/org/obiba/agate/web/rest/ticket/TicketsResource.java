@@ -31,6 +31,7 @@ import javax.ws.rs.core.UriBuilder;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
 import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.Ticket;
@@ -38,11 +39,14 @@ import org.obiba.agate.domain.User;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.TicketService;
 import org.obiba.agate.service.UserService;
+import org.obiba.agate.web.model.Agate;
 import org.obiba.agate.web.rest.config.JerseyConfiguration;
 import org.obiba.web.model.AuthDtos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  *
@@ -63,6 +67,16 @@ public class TicketsResource extends BaseTicketResource {
 
   @Inject
   private UserService userService;
+
+  @GET
+  @RequiresRoles("AGATE_ADMIN")
+  public List<Agate.TicketDto> get() {
+    ImmutableList.Builder<Agate.TicketDto> builder = ImmutableList.builder();
+    for(Ticket ticket : ticketService.findAll()) {
+      builder.add(dtos.asDto(ticket));
+    }
+    return builder.build();
+  }
 
   @POST
   public Response login(@SuppressWarnings("TypeMayBeWeakened") @Context HttpServletRequest servletRequest,
