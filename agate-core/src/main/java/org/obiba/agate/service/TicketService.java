@@ -20,12 +20,11 @@ public class TicketService {
 
   private static final Logger log = LoggerFactory.getLogger(TicketService.class);
 
-  private int shortTermTicketHours;
-
-  private int longTermTicketHours;
-
   @Inject
   private TicketRepository ticketRepository;
+
+  @Inject
+  private ConfigurationService configurationService;
 
   @NotNull
   public Ticket findById(@NotNull String id) throws NoSuchTicketException {
@@ -60,7 +59,7 @@ public class TicketService {
   @Scheduled(cron = "0 0 0 * * ?")
   public void removeExpiredRemembered() {
     removeExpired(ticketRepository
-        .findByCreatedDateBeforeAndRemembered(DateTime.now().minusHours(longTermTicketHours * 3600), true));
+        .findByCreatedDateBeforeAndRemembered(DateTime.now().minusHours(configurationService.getConfiguration().getLongTimeout() * 3600), true));
   }
 
   /**
@@ -70,17 +69,7 @@ public class TicketService {
   @Scheduled(cron = "0 * 0 * * ?")
   public void removeExpiredNotRemembered() {
     removeExpired(ticketRepository
-        .findByCreatedDateBeforeAndRemembered(DateTime.now().minusHours(shortTermTicketHours * 3600), false));
-  }
-
-  @Value("${ticket.timeout.short}")
-  public void setShortTermTicketHours(int shortTermTicketHours) {
-    this.shortTermTicketHours = shortTermTicketHours;
-  }
-
-  @Value("${ticket.timeout.long}")
-  public void setLongTermTicketHours(int longTermTicketHours) {
-    this.longTermTicketHours = longTermTicketHours;
+        .findByCreatedDateBeforeAndRemembered(DateTime.now().minusHours(configurationService.getConfiguration().getShortTimeout() * 3600), false));
   }
 
   private void removeExpired(List<Ticket> tickets) {

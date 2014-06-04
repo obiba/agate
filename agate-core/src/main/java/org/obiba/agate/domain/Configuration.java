@@ -8,18 +8,24 @@ import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 
 @Document
-public class AgateConfig extends AbstractAuditableDocument {
+public class Configuration extends AbstractAuditableDocument {
 
   private static final long serialVersionUID = -9020464712632680519L;
 
   public static final String DEFAULT_NAME = "Agate";
+
+  public static final int DEFAULT_SHORT_TIMEOUT = 8; // 8 hours
+
+  public static final int DEFAULT_LONG_TIMEOUT = 24*30*3; // 3 months
 
   @NotBlank
   private String name = DEFAULT_NAME;
 
   private String domain;
 
-  private String publicUrl;
+  private int shortTimeout = DEFAULT_SHORT_TIMEOUT;
+
+  private int longTimeout = DEFAULT_LONG_TIMEOUT;
 
   public String getName() {
     return name;
@@ -41,22 +47,27 @@ public class AgateConfig extends AbstractAuditableDocument {
     return !Strings.isNullOrEmpty(domain);
   }
 
-  public String getPublicUrl() {
-    return publicUrl;
+  public int getShortTimeout() {
+    return shortTimeout;
   }
 
-  public void setPublicUrl(String publicUrl) {
-    this.publicUrl = publicUrl;
+  public void setShortTimeout(int shortTimeout) {
+    this.shortTimeout = shortTimeout;
   }
 
-  public boolean hasPublicUrl() {
-    return !Strings.isNullOrEmpty(publicUrl);
+  public int getLongTimeout() {
+    return longTimeout;
+  }
+
+  public void setLongTimeout(int longTimeout) {
+    this.longTimeout = longTimeout;
   }
 
   @Override
   protected Objects.ToStringHelper toStringHelper() {
     return super.toStringHelper().add("name", name) //
         .add("domain", domain) //
-        .add("publicUrl", publicUrl);
+        .add("shortTimeout", shortTimeout) //
+        .add("longTimeout", longTimeout);
   }
 }

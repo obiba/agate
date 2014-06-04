@@ -8,18 +8,21 @@
     <div form-input name="name" model="agateConfig.name" label="administration.config.name" required="true"
         help="administration.config.name-help"></div>
 
-    <div form-input name="publicUrl" model="agateConfig.domain" label="administration.config.domain"
+    <div form-input name="domain" model="agateConfig.domain" label="administration.config.domain"
         help="administration.config.domain-help"></div>
 
-    <div form-input name="publicUrl" model="agateConfig.publicUrl" label="administration.config.publicUrl"
-        help="administration.config.publicUrl-help"></div>
+    <div form-input name="shortTimeout" model="agateConfig.shortTimeout" label="administration.config.shortTimeout"
+        help="administration.config.shortTimeout-help"></div>
+
+    <div form-input name="longTimeout" model="agateConfig.longTimeout" label="administration.config.longTimeout"
+        help="administration.config.longTimeout-help"></div>
 
     <a href="#/config" class="btn btn-default">
-      <span class="glyphicon glyphicon-ban-circle"></span> <span translate>cancel</span>
+      <span translate>cancel</span>
     </a>
 
-    <button type="submit" class="btn btn-primary">
-      <span class="glyphicon glyphicon-save"></span> <span translate>save</span>
+    <button type="submit" class="btn btn-info">
+      <span translate>save</span>
     </button>
 
   </form>

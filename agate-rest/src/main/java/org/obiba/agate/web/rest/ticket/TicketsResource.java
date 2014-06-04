@@ -32,15 +32,16 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
+import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
+import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.TicketService;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.rest.config.JerseyConfiguration;
 import org.obiba.web.model.AuthDtos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -54,14 +55,8 @@ public class TicketsResource extends BaseTicketResource {
 
   public static final String TICKET_COOKIE_NAME = "obibaid";
 
-  @Value("${ticket.domain}")
-  private String domain;
-
-  @Value("${ticket.timeout.short}")
-  private int shortTermTicketHours;
-
-  @Value("${ticket.timeout.long}")
-  private int longTermTicketHours;
+  @Inject
+  private ConfigurationService configurationService;
 
   @Inject
   private TicketService ticketService;
@@ -83,8 +78,9 @@ public class TicketsResource extends BaseTicketResource {
       subject.logout();
 
       Ticket ticket = createTicket(username, renew, rememberMe, application);
-      int timeout = rememberMe ? shortTermTicketHours : longTermTicketHours;
-      NewCookie cookie = new NewCookie(TICKET_COOKIE_NAME, ticket.getId(), "/", domain, null, timeout * 3600, false);
+      Configuration configuration = configurationService.getConfiguration();
+      int timeout = rememberMe ? configuration.getShortTimeout() : configuration.getLongTimeout();
+      NewCookie cookie = new NewCookie(TICKET_COOKIE_NAME, ticket.getId(), "/", configuration.getDomain(), null, timeout * 3600, false);
       log.info("Successful Granting Ticket creation for user '{}' with CAS ID: {}", username, ticket.getId());
       return Response
           .created(UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(TicketResource.class).build(ticket.getId()))

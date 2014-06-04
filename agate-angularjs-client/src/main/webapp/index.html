@@ -38,33 +38,43 @@
     </div>
     <div class="navbar-collapse collapse" id="navbar-main" ng-switch="authenticated">
       <ul class="nav navbar-nav">
-        <li ng-hide="!hasRole('AGATE_ADMIN')">
-          <a href="#/applications">
-            <span translate>global.menu.applications</span>
-          </a>
-        </li>
-        <li ng-hide="!hasRole('AGATE_ADMIN')">
-          <a href="#/users">
-            <span translate>global.menu.users</span>
-          </a>
-        </li>
-        <li ng-hide="!hasRole('AGATE_ADMIN')">
-          <a href="#/groups">
-            <span translate>global.menu.groups</span>
-          </a>
-        </li>
-        <li ng-hide="!hasRole('AGATE_ADMIN')">
-          <a href="#/config">
+        <li class="dropdown" ng-hide="!hasRole('AGATE_ADMIN')">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
             <span translate>global.menu.admin</span>
-          </a>
+            <i class="fa fa-caret-down"></i></a>
+          <ul class="dropdown-menu pull-right">
+            <li>
+              <a href="#/applications">
+                <span translate>global.menu.applications</span>
+              </a>
+            </li>
+            <li>
+              <a href="#/users">
+                <span translate>global.menu.users</span>
+              </a>
+            </li>
+            <li>
+              <a href="#/groups">
+                <span translate>global.menu.groups</span>
+              </a>
+            </li>
+            <li class="divider"></li>
+            <li>
+              <a href="#/config">
+                <span translate>global.menu.configuration</span>
+              </a>
+            </li>
+          </ul>
         </li>
+
       </ul>
 
       <ul class="nav navbar-nav navbar-right" ng-hide="!authenticated">
-        <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">
-          <span class="glyphicon glyphicon-user"></span>
-          {{subject.login}}
-          <span class="caret"></span></a>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <i class="fa fa-user"></i>
+            {{subject.login}}
+            <i class="fa fa-caret-down"></i></a>
           <ul class="dropdown-menu pull-right">
             <li><a href="#/profile"><i class="fa fa-cog"></i> <span translate>global.menu.myProfile</span></a></li>
             <li class="divider"></li>

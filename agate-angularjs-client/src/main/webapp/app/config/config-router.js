@@ -6,14 +6,14 @@ agate.config
       $routeProvider
         .when('/config', {
           templateUrl: 'app/config/views/config-view.html',
-          controller: 'AgateConfigController',
+          controller: 'ConfigurationController',
           access: {
             authorizedRoles: ['AGATE_ADMIN']
           }
         })
         .when('/config/edit', {
           templateUrl: 'app/config/views/config-form.html',
-          controller: 'AgateConfigEditController',
+          controller: 'ConfigurationEditController',
           access: {
             authorizedRoles: ['AGATE_ADMIN']
           }

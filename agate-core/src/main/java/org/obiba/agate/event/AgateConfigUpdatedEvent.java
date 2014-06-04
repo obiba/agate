@@ -1,10 +1,10 @@
 package org.obiba.agate.event;
 
-import org.obiba.agate.domain.AgateConfig;
+import org.obiba.agate.domain.Configuration;
 
 public class AgateConfigUpdatedEvent extends PersistableUpdatedEvent {
 
-  public AgateConfigUpdatedEvent(AgateConfig agateConfig) {
-    super(agateConfig);
+  public AgateConfigUpdatedEvent(Configuration configuration) {
+    super(configuration);
   }
 }

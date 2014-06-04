@@ -3,17 +3,14 @@ package org.obiba.agate.web.model;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
-import org.obiba.agate.domain.AgateConfig;
 import org.obiba.agate.domain.Application;
+import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.Group;
 import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.service.TicketService;
 import org.obiba.web.model.AuthDtos;
 import org.springframework.stereotype.Component;
-
-import static org.obiba.agate.web.model.Agate.AgateConfigDto;
-import static org.obiba.agate.web.model.Agate.AgateConfigDtoOrBuilder;
 
 @Component
 @SuppressWarnings("OverlyCoupledClass")
@@ -32,7 +29,7 @@ public class Dtos {
   private ApplicationDtos applicationDtos;
 
   @Inject
-  private AgateConfigDtos agateConfigDtos;
+  private ConfigurationDtos configurationDtos;
 
   @NotNull
   public Agate.TicketDto asDto(@NotNull Ticket ticket) {
@@ -60,13 +57,13 @@ public class Dtos {
   }
 
   @NotNull
-  public AgateConfigDto asDto(@NotNull AgateConfig agateConfig) {
-    return agateConfigDtos.asDto(agateConfig);
+  public Agate.ConfigurationDto asDto(@NotNull Configuration configuration) {
+    return configurationDtos.asDto(configuration);
   }
 
   @NotNull
-  public AgateConfig fromDto(@NotNull AgateConfigDtoOrBuilder dto) {
-    return agateConfigDtos.fromDto(dto);
+  public Configuration fromDto(@NotNull Agate.ConfigurationDtoOrBuilder dto) {
+    return configurationDtos.fromDto(dto);
   }
 
 }

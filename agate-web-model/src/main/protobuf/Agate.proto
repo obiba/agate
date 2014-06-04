@@ -20,10 +20,11 @@ message TimestampsDto {
   optional string lastUpdate = 2;
 }
 
-message AgateConfigDto {
+message ConfigurationDto {
   required string name = 1;
   optional string domain = 2;
-  optional string publicUrl = 3;
+  required int32 shortTimeout = 3; // hours
+  required int32 longTimeout = 4; // hours
 }
 
 message UserDto {

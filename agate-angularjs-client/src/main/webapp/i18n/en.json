@@ -10,6 +10,7 @@
       "users": "Users",
       "groups": "Groups",
       "admin": "Administration",
+      "configuration": "Configuration",
       "myProfile": "My Profile",
       "logout": "Sign Out",
 
@@ -147,18 +148,16 @@
   "administration": {
     "title": "Administration",
     "config": {
-      "short-title": "Configuration",
-      "title": "General Configuration",
-      "title-edit": "Edit General Configuration",
+      "title": "Configuration",
+      "title-edit": "Edit Configuration",
       "name": "Name",
       "name-help": "Name of your organization",
       "domain": "Domain",
       "domain-help": "Single sign-on cookie domain",
-      "publicUrl": "Public URL",
-      "publicUrl-help": "Public base URL of the server (not the web-interface one) that will be used when sending notification emails on report generation",
-      "defaultCharSet": "Default Character Set",
-      "languages": "Languages",
-      "languages-help": "Supported languages for studies and networks description"
+      "shortTimeout": "Short term timeout (hours)",
+      "shortTimeout-help": "Ticket expiration timeout in hours",
+      "longTimeout": "Long term timeout (hours)",
+      "longTimeout-help": "Ticket expiration timeout in hours when \"remember me\" option is selected"
     }
   },
   "users": "Users",
@@ -188,7 +187,8 @@
     "add": "Add Application",
     "actions": "Actions",
     "name": "Name",
-    "description": "Description"
+    "description": "Description",
+    "key": "Key"
   },
   "name": "Name",
   "edit": "Edit",

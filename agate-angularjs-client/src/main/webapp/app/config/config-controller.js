@@ -1,19 +1,17 @@
 'use strict';
 
 agate.config
-  .controller('AgateConfigController', ['$scope', '$resource', '$log', 'AgateConfigResource',
+  .controller('ConfigurationController', ['$scope', '$resource', '$log', 'ConfigurationResource',
 
-    function ($scope, $resource, $log, AgateConfigResource) {
-      $scope.agateConfig = AgateConfigResource.get();
-      $scope.availableLanguages = $resource('ws/config/languages').get();
+    function ($scope, $resource, $log, ConfigurationResource) {
+      $scope.agateConfig = ConfigurationResource.get();
     }])
 
-  .controller('AgateConfigEditController', ['$scope', '$resource', '$location', '$log', 'AgateConfigResource', 'FormServerValidation',
+  .controller('ConfigurationEditController', ['$scope', '$resource', '$location', '$log', 'ConfigurationResource', 'FormServerValidation',
 
-    function ($scope, $resource, $location, $log, AgateConfigResource, FormServerValidation) {
+    function ($scope, $resource, $location, $log, ConfigurationResource, FormServerValidation) {
 
-      $scope.agateConfig = AgateConfigResource.get();
-      $scope.availableLanguages = $resource('ws/config/languages').get();
+      $scope.agateConfig = ConfigurationResource.get();
 
       $scope.save = function () {
 
