@@ -47,7 +47,7 @@ angular.module('agate')
       restrict: 'E',
       template: '<div id="strength">' +
         '<small translate="password.messages.validate.newpassword.strength">Password strength:</small>' +
-        '<ul id="strengthBar">' +
+        '<ul id="strengthBar" class="inline" style="padding-left:10px;">' +
         '<li class="point"></li><li class="point"></li><li class="point"></li><li class="point"></li><li class="point"></li>' +
         '</ul>' +
         '</div>',

@@ -1,27 +1,30 @@
 <div>
 
   <h2 translate>administration.config.title</h2>
-
-  <table class="table table-striped">
-    <tbody>
-    <tr>
-      <td translate>administration.config.name</td>
-      <td>{{agateConfig.name}}</td>
-    </tr>
-    <tr>
-      <td translate>administration.config.domain</td>
-      <td>{{agateConfig.domain}}</td>
-    </tr>
-    <tr>
-      <td translate>administration.config.shortTimeout</td>
-      <td>{{agateConfig.shortTimeout}}</td>
-    </tr>
-    <tr>
-      <td translate>administration.config.longTimeout</td>
-      <td>{{agateConfig.longTimeout}}</td>
-    </tr>
-    </tbody>
-  </table>
+  <div class="row">
+    <div class="col-md-6">
+      <table class="table table-striped">
+        <tbody>
+        <tr>
+          <td translate>administration.config.name</td>
+          <td>{{agateConfig.name}}</td>
+        </tr>
+        <tr>
+          <td translate>administration.config.domain</td>
+          <td>{{agateConfig.domain}}</td>
+        </tr>
+        <tr>
+          <td translate>administration.config.shortTimeout</td>
+          <td>{{agateConfig.shortTimeout}}</td>
+        </tr>
+        <tr>
+          <td translate>administration.config.longTimeout</td>
+          <td>{{agateConfig.longTimeout}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 
   <a href="#/config/edit" class="btn btn-primary">
     <i class="fa fa-pencil-square-o"></i> <span translate>edit</span>
