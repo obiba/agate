@@ -10,50 +10,13 @@
     <relativePath>../</relativePath>
   </parent>
 
-  <artifactId>agate-server</artifactId>
+  <artifactId>agate-dist</artifactId>
 
   <dependencies>
 
     <dependency>
       <groupId>org.obiba.agate</groupId>
-      <artifactId>agate-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.obiba.agate</groupId>
-      <artifactId>agate-web-model</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.obiba.agate</groupId>
-      <artifactId>agate-rest</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.obiba.commons</groupId>
-      <artifactId>obiba-shiro-web</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.obiba.agate</groupId>
-      <artifactId>agate-angularjs-client</artifactId>
-      <type>war</type>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-starter-tomcat</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-jetty</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>com.newrelic.agent.java</groupId>
-      <artifactId>newrelic-agent</artifactId>
+      <artifactId>agate-webapp</artifactId>
     </dependency>
 
     <dependency>
@@ -69,61 +32,8 @@
 
   </dependencies>
 
-  <build>
-
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-        <includes>
-          <include>**/*</include>
-        </includes>
-      </resource>
-      <resource>
-        <directory>src/main/conf</directory>
-        <filtering>true</filtering>
-        <includes>
-          <include>**/*</include>
-        </includes>
-      </resource>
-    </resources>
-
-    <plugins>
-
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-        <configuration>
-          <arguments>
-            <argument>--spring.profiles.active=dev</argument>
-          </arguments>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <descriptors>
-            <descriptor>src/main/assembly/agate.xml</descriptor>
-          </descriptors>
-        </configuration>
-        <executions>
-          <execution>
-            <id>make-assembly</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-
-    </plugins>
-
-  </build>
-
   <profiles>
+
     <profile>
       <!-- A profile for the builds performed by the continuous integration server -->
       <id>ci-build</id>
@@ -164,13 +74,14 @@
                     <move todir="${deb.dir}/etc/agate">
                       <fileset dir="${deb.dir}/usr/share/agate-${project.version}/conf"/>
                     </move>
+                    <delete file="${deb.dir}/etc/agate/application-dev.yml"/>
 
                     <exec executable="debuild" dir="${deb.dir}" failonerror="true" osfamily="unix">
                       <arg value="-b"/>
                       <!-- Uncomment following options to package locally  -->
-                      <arg value="-i" />
-                      <arg value="-us" />
-                      <arg value="-uc" />
+                      <!--<arg value="-i"/>-->
+                      <!--<arg value="-us"/>-->
+                      <!--<arg value="-uc"/>-->
                     </exec>
                   </target>
                 </configuration>
@@ -198,7 +109,7 @@
                 </goals>
                 <configuration>
                   <target>
-                    <!-- Deploy agate Server package file in download repo -->
+                    <!-- Deploy Mica Server package file in download repo -->
                     <copy todir="${obiba.download.dir}/agate/${agate.deploy.dir}"
                         file="target/agate-${project.version}-dist.zip"/>
                   </target>

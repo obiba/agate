@@ -16,8 +16,8 @@
     <module>agate-core</module>
     <module>agate-rest</module>
     <module>agate-web-model</module>
-    <module>agate-angularjs-client</module>
-    <module>agate-server</module>
+    <module>agate-webapp</module>
+    <module>agate-dist</module>
   </modules>
 
   <profiles>
@@ -224,9 +224,8 @@
       </dependency>
       <dependency>
         <groupId>org.obiba.agate</groupId>
-        <artifactId>agate-angularjs-client</artifactId>
+        <artifactId>agate-webapp</artifactId>
         <version>${project.version}</version>
-        <type>war</type>
       </dependency>
 
       <dependency>
