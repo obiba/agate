@@ -35,11 +35,39 @@ cache:
 hotReload:
     enabled: true
     package:
-      project: org.obiba.agatee
-      domain: org.obiba.agatee.domain
+      project: org.obiba.agate
+      domain: org.obiba.agate.domain
       restdto: org.obiba.agate.web.rest.dto
     liquibase:
       defaultCatalogName: 
       defaultSchema:
     watchdir:
       - target/classes
+
+# security configuration (this key should be unique for your application, and kept secret)
+#jhipster.security.rememberme.key: agate
+
+async:
+    corePoolSize: 2
+    maxPoolSize: 50
+    queueCapacity: 10000
+
+spring:
+    mail:
+        host: localhost
+        port: 25
+        user:
+        password:
+        protocol: smtp
+        tls: false
+        auth: false
+
+    messageSource:
+        cacheSeconds: 1
+
+authentication:
+    oauth:
+        clientid: jhipsterapp
+        secret: mySecretOAuthSecret
+        # Token is valid 30 minutes
+        tokenValidityInSeconds: 1800

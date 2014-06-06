@@ -18,6 +18,11 @@
       <groupId>org.obiba.agate</groupId>
       <artifactId>agate-webapp</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.obiba.agate</groupId>
+      <artifactId>agate-webapp</artifactId>
+      <type>war</type>
+    </dependency>
 
     <dependency>
       <groupId>org.apache.shiro.tools</groupId>
@@ -31,6 +36,32 @@
     </dependency>
 
   </dependencies>
+
+  <build>
+
+    <plugins>
+
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptors>
+            <descriptor>src/main/assembly/agate.xml</descriptor>
+          </descriptors>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+
+  </build>
 
   <profiles>
 
@@ -68,13 +99,14 @@
                     </copy>
 
                     <mkdir dir="${deb.dir}/usr/share"/>
-                    <unzip src="${basedir}/target/agate-${project.version}-dist.zip" dest="${deb.dir}/usr/share"/>
+                    <unzip src="${basedir}/target/agate-dist-${project.version}-dist.zip" dest="${deb.dir}/usr/share"/>
+                    <move file="${deb.dir}/usr/share/agate-dist-${project.version}"
+                        tofile="${deb.dir}/usr/share/agate-${project.version}"/>
 
                     <mkdir dir="${deb.dir}/etc"/>
                     <move todir="${deb.dir}/etc/agate">
                       <fileset dir="${deb.dir}/usr/share/agate-${project.version}/conf"/>
                     </move>
-                    <delete file="${deb.dir}/etc/agate/application-dev.yml"/>
 
                     <exec executable="debuild" dir="${deb.dir}" failonerror="true" osfamily="unix">
                       <arg value="-b"/>
@@ -96,8 +128,8 @@
                   <target>
                     <property name="deb.version" value="${project.version}-b${buildNumber}"/>
                     <!-- Deploy deb file in deb repo -->
-                    <copy todir="${obiba.deb.dir}/${agate.deploy.dir}"
-                        file="target/agate_server_${deb.version}_all.deb"/>
+                    <copy file="target/agate_server_${deb.version}_all.deb"
+                        todir="${obiba.deb.dir}/${agate.deploy.dir}"/>
                   </target>
                 </configuration>
               </execution>
@@ -109,9 +141,9 @@
                 </goals>
                 <configuration>
                   <target>
-                    <!-- Deploy Mica Server package file in download repo -->
-                    <copy todir="${obiba.download.dir}/agate/${agate.deploy.dir}"
-                        file="target/agate-${project.version}-dist.zip"/>
+                    <!-- Deploy Agate package file in download repo -->
+                    <copy file="target/agate-${project.version}-dist.zip"
+                        todir="${obiba.download.dir}/agate/${agate.deploy.dir}"/>
                   </target>
                 </configuration>
               </execution>

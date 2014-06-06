@@ -1,4 +1,5 @@
 skipTests = false
+version=0.1-SNAPSHOT
 mvn_exec = mvn -Dmaven.test.skip=${skipTests}
 current_dir = $(shell pwd)
 agate_home = ${current_dir}/agate-webapp/target/agate_home
@@ -6,14 +7,13 @@ agate_log = ${agate_home}/logs
 
 help:
 	@echo
-	@echo "Mica Server"
+	@echo "Agate"
 	@echo
 	@echo "Available make targets:"
 	@echo "  all         : Clean & install all modules"
 	@echo "  clean       : Clean all modules"
 	@echo "  install     : Install all modules"
 	@echo "  core        : Install core module"
-	@echo "  search      : Install search module"
 	@echo "  rest        : Install rest module"
 	@echo
 	@echo "  run         : Run webapp module"
@@ -49,8 +49,15 @@ run:
 
 run-prod:
 	cd agate-webapp && \
-	mvn package -Pci-build && \
-	java -Dloader.path=src/main/conf,target/agate-webapp-0.1-SNAPSHOT.jar -DAGATE_HOME="${agate_home}" -DAGATE_LOG="${agate_log}" -jar target/agate-webapp-0.1-SNAPSHOT.jar
+	mvn install -Pci-build && \
+	cd ../agate-dist && \
+	mvn clean package && \
+	cd target && \
+	unzip agate-dist-${version}-dist.zip && \
+	mkdir agate_home && \
+	mv agate-dist-${version}/conf agate_home/conf && \
+	export AGATE_HOME="${current_dir}/agate-dist/target/agate_home" && \
+	agate-dist-${version}/bin/agate
 
 debug:
 	export MAVEN_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,address=8000,suspend=n && \
@@ -82,5 +89,5 @@ plugins-update:
 
 keystore:
 	rm -f keystore.p12
-	keytool -genkey -alias tomcat -keystore keystore.p12 -storepass changeit -validity 365 -keyalg RSA -keysize 2048 -storetype pkcs12 -dname "CN=Agate, O=Maelstrom, OU=OBiBa, L=Montreal, ST=Quebec, C=CA"
+	keytool -genkey -alias tomcat -keystore keystore.p12 -storepass changeit -validity 365 -keyalg RSA -keysize 2048 -storetype pkcs12 -dname "CN=Mica, O=Maelstrom, OU=OBiBa, L=Montreal, ST=Quebec, C=CA"
 	@echo "Generated keystore file:" `pwd`/keystore.p12

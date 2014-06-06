@@ -9,14 +9,13 @@ esac
 if [ -z "$JAVA_OPTS" ]
 then
   # Set default JAVA_OPTS
-  JAVA_OPTS="-Xmx2G -XX:MaxPermSize=128M"
-  export JAVA_OPTS
+  export JAVA_OPTS="-Xmx2G"
 fi
 
-# The directory containing the agate shell script
+# The directory containing the agate-server shell script
 AGATE_BIN_DIR=`dirname $0`
 # resolve links - $0 may be a softlink
-AGATE_DIST=$(readlink -f $AGATE_BIN_DIR/..)
+AGATE_DIST=$(readlink -f $AGATE_BIN_DIR/../webapp)
 
 export AGATE_DIST
 
@@ -44,9 +43,9 @@ fi
 
 # Java 6 supports wildcard classpath entries
 # http://download.oracle.com/javase/6/docs/technotes/tools/solaris/classpath.html
-CLASSPATH=$AGATE_HOME/conf:"$AGATE_DIST/lib/*"
+CLASSPATH=$AGATE_HOME/conf:$AGATE_DIST/WEB-INF/classes:$AGATE_DIST/WEB-INF/lib/*
 if $cygwin; then
-  CLASSPATH=$AGATE_HOME/conf;"$AGATE_DIST/lib/*"
+  CLASSPATH=$AGATE_HOME/conf;$AGATE_DIST/WEB-INF/classes;$AGATE_DIST/WEB-INF/lib/*
 fi
 
 [ -e "$AGATE_HOME/logs" ] || mkdir "$AGATE_HOME/logs"
@@ -54,4 +53,4 @@ fi
 JAVA_DEBUG=-agentlib:jdwp=transport=dt_socket,server=y,address=8000,suspend=n
 
 # Add $JAVA_DEBUG to this line to enable remote JVM debugging (for developers)
-java $JAVA_OPTS -cp "$CLASSPATH" -DAGATE_HOME="${AGATE_HOME}" -DAGATE_DIST=${AGATE_DIST} -DAGATE_LOG=${AGATE_LOG} -Dnewrelic.config.file=${AGATE_HOME}/conf/newrelic.yml -javaagent:$AGATE_DIST/lib/newrelic-agent-${newrelic.version}.jar org.obiba.AGATE.server.AGATEServer $@
+java $JAVA_OPTS -cp "$CLASSPATH" -DAGATE_HOME="${AGATE_HOME}" -DAGATE_DIST=${AGATE_DIST} -DAGATE_LOG=${AGATE_LOG} -Dnewrelic.config.file=${AGATE_HOME}/conf/newrelic.yml -javaagent:$AGATE_DIST/WEB-INF/lib/newrelic-agent-${newrelic.version}.jar org.obiba.agate.Application $@
