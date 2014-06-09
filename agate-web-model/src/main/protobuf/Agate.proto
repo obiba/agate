@@ -16,10 +16,11 @@ message TicketDto {
   }
   required string id = 1;
   optional TimestampsDto timestamps = 2;
-  required string username = 3;
-  required bool remembered = 4;
-  repeated Log logs = 5;
-  optional string expires = 6;
+  required string token = 3;
+  required string username = 4;
+  required bool remembered = 5;
+  repeated Log logs = 6;
+  optional string expires = 7;
 }
 
 message TimestampsDto {

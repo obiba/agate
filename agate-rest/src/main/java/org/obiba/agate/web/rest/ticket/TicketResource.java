@@ -50,7 +50,7 @@ public class TicketResource extends BaseTicketResource {
   public AuthDtos.SubjectDto get(@QueryParam("application") String application, @QueryParam("key") String key) {
     validateApplication(application, key);
 
-    Ticket ticket = ticketService.findById(this.ticket);
+    Ticket ticket = ticketService.getTicket(this.ticket);
     ticket.addLog(application, "subject");
     ticketService.save(ticket);
 
@@ -69,7 +69,7 @@ public class TicketResource extends BaseTicketResource {
   public Response getUsername(@QueryParam("application") String application, @QueryParam("key") String key) {
     validateApplication(application, key);
 
-    Ticket ticket = ticketService.findById(this.ticket);
+    Ticket ticket = ticketService.getTicket(this.ticket);
     ticket.addLog(application, "validate");
     ticketService.save(ticket);
     return Response.ok().entity(ticket.getUsername()).build();

@@ -1,6 +1,7 @@
 package org.obiba.agate.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -11,7 +12,6 @@ import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.repository.TicketRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -28,23 +28,53 @@ public class TicketService {
 
   /**
    * Find all {@link org.obiba.agate.domain.Ticket}.
+   *
    * @return
    */
   public List<Ticket> findAll() {
     return ticketRepository.findAll();
   }
 
+  /**
+   * Find {@link org.obiba.agate.domain.Ticket} by its token.
+   *
+   * @param token
+   * @return
+   * @throws NoSuchTicketException
+   */
   @NotNull
-  public Ticket findById(@NotNull String id) throws NoSuchTicketException {
-    Ticket ticket = ticketRepository.findOne(id);
-    if(ticket == null) throw NoSuchTicketException.withId(id);
+  public Ticket getTicket(@NotNull String token) throws NoSuchTicketException {
+    Ticket ticket = findByToken(token);
+    if(ticket == null) throw NoSuchTicketException.withToken(token);
     return ticket;
   }
 
+  /**
+   * Get the {@link org.obiba.agate.domain.Ticket} corresponding to the given token.
+   *
+   * @param token
+   * @return null if not found
+   */
+  public Ticket findByToken(@NotNull String token) {
+    List<Ticket> tickets = ticketRepository.findByToken(token);
+    return tickets != null && !tickets.isEmpty() ? tickets.iterator().next() : null;
+  }
+
+  /**
+   * Get all {@link org.obiba.agate.domain.Ticket}s for the user name.
+   *
+   * @param username
+   * @return
+   */
   public List<Ticket> findByUsername(@NotNull String username) {
     return ticketRepository.findByUsername(username);
   }
 
+  /**
+   * Delete the list of {@link org.obiba.agate.domain.Ticket}s.
+   *
+   * @param tickets
+   */
   public void deleteAll(List<Ticket> tickets) {
     if(tickets == null || tickets.isEmpty()) return;
     for(Ticket ticket : tickets) {
@@ -52,7 +82,21 @@ public class TicketService {
     }
   }
 
+  /**
+   * Insert or update the {@link org.obiba.agate.domain.Ticket}. Set the {@link org.obiba.agate.domain.Ticket}'s token if none.
+   *
+   * @param ticket
+   */
   public void save(@NotNull @Valid Ticket ticket) {
+    if(!ticket.hasToken()) {
+      UUID token = UUID.randomUUID();
+      Ticket found = findByToken(token.toString());
+      while(found != null) {
+        token = UUID.randomUUID();
+        found = findByToken(token.toString());
+      }
+      ticket.setToken(token.toString());
+    }
     ticketRepository.save(ticket);
   }
 
@@ -66,8 +110,8 @@ public class TicketService {
    */
   @Scheduled(cron = "0 0 0 * * ?")
   public void removeExpiredRemembered() {
-    removeExpired(ticketRepository
-        .findByCreatedDateBeforeAndRemembered(DateTime.now().minusHours(configurationService.getConfiguration().getLongTimeout() * 3600), true));
+    removeExpired(ticketRepository.findByCreatedDateBeforeAndRemembered(
+        DateTime.now().minusHours(configurationService.getConfiguration().getLongTimeout() * 3600), true));
   }
 
   /**
@@ -76,8 +120,8 @@ public class TicketService {
    */
   @Scheduled(cron = "0 * 0 * * ?")
   public void removeExpiredNotRemembered() {
-    removeExpired(ticketRepository
-        .findByCreatedDateBeforeAndRemembered(DateTime.now().minusHours(configurationService.getConfiguration().getShortTimeout() * 3600), false));
+    removeExpired(ticketRepository.findByCreatedDateBeforeAndRemembered(
+        DateTime.now().minusHours(configurationService.getConfiguration().getShortTimeout() * 3600), false));
   }
 
   private void removeExpired(List<Ticket> tickets) {

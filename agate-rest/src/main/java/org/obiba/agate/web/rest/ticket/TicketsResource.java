@@ -94,10 +94,10 @@ public class TicketsResource extends BaseTicketResource {
       Ticket ticket = createTicket(username, renew, rememberMe, application);
       Configuration configuration = configurationService.getConfiguration();
       int timeout = rememberMe ? configuration.getShortTimeout() : configuration.getLongTimeout();
-      NewCookie cookie = new NewCookie(TICKET_COOKIE_NAME, ticket.getId(), "/", configuration.getDomain(), null, timeout * 3600, false);
-      log.info("Successful Granting Ticket creation for user '{}' with CAS ID: {}", username, ticket.getId());
+      NewCookie cookie = new NewCookie(TICKET_COOKIE_NAME, ticket.getToken(), "/", configuration.getDomain(), null, timeout * 3600, false);
+      log.info("Successful Granting Ticket creation for user '{}' with CAS ID: {}", username, ticket.getToken());
       return Response
-          .created(UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(TicketResource.class).build(ticket.getId()))
+          .created(UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(TicketResource.class).build(ticket.getToken()))
           .header(HttpHeaders.SET_COOKIE, cookie).build();
 
     } catch(AuthenticationException e) {

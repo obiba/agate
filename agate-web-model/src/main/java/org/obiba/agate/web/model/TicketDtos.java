@@ -20,6 +20,7 @@ class TicketDtos {
   Agate.TicketDto asDto(@NotNull Ticket ticket) {
     Agate.TicketDto.Builder builder = Agate.TicketDto.newBuilder();
     builder.setId(ticket.getId()) //
+        .setToken(ticket.getToken()) //
         .setUsername(ticket.getUsername()) //
         .setRemembered(ticket.isRemembered()) //
         .setTimestamps(TimestampsDtos.asDto(ticket));

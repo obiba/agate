@@ -11,6 +11,8 @@ import org.springframework.data.mongodb.repository.MongoRepository;
  */
 public interface TicketRepository extends MongoRepository<Ticket, String> {
 
+  List<Ticket> findByToken(String token);
+
   List<Ticket> findByUsername(String username);
 
   List<Ticket> findByCreatedDateBeforeAndRemembered(DateTime localDate, boolean remembered);

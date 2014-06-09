@@ -20,8 +20,8 @@ public class NoSuchTicketException extends NoSuchElementException {
     super(s);
   }
 
-  public static NoSuchTicketException withId(String id) {
-    return new NoSuchTicketException("Ticket with id '" + id + "' does not exist");
+  public static NoSuchTicketException withToken(String token) {
+    return new NoSuchTicketException("Ticket with token '" + token + "' does not exist");
   }
 
 }

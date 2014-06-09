@@ -12,6 +12,8 @@ package org.obiba.agate.domain;
 
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+
 import org.joda.time.DateTime;
 import org.obiba.mongodb.domain.AbstractAuditableDocument;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -28,12 +30,28 @@ public class Ticket extends AbstractAuditableDocument {
 
   private static final long serialVersionUID = -1309201668631219671L;
 
+  @NotNull
+  @Indexed(unique = true)
+  private String token;
+
   @Indexed
   private String username;
 
   private boolean remembered = false;
 
   private List<Log> logs;
+
+  public String getToken() {
+    return token;
+  }
+
+  public void setToken(String token) {
+    this.token = token;
+  }
+
+  public boolean hasToken() {
+    return token != null;
+  }
 
   public String getUsername() {
     return username;
