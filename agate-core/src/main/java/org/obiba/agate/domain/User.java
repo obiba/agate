@@ -113,6 +113,10 @@ public class User extends AbstractAuditableDocument {
     return groups;
   }
 
+  public boolean hasGroups() {
+    return groups != null && !groups.isEmpty();
+  }
+
   public void setGroups(Set<String> groups) {
     this.groups = groups;
   }
@@ -175,6 +179,11 @@ public class User extends AbstractAuditableDocument {
       return this;
     }
 
+    public Builder role(Roles role) {
+      user.setRole(role);
+      return this;
+    }
+
     public Builder firstName(String name) {
       user.setFirstName(name);
       return this;
@@ -192,6 +201,11 @@ public class User extends AbstractAuditableDocument {
 
     public Builder disabled() {
       user.setEnabled(false);
+      return this;
+    }
+
+    public Builder groups(String... groups) {
+      user.setGroups(Sets.newHashSet(groups));
       return this;
     }
 

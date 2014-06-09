@@ -18,8 +18,6 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.Sets;
-
 @Component
 public class UserSeed implements ApplicationListener<ContextRefreshedEvent> {
 
@@ -28,25 +26,71 @@ public class UserSeed implements ApplicationListener<ContextRefreshedEvent> {
 
   @Override
   public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-    User user = new User();
-    user.setName("test1");
-    user.setPassword(userService.hashPassword("pwel1"));
-    user.setFirstName("Johnny B.");
-    user.setLastName("Good");
-    user.setEmail("test1@patate.com");
-    user.setGroups(Sets.newHashSet("group1", "group2"));
+    User.Builder builder;
 
-    userService.save(user);
+    builder = User.newBuilder() //
+        .name("mica-admin") //
+        .password(userService.hashPassword("password")) //
+        .firstName("Mica") //
+        .lastName("Administrator") //
+        .email("mica@example.org") //
+        .groups("mica-administrator");
 
-    user = new User();
-    user.setName("test2");
-    user.setPassword(userService.hashPassword("pwel2"));
-    user.setFirstName("Michel");
-    user.setLastName("Tremblay");
-    user.setEmail("test2@patate.com");
-    user.setRole(Roles.AGATE_ADMIN);
-    user.setGroups(Sets.newHashSet("group1", "group3", "mica-administrator"));
+    save(builder.build());
 
-    userService.save(user);
+    builder = User.newBuilder() //
+        .name("opal-admin") //
+        .password(userService.hashPassword("password")) //
+        .firstName("Opal") //
+        .lastName("Administrator") //
+        .email("opal@example.org") //
+        .groups("opal-administrator");
+
+    save(builder.build());
+
+    builder = User.newBuilder() //
+        .name("agate-admin") //
+        .password(userService.hashPassword("password")) //
+        .firstName("Agate") //
+        .lastName("Administrator") //
+        .email("agate@example.org") //
+        .role(Roles.AGATE_ADMIN);
+
+    save(builder.build());
+
+    builder = User.newBuilder() //
+        .name("super-admin") //
+        .password(userService.hashPassword("password")) //
+        .firstName("Super") //
+        .lastName("Administrator") //
+        .email("super@example.org") //
+        .role(Roles.AGATE_ADMIN) //
+        .groups("opal-administrator", "mica-administrator");
+
+    save(builder.build());
+
+    builder = User.newBuilder() //
+        .name("user1") //
+        .password(userService.hashPassword("password")) //
+        .firstName("Johnny B.") //
+        .lastName("Good") //
+        .email("user1@example.org") //
+        .groups("group1", "group2");
+
+    save(builder.build());
+
+    builder = User.newBuilder() //
+        .name("user2") //
+        .password(userService.hashPassword("password")) //
+        .firstName("Michel") //
+        .lastName("Tremblay") //
+        .email("user2@example.org") //
+        .groups("group1", "group3");
+
+    save(builder.build());
+  }
+
+  private void save(User user) {
+    if(userService.findUser(user.getName()) == null) userService.save(user);
   }
 }

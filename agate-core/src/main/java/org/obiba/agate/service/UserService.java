@@ -78,9 +78,11 @@ public class UserService {
    */
   public User save(@NotNull User user) {
     userRepository.save(user);
-    for (String groupName : user.getGroups()) {
-      Group group = findGroup(groupName);
-      if (group == null) groupRepository.save(new Group(groupName));
+    if (user.getGroups() != null) {
+      for(String groupName : user.getGroups()) {
+        Group group = findGroup(groupName);
+        if(group == null) groupRepository.save(new Group(groupName));
+      }
     }
     return user;
   }

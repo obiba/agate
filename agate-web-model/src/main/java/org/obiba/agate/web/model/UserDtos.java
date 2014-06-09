@@ -35,7 +35,7 @@ class UserDtos {
     if(!Strings.isNullOrEmpty(user.getFirstName())) builder.setFirstName(user.getFirstName());
     if(!Strings.isNullOrEmpty(user.getLastName())) builder.setLastName(user.getLastName());
     if(!Strings.isNullOrEmpty(user.getEmail())) builder.setEmail(user.getEmail());
-    if(!user.getGroups().isEmpty()) builder.addAllGroups(user.getGroups());
+    if(user.hasGroups()) builder.addAllGroups(user.getGroups());
 
     return builder.build();
   }
