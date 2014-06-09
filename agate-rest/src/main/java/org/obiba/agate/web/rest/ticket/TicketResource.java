@@ -76,7 +76,9 @@ public class TicketResource extends BaseTicketResource {
   }
 
   @DELETE
-  public Response logout() {
+  public Response logout(@QueryParam("application") String application, @QueryParam("key") String key) {
+    validateApplication(application, key);
+
     ticketService.delete(ticket);
     return Response.noContent().build();
   }
