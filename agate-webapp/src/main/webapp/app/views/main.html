@@ -5,11 +5,11 @@
 
       <p><span translate>main.subtitle</span></p>
 
-      <div class="alert alert-success" ng-hide="!(authenticated && hasRole('AGATE_USER'))"
+      <div class="alert alert-success" ng-hide="!(authenticated && hasRole('agate-user'))"
           translate translate-values="{username: '{{subject.login}}'}">
       main.logged.userMessage
       </div>
-      <div class="alert alert-warning" ng-hide="!(authenticated && hasRole('AGATE_ADMIN'))"
+      <div class="alert alert-warning" ng-hide="!(authenticated && hasRole('agate-administrator'))"
           translate translate-values="{username: '{{subject.login}}'}">
         main.logged.adminMessage
       </div>

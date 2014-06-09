@@ -19,28 +19,28 @@ agate.application
           templateUrl: 'app/application/views/application-list.html',
           controller: 'ApplicationListController',
           access: {
-            authorizedRoles: ['AGATE_ADMIN']
+            authorizedRoles: ['agate-administrator']
           }
         })
         .when('/application/new', {
           templateUrl: 'app/application/views/application-form.html',
           controller: 'ApplicationEditController',
           access: {
-            authorizedRoles: ['AGATE_ADMIN']
+            authorizedRoles: ['agate-administrator']
           }
         })
         .when('/application/:id', {
           templateUrl: 'app/application/views/application-view.html',
           controller: 'ApplicationViewController',
           access: {
-            authorizedRoles: ['AGATE_ADMIN']
+            authorizedRoles: ['agate-administrator']
           }
         })
         .when('/application/:id/edit', {
           templateUrl: 'app/application/views/application-form.html',
           controller: 'ApplicationEditController',
           access: {
-            authorizedRoles: ['AGATE_ADMIN']
+            authorizedRoles: ['agate-administrator']
           }
         });
     }]);

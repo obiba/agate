@@ -45,7 +45,7 @@ public class UserSeed implements ApplicationListener<ContextRefreshedEvent> {
     user.setLastName("Tremblay");
     user.setEmail("test2@patate.com");
     user.setRole(Roles.AGATE_ADMIN);
-    user.setGroups(Sets.newHashSet("group1", "group3"));
+    user.setGroups(Sets.newHashSet("group1", "group3", "mica-administrator"));
 
     userService.save(user);
   }

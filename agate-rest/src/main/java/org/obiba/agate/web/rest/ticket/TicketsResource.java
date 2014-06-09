@@ -69,7 +69,7 @@ public class TicketsResource extends BaseTicketResource {
   private UserService userService;
 
   @GET
-  @RequiresRoles("AGATE_ADMIN")
+  @RequiresRoles("agate-administrator")
   public List<Agate.TicketDto> get() {
     ImmutableList.Builder<Agate.TicketDto> builder = ImmutableList.builder();
     for(Ticket ticket : ticketService.findAll()) {

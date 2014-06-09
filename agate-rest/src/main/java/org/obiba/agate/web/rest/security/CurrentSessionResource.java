@@ -47,10 +47,10 @@ public class CurrentSessionResource {
         .setRealm(subject.getPrincipals().getRealmNames().iterator().next());
 
     try {
-      subject.checkRole(Roles.AGATE_ADMIN.name());
-      builder.setRole(Roles.AGATE_ADMIN.name());
+      subject.checkRole(Roles.AGATE_ADMIN.toString());
+      builder.setRole(Roles.AGATE_ADMIN.toString());
     } catch(AuthorizationException e) {
-      builder.setRole(Roles.AGATE_USER.name());
+      builder.setRole(Roles.AGATE_USER.toString());
     }
     
     return builder.build();

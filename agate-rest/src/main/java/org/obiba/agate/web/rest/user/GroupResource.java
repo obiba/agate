@@ -28,7 +28,7 @@ import org.obiba.agate.web.model.Dtos;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiresRoles("AGATE_ADMIN")
+@RequiresRoles("agate-administrator")
 @Path("/group/{id}")
 public class GroupResource {
 

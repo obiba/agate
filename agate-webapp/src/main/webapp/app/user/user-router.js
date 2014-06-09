@@ -8,28 +8,28 @@ agate.user
           templateUrl: 'app/user/views/user-list.html',
           controller: 'UserListController',
           access: {
-            authorizedRoles: ['AGATE_ADMIN']
+            authorizedRoles: ['agate-administrator']
           }
         })
         .when('/user/new', {
           templateUrl: 'app/user/views/user-form.html',
           controller: 'UserEditController',
           access: {
-            authorizedRoles: ['AGATE_ADMIN']
+            authorizedRoles: ['agate-administrator']
           }
         })
         .when('/user/:id', {
           templateUrl: 'app/user/views/user-view.html',
           controller: 'UserViewController',
           access: {
-            authorizedRoles: ['AGATE_ADMIN']
+            authorizedRoles: ['agate-administrator']
           }
         })
         .when('/user/:id/edit', {
           templateUrl: 'app/user/views/user-form.html',
           controller: 'UserEditController',
           access: {
-            authorizedRoles: ['AGATE_ADMIN']
+            authorizedRoles: ['agate-administrator']
           }
         });
     }]);

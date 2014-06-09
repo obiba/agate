@@ -188,8 +188,8 @@
     "enabled": "Enabled",
     "role": "Role",
     "groups": "Groups",
-    "AGATE_ADMIN": "Administrator",
-    "AGATE_USER": "User"
+    "agate-administrator": "Administrator",
+    "agate-user": "User"
   },
   "name": "Name",
   "edit": "Edit",

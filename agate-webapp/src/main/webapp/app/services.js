@@ -2,8 +2,8 @@
 
 agate.constant('USER_ROLES', {
   all: '*',
-  admin: 'AGATE_ADMIN',
-  user: 'AGATE_USER'
+  admin: 'agate-administrator',
+  user: 'agate-user'
 });
 
 /* Services */
@@ -34,7 +34,7 @@ agate.factory('Session', ['$cookieStore',
     this.destroy = function () {
       this.login = null;
       this.role = null;
-      $cookieStore.remove('account');
+      $cookieStore.remove('agate_subject');
       $cookieStore.remove('agatesid');
       $cookieStore.remove('obibaid');
     };
@@ -54,7 +54,7 @@ agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$cookieSto
         }).success(function () {
           CurrentSession.get(function (data) {
             Session.create(data.username, data.role);
-            $cookieStore.put('account', JSON.stringify(Session));
+            $cookieStore.put('agate_subject', JSON.stringify(Session));
             authService.loginConfirmed(data);
           });
         }).error(function () {
@@ -64,8 +64,8 @@ agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$cookieSto
       isAuthenticated: function () {
         if (!Session.login) {
           // check if the user has a cookie
-          if ($cookieStore.get('account') !== null) {
-            var account = JSON.parse($cookieStore.get('account'));
+          if ($cookieStore.get('agate_subject') !== null) {
+            var account = JSON.parse($cookieStore.get('agate_subject'));
             Session.create(account.login, account.role);
             $rootScope.account = Session;
           }

@@ -19,14 +19,14 @@ agate.ticket
           templateUrl: 'app/ticket/views/ticket-list.html',
           controller: 'TicketListController',
           access: {
-            authorizedRoles: ['AGATE_ADMIN']
+            authorizedRoles: ['agate-administrator']
           }
         })
         .when('/ticket/:id', {
           templateUrl: 'app/ticket/views/ticket-view.html',
           controller: 'TicketViewController',
           access: {
-            authorizedRoles: ['AGATE_ADMIN']
+            authorizedRoles: ['agate-administrator']
           }
         });
     }]);

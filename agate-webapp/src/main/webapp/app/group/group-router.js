@@ -19,28 +19,28 @@ agate.group
           templateUrl: 'app/group/views/group-list.html',
           controller: 'GroupListController',
           access: {
-            authorizedRoles: ['AGATE_ADMIN']
+            authorizedRoles: ['agate-administrator']
           }
         })
         .when('/group/new', {
           templateUrl: 'app/group/views/group-form.html',
           controller: 'GroupEditController',
           access: {
-            authorizedRoles: ['AGATE_ADMIN']
+            authorizedRoles: ['agate-administrator']
           }
         })
         .when('/group/:id', {
           templateUrl: 'app/group/views/group-view.html',
           controller: 'GroupViewController',
           access: {
-            authorizedRoles: ['AGATE_ADMIN']
+            authorizedRoles: ['agate-administrator']
           }
         })
         .when('/group/:id/edit', {
           templateUrl: 'app/group/views/group-form.html',
           controller: 'GroupEditController',
           access: {
-            authorizedRoles: ['AGATE_ADMIN']
+            authorizedRoles: ['agate-administrator']
           }
         });
     }]);

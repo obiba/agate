@@ -26,7 +26,7 @@ import org.obiba.agate.web.model.Dtos;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiresRoles("AGATE_ADMIN")
+@RequiresRoles("agate-administrator")
 @Path("/user/{id}")
 public class UserResource extends AbstractUserResource {
 
@@ -38,7 +38,7 @@ public class UserResource extends AbstractUserResource {
 
   @PUT
   @Path("/role")
-  public Response updateRole(@FormParam("role") @DefaultValue("AGATE_USER") String role) {
+  public Response updateRole(@FormParam("role") @DefaultValue("agate-user") String role) {
     User user = userService.getUser(id);
     user.setRole(role);
     userService.save(user);

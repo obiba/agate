@@ -34,7 +34,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 
 @Component
-@RequiresRoles("AGATE_ADMIN")
+@RequiresRoles("agate-administrator")
 @Path("/users")
 public class UsersResource {
 
@@ -57,7 +57,7 @@ public class UsersResource {
 
   @POST
   public Response create(@FormParam("username") String username, @FormParam("password") String password,
-      @FormParam("role") @DefaultValue("AGATE_USER") String role, @FormParam("firstname") String firstName,
+      @FormParam("role") @DefaultValue("agate-user") String role, @FormParam("firstname") String firstName,
       @FormParam("lastname") String lastName, @FormParam("email") String email,
       @FormParam("group") List<String> groups) {
     if(Strings.isNullOrEmpty(username)) throw new BadRequestException("User name cannot be empty");

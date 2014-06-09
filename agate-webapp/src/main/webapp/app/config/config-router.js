@@ -8,14 +8,14 @@ agate.config
           templateUrl: 'app/config/views/config-view.html',
           controller: 'ConfigurationController',
           access: {
-            authorizedRoles: ['AGATE_ADMIN']
+            authorizedRoles: ['agate-administrator']
           }
         })
         .when('/config/edit', {
           templateUrl: 'app/config/views/config-form.html',
           controller: 'ConfigurationEditController',
           access: {
-            authorizedRoles: ['AGATE_ADMIN']
+            authorizedRoles: ['agate-administrator']
           }
         });
     }]);

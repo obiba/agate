@@ -25,8 +25,8 @@ public class ApplicationSeed implements ApplicationListener<ContextRefreshedEven
 
   @Override
   public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-    applicationService.save(new Application("opal", "opal"));
-    applicationService.save(new Application("mica-server", "mica-server"));
-    applicationService.save(new Application("mica-drupal", "mica-drupal"));
+    applicationService.save(new Application("opal", "changeit"));
+    applicationService.save(new Application("mica-server", "changeit"));
+    applicationService.save(new Application("mica-drupal", "changeit"));
   }
 }

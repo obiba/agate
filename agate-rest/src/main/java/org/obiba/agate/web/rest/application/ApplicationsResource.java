@@ -36,7 +36,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 
 @Component
-@RequiresRoles("AGATE_ADMIN")
+@RequiresRoles("agate-administrator")
 @Path("/applications")
 public class ApplicationsResource {
 

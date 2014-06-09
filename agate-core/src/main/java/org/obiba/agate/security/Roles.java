@@ -11,5 +11,16 @@
 package org.obiba.agate.security;
 
 public enum Roles {
-  AGATE_ADMIN, AGATE_USER
+  AGATE_ADMIN {
+    @Override
+    public String toString() {
+      return "agate-administrator";
+    }
+  }, //
+  AGATE_USER {
+    @Override
+    public String toString() {
+      return "agate-user";
+    }
+  }
 }
