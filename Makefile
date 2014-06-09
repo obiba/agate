@@ -17,7 +17,7 @@ help:
 	@echo "  rest        : Install rest module"
 	@echo
 	@echo "  run         : Run webapp module"
-	@echo "  debug       : Debug webapp module on port 8000"
+	@echo "  debug       : Debug webapp module on port 8001"
 	@echo "  grunt       : Start grunt on port 9000"
 	@echo "  npm-install : Download all NodeJS dependencies"
 	@echo
@@ -60,7 +60,7 @@ run-prod:
 	agate-dist-${version}/bin/agate
 
 debug:
-	export MAVEN_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,address=8000,suspend=n && \
+	export MAVEN_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,address=8001,suspend=n && \
 	cd agate-webapp && \
 	${mvn_exec} spring-boot:run -Pdev -Dspring.profiles.active=dev -DAGATE_HOME="${agate_home}" -DAGATE_LOG="${agate_log}"
 
