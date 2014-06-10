@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.mysql.jdbc.StringUtils;
+
 @Service
 public class TicketService {
 
@@ -78,7 +80,7 @@ public class TicketService {
   public void deleteAll(List<Ticket> tickets) {
     if(tickets == null || tickets.isEmpty()) return;
     for(Ticket ticket : tickets) {
-      delete(ticket.getId());
+      deleteById(ticket.getId());
     }
   }
 
@@ -100,8 +102,18 @@ public class TicketService {
     ticketRepository.save(ticket);
   }
 
-  public void delete(@NotNull String id) {
-    ticketRepository.delete(id);
+  /**
+   * Delete a {@link org.obiba.agate.domain.Ticket} if any is matching the given token.
+   *
+   * @param token
+   */
+  public void delete(@NotNull String token) {
+    Ticket ticket = findByToken(token);
+    if(ticket != null) deleteById(ticket.getId());
+  }
+
+  private void deleteById(@NotNull String id) {
+    if(!StringUtils.isNullOrEmpty(id)) ticketRepository.delete(id);
   }
 
   /**

@@ -31,13 +31,13 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component
-@Path("/ticket/{ticket}")
+@Path("/ticket/{token}")
 public class TicketResource extends BaseTicketResource {
 
   private static final Logger log = LoggerFactory.getLogger(TicketResource.class);
 
-  @PathParam("ticket")
-  private String ticket;
+  @PathParam("token")
+  private String token;
 
   @Inject
   private TicketService ticketService;
@@ -50,7 +50,7 @@ public class TicketResource extends BaseTicketResource {
   public AuthDtos.SubjectDto get(@QueryParam("application") String application, @QueryParam("key") String key) {
     validateApplication(application, key);
 
-    Ticket ticket = ticketService.getTicket(this.ticket);
+    Ticket ticket = ticketService.getTicket(token);
     ticket.addLog(application, "subject");
     ticketService.save(ticket);
 
@@ -69,7 +69,7 @@ public class TicketResource extends BaseTicketResource {
   public Response getUsername(@QueryParam("application") String application, @QueryParam("key") String key) {
     validateApplication(application, key);
 
-    Ticket ticket = ticketService.getTicket(this.ticket);
+    Ticket ticket = ticketService.getTicket(token);
     ticket.addLog(application, "validate");
     ticketService.save(ticket);
     return Response.ok().entity(ticket.getUsername()).build();
@@ -79,7 +79,7 @@ public class TicketResource extends BaseTicketResource {
   public Response logout(@QueryParam("application") String application, @QueryParam("key") String key) {
     validateApplication(application, key);
 
-    ticketService.delete(ticket);
+    ticketService.delete(token);
     return Response.noContent().build();
   }
 
