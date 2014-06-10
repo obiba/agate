@@ -1,6 +1,14 @@
+# used for developement when application is run with dev profile
 server:
     port: 8081
     address: localhost
+
+https:
+    port: 8444
+    keystore:
+        file: classpath:/keystore.p12
+        password: changeit
+        type: PKCS12
 
 spring:
     profiles: dev
