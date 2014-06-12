@@ -13,7 +13,9 @@ package org.obiba.agate.web.rest.ticket;
 import javax.inject.Inject;
 import javax.ws.rs.ForbiddenException;
 
+import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.service.ApplicationService;
+import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.web.model.Dtos;
 
 public class BaseTicketResource {
@@ -22,9 +24,16 @@ public class BaseTicketResource {
   private ApplicationService applicationService;
 
   @Inject
+  private ConfigurationService configurationService;
+
+  @Inject
   protected Dtos dtos;
 
   protected void validateApplication(String name, String key) {
     if(!applicationService.isValid(name, key)) throw new ForbiddenException();
+  }
+
+  protected Configuration getConfiguration() {
+    return configurationService.getConfiguration();
   }
 }

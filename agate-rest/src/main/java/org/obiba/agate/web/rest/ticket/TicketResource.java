@@ -16,6 +16,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 
 import org.obiba.agate.domain.Ticket;
@@ -78,9 +80,11 @@ public class TicketResource extends BaseTicketResource {
   @DELETE
   public Response logout(@QueryParam("application") String application, @QueryParam("key") String key) {
     validateApplication(application, key);
-
     ticketService.delete(token);
-    return Response.noContent().build();
+
+    return Response.noContent().header(HttpHeaders.SET_COOKIE,
+        new NewCookie(TicketsResource.TICKET_COOKIE_NAME, null, "/", getConfiguration().getDomain(),
+            "Obiba session deleted", 0, false)).build();
   }
 
 }

@@ -27,7 +27,7 @@ public class ApplicationSeed implements ApplicationListener<ContextRefreshedEven
   public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
     save(new Application("opal", "changeit"));
     save(new Application("mica-server", "changeit"));
-    save(new Application("mica-drupal", "changeit"));
+    save(new Application("drupal", "changeit"));
   }
 
   private void save(Application application) {

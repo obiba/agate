@@ -36,7 +36,7 @@ import org.apache.shiro.subject.Subject;
 import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
-import org.obiba.agate.service.ConfigurationService;
+import org.obiba.agate.security.AgateUserRealm;
 import org.obiba.agate.service.TicketService;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.model.Agate;
@@ -59,8 +59,6 @@ public class TicketsResource extends BaseTicketResource {
 
   public static final String TICKET_COOKIE_NAME = "obibaid";
 
-  @Inject
-  private ConfigurationService configurationService;
 
   @Inject
   private TicketService ticketService;
@@ -86,15 +84,18 @@ public class TicketsResource extends BaseTicketResource {
 
     validateApplication(application, key);
 
+    Subject subject = SecurityUtils.getSubject();
     try {
-      Subject subject = SecurityUtils.getSubject();
       subject.login(new UsernamePasswordToken(username, password));
-      subject.logout();
+      if(!subject.getPrincipals().getRealmNames().contains(AgateUserRealm.AGATE_REALM)) {
+        throw new ForbiddenException();
+      }
 
       Ticket ticket = createTicket(username, renew, rememberMe, application);
-      Configuration configuration = configurationService.getConfiguration();
-      int timeout = rememberMe ? configuration.getShortTimeout() : configuration.getLongTimeout();
-      NewCookie cookie = new NewCookie(TICKET_COOKIE_NAME, ticket.getToken(), "/", configuration.getDomain(), null, timeout * 3600, false);
+      Configuration configuration = getConfiguration();
+      int timeout = rememberMe ? configuration.getLongTimeout() : configuration.getShortTimeout();
+      NewCookie cookie = new NewCookie(TICKET_COOKIE_NAME, ticket.getToken(), "/", configuration.getDomain(), null,
+          timeout * 3600, false);
       log.info("Successful Granting Ticket creation for user '{}' with CAS ID: {}", username, ticket.getToken());
       return Response
           .created(UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(TicketResource.class).build(ticket.getToken()))
@@ -105,6 +106,8 @@ public class TicketsResource extends BaseTicketResource {
           e.getMessage());
       // When a request contains credentials and they are invalid, the a 403 (Forbidden) should be returned.
       throw new ForbiddenException();
+    } finally {
+      subject.logout();
     }
   }
 
