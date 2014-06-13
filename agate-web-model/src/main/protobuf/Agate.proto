@@ -9,7 +9,7 @@ message SessionDto {
 }
 
 message TicketDto {
-  message Log {
+  message Event {
     required string application = 1;
     required string action = 2;
     required string time = 3;
@@ -19,7 +19,7 @@ message TicketDto {
   required string token = 3;
   required string username = 4;
   required bool remembered = 5;
-  repeated Log logs = 6;
+  repeated Event events = 6;
   optional string expires = 7;
 }
 

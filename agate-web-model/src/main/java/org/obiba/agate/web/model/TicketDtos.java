@@ -25,11 +25,11 @@ class TicketDtos {
         .setRemembered(ticket.isRemembered()) //
         .setTimestamps(TimestampsDtos.asDto(ticket));
 
-    for(Ticket.Log log : ticket.getLogs()) {
-      builder.addLogs(Agate.TicketDto.Log.newBuilder() //
-          .setApplication(log.getApplication()) //
-          .setAction(log.getAction()) //
-          .setTime(log.getTime().toString()));
+    for(Ticket.Event event : ticket.getEvents()) {
+      builder.addEvents(Agate.TicketDto.Event.newBuilder() //
+          .setApplication(event.getApplication()) //
+          .setAction(event.getAction()) //
+          .setTime(event.getTime().toString()));
     }
 
     Configuration configuration = configurationService.getConfiguration();

@@ -39,7 +39,7 @@ public class Ticket extends AbstractAuditableDocument {
 
   private boolean remembered = false;
 
-  private List<Log> logs;
+  private List<Event> events;
 
   public String getToken() {
     return token;
@@ -69,16 +69,16 @@ public class Ticket extends AbstractAuditableDocument {
     this.remembered = remembered;
   }
 
-  public List<Log> getLogs() {
-    return logs == null ? logs = Lists.newArrayList() : logs;
+  public List<Event> getEvents() {
+    return events == null ? events = Lists.newArrayList() : events;
   }
 
-  public void setLogs(List<Log> logs) {
-    this.logs = logs;
+  public void setEvents(List<Event> events) {
+    this.events = events;
   }
 
-  public void addLog(String application, String action) {
-    getLogs().add(new Log(application, action));
+  public void addEvent(String application, String action) {
+    getEvents().add(new Event(application, action));
   }
 
   @Override
@@ -87,17 +87,17 @@ public class Ticket extends AbstractAuditableDocument {
         .add("remembered", remembered);
   }
 
-  public static class Log {
+  public static class Event {
     private String application;
 
     private String action;
 
     private DateTime time = DateTime.now();
 
-    public Log() {
+    public Event() {
     }
 
-    public Log(String application, String action) {
+    public Event(String application, String action) {
       this.application = application;
       this.action = action;
     }

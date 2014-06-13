@@ -54,7 +54,7 @@ public class TicketResource extends BaseTicketResource {
     validateApplication(servletRequest);
 
     Ticket ticket = ticketService.getTicket(token);
-    ticket.addLog(getApplicationName(), "subject");
+    ticket.addEvent(getApplicationName(), "subject");
     ticketService.save(ticket);
 
     User user = userService.findUser(ticket.getUsername());
@@ -73,7 +73,7 @@ public class TicketResource extends BaseTicketResource {
     validateApplication(servletRequest);
 
     Ticket ticket = ticketService.getTicket(token);
-    ticket.addLog(getApplicationName(), "validate");
+    ticket.addEvent(getApplicationName(), "validate");
     ticketService.save(ticket);
     return Response.ok().entity(ticket.getUsername()).build();
   }

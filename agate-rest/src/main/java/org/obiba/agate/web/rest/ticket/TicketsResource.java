@@ -137,7 +137,7 @@ public class TicketsResource extends BaseTicketResource {
       ticket = tickets.get(0);
     }
     ticket.setRemembered(rememberMe);
-    ticket.addLog(application, "login");
+    ticket.addEvent(application, "login");
     ticketService.save(ticket);
 
     return ticket;
