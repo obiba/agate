@@ -11,12 +11,15 @@
 package org.obiba.agate.web.rest.ticket;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.ForbiddenException;
 
 import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.service.ApplicationService;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.web.model.Dtos;
+import org.obiba.shiro.authc.HttpAuthorizationToken;
+import org.obiba.shiro.realm.ObibaRealm;
 
 public class BaseTicketResource {
 
@@ -29,8 +32,23 @@ public class BaseTicketResource {
   @Inject
   protected Dtos dtos;
 
-  protected void validateApplication(String name, String key) {
+  private String applicationName;
+
+  protected void validateApplication(HttpServletRequest servletRequest) {
+    String appAuthHeader = servletRequest.getHeader(ObibaRealm.APPLICATION_AUTH_HEADER);
+    if (appAuthHeader == null) throw new ForbiddenException();
+
+    HttpAuthorizationToken token = new HttpAuthorizationToken(ObibaRealm.APPLICATION_AUTH_SCHEMA, appAuthHeader);
+    validateApplicationParameters(token.getUsername(), new String(token.getPassword()));
+  }
+
+  private void validateApplicationParameters(String name, String key) {
     if(!applicationService.isValid(name, key)) throw new ForbiddenException();
+    applicationName = name;
+  }
+
+  protected String getApplicationName() {
+    return applicationName;
   }
 
   protected Configuration getConfiguration() {

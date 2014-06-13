@@ -11,11 +11,12 @@
 package org.obiba.agate.web.rest.ticket;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
@@ -49,11 +50,11 @@ public class TicketResource extends BaseTicketResource {
 
   @GET
   @Path("/subject")
-  public AuthDtos.SubjectDto get(@QueryParam("application") String application, @QueryParam("key") String key) {
-    validateApplication(application, key);
+  public AuthDtos.SubjectDto get(@Context HttpServletRequest servletRequest) {
+    validateApplication(servletRequest);
 
     Ticket ticket = ticketService.getTicket(token);
-    ticket.addLog(application, "subject");
+    ticket.addLog(getApplicationName(), "subject");
     ticketService.save(ticket);
 
     User user = userService.findUser(ticket.getUsername());
@@ -68,18 +69,19 @@ public class TicketResource extends BaseTicketResource {
 
   @GET
   @Path("/username")
-  public Response getUsername(@QueryParam("application") String application, @QueryParam("key") String key) {
-    validateApplication(application, key);
+  public Response getUsername(@Context HttpServletRequest servletRequest) {
+    validateApplication(servletRequest);
 
     Ticket ticket = ticketService.getTicket(token);
-    ticket.addLog(application, "validate");
+    ticket.addLog(getApplicationName(), "validate");
     ticketService.save(ticket);
     return Response.ok().entity(ticket.getUsername()).build();
   }
 
   @DELETE
-  public Response logout(@QueryParam("application") String application, @QueryParam("key") String key) {
-    validateApplication(application, key);
+  public Response logout(@Context HttpServletRequest servletRequest) {
+    validateApplication(servletRequest);
+
     ticketService.delete(token);
 
     return Response.noContent().header(HttpHeaders.SET_COOKIE,

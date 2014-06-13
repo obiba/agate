@@ -59,7 +59,6 @@ public class TicketsResource extends BaseTicketResource {
 
   public static final String TICKET_COOKIE_NAME = "obibaid";
 
-
   @Inject
   private TicketService ticketService;
 
@@ -77,12 +76,12 @@ public class TicketsResource extends BaseTicketResource {
   }
 
   @POST
-  public Response login(@SuppressWarnings("TypeMayBeWeakened") @Context HttpServletRequest servletRequest,
+  public Response login(@Context HttpServletRequest servletRequest,
       @QueryParam("rememberMe") @DefaultValue("false") boolean rememberMe,
-      @QueryParam("renew") @DefaultValue("false") boolean renew, @QueryParam("application") String application,
-      @QueryParam("key") String key, @FormParam("username") String username, @FormParam("password") String password) {
+      @QueryParam("renew") @DefaultValue("false") boolean renew, @FormParam("username") String username,
+      @FormParam("password") String password) {
 
-    validateApplication(application, key);
+    validateApplication(servletRequest);
 
     Subject subject = SecurityUtils.getSubject();
     try {
@@ -91,7 +90,7 @@ public class TicketsResource extends BaseTicketResource {
         throw new ForbiddenException();
       }
 
-      Ticket ticket = createTicket(username, renew, rememberMe, application);
+      Ticket ticket = createTicket(username, renew, rememberMe, getApplicationName());
       Configuration configuration = getConfiguration();
       int timeout = rememberMe ? configuration.getLongTimeout() : configuration.getShortTimeout();
       NewCookie cookie = new NewCookie(TICKET_COOKIE_NAME, ticket.getToken(), "/", configuration.getDomain(), null,
@@ -113,9 +112,10 @@ public class TicketsResource extends BaseTicketResource {
 
   @GET
   @Path("/subject/{username}")
-  public AuthDtos.SubjectDto get(@PathParam("username") String username, @QueryParam("application") String application,
-      @QueryParam("key") String key) {
-    validateApplication(application, key);
+  public AuthDtos.SubjectDto get(@Context HttpServletRequest servletRequest, @PathParam("username") String username,
+      @QueryParam("application") String application, @QueryParam("key") String key) {
+    validateApplication(servletRequest);
+
     User user = userService.findUser(username);
     AuthDtos.SubjectDto subject;
     if(user != null) {
