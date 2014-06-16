@@ -13,11 +13,7 @@
   <artifactId>agate-dist</artifactId>
 
   <dependencies>
-
-    <dependency>
-      <groupId>org.obiba.agate</groupId>
-      <artifactId>agate-webapp</artifactId>
-    </dependency>
+  	
     <dependency>
       <groupId>org.obiba.agate</groupId>
       <artifactId>agate-webapp</artifactId>
