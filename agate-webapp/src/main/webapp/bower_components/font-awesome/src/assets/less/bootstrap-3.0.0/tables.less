@@ -2,15 +2,14 @@
 // Tables
 // --------------------------------------------------
 
-
 table {
   max-width: 100%;
   background-color: @table-bg;
 }
+
 th {
   text-align: left;
 }
-
 
 // Baseline styles
 
@@ -57,7 +56,6 @@ th {
   }
 }
 
-
 // Condensed table w/ half padding
 
 .table-condensed {
@@ -72,7 +70,6 @@ th {
     }
   }
 }
-
 
 // Bordered version
 //
@@ -100,7 +97,6 @@ th {
   }
 }
 
-
 // Zebra-striping
 //
 // Default zebra-stripe styles (alternating gray and transparent backgrounds)
@@ -115,7 +111,6 @@ th {
     }
   }
 }
-
 
 // Hover effect
 //
@@ -132,7 +127,6 @@ th {
   }
 }
 
-
 // Table cell sizing
 //
 // Reset default table behavior
@@ -141,6 +135,7 @@ table col[class*="col-"] {
   float: none;
   display: table-column;
 }
+
 table {
   td,
   th {
@@ -150,7 +145,6 @@ table {
     }
   }
 }
-
 
 // Table backgrounds
 //
@@ -163,7 +157,7 @@ table {
   > td.active,
   > th.active,
   &.active > td,
-  &.active > th  {
+  &.active > th {
     background-color: @table-bg-active;
   }
 }
@@ -172,7 +166,6 @@ table {
 .table-row-variant(success; @state-success-bg; @state-success-border);
 .table-row-variant(danger; @state-danger-bg; @state-danger-border);
 .table-row-variant(warning; @state-warning-bg; @state-warning-border);
-
 
 // Responsive tables
 //

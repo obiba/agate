@@ -2,7 +2,6 @@
 // Carousel
 // --------------------------------------------------
 
-
 // Wrapper for the slide container and indicators
 .carousel {
   position: relative;
@@ -28,7 +27,9 @@
 
   > .active,
   > .next,
-  > .prev { display: block; }
+  > .prev {
+    display: block;
+  }
 
   > .active {
     left: 0;
@@ -109,7 +110,7 @@
   }
   .icon-prev,
   .icon-next {
-    width:  20px;
+    width: 20px;
     height: 20px;
     margin-top: -10px;
     margin-left: -10px;
@@ -118,12 +119,12 @@
 
   .icon-prev {
     &:before {
-      content: '\2039';// SINGLE LEFT-POINTING ANGLE QUOTATION MARK (U+2039)
+      content: '\2039'; // SINGLE LEFT-POINTING ANGLE QUOTATION MARK (U+2039)
     }
   }
   .icon-next {
     &:before {
-      content: '\203a';// SINGLE RIGHT-POINTING ANGLE QUOTATION MARK (U+203A)
+      content: '\203a'; // SINGLE RIGHT-POINTING ANGLE QUOTATION MARK (U+203A)
     }
   }
 }
@@ -146,7 +147,7 @@
 
   li {
     display: inline-block;
-    width:  10px;
+    width: 10px;
     height: 10px;
     margin: 1px;
     text-indent: -999px;
@@ -156,7 +157,7 @@
   }
   .active {
     margin: 0;
-    width:  12px;
+    width: 12px;
     height: 12px;
     background-color: @carousel-indicator-active-bg;
   }
@@ -180,7 +181,6 @@
     text-shadow: none; // No shadow for button elements in carousel-caption
   }
 }
-
 
 // Scale up controls for tablets and up
 @media screen and (min-width: @screen-tablet) {

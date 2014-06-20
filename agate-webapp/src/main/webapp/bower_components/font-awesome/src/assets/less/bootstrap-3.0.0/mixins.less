@@ -2,7 +2,6 @@
 // Mixins
 // --------------------------------------------------
 
-
 // Utilities
 // -------------------------
 
@@ -48,16 +47,29 @@
   width: @width;
   height: @height;
 }
+
 .square(@size) {
   .size(@size; @size);
 }
 
 // Placeholder text
 .placeholder(@color: @input-color-placeholder) {
-  &:-moz-placeholder            { color: @color; } // Firefox 4-18
-  &::-moz-placeholder           { color: @color; } // Firefox 19+
-  &:-ms-input-placeholder       { color: @color; } // Internet Explorer 10+
-  &::-webkit-input-placeholder  { color: @color; } // Safari and Chrome
+  &:-moz-placeholder {
+    color: @color;
+  }
+  // Firefox 4-18
+  &::-moz-placeholder {
+    color: @color;
+  }
+  // Firefox 19+
+  &:-ms-input-placeholder {
+    color: @color;
+  }
+  // Internet Explorer 10+
+  &::-webkit-input-placeholder {
+    color: @color;
+  }
+  // Safari and Chrome
 }
 
 // Text overflow
@@ -78,106 +90,114 @@
   border: 0;
 }
 
-
-
 // CSS3 PROPERTIES
 // --------------------------------------------------
 
 // Single side border-radius
 .border-top-radius(@radius) {
   border-top-right-radius: @radius;
-   border-top-left-radius: @radius;
+  border-top-left-radius: @radius;
 }
+
 .border-right-radius(@radius) {
   border-bottom-right-radius: @radius;
-     border-top-right-radius: @radius;
+  border-top-right-radius: @radius;
 }
+
 .border-bottom-radius(@radius) {
   border-bottom-right-radius: @radius;
-   border-bottom-left-radius: @radius;
+  border-bottom-left-radius: @radius;
 }
+
 .border-left-radius(@radius) {
   border-bottom-left-radius: @radius;
-     border-top-left-radius: @radius;
+  border-top-left-radius: @radius;
 }
 
 // Drop shadows
 .box-shadow(@shadow) {
   -webkit-box-shadow: @shadow; // iOS <4.3 & Android <4.1
-          box-shadow: @shadow;
+  box-shadow: @shadow;
 }
 
 // Transitions
 .transition(@transition) {
   -webkit-transition: @transition;
-          transition: @transition;
+  transition: @transition;
 }
+
 .transition-delay(@transition-delay) {
   -webkit-transition-delay: @transition-delay;
-          transition-delay: @transition-delay;
+  transition-delay: @transition-delay;
 }
+
 .transition-duration(@transition-duration) {
   -webkit-transition-duration: @transition-duration;
-          transition-duration: @transition-duration;
+  transition-duration: @transition-duration;
 }
+
 .transition-transform(@transition) {
   -webkit-transition: -webkit-transform @transition;
-     -moz-transition: -moz-transform @transition;
-       -o-transition: -o-transform @transition;
-          transition: transform @transition;
+  -moz-transition: -moz-transform @transition;
+  -o-transition: -o-transform @transition;
+  transition: transform @transition;
 }
 
 // Transformations
 .rotate(@degrees) {
   -webkit-transform: rotate(@degrees);
-      -ms-transform: rotate(@degrees); // IE9+
-          transform: rotate(@degrees);
+  -ms-transform: rotate(@degrees); // IE9+
+  transform: rotate(@degrees);
 }
+
 .scale(@ratio) {
   -webkit-transform: scale(@ratio);
-      -ms-transform: scale(@ratio); // IE9+
-          transform: scale(@ratio);
+  -ms-transform: scale(@ratio); // IE9+
+  transform: scale(@ratio);
 }
+
 .translate(@x; @y) {
   -webkit-transform: translate(@x, @y);
-      -ms-transform: translate(@x, @y); // IE9+
-          transform: translate(@x, @y);
+  -ms-transform: translate(@x, @y); // IE9+
+  transform: translate(@x, @y);
 }
+
 .skew(@x; @y) {
   -webkit-transform: skew(@x, @y);
-      -ms-transform: skewX(@x) skewY(@y); // See https://github.com/twbs/bootstrap/issues/4885; IE9+
-          transform: skew(@x, @y);
+  -ms-transform: skewX(@x) skewY(@y); // See https://github.com/twbs/bootstrap/issues/4885; IE9+
+  transform: skew(@x, @y);
 }
+
 .translate3d(@x; @y; @z) {
   -webkit-transform: translate3d(@x, @y, @z);
-          transform: translate3d(@x, @y, @z);
+  transform: translate3d(@x, @y, @z);
 }
 
 // Backface visibility
 // Prevent browsers from flickering when using CSS 3D transforms.
 // Default value is `visible`, but can be changed to `hidden`
 // See git pull https://github.com/dannykeane/bootstrap.git backface-visibility for examples
-.backface-visibility(@visibility){
+.backface-visibility(@visibility) {
   -webkit-backface-visibility: @visibility;
-     -moz-backface-visibility: @visibility;
-          backface-visibility: @visibility;
+  -moz-backface-visibility: @visibility;
+  backface-visibility: @visibility;
 }
 
 // Box sizing
 .box-sizing(@boxmodel) {
   -webkit-box-sizing: @boxmodel;
-     -moz-box-sizing: @boxmodel;
-          box-sizing: @boxmodel;
+  -moz-box-sizing: @boxmodel;
+  box-sizing: @boxmodel;
 }
 
 // User select
 // For selecting text on the page
 .user-select(@select) {
   -webkit-user-select: @select;
-     -moz-user-select: @select;
-      -ms-user-select: @select; // IE10+
-       -o-user-select: @select;
-          user-select: @select;
+  -moz-user-select: @select;
+  -ms-user-select: @select; // IE10+
+  -o-user-select: @select;
+  user-select: @select;
 }
 
 // Resize anything
@@ -189,21 +209,21 @@
 // CSS3 Content Columns
 .content-columns(@column-count; @column-gap: @grid-gutter-width) {
   -webkit-column-count: @column-count;
-     -moz-column-count: @column-count;
-          column-count: @column-count;
+  -moz-column-count: @column-count;
+  column-count: @column-count;
   -webkit-column-gap: @column-gap;
-     -moz-column-gap: @column-gap;
-          column-gap: @column-gap;
+  -moz-column-gap: @column-gap;
+  column-gap: @column-gap;
 }
 
 // Optional hyphenation
 .hyphens(@mode: auto) {
   word-wrap: break-word;
   -webkit-hyphens: @mode;
-     -moz-hyphens: @mode;
-      -ms-hyphens: @mode; // IE10+
-       -o-hyphens: @mode;
-          hyphens: @mode;
+  -moz-hyphens: @mode;
+  -ms-hyphens: @mode; // IE10+
+  -o-hyphens: @mode;
+  hyphens: @mode;
 }
 
 // Opacity
@@ -213,8 +233,6 @@
   @opacity-ie: (@opacity * 100);
   filter: ~"alpha(opacity=@{opacity-ie})";
 }
-
-
 
 // GRADIENTS
 // --------------------------------------------------
@@ -229,9 +247,9 @@
     background-image: -webkit-gradient(linear, @start-percent top, @end-percent top, from(@start-color), to(@end-color)); // Safari 4+, Chrome 2+
     background-image: -webkit-linear-gradient(left, color-stop(@start-color @start-percent), color-stop(@end-color @end-percent)); // Safari 5.1+, Chrome 10+
     background-image: -moz-linear-gradient(left, @start-color @start-percent, @end-color @end-percent); // FF 3.6+
-    background-image:  linear-gradient(to right, @start-color @start-percent, @end-color @end-percent); // Standard, IE10
+    background-image: linear-gradient(to right, @start-color @start-percent, @end-color @end-percent); // Standard, IE10
     background-repeat: repeat-x;
-    filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=1)",argb(@start-color),argb(@end-color))); // IE9 and down
+    filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=1)",argb(@start-color), argb(@end-color))); // IE9 and down
   }
 
   // Vertical gradient, from top to bottom
@@ -241,10 +259,10 @@
   .vertical(@start-color: #555; @end-color: #333; @start-percent: 0%; @end-percent: 100%) {
     background-image: -webkit-gradient(linear, left @start-percent, left @end-percent, from(@start-color), to(@end-color)); // Safari 4+, Chrome 2+
     background-image: -webkit-linear-gradient(top, @start-color, @start-percent, @end-color, @end-percent); // Safari 5.1+, Chrome 10+
-    background-image:  -moz-linear-gradient(top, @start-color @start-percent, @end-color @end-percent); // FF 3.6+
+    background-image: -moz-linear-gradient(top, @start-color @start-percent, @end-color @end-percent); // FF 3.6+
     background-image: linear-gradient(to bottom, @start-color @start-percent, @end-color @end-percent); // Standard, IE10
     background-repeat: repeat-x;
-    filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=0)",argb(@start-color),argb(@end-color))); // IE9 and down
+    filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=0)",argb(@start-color), argb(@end-color))); // IE9 and down
   }
 
   .directional(@start-color: #555; @end-color: #333; @deg: 45deg) {
@@ -259,7 +277,7 @@
     background-image: -moz-linear-gradient(left, @start-color, @mid-color @color-stop, @end-color);
     background-image: linear-gradient(to right, @start-color, @mid-color @color-stop, @end-color);
     background-repeat: no-repeat;
-    filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=1)",argb(@start-color),argb(@end-color))); // IE9 and down, gets no color-stop at all for proper fallback
+    filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=1)",argb(@start-color), argb(@end-color))); // IE9 and down, gets no color-stop at all for proper fallback
   }
   .vertical-three-colors(@start-color: #00b3ee; @mid-color: #7a43b6; @color-stop: 50%; @end-color: #c3325f) {
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(@start-color), color-stop(@color-stop, @mid-color), to(@end-color));
@@ -267,7 +285,7 @@
     background-image: -moz-linear-gradient(top, @start-color, @mid-color @color-stop, @end-color);
     background-image: linear-gradient(@start-color, @mid-color @color-stop, @end-color);
     background-repeat: no-repeat;
-    filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=0)",argb(@start-color),argb(@end-color))); // IE9 and down, gets no color-stop at all for proper fallback
+    filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=0)",argb(@start-color), argb(@end-color))); // IE9 and down, gets no color-stop at all for proper fallback
   }
   .radial(@inner-color: #555; @outer-color: #333) {
     background-image: -webkit-gradient(radial, center center, 0, center center, 460, from(@inner-color), to(@outer-color));
@@ -277,10 +295,10 @@
     background-repeat: no-repeat;
   }
   .striped(@color: #555; @angle: 45deg) {
-    background-image: -webkit-gradient(linear, 0 100%, 100% 0, color-stop(.25, rgba(255,255,255,.15)), color-stop(.25, transparent), color-stop(.5, transparent), color-stop(.5, rgba(255,255,255,.15)), color-stop(.75, rgba(255,255,255,.15)), color-stop(.75, transparent), to(transparent));
-    background-image: -webkit-linear-gradient(@angle, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent);
-    background-image: -moz-linear-gradient(@angle, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent);
-    background-image: linear-gradient(@angle, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent);
+    background-image: -webkit-gradient(linear, 0 100%, 100% 0, color-stop(.25, rgba(255, 255, 255, .15)), color-stop(.25, transparent), color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .15)), color-stop(.75, rgba(255, 255, 255, .15)), color-stop(.75, transparent), to(transparent));
+    background-image: -webkit-linear-gradient(@angle, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+    background-image: -moz-linear-gradient(@angle, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+    background-image: linear-gradient(@angle, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
   }
 }
 
@@ -292,8 +310,6 @@
   filter: e(%("progid:DXImageTransform.Microsoft.gradient(enabled = false)"));
 }
 
-
-
 // Retina images
 //
 // Short retina mixin for setting background-image and -size
@@ -301,18 +317,11 @@
 .img-retina(@file-1x; @file-2x; @width-1x; @height-1x) {
   background-image: url("@{file-1x}");
 
-  @media
-  only screen and (-webkit-min-device-pixel-ratio: 2),
-  only screen and (   min--moz-device-pixel-ratio: 2),
-  only screen and (     -o-min-device-pixel-ratio: 2/1),
-  only screen and (        min-device-pixel-ratio: 2),
-  only screen and (                min-resolution: 192dpi),
-  only screen and (                min-resolution: 2dppx) {
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (   min--moz-device-pixel-ratio: 2), only screen and (     -o-min-device-pixel-ratio: 2/1), only screen and (        min-device-pixel-ratio: 2), only screen and (                min-resolution: 192dpi), only screen and (                min-resolution: 2dppx) {
     background-image: url("@{file-2x}");
     background-size: @width-1x @height-1x;
   }
 }
-
 
 // Responsive image
 //
@@ -323,7 +332,6 @@
   max-width: 100%; // Part 1: Set a maximum relative to the parent
   height: auto; // Part 2: Scale the height according to the width, otherwise you get stretching
 }
-
 
 // COMPONENT MIXINS
 // --------------------------------------------------
@@ -413,14 +421,14 @@
   &:focus,
   &:active,
   &.active,
-  .open .dropdown-toggle& {
+  .open .dropdown-toggle & {
     color: @color;
     background-color: darken(@background, 8%);
-        border-color: darken(@border, 12%);
+    border-color: darken(@border, 12%);
   }
   &:active,
   &.active,
-  .open .dropdown-toggle& {
+  .open .dropdown-toggle & {
     background-image: none;
   }
   &.disabled,
@@ -432,7 +440,7 @@
     &:active,
     &.active {
       background-color: @background;
-          border-color: @border
+      border-color: @border
     }
   }
 }
@@ -505,16 +513,24 @@
 // More easily include all the states for responsive-utilities.less.
 .responsive-visibility() {
   display: block !important;
-  tr& { display: table-row !important; }
+  tr& {
+    display: table-row !important;
+  }
   th&,
-  td& { display: table-cell !important; }
+  td& {
+    display: table-cell !important;
+  }
 }
 
 .responsive-invisibility() {
   display: none !important;
-  tr& { display: none !important; }
+  tr& {
+    display: none !important;
+  }
   th&,
-  td& { display: none !important; }
+  td& {
+    display: none !important;
+  }
 }
 
 // Grid System
@@ -524,14 +540,14 @@
 .container-fixed() {
   margin-right: auto;
   margin-left: auto;
-  padding-left:  (@grid-gutter-width / 2);
+  padding-left: (@grid-gutter-width / 2);
   padding-right: (@grid-gutter-width / 2);
   .clearfix();
 }
 
 // Creates a wrapper for a series of columns
 .make-row(@gutter: @grid-gutter-width) {
-  margin-left:  (@gutter / -2);
+  margin-left: (@gutter / -2);
   margin-right: (@gutter / -2);
   .clearfix();
 }
@@ -544,7 +560,7 @@
   // Prevent columns from collapsing when empty
   min-height: 1px;
   // Inner gutter via padding
-  padding-left:  (@gutter / 2);
+  padding-left: (@gutter / 2);
   padding-right: (@gutter / 2);
 }
 
@@ -554,7 +570,7 @@
   // Prevent columns from collapsing when empty
   min-height: 1px;
   // Inner gutter via padding
-  padding-left:  (@gutter / 2);
+  padding-left: (@gutter / 2);
   padding-right: (@gutter / 2);
 
   // Calculate width based on number of columns available
@@ -570,11 +586,13 @@
     margin-left: percentage((@columns / @grid-columns));
   }
 }
+
 .make-sm-column-push(@columns) {
   @media (min-width: @screen-sm) {
     left: percentage((@columns / @grid-columns));
   }
 }
+
 .make-sm-column-pull(@columns) {
   @media (min-width: @screen-sm) {
     right: percentage((@columns / @grid-columns));
@@ -587,7 +605,7 @@
   // Prevent columns from collapsing when empty
   min-height: 1px;
   // Inner gutter via padding
-  padding-left:  (@gutter / 2);
+  padding-left: (@gutter / 2);
   padding-right: (@gutter / 2);
 
   // Calculate width based on number of columns available
@@ -603,11 +621,13 @@
     margin-left: percentage((@columns / @grid-columns));
   }
 }
+
 .make-md-column-push(@columns) {
   @media (min-width: @screen-md) {
     left: percentage((@columns / @grid-columns));
   }
 }
+
 .make-md-column-pull(@columns) {
   @media (min-width: @screen-md) {
     right: percentage((@columns / @grid-columns));
@@ -620,7 +640,7 @@
   // Prevent columns from collapsing when empty
   min-height: 1px;
   // Inner gutter via padding
-  padding-left:  (@gutter / 2);
+  padding-left: (@gutter / 2);
   padding-right: (@gutter / 2);
 
   // Calculate width based on number of columns available
@@ -636,17 +656,18 @@
     margin-left: percentage((@columns / @grid-columns));
   }
 }
+
 .make-lg-column-push(@columns) {
   @media (min-width: @screen-lg) {
     left: percentage((@columns / @grid-columns));
   }
 }
+
 .make-lg-column-pull(@columns) {
   @media (min-width: @screen-lg) {
     right: percentage((@columns / @grid-columns));
   }
 }
-
 
 // Form validation states
 //
@@ -662,10 +683,10 @@
   // Set the border and box shadow on specific inputs to match
   .form-control {
     border-color: @border-color;
-    .box-shadow(inset 0 1px 1px rgba(0,0,0,.075)); // Redeclare so transitions work
+    .box-shadow(inset 0 1px 1px rgba(0, 0, 0, .075)); // Redeclare so transitions work
     &:focus {
       border-color: darken(@border-color, 10%);
-      @shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px lighten(@border-color, 20%);
+      @shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px lighten(@border-color, 20%);
       .box-shadow(@shadow);
     }
   }

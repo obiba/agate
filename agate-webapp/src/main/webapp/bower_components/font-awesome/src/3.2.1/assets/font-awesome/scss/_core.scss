@@ -45,7 +45,9 @@ a {
   margin-left: $icons-li-width;
   list-style-type: none;
 
-  > li { position: relative; }
+  > li {
+    position: relative;
+  }
 
   .icon-li {
     position: absolute;
@@ -64,9 +66,17 @@ a {
   }
 }
 
-.icon-muted { color: $iconMuted; }
-.icon-light { color: $iconLight; }
-.icon-dark { color: $iconDark; }
+.icon-muted {
+  color: $iconMuted;
+}
+
+.icon-light {
+  color: $iconLight;
+}
+
+.icon-dark {
+  color: $iconDark;
+}
 
 // Icon Borders
 // -------------------------
@@ -87,6 +97,7 @@ a {
     @include border-radius(4px);
   }
 }
+
 .icon-3x {
   font-size: 3em;
   &.icon-border {
@@ -94,6 +105,7 @@ a {
     @include border-radius(5px);
   }
 }
+
 .icon-4x {
   font-size: 4em;
   &.icon-border {
@@ -110,13 +122,17 @@ a {
   }
 }
 
-
 // Floats & Margins
 // -------------------------
 
 // Quick floats
-.pull-right { float: right; }
-.pull-left { float: left; }
+.pull-right {
+  float: right;
+}
+
+.pull-left {
+  float: left;
+}
 
 [class^="icon-"],
 [class*=" icon-"] {

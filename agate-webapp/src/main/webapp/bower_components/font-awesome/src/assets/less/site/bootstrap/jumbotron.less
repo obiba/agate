@@ -3,14 +3,16 @@
   border-top: 1px solid mix(@jumbotron-bg, @jumbotron-color, 90%);
   border-bottom: 1px solid @jumbotron-border;
   margin-bottom: 0;
-  &, h1 { color: @jumbotron-color; }
+  &, h1 {
+    color: @jumbotron-color;
+  }
   padding: 50px 0 40px;
 
   h1 {
     font-size: 80px;
     letter-spacing: -2px;
     line-height: 1;
-    text-shadow: 4px 3px 0px @jumbotron-bg, 9px 8px 0px rgba(0,0,0,0.15); // double text shadow
+    text-shadow: 4px 3px 0px @jumbotron-bg, 9px 8px 0px rgba(0, 0, 0, 0.15); // double text shadow
     margin: 0 0 15px;
   }
   p {
@@ -21,7 +23,7 @@
     font-size: 24px;
     line-height: 1.3;
     font-weight: lighter;
-    text-shadow: 0 1px 0 rgba(0,0,0,0.15);
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
   }
 }
 
@@ -29,7 +31,9 @@
   padding: 30px 0 25px;
   background-color: @gray-lighter;
   color: @gray-darker;
-  &, h1 { text-shadow: 0 1px 0 #fff; }
+  &, h1 {
+    text-shadow: 0 1px 0 #fff;
+  }
   border-bottom-color: mix(@gray-light, @gray-lighter, 25%);
   border-top-color: mix(#fff, @gray-lighter, 50%);
   h1 {
@@ -54,15 +58,31 @@
       font-weight: bold;
     }
     .dl-horizontal {
-      dt { width: @component-offset-horizontal - 100; }
-      dd { margin-left: @component-offset-horizontal - 85; }
+      dt {
+        width: @component-offset-horizontal - 100;
+      }
+      dd {
+        margin-left: @component-offset-horizontal - 85;
+      }
     }
   }
-  .fa-2 { font-size: 2em; }
-  .fa-3 { font-size: 4em; }
-  .fa-4 { font-size: 7em; }
-  .fa-5 { font-size: 12em; }
-  .fa-6 { font-size: 20em; }
+  .fa-2 {
+    font-size: 2em;
+  }
+  .fa-3 {
+    font-size: 4em;
+  }
+  .fa-4 {
+    font-size: 7em;
+  }
+  .fa-5 {
+    font-size: 12em;
+  }
+  .fa-6 {
+    font-size: 20em;
+  }
 
-  .fa-1, .fa-2, .fa-3, .fa-4, .fa-5, .fa-6 { margin-right: 1/14em; }
+  .fa-1, .fa-2, .fa-3, .fa-4, .fa-5, .fa-6 {
+    margin-right: 1/14em;
+  }
 }
