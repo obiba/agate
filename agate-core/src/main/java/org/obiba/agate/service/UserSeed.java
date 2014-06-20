@@ -12,13 +12,16 @@ package org.obiba.agate.service;
 
 import javax.inject.Inject;
 
+import org.obiba.agate.config.Profiles;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.security.Roles;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
 @Component
+@Profile(Profiles.DEV)
 public class UserSeed implements ApplicationListener<ContextRefreshedEvent> {
 
   @Inject
@@ -66,6 +69,16 @@ public class UserSeed implements ApplicationListener<ContextRefreshedEvent> {
         .email("super@example.org") //
         .role(Roles.AGATE_ADMIN) //
         .groups("opal-administrator", "mica-administrator");
+
+    save(builder.build());
+
+    builder = User.newBuilder() //
+        .name("anonymous") //
+        .password(userService.hashPassword("password")) //
+        .firstName("Anonymous") //
+        .lastName("User") //
+        .email("anonymous@example.org") //
+        .groups("anonymous");
 
     save(builder.build());
 
