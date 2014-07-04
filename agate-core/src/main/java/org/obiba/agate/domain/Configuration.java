@@ -27,6 +27,8 @@ public class Configuration extends AbstractAuditableDocument {
 
   private int longTimeout = DEFAULT_LONG_TIMEOUT;
 
+  private String secretKey;
+
   public String getName() {
     return name;
   }
@@ -61,6 +63,14 @@ public class Configuration extends AbstractAuditableDocument {
 
   public void setLongTimeout(int longTimeout) {
     this.longTimeout = longTimeout;
+  }
+
+  public String getSecretKey() {
+    return secretKey;
+  }
+
+  public void setSecretKey(String secretKey) {
+    this.secretKey = secretKey;
   }
 
   @Override

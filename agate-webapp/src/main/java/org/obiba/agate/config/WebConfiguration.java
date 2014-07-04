@@ -63,9 +63,9 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
 
   private static final int DEFAULT_HTTPS_PORT = 8444;
 
-  private static final String DEFAULT_KEYSTORE_FILE = "file:${AGATE_HOME}/conf/keystore.p12";
+  private static final int MAX_IDLE_TIME = 30000;
 
-  private static final String DEFAULT_KEYSTORE_TYPE = "PKCS12";
+  private static final int REQUEST_HEADER_SIZE = 8192;
 
   @Inject
   private Environment env;
@@ -76,29 +76,15 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
   @Inject
   private AuthenticationFilter authenticationFilter;
 
-  private static final int MAX_IDLE_TIME = 30000;
-
-  private static final int REQUEST_HEADER_SIZE = 8192;
+  @Inject
+  private org.obiba.ssl.SslContextFactory sslContextFactory;
 
   private int httpsPort;
-
-  private Resource keystoreFile;
-
-  private String keystorePass;
-
-  private String keystoreType;
 
   @Override
   public void setEnvironment(Environment environment) {
     RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(environment, "https.");
     httpsPort = propertyResolver.getProperty("port", Integer.class, DEFAULT_HTTPS_PORT);
-
-    ResourceEditor resourceEditor = new ResourceEditor();
-    resourceEditor.setAsText(propertyResolver.getProperty("keystore.file", String.class, DEFAULT_KEYSTORE_FILE));
-    keystoreFile = (Resource) resourceEditor.getValue();
-
-    keystorePass = propertyResolver.getProperty("keystore.password");
-    keystoreType = propertyResolver.getProperty("keystore.type", String.class, DEFAULT_KEYSTORE_TYPE);
   }
 
   @Bean
@@ -115,17 +101,19 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
   }
 
   private void customizeSsl(Server server) {
-    SslContextFactory jettySsl = new SslContextFactory();
+    SslContextFactory jettySsl = new SslContextFactory() {
+
+      @Override
+      protected void doStart() throws Exception {
+        setSslContext(sslContextFactory.createSslContext());
+      }
+
+      @Override
+      public void checkKeyStore() {
+      }
+    };
     jettySsl.setWantClientAuth(true);
     jettySsl.setNeedClientAuth(false);
-
-    try {
-      jettySsl.setKeyStorePath(keystoreFile.getFile().getAbsolutePath());
-      jettySsl.setKeyStorePassword(keystorePass);
-      jettySsl.setKeyStoreType(keystoreType);
-    } catch(IOException e) {
-      throw new RuntimeException("Failed to set jetty server keystore: " + e.getMessage(), e);
-    }
 
     Connector sslConnector = new SslSelectChannelConnector(jettySsl);
     sslConnector.setPort(httpsPort);

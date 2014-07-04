@@ -4,10 +4,6 @@ server:
 
 https:
     port: 8444
-    keystore:
-        file: file:${AGATE_HOME}/conf/keystore.p12
-        password: changeit
-        type: PKCS12
 
 spring:
     profiles: prod
