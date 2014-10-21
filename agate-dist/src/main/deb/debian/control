@@ -9,9 +9,8 @@ Homepage: http://www.obiba.org
 Package: agate
 Architecture: all
 Pre-Depends: debconf, coreutils (>= 6.10)
-Depends: ${shlibs:Depends}, ${misc:Depends}, daemon, adduser, psmisc, java7-runtime
-Suggests: mysql-server, rserver-admin
-Description: OBiBa portal for biobanks
+Depends: ${shlibs:Depends}, ${misc:Depends}, daemon, adduser, psmisc, java8-runtime
+Description: OBiBa user portal for biobanks
  Agate.
  .
  OBiBa is an international software development project committed to building a
