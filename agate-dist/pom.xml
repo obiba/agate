@@ -138,8 +138,8 @@
                 <configuration>
                   <target>
                     <!-- Deploy Agate package file in download repo -->
-                    <copy file="target/agate-${project.version}-dist.zip"
-                        todir="${obiba.download.dir}/agate/${agate.deploy.dir}"/>
+                    <copy file="target/agate-dist-${project.version}-dist.zip"
+                        tofile="${obiba.download.dir}/agate/${agate.deploy.dir}/agate-${project.version}-dist.zip"/>
                   </target>
                 </configuration>
               </execution>
