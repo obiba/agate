@@ -73,16 +73,6 @@ public class UserSeed implements ApplicationListener<ContextRefreshedEvent> {
     save(builder.build());
 
     builder = User.newBuilder() //
-        .name("anonymous") //
-        .password(userService.hashPassword("password")) //
-        .firstName("Anonymous") //
-        .lastName("User") //
-        .email("anonymous@example.org") //
-        .groups("anonymous");
-
-    save(builder.build());
-
-    builder = User.newBuilder() //
         .name("user1") //
         .password(userService.hashPassword("password")) //
         .firstName("Johnny B.") //
