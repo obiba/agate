@@ -10,7 +10,7 @@
     properties from the resources/config/*.yml files.
   -->
 
-  <diskStore path="java.io.tmpdir"/>
+  <diskStore path="${AGATE_HOME}/work/ehcache"/>
 
   <defaultCache eternal="false" overflowToDisk="false"/>
 
