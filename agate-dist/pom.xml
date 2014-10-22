@@ -125,7 +125,7 @@
                     <property name="deb.version" value="${project.version}-b${buildNumber}"/>
                     <!-- Deploy deb file in deb repo -->
                     <copy file="target/agate_${deb.version}_all.deb"
-                        todir="${obiba.deb.dir}/${agate.deploy.dir}"/>
+                        tofile="${obiba.deb.dir}/${agate.deploy.dir}/agate_${project.version}_all.deb"/>
                   </target>
                 </configuration>
               </execution>
