@@ -18,9 +18,7 @@ set AGATE_LOG=%AGATE_HOME%\logs
 IF NOT EXIST "%AGATE_LOG%" mkdir "%AGATE_LOG%"
 echo AGATE_LOG=%AGATE_LOG%
 
-rem Java 7 supports wildcard classpaths
-rem http://docs.oracle.com/javase/7/docs/technotes/tools/windows/classpath.html
-set CLASSPATH=%AGATE_HOME%\conf;%AGATE_DIST%\lib\*
+set CLASSPATH=%AGATE_HOME%\conf;%AGATE_DIST%\webapp\WEB-INF\classes;%AGATE_DIST%\webapp\WEB-INF\lib\*
 
 set JAVA_DEBUG=-agentlib:jdwp=transport=dt_socket,server=y,address=8000,suspend=n
 

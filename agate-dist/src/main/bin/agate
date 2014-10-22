@@ -41,8 +41,6 @@ if $cygwin; then
   export AGATE_HOME=`cygpath --absolute --windows "$AGATE_HOME"`
 fi
 
-# Java 6 supports wildcard classpath entries
-# http://download.oracle.com/javase/6/docs/technotes/tools/solaris/classpath.html
 CLASSPATH=$AGATE_HOME/conf:$AGATE_DIST/WEB-INF/classes:$AGATE_DIST/WEB-INF/lib/*
 if $cygwin; then
   CLASSPATH=$AGATE_HOME/conf;$AGATE_DIST/WEB-INF/classes;$AGATE_DIST/WEB-INF/lib/*
