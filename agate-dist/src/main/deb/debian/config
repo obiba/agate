@@ -9,25 +9,25 @@ ${DEBIAN_SCRIPT_TRACE:+ echo "#42#DEBUG# RUNNING $0 $*" 1>&2 }
 if [ "$1" = "configure" ] && [ -z "$2" ] || [ "$1" = "reconfigure" ]; then
   while :; do
     RET=""
-    db_input high agate-server/admin_password || true
+    db_input high agate/admin_password || true
     db_go
-    db_get agate-server/admin_password
+    db_get agate/admin_password
     # if password isn't empty we ask for password verification
     if [ -z "$RET" ]; then
-      db_fset agate-server/admin_password seen false
-      db_fset agate-server/admin_password_again seen false
+      db_fset agate/admin_password seen false
+      db_fset agate/admin_password_again seen false
       break
     fi
     ROOT_PW="$RET"
-    db_input high agate-server/admin_password_again || true
+    db_input high agate/admin_password_again || true
     db_go
-    db_get agate-server/admin_password_again
+    db_get agate/admin_password_again
     if [ "$RET" = "$ROOT_PW" ]; then
       ROOT_PW=''
       break
     fi
-    db_set agate-server/admin_password ""
-    db_set agate-server/admin_password_again ""
+    db_set agate/admin_password ""
+    db_set agate/admin_password_again ""
     db_go
   done
 fi
