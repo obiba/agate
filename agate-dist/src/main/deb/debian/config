@@ -26,6 +26,8 @@ if [ "$1" = "configure" ] && [ -z "$2" ] || [ "$1" = "reconfigure" ]; then
       ROOT_PW=''
       break
     fi
+    db_fset agate/password_mismatch seen false
+    db_input critical agate/password_mismatch
     db_set agate/admin_password ""
     db_set agate/admin_password_again ""
     db_go
