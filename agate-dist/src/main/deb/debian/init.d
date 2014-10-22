@@ -37,7 +37,7 @@ SCRIPTNAME=/etc/init.d/$NAME
 . /lib/lsb/init-functions
 
 DAEMON_ARGS="--name=$NAME --user=$AGATE_USER --pidfile=$PIDFILE --inherit --env=AGATE_HOME=$AGATE_HOME --env=AGATE_LOG=$AGATE_LOG --output=$AGATE_LOG/stdout.log --chdir=$AGATE_HOME"
-CLASSPATH="$AGATE_HOME/conf:$AGATE_DIST/lib/*"
+CLASSPATH="$AGATE_HOME/conf:$AGATE_DIST/webapp/WEB-INF/classes:$AGATE_DIST/webapp/WEB-INF/lib/*"
 
 # Get the status of the daemon process
 get_daemon_status()
