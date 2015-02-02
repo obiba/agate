@@ -14,7 +14,7 @@ import javax.servlet.ServletRegistration;
 
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.obiba.agate.web.filter.CachingHttpHeadersFilter;
 import org.obiba.agate.web.filter.StaticResourcesProductionFilter;
@@ -115,10 +115,9 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
     jettySsl.setWantClientAuth(true);
     jettySsl.setNeedClientAuth(false);
 
-    Connector sslConnector = new SslSelectChannelConnector(jettySsl);
+    ServerConnector sslConnector = new ServerConnector(server, jettySsl);
     sslConnector.setPort(httpsPort);
-    sslConnector.setMaxIdleTime(MAX_IDLE_TIME);
-    sslConnector.setRequestHeaderSize(REQUEST_HEADER_SIZE);
+    sslConnector.setIdleTimeout(MAX_IDLE_TIME);
 
     server.addConnector(sslConnector);
   }
@@ -143,9 +142,17 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
   private void initAuthenticationFilter(ServletContext servletContext) {
     log.debug("Registering Authentication Filter");
     FilterRegistration.Dynamic filterRegistration = servletContext
-        .addFilter("authenticationFilter", authenticationFilter);
-    filterRegistration
-        .addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, ASYNC, INCLUDE, ERROR), true, WS_ROOT + "/*");
+      .addFilter("authenticationFilter", authenticationFilter);
+
+    if (filterRegistration == null) {
+      filterRegistration =
+        (FilterRegistration.Dynamic)servletContext.getFilterRegistration("authenticationFilter");
+    }
+
+    log.debug("Adding mappging to authentication filter registration");
+
+    filterRegistration.addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, ASYNC, INCLUDE, ERROR), true,
+      WS_ROOT + "/*");
     filterRegistration.setAsyncSupported(true);
   }
 

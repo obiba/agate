@@ -9,7 +9,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>1.0.2.RELEASE</version>
+    <version>1.2.1.RELEASE</version>
   </parent>
 
   <modules>
@@ -105,6 +105,7 @@
 
     <assertj-core.version>1.6.0</assertj-core.version>
     <awaitility.version>1.4.0</awaitility.version>
+    <codahale-metrics.version>3.0.2</codahale-metrics.version>
     <commons-io.version>2.4</commons-io.version>
     <commons-lang.version>2.6</commons-lang.version>
     <ehcache-core.version>2.6.8</ehcache-core.version>
@@ -233,10 +234,19 @@
         <version>${project.version}</version>
         <type>war</type>
       </dependency>
-
+      <dependency>
+        <groupId>com.codahale.metrics</groupId>
+        <artifactId>metrics-core</artifactId>
+        <version>${codahale-metrics.version}</version>
+      </dependency>
       <dependency>
         <groupId>com.codahale.metrics</groupId>
         <artifactId>metrics-ehcache</artifactId>
+        <version>${codahale-metrics.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.codahale.metrics</groupId>
+        <artifactId>metrics-graphite</artifactId>
         <version>${codahale-metrics.version}</version>
       </dependency>
       <dependency>
@@ -497,6 +507,10 @@
   </dependencyManagement>
 
   <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-jersey</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.springframework.boot</groupId>

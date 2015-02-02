@@ -43,12 +43,14 @@ import org.obiba.shiro.SessionStorageEvaluator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.ImmutableList;
 
 @Component
+@DependsOn("cacheConfiguration")
 public class SecurityManagerFactory implements FactoryBean<SecurityManager> {
 
   public static final String INI_REALM = "agate-ini-realm";
