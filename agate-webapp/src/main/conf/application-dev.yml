@@ -13,6 +13,18 @@ spring:
         mode: XHTML
         cache: false
 
+    mail:
+        host: localhost
+        port: 25
+        user:
+        password:
+        protocol: smtp
+        tls: false
+        auth: false
+
+    messageSource:
+        cacheSeconds: 1
+
 mongodb:
     url: localhost:27017
     databaseName: agate
@@ -43,7 +55,7 @@ hotReload:
       domain: org.obiba.agate.domain
       restdto: org.obiba.agate.web.rest.dto
     liquibase:
-      defaultCatalogName: 
+      defaultCatalogName:
       defaultSchema:
     watchdir:
       - target/classes
@@ -51,23 +63,12 @@ hotReload:
 # security configuration (this key should be unique for your application, and kept secret)
 #jhipster.security.rememberme.key: agate
 
+endpoints.health.sensitive: false
+
 async:
     corePoolSize: 2
     maxPoolSize: 50
     queueCapacity: 10000
-
-spring:
-    mail:
-        host: localhost
-        port: 25
-        user:
-        password:
-        protocol: smtp
-        tls: false
-        auth: false
-
-    messageSource:
-        cacheSeconds: 1
 
 authentication:
     oauth:

@@ -12,6 +12,18 @@ spring:
         mode: XHTML
         cache: true
 
+    mail:
+        host: localhost
+        port: 25
+        user:
+        password:
+        protocol: smtp
+        tls: false
+        auth: false
+
+    messageSource:
+        cacheSeconds: 1
+
 mongodb:
     url: localhost:27017
     databaseName: agate
@@ -46,19 +58,6 @@ async:
     corePoolSize: 2
     maxPoolSize: 50
     queueCapacity: 10000
-
-spring:
-    mail:
-        host: localhost
-        port: 25
-        user:
-        password:
-        protocol: smtp
-        tls: false
-        auth: false
-
-    messageSource:
-        cacheSeconds: 1
 
 authentication:
     oauth:
