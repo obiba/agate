@@ -1,6 +1,5 @@
 package org.obiba.agate.config;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -12,17 +11,15 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
-import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.servlets.GzipFilter;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.obiba.agate.web.filter.CachingHttpHeadersFilter;
 import org.obiba.agate.web.filter.StaticResourcesProductionFilter;
-import org.obiba.agate.web.filter.gzip.GZipServletFilter;
 import org.obiba.shiro.web.filter.AuthenticationFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
@@ -36,8 +33,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceEditor;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.servlet.InstrumentedFilter;
@@ -162,13 +157,13 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
   private void initGzipFilter(ServletContext servletContext, EnumSet<DispatcherType> disps) {
     log.debug("Registering GZip Filter");
 
-    FilterRegistration.Dynamic compressingFilter = servletContext.addFilter("gzipFilter", new GZipServletFilter());
+    FilterRegistration.Dynamic compressingFilter = servletContext.addFilter("gzipFilter", new GzipFilter());
     compressingFilter.addMappingForUrlPatterns(disps, true, "*.css");
     compressingFilter.addMappingForUrlPatterns(disps, true, "*.json");
     compressingFilter.addMappingForUrlPatterns(disps, true, "*.html");
     compressingFilter.addMappingForUrlPatterns(disps, true, "*.js");
     compressingFilter.addMappingForUrlPatterns(disps, true, "/metrics/*");
-    // don't compress WS_ROOT/* or Jersey ExceptionMapper won't work
+    compressingFilter.addMappingForUrlPatterns(disps, true, WS_ROOT + "/*");
     compressingFilter.setAsyncSupported(true);
   }
 
