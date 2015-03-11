@@ -29,7 +29,7 @@ class UserDtos {
     builder.setId(user.getId()) //
         .setName(user.getName()) //
         .setRole(user.getRole())//
-        .setEnabled(user.isEnabled()) //
+        .setStatus(user.getStatus().toString()) //
         .setTimestamps(TimestampsDtos.asDto(user));
 
     if(!Strings.isNullOrEmpty(user.getFirstName())) builder.setFirstName(user.getFirstName());

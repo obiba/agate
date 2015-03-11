@@ -13,7 +13,7 @@
         <th translate>user.name</th>
         <th translate>user.fullName</th>
         <th translate>user.email</th>
-        <th translate>user.enabled</th>
+        <th translate>user.status</th>
         <th translate>user.role</th>
         <th translate>user.groups</th>
         <th translate>user.actions</th>
@@ -31,8 +31,9 @@
           <a href="mailto:{{user.email}}" target="_blank">{{user.email}}</a>
         </td>
         <td>
-          <i class="fa fa-check-square-o" ng-hide="!user.enabled"></i>
-          <i class="fa fa-square-o" ng-hide="user.enabled"></i>
+          <i class="fa fa-star" ng-hide="user.status != 'ACTIVE'" title="{{user.status.toLowerCase()}}"></i>
+          <i class="fa fa-star-half-o" ng-hide="user.status != 'PENDING'" title="{{user.status.toLowerCase()}}"></i>
+          <i class="fa fa-star-o" ng-hide="user.status != 'INACTIVE'" title="{{user.status.toLowerCase()}}"></i>
         </td>
         <td>
           <span translate>user.{{user.role}}</span>

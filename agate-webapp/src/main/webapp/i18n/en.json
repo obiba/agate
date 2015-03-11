@@ -186,7 +186,7 @@
     "lastName": "Last Name",
     "fullName": "Full Name",
     "email": "Email",
-    "enabled": "Enabled",
+    "status": "Status",
     "role": "Role",
     "groups": "Groups",
     "agate-administrator": "Administrator",

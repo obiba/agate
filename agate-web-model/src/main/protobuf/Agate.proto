@@ -43,7 +43,7 @@ message UserDto {
   optional string lastName = 5;
   optional string email = 6;
   required string role = 7;
-  required bool enabled = 8;
+  required string status = 8;
   repeated string groups = 9;
   optional TimestampsDto timestamps = 10;
 }

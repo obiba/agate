@@ -35,7 +35,7 @@ public class User extends AbstractAuditableDocument {
   @Email
   private String email;
 
-  private boolean enabled = true;
+  private UserStatus status = UserStatus.PENDING;
 
   private String role = Roles.AGATE_USER.toString();
 
@@ -90,11 +90,15 @@ public class User extends AbstractAuditableDocument {
   }
 
   public boolean isEnabled() {
-    return enabled;
+    return status == UserStatus.ACTIVE;
   }
 
-  public void setEnabled(boolean enabled) {
-    this.enabled = enabled;
+  public UserStatus getStatus() {
+    return status;
+  }
+
+  public void setStatus(UserStatus status) {
+    this.status = status;
   }
 
   public String getRole() {
@@ -162,6 +166,7 @@ public class User extends AbstractAuditableDocument {
 
     private Builder() {
       user = new User();
+      active();
     }
 
     public Builder name(String name) {
@@ -199,8 +204,18 @@ public class User extends AbstractAuditableDocument {
       return this;
     }
 
-    public Builder disabled() {
-      user.setEnabled(false);
+    public Builder active() {
+      user.setStatus(UserStatus.ACTIVE);
+      return this;
+    }
+
+    public Builder inactive() {
+      user.setStatus(UserStatus.INACTIVE);
+      return this;
+    }
+
+    public Builder pending() {
+      user.setStatus(UserStatus.PENDING);
       return this;
     }
 
