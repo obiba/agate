@@ -36,7 +36,6 @@ import org.apache.shiro.subject.Subject;
 import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
-import org.obiba.agate.security.SecurityManagerFactory;
 import org.obiba.agate.service.TicketService;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.model.Agate;
@@ -91,9 +90,7 @@ public class TicketsResource extends BaseTicketResource {
 
       // check authentication
       subject.login(new UsernamePasswordToken(username, password));
-      if(subject.getPrincipals().getRealmNames().contains(SecurityManagerFactory.INI_REALM)) {
-        throw new ForbiddenException();
-      }
+      validateRealm(servletRequest, user, subject);
 
       Ticket ticket = createTicket(username, renew, rememberMe, getApplicationName());
       Configuration configuration = getConfiguration();
@@ -161,6 +158,15 @@ public class TicketsResource extends BaseTicketResource {
     if(!user.hasApplication(getApplicationName())) {
       log.info("Application '{}' not allowed for user '{}' at ip: '{}'", getApplicationName(), user.getName(),
         servletRequest.getRemoteAddr());
+      throw new ForbiddenException();
+    }
+  }
+
+  private void validateRealm(HttpServletRequest servletRequest, User user, Subject subject) {
+    // check that authentication realm is the expected one as specified in user profile
+    if(!subject.getPrincipals().getRealmNames().contains(user.getRealm())) {
+      log.info("Authentication failure of user '{}' at ip: '{}': unexpected realm '{}'", user.getName(), servletRequest.getRemoteAddr(),
+        subject.getPrincipals().getRealmNames().iterator().next());
       throw new ForbiddenException();
     }
   }
