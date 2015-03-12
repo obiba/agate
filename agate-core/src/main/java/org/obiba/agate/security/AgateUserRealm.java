@@ -32,6 +32,7 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.util.SimpleByteSource;
 import org.obiba.agate.domain.User;
+import org.obiba.agate.domain.UserCredentials;
 import org.obiba.agate.service.UserService;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.core.env.Environment;
@@ -91,10 +92,13 @@ public class AgateUserRealm extends AuthorizingRealm {
     }
 
     User user = userService.findUser(username);
-    if(user == null || !user.isEnabled()) {
+    if(user == null || !user.isEnabled() || !user.getRealm().equals(AGATE_REALM)) {
       throw new UnknownAccountException("No account found for user [" + username + "]");
     }
-    SimpleAuthenticationInfo authInfo = new SimpleAuthenticationInfo(username, user.getPassword(), getName());
+    UserCredentials userCredentials = userService.findUserCredentials(username);
+    if(userCredentials == null) throw new UnknownAccountException("No account found for user [" + username + "]");
+
+    SimpleAuthenticationInfo authInfo = new SimpleAuthenticationInfo(username, userCredentials.getPassword(), getName());
     authInfo.setCredentialsSalt(new SimpleByteSource(salt));
     return authInfo;
   }

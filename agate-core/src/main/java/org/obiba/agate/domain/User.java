@@ -6,16 +6,18 @@ import java.util.Set;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Email;
+import org.obiba.agate.security.AgateUserRealm;
 import org.obiba.agate.security.Roles;
 import org.obiba.mongodb.domain.AbstractAuditableDocument;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
 /**
- * A user.
+ * A user, for any realm.
  */
 @Document
 public class User extends AbstractAuditableDocument {
@@ -26,7 +28,7 @@ public class User extends AbstractAuditableDocument {
   @Indexed(unique = true)
   private String name;
 
-  private String password;
+  private String realm;
 
   private String firstName;
 
@@ -41,12 +43,14 @@ public class User extends AbstractAuditableDocument {
 
   private Set<String> groups;
 
+  private Set<String> applications;
+
   public User() {
   }
 
-  public User(String name, String password) {
+  public User(String name, String realm) {
     this.name = name;
-    this.password = password;
+    this.realm = realm;
   }
 
   public String getName() {
@@ -57,12 +61,12 @@ public class User extends AbstractAuditableDocument {
     this.name = name;
   }
 
-  public String getPassword() {
-    return password;
+  public String getRealm() {
+    return realm;
   }
 
-  public void setPassword(String password) {
-    this.password = password;
+  public void setRealm(String realm) {
+    this.realm = realm;
   }
 
   public String getFirstName() {
@@ -125,6 +129,22 @@ public class User extends AbstractAuditableDocument {
     this.groups = groups;
   }
 
+  public Set<String> getApplications() {
+    return applications;
+  }
+
+  public boolean hasApplications() {
+    return applications != null && !applications.isEmpty();
+  }
+
+  public boolean hasApplication(String application) {
+    return hasApplications() && applications.contains(application);
+  }
+
+  public void setApplications(Set<String> applications) {
+    this.applications = applications;
+  }
+
   @Override
   public boolean equals(Object o) {
     if(this == o) {
@@ -167,6 +187,7 @@ public class User extends AbstractAuditableDocument {
     private Builder() {
       user = new User();
       active();
+      realm(AgateUserRealm.AGATE_REALM);
     }
 
     public Builder name(String name) {
@@ -174,8 +195,8 @@ public class User extends AbstractAuditableDocument {
       return this;
     }
 
-    public Builder password(String pwd) {
-      user.setPassword(pwd);
+    public Builder realm(String realm) {
+      user.setRealm(Strings.isNullOrEmpty(realm) ? AgateUserRealm.AGATE_REALM : realm);
       return this;
     }
 
@@ -226,6 +247,16 @@ public class User extends AbstractAuditableDocument {
 
     public Builder groups(List<String> groups) {
       user.setGroups(Sets.newHashSet(groups));
+      return this;
+    }
+
+    public Builder applications(String... applications) {
+      user.setApplications(Sets.newHashSet(applications));
+      return this;
+    }
+
+    public Builder applications(List<String> applications) {
+      user.setApplications(Sets.newHashSet(applications));
       return this;
     }
 

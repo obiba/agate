@@ -56,21 +56,19 @@ public class UsersResource {
   }
 
   @POST
-  public Response create(@FormParam("username") String username, @FormParam("password") String password,
-      @FormParam("role") @DefaultValue("agate-user") String role, @FormParam("firstname") String firstName,
-      @FormParam("lastname") String lastName, @FormParam("email") String email,
-      @FormParam("group") List<String> groups) {
+  public Response create(@FormParam("username") String username, @FormParam("realm") String realm,
+    @FormParam("role") @DefaultValue("agate-user") String role, @FormParam("firstname") String firstName,
+    @FormParam("lastname") String lastName, @FormParam("email") String email, @FormParam("group") List<String> groups) {
     if(Strings.isNullOrEmpty(username)) throw new BadRequestException("User name cannot be empty");
     User user = userService.findUser(username);
     if(user != null) throw new BadRequestException("User already exists: " + username);
-    if(Strings.isNullOrEmpty(password)) throw new BadRequestException("User password cannot be empty");
     if(CURRENT_USER_NAME.equals(username)) throw new BadRequestException("Reserved user name: " + CURRENT_USER_NAME);
 
-    user = User.newBuilder().name(username).password(userService.hashPassword(password)).role(role).firstName(firstName)
-        .lastName(lastName).email(email).groups(groups).build();
+    user = User.newBuilder().name(username).realm(realm).role(role).firstName(firstName).lastName(lastName).email(email)
+      .groups(groups).build();
     userService.save(user);
     return Response
-        .created(UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(UserResource.class).build(user.getId())).build();
+      .created(UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(UserResource.class).build(user.getId())).build();
   }
 
 }

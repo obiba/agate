@@ -16,6 +16,8 @@
         <th translate>user.status</th>
         <th translate>user.role</th>
         <th translate>user.groups</th>
+        <th translate>user.applications</th>
+        <th translate>user.realm</th>
         <th translate>user.actions</th>
       </tr>
       </thead>
@@ -40,6 +42,12 @@
         </td>
         <td>
           {{user.groups.join(', ')}}
+        </td>
+        <td>
+          {{user.applications.join(', ')}}
+        </td>
+        <td>
+          {{user.realm}}
         </td>
         <td>
           <ul class="list-inline">

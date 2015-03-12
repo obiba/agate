@@ -118,6 +118,8 @@ agate
       $rootScope.$on('$routeChangeStart', function (event, next) {
         $rootScope.authenticated = AuthenticationSharedService.isAuthenticated();
         $rootScope.hasRole = AuthenticationSharedService.isAuthorized;
+        $rootScope.hasProfile = AuthenticationSharedService.hasProfile();
+        $rootScope.canChangePassword = AuthenticationSharedService.canChangePassword();
         $rootScope.userRoles = USER_ROLES;
         $rootScope.subject = Session;
 

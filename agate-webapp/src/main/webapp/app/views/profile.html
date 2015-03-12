@@ -108,7 +108,10 @@
         </div>
       </div>
       <div class="tab-pane fade" id="password">
-        <div class="row">
+        <div class="alert alert-info" ng-hide="canChangePassword">
+          <strong>Unsupported!</strong> Password cannot be changed in this realm: {{settingsAccount.realm}}.
+        </div>
+        <div class="row" ng-show="canChangePassword">
           <div class="col-md-6">
             <div class="alert alert-success" ng-show="success" translate="password.messages.success">
               <strong>Password changed!</strong>

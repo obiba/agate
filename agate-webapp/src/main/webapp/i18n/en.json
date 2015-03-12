@@ -182,6 +182,7 @@
     "add": "Add User",
     "actions": "Actions",
     "name": "Name",
+    "realm": "Realm",
     "firstName": "First Name",
     "lastName": "Last Name",
     "fullName": "Full Name",
@@ -189,6 +190,7 @@
     "status": "Status",
     "role": "Role",
     "groups": "Groups",
+    "applications": "Applications",
     "agate-administrator": "Administrator",
     "agate-user": "User"
   },

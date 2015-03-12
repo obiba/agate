@@ -36,7 +36,7 @@ import org.apache.shiro.subject.Subject;
 import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
-import org.obiba.agate.security.AgateUserRealm;
+import org.obiba.agate.security.SecurityManagerFactory;
 import org.obiba.agate.service.TicketService;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.model.Agate;
@@ -77,16 +77,21 @@ public class TicketsResource extends BaseTicketResource {
 
   @POST
   public Response login(@Context HttpServletRequest servletRequest,
-      @QueryParam("rememberMe") @DefaultValue("false") boolean rememberMe,
-      @QueryParam("renew") @DefaultValue("false") boolean renew, @FormParam("username") String username,
-      @FormParam("password") String password) {
+    @QueryParam("rememberMe") @DefaultValue("false") boolean rememberMe,
+    @QueryParam("renew") @DefaultValue("false") boolean renew, @FormParam("username") String username,
+    @FormParam("password") String password) {
 
     validateApplication(servletRequest);
 
     Subject subject = SecurityUtils.getSubject();
     try {
+      User user = userService.findUser(username);
+      validateUser(servletRequest, username, user);
+      validateApplication(servletRequest, user);
+
+      // check authentication
       subject.login(new UsernamePasswordToken(username, password));
-      if(!subject.getPrincipals().getRealmNames().contains(AgateUserRealm.AGATE_REALM)) {
+      if(subject.getPrincipals().getRealmNames().contains(SecurityManagerFactory.INI_REALM)) {
         throw new ForbiddenException();
       }
 
@@ -94,15 +99,15 @@ public class TicketsResource extends BaseTicketResource {
       Configuration configuration = getConfiguration();
       int timeout = rememberMe ? configuration.getLongTimeout() : configuration.getShortTimeout();
       NewCookie cookie = new NewCookie(TICKET_COOKIE_NAME, ticket.getToken(), "/", configuration.getDomain(), null,
-          timeout * 3600, false);
-      log.info("Successful Granting Ticket creation for user '{}' with CAS ID: {}", username, ticket.getToken());
+        timeout * 3600, false);
+      log.info("Successful Granting Ticket creation for user '{}' with ticket ID: {}", username, ticket.getToken());
       return Response
-          .created(UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(TicketResource.class).build(ticket.getToken()))
-          .header(HttpHeaders.SET_COOKIE, cookie).build();
+        .created(UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(TicketResource.class).build(ticket.getToken()))
+        .header(HttpHeaders.SET_COOKIE, cookie).build();
 
     } catch(AuthenticationException e) {
       log.info("Authentication failure of user '{}' at ip: '{}': {}", username, servletRequest.getRemoteAddr(),
-          e.getMessage());
+        e.getMessage());
       // When a request contains credentials and they are invalid, the a 403 (Forbidden) should be returned.
       throw new ForbiddenException();
     } finally {
@@ -113,7 +118,7 @@ public class TicketsResource extends BaseTicketResource {
   @GET
   @Path("/subject/{username}")
   public AuthDtos.SubjectDto get(@Context HttpServletRequest servletRequest, @PathParam("username") String username,
-      @QueryParam("application") String application, @QueryParam("key") String key) {
+    @QueryParam("application") String application, @QueryParam("key") String key) {
     validateApplication(servletRequest);
 
     User user = userService.findUser(username);
@@ -141,6 +146,23 @@ public class TicketsResource extends BaseTicketResource {
     ticketService.save(ticket);
 
     return ticket;
+  }
+
+  private void validateUser(HttpServletRequest servletRequest, String username, User user) {
+    // check user exists
+    if(user == null) {
+      log.info("Not a registered user '{}' at ip: '{}'", username, servletRequest.getRemoteAddr());
+      throw new ForbiddenException();
+    }
+  }
+
+  private void validateApplication(HttpServletRequest servletRequest, User user) {
+    // check application
+    if(!user.hasApplication(getApplicationName())) {
+      log.info("Application '{}' not allowed for user '{}' at ip: '{}'", getApplicationName(), user.getName(),
+        servletRequest.getRemoteAddr());
+      throw new ForbiddenException();
+    }
   }
 
 }

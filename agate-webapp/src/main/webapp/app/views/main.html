@@ -16,7 +16,7 @@
       <a href="#/login" class="btn btn-info" ng-hide="authenticated">
         <span translate>login.form.button</span>
       </a>
-      <a href="#/profile" class="btn btn-info" ng-hide="!authenticated">
+      <a href="#/profile" class="btn btn-info" ng-show="authenticated && hasProfile">
         <span translate>global.menu.myProfile</span>
       </a>
 

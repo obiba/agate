@@ -19,7 +19,6 @@ import javax.inject.Inject;
 import net.sf.ehcache.CacheManager;
 
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.AbstractAuthenticator;
 import org.apache.shiro.authc.credential.PasswordMatcher;
 import org.apache.shiro.authc.pam.FirstSuccessfulStrategy;
 import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
@@ -61,15 +60,6 @@ public class SecurityManagerFactory implements FactoryBean<SecurityManager> {
 
   @Inject
   private Set<Realm> realms;
-
-//  @Inject
-//  private Set<SessionListener> sessionListeners;
-
-//  @Inject
-//  private Set<AuthenticationListener> authenticationListeners;
-
-//  @Inject
-//  private RolePermissionResolver rolePermissionResolver;
 
   @Inject
   private CacheManager cacheManager;
@@ -134,6 +124,8 @@ public class SecurityManagerFactory implements FactoryBean<SecurityManager> {
       initializeSubjectDAO(dsm);
       initializeAuthorizer(dsm);
       initializeAuthenticator(dsm);
+
+
 
 //      ((AbstractAuthenticator) dsm.getAuthenticator()).setAuthenticationListeners(authenticationListeners);
 

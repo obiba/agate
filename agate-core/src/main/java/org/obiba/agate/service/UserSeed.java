@@ -14,6 +14,7 @@ import javax.inject.Inject;
 
 import org.obiba.agate.config.Profiles;
 import org.obiba.agate.domain.User;
+import org.obiba.agate.domain.UserCredentials;
 import org.obiba.agate.security.Roles;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Profile;
@@ -32,70 +33,68 @@ public class UserSeed implements ApplicationListener<ContextRefreshedEvent> {
     User.Builder builder;
 
     builder = User.newBuilder() //
-        .name("mica-admin") //
-        .password(userService.hashPassword("password")) //
-        .firstName("Mica") //
-        .lastName("Administrator") //
-        .email("mica@example.org") //
-        .groups("mica-administrator");
+      .name("mica-admin") //
+      .firstName("Mica") //
+      .lastName("Administrator") //
+      .email("mica@example.org") //
+      .groups("mica-administrator") //
+      .applications("mica");
 
     save(builder.build());
 
     builder = User.newBuilder() //
-        .name("opal-admin") //
-        .password(userService.hashPassword("password")) //
-        .firstName("Opal") //
-        .lastName("Administrator") //
-        .email("opal@example.org") //
-        .groups("opal-administrator");
+      .name("opal-admin") //
+      .firstName("Opal") //
+      .lastName("Administrator") //
+      .email("opal@example.org") //
+      .groups("opal-administrator") //
+      .applications("opal");
 
     save(builder.build());
 
     builder = User.newBuilder() //
-        .name("agate-admin") //
-        .password(userService.hashPassword("password")) //
-        .firstName("Agate") //
-        .lastName("Administrator") //
-        .email("agate@example.org") //
-        .role(Roles.AGATE_ADMIN);
+      .name("agate-admin") //
+      .firstName("Agate") //
+      .lastName("Administrator") //
+      .email("agate@example.org") //
+      .role(Roles.AGATE_ADMIN);
 
     save(builder.build());
 
     builder = User.newBuilder() //
-        .name("super-admin") //
-        .password(userService.hashPassword("password")) //
-        .firstName("Super") //
-        .lastName("Administrator") //
-        .email("super@example.org") //
-        .role(Roles.AGATE_ADMIN) //
-        .groups("opal-administrator", "mica-administrator");
+      .name("super-admin") //
+      .firstName("Super") //
+      .lastName("Administrator") //
+      .email("super@example.org") //
+      .role(Roles.AGATE_ADMIN) //
+      .groups("opal-administrator", "mica-administrator") //
+      .applications("opal", "mica");
 
     save(builder.build());
 
     builder = User.newBuilder() //
-        .name("user1") //
-        .password(userService.hashPassword("password")) //
-        .firstName("Johnny B.") //
-        .lastName("Good") //
-        .email("user1@example.org") //
-        .groups("group1", "group2");
+      .name("user1") //
+      .firstName("Johnny B.") //
+      .lastName("Good") //
+      .email("user1@example.org") //
+      .groups("group1", "group2") //
+      .applications("opal", "mica");
 
     save(builder.build());
 
     builder = User.newBuilder() //
-        .name("user2") //
-        .password(userService.hashPassword("password")) //
-        .inactive() //
-        .firstName("Michel") //
-        .lastName("Tremblay") //
-        .email("user2@example.org") //
-        .groups("group1", "group3");
+      .name("user2") //
+      .inactive() //
+      .firstName("Michel") //
+      .lastName("Tremblay") //
+      .email("user2@example.org") //
+      .groups("group1", "group3") //
+      .applications("opal", "mica");
 
     save(builder.build());
 
     builder = User.newBuilder() //
       .name("user3") //
-      .password(userService.hashPassword("password")) //
       .pending() //
       .firstName("Monsieur") //
       .lastName("Patate") //
@@ -105,6 +104,12 @@ public class UserSeed implements ApplicationListener<ContextRefreshedEvent> {
   }
 
   private void save(User user) {
-    if(userService.findUser(user.getName()) == null) userService.save(user);
+    if(userService.findUser(user.getName()) == null) {
+      userService.save(user);
+      userService.save(UserCredentials.newBuilder() //
+        .name(user.getName()) //
+        .password(userService.hashPassword("password")) //
+        .build());
+    }
   }
 }

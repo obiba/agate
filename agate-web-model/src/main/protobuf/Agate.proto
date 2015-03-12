@@ -38,14 +38,15 @@ message ConfigurationDto {
 message UserDto {
   required string id = 1;
   required string name = 2;
-  optional string password = 3;
+  required string realm = 3;
   optional string firstName = 4;
   optional string lastName = 5;
   optional string email = 6;
   required string role = 7;
   required string status = 8;
   repeated string groups = 9;
-  optional TimestampsDto timestamps = 10;
+  repeated string applications = 10;
+  optional TimestampsDto timestamps = 11;
 }
 
 message GroupDto {

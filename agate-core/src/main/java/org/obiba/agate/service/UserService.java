@@ -10,8 +10,11 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.obiba.agate.domain.Group;
 import org.obiba.agate.domain.User;
+import org.obiba.agate.domain.UserCredentials;
 import org.obiba.agate.repository.GroupRepository;
+import org.obiba.agate.repository.UserCredentialsRepository;
 import org.obiba.agate.repository.UserRepository;
+import org.obiba.agate.security.AgateUserRealm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
@@ -32,6 +35,9 @@ public class UserService {
   private UserRepository userRepository;
 
   @Inject
+  private UserCredentialsRepository userCredentialsRepository;
+
+  @Inject
   private GroupRepository groupRepository;
 
   @Inject
@@ -39,6 +45,7 @@ public class UserService {
 
   /**
    * Find all {@link org.obiba.agate.domain.User}.
+   *
    * @return
    */
   public List<User> findUsers() {
@@ -47,11 +54,21 @@ public class UserService {
 
   /**
    * Find a {@link org.obiba.agate.domain.User} by its name.
+   *
    * @param username
    * @return null if not found
    */
-  public @Nullable User findUser(@NotNull String username) {
+  public
+  @Nullable
+  User findUser(@NotNull String username) {
     List<User> users = userRepository.findByName(username);
+    return users == null || users.isEmpty() ? null : users.get(0);
+  }
+
+  public
+  @Nullable
+  UserCredentials findUserCredentials(@NotNull String username) {
+    List<UserCredentials> users = userCredentialsRepository.findByName(username);
     return users == null || users.isEmpty() ? null : users.get(0);
   }
 
@@ -64,21 +81,22 @@ public class UserService {
     log.debug("Changed information for User: {}", currentUser);
   }
 
-  public void changeCurrentUserPassword(String password) {
-    User currentUser = getCurrentUser();
+  public void updateCurrentUserPassword(String password) {
+    UserCredentials currentUser = getCurrentUserCredentials();
     currentUser.setPassword(hashPassword(password));
-    userRepository.save(currentUser);
+    userCredentialsRepository.save(currentUser);
     log.debug("Changed password for User: {}", currentUser);
   }
 
   /**
    * Insert or update a {@link org.obiba.agate.domain.User}.
+   *
    * @param user
    * @return
    */
   public User save(@NotNull User user) {
     userRepository.save(user);
-    if (user.getGroups() != null) {
+    if(user.getGroups() != null) {
       for(String groupName : user.getGroups()) {
         Group group = findGroup(groupName);
         if(group == null) groupRepository.save(new Group(groupName));
@@ -87,8 +105,14 @@ public class UserService {
     return user;
   }
 
+  public UserCredentials save(@NotNull UserCredentials userCredentials) {
+    userCredentialsRepository.save(userCredentials);
+    return userCredentials;
+  }
+
   /**
    * Delete a {@link org.obiba.agate.domain.User}.
+   *
    * @param id
    */
   public void delete(@NotNull String id) {
@@ -97,6 +121,7 @@ public class UserService {
 
   /**
    * Delete a {@link org.obiba.agate.domain.User}.
+   *
    * @param user
    */
   public void delete(@NotNull User user) {
@@ -105,36 +130,54 @@ public class UserService {
 
   /**
    * Get user with id and throws {@link org.obiba.agate.service.NoSuchUserException} if not found.
+   *
    * @param id
    * @return
    */
   public User getUser(String id) {
     User user = userRepository.findOne(id);
-    if (user == null) throw NoSuchUserException.withId(id);
+    if(user == null) throw NoSuchUserException.withId(id);
     return user;
   }
 
   /**
    * Get currently logged user and throws {@link org.obiba.agate.service.NoSuchUserException} if not found.
-   * @param id
+   *
    * @return
+   * @throws org.obiba.agate.service.NoSuchUserException
    */
   public User getCurrentUser() {
     String username = SecurityUtils.getSubject().getPrincipal().toString();
     User currentUser = findUser(username);
-    if (currentUser == null) throw NoSuchUserException.withName(username);
+    if(currentUser == null) throw NoSuchUserException.withName(username);
+    return currentUser;
+  }
+
+  /**
+   * Get currently logged user from {@link org.obiba.agate.security.AgateUserRealm} and throws
+   * {@link org.obiba.agate.service.NoSuchUserException} if not found or if user is not bound to this realm.
+   *
+   * @return
+   * @throws org.obiba.agate.service.NoSuchUserException
+   */
+  public UserCredentials getCurrentUserCredentials() {
+    User user = getCurrentUser();
+    if(!user.getRealm().equals(AgateUserRealm.AGATE_REALM)) throw NoSuchUserException.withName(user.getName());
+    UserCredentials currentUser = findUserCredentials(user.getName());
+    if(currentUser == null) throw NoSuchUserException.withName(user.getName());
     return currentUser;
   }
 
   /**
    * Hash user password.
+   *
    * @param password
    * @return
    */
   public String hashPassword(String password) {
     RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "shiro.password.");
     return new Sha512Hash(password, propertyResolver.getProperty("salt"),
-        propertyResolver.getProperty("nbHashIterations", Integer.class)).toString();
+      propertyResolver.getProperty("nbHashIterations", Integer.class)).toString();
   }
 
   //
@@ -143,6 +186,7 @@ public class UserService {
 
   /**
    * Find all {@link org.obiba.agate.domain.Group}.
+   *
    * @return
    */
   public List<Group> findGroups() {
@@ -151,27 +195,32 @@ public class UserService {
 
   /**
    * Find a {@link org.obiba.agate.domain.Group} by its name.
+   *
    * @param name
    * @return null if not found
    */
-  public @Nullable Group findGroup(@NotNull String name) {
+  public
+  @Nullable
+  Group findGroup(@NotNull String name) {
     List<Group> groups = groupRepository.findByName(name);
     return groups == null || groups.isEmpty() ? null : groups.get(0);
   }
 
   /**
    * Get group with id and throws {@link org.obiba.agate.service.NoSuchGroupException} if not found.
+   *
    * @param id
    * @return
    */
   public Group getGroup(String id) {
     Group group = groupRepository.findOne(id);
-    if (group == null) throw NoSuchGroupException.withId(id);
+    if(group == null) throw NoSuchGroupException.withId(id);
     return group;
   }
 
   /**
    * Insert of update a {@link org.obiba.agate.domain.Group}.
+   *
    * @param group
    * @return
    */
@@ -182,11 +231,12 @@ public class UserService {
 
   /**
    * Delete a {@link org.obiba.agate.domain.Group}.
+   *
    * @param user
    */
   public void delete(@NotNull Group group) {
-    for (User user : userRepository.findAll()) {
-      if (user.getGroups().contains(group.getName())) {
+    for(User user : userRepository.findAll()) {
+      if(user.getGroups().contains(group.getName())) {
         throw NotOrphanGroupException.withName(group.getName());
       }
     }

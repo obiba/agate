@@ -27,13 +27,15 @@ agate.factory('Password', ['$resource',
 
 agate.factory('Session', ['$cookieStore',
   function ($cookieStore) {
-    this.create = function (login, role) {
+    this.create = function (login, role, realm) {
       this.login = login;
       this.role = role;
+      this.realm = realm;
     };
     this.destroy = function () {
       this.login = null;
       this.role = null;
+      this.realm = null;
       $cookieStore.remove('agate_subject');
       $cookieStore.remove('agatesid');
       $cookieStore.remove('obibaid');
@@ -53,7 +55,7 @@ agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$cookieSto
           ignoreAuthModule: 'ignoreAuthModule'
         }).success(function () {
           CurrentSession.get(function (data) {
-            Session.create(data.username, data.role);
+            Session.create(data.username, data.role, data.realm);
             $cookieStore.put('agate_subject', JSON.stringify(Session));
             authService.loginConfirmed(data);
           });
@@ -66,7 +68,7 @@ agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$cookieSto
           // check if the user has a cookie
           if ($cookieStore.get('agate_subject') !== null) {
             var account = JSON.parse($cookieStore.get('agate_subject'));
-            Session.create(account.login, account.role);
+            Session.create(account.login, account.role, account.realm);
             $rootScope.account = Session;
           }
         }
@@ -93,6 +95,12 @@ agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$cookieSto
         });
 
         return isAuthorized;
+      },
+      hasProfile: function () {
+        return Session.realm !== 'agate-ini-realm';
+      },
+      canChangePassword: function () {
+        return Session.realm !== 'agate-user-realm';
       },
       logout: function () {
         $rootScope.authenticationError = false;

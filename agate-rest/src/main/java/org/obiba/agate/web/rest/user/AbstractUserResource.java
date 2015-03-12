@@ -19,6 +19,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
 import org.obiba.agate.domain.User;
+import org.obiba.agate.domain.UserCredentials;
+import org.obiba.agate.security.AgateUserRealm;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.model.Agate;
 import org.obiba.agate.web.model.Dtos;
@@ -55,8 +57,14 @@ public abstract class AbstractUserResource {
   public Response updatePassword(@FormParam("password") String password) {
     if(Strings.isNullOrEmpty(password)) throw new BadRequestException("User password cannot be empty");
     User user = getUser();
-    user.setPassword(userService.hashPassword(password));
-    userService.save(user);
+    if (!user.getRealm().equals(AgateUserRealm.AGATE_REALM)) throw new BadRequestException("User password cannot be changed");
+    UserCredentials userCredentials = userService.findUserCredentials(user.getName());
+    if (userCredentials == null) {
+      userCredentials = UserCredentials.newBuilder().name(user.getName()).password(userService.hashPassword(password)).build();
+    } else {
+      userCredentials.setPassword(userService.hashPassword(password));
+    }
+    userService.save(userCredentials);
     return Response.noContent().build();
   }
 

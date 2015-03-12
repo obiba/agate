@@ -27,15 +27,17 @@ class UserDtos {
   Agate.UserDto asDto(@NotNull User user) {
     Agate.UserDto.Builder builder = Agate.UserDto.newBuilder();
     builder.setId(user.getId()) //
-        .setName(user.getName()) //
-        .setRole(user.getRole())//
-        .setStatus(user.getStatus().toString()) //
-        .setTimestamps(TimestampsDtos.asDto(user));
+      .setName(user.getName()) //
+      .setRealm(user.getRealm()) //
+      .setRole(user.getRole())//
+      .setStatus(user.getStatus().toString()) //
+      .setTimestamps(TimestampsDtos.asDto(user));
 
     if(!Strings.isNullOrEmpty(user.getFirstName())) builder.setFirstName(user.getFirstName());
     if(!Strings.isNullOrEmpty(user.getLastName())) builder.setLastName(user.getLastName());
     if(!Strings.isNullOrEmpty(user.getEmail())) builder.setEmail(user.getEmail());
     if(user.hasGroups()) builder.addAllGroups(user.getGroups());
+    if(user.hasApplications()) builder.addAllApplications(user.getApplications());
 
     return builder.build();
   }
@@ -57,8 +59,8 @@ class UserDtos {
   Agate.GroupDto asDto(@NotNull Group group) {
     Agate.GroupDto.Builder builder = Agate.GroupDto.newBuilder();
     builder.setId(group.getId()) //
-        .setName(group.getName()) //
-        .setTimestamps(TimestampsDtos.asDto(group));
+      .setName(group.getName()) //
+      .setTimestamps(TimestampsDtos.asDto(group));
 
     if(group.hasDescription()) builder.setDescription(group.getDescription());
 
@@ -67,7 +69,7 @@ class UserDtos {
 
   private void addAttribute(AuthDtos.SubjectDto.Builder builder, String key, String value) {
     builder
-        .addAttributes(AuthDtos.SubjectDto.AttributeDto.newBuilder().setKey(key).setValue(value == null ? "" : value));
+      .addAttributes(AuthDtos.SubjectDto.AttributeDto.newBuilder().setKey(key).setValue(value == null ? "" : value));
   }
 
 }
