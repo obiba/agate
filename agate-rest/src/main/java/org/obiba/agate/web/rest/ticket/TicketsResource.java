@@ -36,6 +36,7 @@ import org.apache.shiro.subject.Subject;
 import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
+import org.obiba.agate.domain.UserStatus;
 import org.obiba.agate.service.TicketService;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.model.Agate;
@@ -82,13 +83,14 @@ public class TicketsResource extends BaseTicketResource {
 
     validateApplication(servletRequest);
 
-    Subject subject = SecurityUtils.getSubject();
+    Subject subject = null;
     try {
       User user = userService.findUser(username);
       validateUser(servletRequest, username, user);
       validateApplication(servletRequest, user);
 
       // check authentication
+      subject = SecurityUtils.getSubject();
       subject.login(new UsernamePasswordToken(username, password));
       validateRealm(servletRequest, user, subject);
 
@@ -108,7 +110,7 @@ public class TicketsResource extends BaseTicketResource {
       // When a request contains credentials and they are invalid, the a 403 (Forbidden) should be returned.
       throw new ForbiddenException();
     } finally {
-      subject.logout();
+      if(subject != null) subject.logout();
     }
   }
 
@@ -146,9 +148,12 @@ public class TicketsResource extends BaseTicketResource {
   }
 
   private void validateUser(HttpServletRequest servletRequest, String username, User user) {
-    // check user exists
+    // check user exists and has the right status
     if(user == null) {
       log.info("Not a registered user '{}' at ip: '{}'", username, servletRequest.getRemoteAddr());
+      throw new ForbiddenException();
+    } else if (user.getStatus() != UserStatus.ACTIVE) {
+      log.info("Not an active user '{}': status is '{}'", username, user.getStatus());
       throw new ForbiddenException();
     }
   }
@@ -165,8 +170,8 @@ public class TicketsResource extends BaseTicketResource {
   private void validateRealm(HttpServletRequest servletRequest, User user, Subject subject) {
     // check that authentication realm is the expected one as specified in user profile
     if(!subject.getPrincipals().getRealmNames().contains(user.getRealm())) {
-      log.info("Authentication failure of user '{}' at ip: '{}': unexpected realm '{}'", user.getName(), servletRequest.getRemoteAddr(),
-        subject.getPrincipals().getRealmNames().iterator().next());
+      log.info("Authentication failure of user '{}' at ip: '{}': unexpected realm '{}'", user.getName(),
+        servletRequest.getRemoteAddr(), subject.getPrincipals().getRealmNames().iterator().next());
       throw new ForbiddenException();
     }
   }
