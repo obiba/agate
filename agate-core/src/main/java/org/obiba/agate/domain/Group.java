@@ -23,7 +23,7 @@ import com.google.common.base.Strings;
 /**
  * A group.
  */
-@Document(collection = "usergroup") // group is a reserved word in mongodb
+@Document(collection = "userGroup") // group is a reserved word in mongodb
 public class Group extends AbstractAuditableDocument {
 
   private static final long serialVersionUID = -2028848270265682755L;
