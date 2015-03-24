@@ -33,9 +33,7 @@
           <a href="mailto:{{user.email}}" target="_blank">{{user.email}}</a>
         </td>
         <td>
-          <i class="fa fa-star" ng-hide="user.status != 'ACTIVE'" title="{{user.status.toLowerCase()}}"></i>
-          <i class="fa fa-star-half-o" ng-hide="user.status != 'PENDING'" title="{{user.status.toLowerCase()}}"></i>
-          <i class="fa fa-star-o" ng-hide="user.status != 'INACTIVE'" title="{{user.status.toLowerCase()}}"></i>
+          <span translate>user.{{user.status}}</span>
         </td>
         <td>
           <span translate>user.{{user.role}}</span>

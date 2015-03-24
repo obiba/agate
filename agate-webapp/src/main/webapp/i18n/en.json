@@ -14,7 +14,6 @@
       "users": "Users",
       "myProfile": "My Profile",
       "logout": "Sign Out",
-
       "account": {
         "main": "Account",
         "settings": "Settings",
@@ -129,7 +128,6 @@
       "success": "<strong>Session invalidated!</strong>",
       "error": "<strong>An error has occured!</strong> The session could not be invalidated."
     }
-
   },
   "errors": {
     "title": "Error page!",
@@ -192,7 +190,11 @@
     "groups": "Groups",
     "applications": "Applications",
     "agate-administrator": "Administrator",
-    "agate-user": "User"
+    "agate-user": "User",
+    "ACTIVE": "Active",
+    "INACTIVE": "Inactive",
+    "APPROVED": "Pending",
+    "PENDING": "Pending"
   },
   "name": "Name",
   "edit": "Edit",

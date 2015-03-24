@@ -15,8 +15,9 @@ package org.obiba.agate.domain;
  */
 public enum UserStatus {
 
-  ACTIVE,  // User operational
-  PENDING, // User submitted to administrator approval
-  INACTIVE // User temporary banned
+  ACTIVE,   // User operational
+  PENDING,  // User submitted to administrator approval
+  APPROVED, // User was approved by administrator but still require user confirmation (email, password reset)
+  INACTIVE  // User temporary banned
 
 }
