@@ -158,6 +158,11 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
     log.debug("Registering GZip Filter");
 
     FilterRegistration.Dynamic compressingFilter = servletContext.addFilter("gzipFilter", new GzipFilter());
+
+    if (compressingFilter == null) {
+      compressingFilter = (FilterRegistration.Dynamic)servletContext.getFilterRegistration("gzipFilter");
+    }
+
     compressingFilter.addMappingForUrlPatterns(disps, true, "*.css");
     compressingFilter.addMappingForUrlPatterns(disps, true, "*.json");
     compressingFilter.addMappingForUrlPatterns(disps, true, "*.html");
