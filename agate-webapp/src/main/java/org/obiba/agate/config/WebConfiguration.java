@@ -1,15 +1,23 @@
 package org.obiba.agate.config;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 
 import javax.inject.Inject;
 import javax.servlet.DispatcherType;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
@@ -109,6 +117,7 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
     };
     jettySsl.setWantClientAuth(true);
     jettySsl.setNeedClientAuth(false);
+    jettySsl.addExcludeProtocols("SSLv2", "SSLv3");
 
     ServerConnector sslConnector = new ServerConnector(server, jettySsl);
     sslConnector.setPort(httpsPort);
@@ -121,6 +130,7 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
   public void onStartup(ServletContext servletContext) throws ServletException {
     log.info("Web application configuration, using profiles: {}", Arrays.toString(env.getActiveProfiles()));
 
+    initAllowedMethodsFilter(servletContext);
     initAuthenticationFilter(servletContext);
 
     EnumSet<DispatcherType> disps = EnumSet.of(REQUEST, FORWARD, ASYNC);
@@ -134,6 +144,15 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
     log.info("Web application fully configured");
   }
 
+  private void initAllowedMethodsFilter(ServletContext servletContext) {
+    log.debug("Registering Allowed Methods Filter");
+
+    FilterRegistration.Dynamic filterRegistration = servletContext.addFilter("noTrace", new NoTraceFilter());
+
+    filterRegistration.addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, ASYNC, INCLUDE, ERROR), true, "/*");
+    filterRegistration.setAsyncSupported(true);
+  }
+
   private void initAuthenticationFilter(ServletContext servletContext) {
     log.debug("Registering Authentication Filter");
     FilterRegistration.Dynamic filterRegistration = servletContext
@@ -144,7 +163,7 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
         (FilterRegistration.Dynamic)servletContext.getFilterRegistration("authenticationFilter");
     }
 
-    log.debug("Adding mappging to authentication filter registration");
+    log.debug("Adding mapping to authentication filter registration");
 
     filterRegistration.addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, ASYNC, INCLUDE, ERROR), true,
       WS_ROOT + "/*");
@@ -181,7 +200,8 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
     FilterRegistration.Dynamic resourcesFilter = servletContext
         .addFilter("staticResourcesProductionFilter", new StaticResourcesProductionFilter());
 
-    resourcesFilter.addMappingForUrlPatterns(disps, true, "/");
+    resourcesFilter.addMappingForUrlPatterns(disps, true, "/favicon.ico");
+    resourcesFilter.addMappingForUrlPatterns(disps, true, "/robots.txt");
     resourcesFilter.addMappingForUrlPatterns(disps, true, "/index.html");
     resourcesFilter.addMappingForUrlPatterns(disps, true, "/images/*");
     resourcesFilter.addMappingForUrlPatterns(disps, true, "/fonts/*");
@@ -227,6 +247,36 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
     metricsAdminServlet.addMapping("/metrics/metrics/*");
     metricsAdminServlet.setAsyncSupported(true);
     metricsAdminServlet.setLoadOnStartup(2);
+  }
+
+  /**
+   * When a TRACE request is received, returns a Forbidden response.
+   */
+  private static class NoTraceFilter implements Filter {
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+
+    }
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+      throws IOException, ServletException {
+      HttpServletRequest httpRequest = (HttpServletRequest) request;
+      HttpServletResponse httpResponse = (HttpServletResponse) response;
+
+      if("TRACE".equals(httpRequest.getMethod())) {
+        httpResponse.reset();
+        httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "TRACE method not allowed");
+        return;
+      }
+      chain.doFilter(request, response);
+    }
+
+    @Override
+    public void destroy() {
+
+    }
   }
 
 }
