@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.obiba.agate.domain.User;
+import org.obiba.agate.domain.UserStatus;
 import org.obiba.agate.service.NoSuchUserException;
 import org.obiba.agate.web.model.Dtos;
 import org.springframework.stereotype.Component;
@@ -41,6 +42,15 @@ public class UserResource extends AbstractUserResource {
   public Response updateRole(@FormParam("role") @DefaultValue("agate-user") String role) {
     User user = userService.getUser(id);
     user.setRole(role);
+    userService.save(user);
+    return Response.noContent().build();
+  }
+
+  @PUT
+  @Path("/status")
+  public Response updateStatus(@FormParam("status") String status) {
+    User user = userService.getUser(id);
+    user.setStatus(UserStatus.valueOf(status.toUpperCase()));
     userService.save(user);
     return Response.noContent().build();
   }
