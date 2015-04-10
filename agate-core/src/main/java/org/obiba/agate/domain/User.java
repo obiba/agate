@@ -1,6 +1,7 @@
 package org.obiba.agate.domain;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.validation.constraints.NotNull;
@@ -14,6 +15,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -36,6 +38,8 @@ public class User extends AbstractAuditableDocument {
 
   @Email
   private String email;
+
+  private Map<String,String> attributes = Maps.newHashMap();
 
   private UserStatus status = UserStatus.PENDING;
 
@@ -91,6 +95,26 @@ public class User extends AbstractAuditableDocument {
 
   public void setEmail(String email) {
     this.email = email;
+  }
+
+  public boolean hasAttributes() {
+    return attributes.size() > 0;
+  }
+
+  public Map<String, String> getAttributes() {
+    return attributes;
+  }
+
+  public void setAttributes(Map<String, String> attributes) {
+    this.attributes = attributes == null ? Maps.newHashMap() : attributes;
+  }
+
+  public void setAttribute(String name, String value) {
+    attributes.put(name, value);
+  }
+
+  public void deleteAttribute(String name) {
+    attributes.remove(name);
   }
 
   public boolean isEnabled() {
@@ -237,6 +261,11 @@ public class User extends AbstractAuditableDocument {
 
     public Builder pending() {
       user.setStatus(UserStatus.PENDING);
+      return this;
+    }
+
+    public Builder with(String name, String value) {
+      user.setAttribute(name, value);
       return this;
     }
 

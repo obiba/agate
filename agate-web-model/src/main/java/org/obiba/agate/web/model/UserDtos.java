@@ -36,6 +36,8 @@ class UserDtos {
     if(!Strings.isNullOrEmpty(user.getFirstName())) builder.setFirstName(user.getFirstName());
     if(!Strings.isNullOrEmpty(user.getLastName())) builder.setLastName(user.getLastName());
     if(!Strings.isNullOrEmpty(user.getEmail())) builder.setEmail(user.getEmail());
+    if(user.hasAttributes()) user.getAttributes()
+      .forEach((n, v) -> builder.addAttributes(Agate.AttributeDto.newBuilder().setName(n).setValue(v)));
     if(user.hasGroups()) builder.addAllGroups(user.getGroups());
     if(user.hasApplications()) builder.addAllApplications(user.getApplications());
 
@@ -50,6 +52,7 @@ class UserDtos {
       addAttribute(builder, "firstName", user.getFirstName());
       addAttribute(builder, "lastName", user.getLastName());
       addAttribute(builder, "email", user.getEmail());
+      user.getAttributes().forEach((n, v) -> addAttribute(builder, n, v));
     }
 
     return builder.build();

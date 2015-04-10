@@ -98,7 +98,9 @@ public class UserSeed implements ApplicationListener<ContextRefreshedEvent> {
       .pending() //
       .firstName("Monsieur") //
       .lastName("Patate") //
-      .email("user3@example.org");
+      .email("user3@example.org") //
+      .with("institution", "Friterie") //
+      .with("note", "Mr Burger's friend");
 
     save(builder.build());
   }

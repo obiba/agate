@@ -1,11 +1,14 @@
 package org.obiba.agate.domain;
 
+import java.util.List;
+
 import org.hibernate.validator.constraints.NotBlank;
 import org.obiba.mongodb.domain.AbstractAuditableDocument;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 @Document
 public class Configuration extends AbstractAuditableDocument {
@@ -16,7 +19,7 @@ public class Configuration extends AbstractAuditableDocument {
 
   public static final int DEFAULT_SHORT_TIMEOUT = 8; // 8 hours
 
-  public static final int DEFAULT_LONG_TIMEOUT = 24*30*3; // 3 months
+  public static final int DEFAULT_LONG_TIMEOUT = 24 * 30 * 3; // 3 months
 
   @NotBlank
   private String name = DEFAULT_NAME;
@@ -28,6 +31,8 @@ public class Configuration extends AbstractAuditableDocument {
   private int longTimeout = DEFAULT_LONG_TIMEOUT;
 
   private String secretKey;
+
+  private List<AttributeConfiguration> userAttributes;
 
   public String getName() {
     return name;
@@ -73,11 +78,28 @@ public class Configuration extends AbstractAuditableDocument {
     this.secretKey = secretKey;
   }
 
+  public boolean hasUserAttributes() {
+    return userAttributes != null && userAttributes.size() > 0;
+  }
+
+  public List<AttributeConfiguration> getUserAttributes() {
+    return userAttributes;
+  }
+
+  public void setUserAttributes(List<AttributeConfiguration> userAttributes) {
+    this.userAttributes = userAttributes;
+  }
+
+  public void addUserAttribute(AttributeConfiguration config) {
+    if(userAttributes == null) userAttributes = Lists.newArrayList();
+    userAttributes.add(config);
+  }
+
   @Override
   protected Objects.ToStringHelper toStringHelper() {
     return super.toStringHelper().add("name", name) //
-        .add("domain", domain) //
-        .add("shortTimeout", shortTimeout) //
-        .add("longTimeout", longTimeout);
+      .add("domain", domain) //
+      .add("shortTimeout", shortTimeout) //
+      .add("longTimeout", longTimeout);
   }
 }

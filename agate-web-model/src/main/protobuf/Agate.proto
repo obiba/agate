@@ -28,11 +28,24 @@ message TimestampsDto {
   optional string lastUpdate = 2;
 }
 
+message AttributeConfigurationDto {
+  required string name = 1;
+  required bool required = 2;
+  required string type = 3;
+  repeated string values = 4;
+}
+
 message ConfigurationDto {
   required string name = 1;
   optional string domain = 2;
   required int32 shortTimeout = 3; // hours
   required int32 longTimeout = 4; // hours
+  repeated AttributeConfigurationDto userAttributes = 5;
+}
+
+message AttributeDto {
+  required string name = 1;
+  optional string value = 2;
 }
 
 message UserDto {
@@ -42,11 +55,12 @@ message UserDto {
   optional string firstName = 4;
   optional string lastName = 5;
   optional string email = 6;
-  required string role = 7;
-  required string status = 8;
-  repeated string groups = 9;
-  repeated string applications = 10;
-  optional TimestampsDto timestamps = 11;
+  repeated AttributeDto attributes = 7;
+  required string role = 8;
+  required string status = 9;
+  repeated string groups = 10;
+  repeated string applications = 11;
+  optional TimestampsDto timestamps = 12;
 }
 
 message GroupDto {
