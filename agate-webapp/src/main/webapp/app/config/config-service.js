@@ -7,4 +7,10 @@ agate.config.factory('ConfigurationResource', ['$resource',
       'save': {method: 'PUT'},
       'get': {method: 'GET'}
     });
-  }]);
+  }])
+  .factory('KeyStoreResource', ['$resource',
+    function ($resource) {
+      return $resource('ws/config/keystore/system/https', {}, {
+        'save': {method: 'PUT'}
+      });
+    }]);

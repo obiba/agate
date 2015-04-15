@@ -134,19 +134,36 @@
     "403": "You are not authorized to access the page."
   },
   "footer": "This is your footer",
-  "administration": {
-    "title": "Administration",
-    "config": {
-      "title": "Configuration",
-      "title-edit": "Edit Configuration",
+  "config": {
+    "title": "Configuration",
+    "title-edit": "Edit Configuration",
+    "name": "Name",
+    "name-help": "Name of your organization",
+    "domain": "Domain",
+    "domain-help": "Single sign-on cookie domain",
+    "shortTimeout": "Short term timeout (hours)",
+    "shortTimeout-help": "Ticket expiration timeout in hours",
+    "longTimeout": "Long term timeout (hours)",
+    "longTimeout-help": "Ticket expiration timeout in hours when \"remember me\" option is selected",
+    "encryptionKeys": "Encyption Keys",
+    "addKeyPair": "Add Keys",
+    "downloadCertificate": "Download Certificate",
+    "actions": "Actions",
+    "create" : "Create",
+    "import" : "Import",
+    "keys": {
+      "titleCreate": "Create Certificate",
+      "titleImport": "Import Certificate",
       "name": "Name",
-      "name-help": "Name of your organization",
-      "domain": "Domain",
-      "domain-help": "Single sign-on cookie domain",
-      "shortTimeout": "Short term timeout (hours)",
-      "shortTimeout-help": "Ticket expiration timeout in hours",
-      "longTimeout": "Long term timeout (hours)",
-      "longTimeout-help": "Ticket expiration timeout in hours when \"remember me\" option is selected"
+      "organization": "Organization",
+      "organizationalUnit": "Organizational Unit",
+      "locality": "Locality",
+      "state": "State",
+      "country": "Country",
+      "algo": "Algorithm",
+      "size": "Size",
+      "private": "Private Key",
+      "public": "Public Key"
     }
   },
   "applications": "Applications",

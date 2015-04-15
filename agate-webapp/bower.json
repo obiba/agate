@@ -24,7 +24,8 @@
     "json3": "3.3.0",
     "modernizr": "2.7.1",
     "swagger-ui": "2.0.16",
-    "angular-moment": "~0.7.1"
+    "angular-moment": "~0.7.1",
+    "ng-obiba": "git@github.com:obiba/ng-obiba.git"
   },
   "devDependencies": {
     "angular-mocks": "1.2.16",

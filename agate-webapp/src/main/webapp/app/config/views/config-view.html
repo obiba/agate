@@ -1,24 +1,24 @@
 <div>
 
-  <h2 translate>administration.config.title</h2>
+  <h2 translate>config.title</h2>
   <div class="row">
     <div class="col-md-6">
       <table class="table table-striped">
         <tbody>
         <tr>
-          <td translate>administration.config.name</td>
+          <td translate>config.name</td>
           <td>{{agateConfig.name}}</td>
         </tr>
         <tr>
-          <td translate>administration.config.domain</td>
+          <td translate>config.domain</td>
           <td>{{agateConfig.domain}}</td>
         </tr>
         <tr>
-          <td translate>administration.config.shortTimeout</td>
+          <td translate>config.shortTimeout</td>
           <td>{{agateConfig.shortTimeout}}</td>
         </tr>
         <tr>
-          <td translate>administration.config.longTimeout</td>
+          <td translate>config.longTimeout</td>
           <td>{{agateConfig.longTimeout}}</td>
         </tr>
         </tbody>
@@ -28,6 +28,22 @@
 
   <a href="#/config/edit" class="btn btn-primary">
     <i class="fa fa-pencil-square-o"></i> <span translate>edit</span>
+  </a>
+
+  <h2 translate>config.encryptionKeys</h2>
+
+  <div class="btn-group dropdown" is-open="status.isopen">
+    <button type="button" class="btn btn-info dropdown-toggle" ng-disabled="disabled">
+      <i class="fa fa-plus"></i> <span translate>config.addKeyPair</span> <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu">
+      <li><a href="" ng-click="createKeyPair()" translate>config.create</a></li>
+      <li><a href="" ng-click="importKeyPair()" translate>config.import</a></li>
+    </ul>
+  </div>
+
+  <a href="" class="btn btn-default" ng-click="downloadCertificate()">
+    <i class="fa fa-download"></i> <span translate>config.downloadCertificate</span>
   </a>
 
 </div>
