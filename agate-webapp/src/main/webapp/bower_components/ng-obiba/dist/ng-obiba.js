@@ -3,7 +3,7 @@
  * https://github.com/obiba/ng-obiba
 
  * License: GNU Public License version 3
- * Date: 2014-05-27
+ * Date: 2015-04-13
  */
 'use strict';
 
@@ -201,11 +201,66 @@ angular.module('obiba.form')
       scope: {
         name: '@',
         model: '=',
+        disabled: '=',
+        type: '@',
+        label: '@',
+        required: '@',
+        min: '@',
+        max: '@',
+        step: '@',
+        help: '@'
+      },
+      templateUrl: 'form/form-input-template.tpl.html',
+      link: function ($scope, elem, attr, ctrl) {
+        if (angular.isUndefined($scope.model) || $scope.model === null) {
+          $scope.model = '';
+        }
+        $scope.form = ctrl;
+      },
+      compile: function(elem, attrs) {
+        if (!attrs.type) { attrs.type = 'text'; }
+      }
+    };
+  }])
+
+  .directive('formTextarea', [function () {
+    return {
+      restrict: 'AE',
+      require: '^form',
+      scope: {
+        name: '@',
+        model: '=',
+        disabled: '=',
         label: '@',
         required: '@',
         help: '@'
       },
-      templateUrl: 'form/form-input-template.tpl.html',
+      templateUrl: 'form/form-textarea-template.tpl.html',
+      link: function ($scope, elem, attr, ctrl) {
+        if (angular.isUndefined($scope.model) || $scope.model === null) {
+          $scope.model = '';
+        }
+        $scope.form = ctrl;
+      },
+      compile: function(elem, attrs) {
+        if (!attrs.type) { attrs.type = 'text'; }
+      }
+    };
+  }])
+
+  .directive('formLocalizedInput', [function () {
+    return {
+      restrict: 'AE',
+      require: '^form',
+      scope: {
+        locales: '=',
+        name: '@',
+        model: '=',
+        label: '@',
+        required: '@',
+        help: '@'
+      },
+      templateUrl: 'form/form-localized-input-template.tpl.html',
       link: function ($scope, elem, attr, ctrl) {
         if (angular.isUndefined($scope.model) || $scope.model === null) {
           $scope.model = '';
@@ -233,7 +288,51 @@ angular.module('obiba.form')
         $scope.form = ctrl;
       }
     };
-  }]);;'use strict';
+  }])
+
+  .directive('formCheckboxGroup', [function() {
+    return {
+      restrict: 'A',
+      scope: {
+        options: '=',
+        model: '='
+      },
+      template: '<div form-checkbox ng-repeat="item in items" name="{{item.name}}" model="item.value" label="{{item.label}}">',
+      link: function ($scope, elem, attrs) {
+        $scope.$watch('model', function(selected) {
+          $scope.items = $scope.options.map(function(n) {
+            var value = angular.isArray(selected) && (selected.indexOf(n) > -1 ||
+              selected.indexOf(n.name) > -1);
+            return {
+              name: attrs.model + '.' + (n.name || n),
+              label: n.label || n,
+              value: value
+            };
+          });
+        }, true);
+
+        $scope.$watch('items', function(items) {
+          if (angular.isArray(items)) {
+            $scope.model = items.filter(function(e) { return e.value; })
+              .map(function(e) { return e.name.replace(attrs.model + '.', ''); });
+          }
+        }, true);
+
+        $scope.$watch('options', function(opts) {
+          $scope.items = opts.map(function(n) {
+            var value = angular.isArray($scope.model) && ($scope.model.indexOf(n) > -1 ||
+              $scope.model.indexOf(n.name) > -1);
+            return {
+              name: attrs.model + '.' + (n.name || n),
+              label: n.label || n,
+              value: value
+            };
+          });
+        }, true);
+      }
+    };
+  }]);
+;'use strict';
 
 angular.module('ngObiba', [
   'obiba.form',
@@ -241,7 +340,7 @@ angular.module('ngObiba', [
   'obiba.rest',
   'obiba.utils'
 ]);
-;angular.module('templates-main', ['form/form-checkbox-template.tpl.html', 'form/form-input-template.tpl.html', 'notification/notification-confirm-modal.tpl.html', 'notification/notification-modal.tpl.html']);
+;angular.module('templates-main', ['form/form-checkbox-template.tpl.html', 'form/form-input-template.tpl.html', 'form/form-localized-input-template.tpl.html', 'form/form-textarea-template.tpl.html', 'notification/notification-confirm-modal.tpl.html', 'notification/notification-modal.tpl.html']);
 
 angular.module("form/form-checkbox-template.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("form/form-checkbox-template.tpl.html",
@@ -282,12 +381,16 @@ angular.module("form/form-input-template.tpl.html", []).run(["$templateCache", f
     "\n" +
     "  <input\n" +
     "      ng-model=\"model\"\n" +
-    "      type=\"text\"\n" +
+    "      type=\"{{type}}\"\n" +
     "      class=\"form-control\"\n" +
     "      id=\"{{name}}\"\n" +
     "      name=\"{{name}}\"\n" +
     "      form-server-error\n" +
-    "      ng-required=\"required\">\n" +
+    "      ng-attr-min=\"{{min}}\"\n" +
+    "      ng-attr-max=\"{{max}}\"\n" +
+    "      ng-attr-step=\"{{step}}\"\n" +
+    "      ng-disabled=\"disabled\"\n" +
+    "      ng-required=\"required\"/>\n" +
     "\n" +
     "  <ul class=\"input-error list-unstyled\" ng-show=\"form[name].$dirty && form[name].$invalid\">\n" +
     "    <li ng-show=\"form[name].$error.required\" translate>required</li>\n" +
@@ -296,7 +399,67 @@ angular.module("form/form-input-template.tpl.html", []).run(["$templateCache", f
     "\n" +
     "  <p ng-show=\"help\" class=\"help-block\">{{help | translate}}</p>\n" +
     "\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("form/form-localized-input-template.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("form/form-localized-input-template.tpl.html",
+    "<div class=\"form-group\" ng-class=\"{'has-error': (form[name].$dirty || form.saveAttempted) && form[name].$invalid}\">\n" +
+    "\n" +
+    "    <label for=\"{{name}}\" class=\"control-label\">\n" +
+    "        {{label | translate}}\n" +
+    "        <span ng-show=\"required\">*</span>\n" +
+    "    </label>\n" +
+    "\n" +
+    "    <div class=\"input-group\" ng-repeat=\"locale in locales track by $index\">\n" +
+    "        <span class=\"input-group-addon\">{{locale.lang}}</span>\n" +
+    "        <input\n" +
+    "                ng-model=\"locale.value\"\n" +
+    "                type=\"text\"\n" +
+    "                class=\"form-control\"\n" +
+    "                id=\"{{name}}.{{locale.lang}}\"\n" +
+    "                name=\"{{name}}.locale.lang}}\"\n" +
+    "                form-server-error>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <ul class=\"input-error list-unstyled\" ng-show=\"form[name].$dirty && form[name].$invalid\">\n" +
+    "        <li ng-show=\"form[name].$error.required\" translate>required</li>\n" +
+    "        <li ng-repeat=\"error in form[name].errors\">{{error}}</li>\n" +
+    "    </ul>\n" +
+    "\n" +
+    "    <p ng-show=\"help\" class=\"help-block\">{{help | translate}}</p>\n" +
+    "\n" +
     "</div>");
+}]);
+
+angular.module("form/form-textarea-template.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("form/form-textarea-template.tpl.html",
+    "<div class=\"form-group\" ng-class=\"{'has-error': (form[name].$dirty || form.saveAttempted) && form[name].$invalid}\">\n" +
+    "\n" +
+    "  <label for=\"{{name}}\" class=\"control-label\">\n" +
+    "    {{label | translate}}\n" +
+    "    <span ng-show=\"required\">*</span>\n" +
+    "  </label>\n" +
+    "\n" +
+    "  <textarea\n" +
+    "      ng-model=\"model\"\n" +
+    "      class=\"form-control\"\n" +
+    "      id=\"{{name}}\"\n" +
+    "      name=\"{{name}}\"\n" +
+    "      form-server-error\n" +
+    "      ng-disabled=\"disabled\"\n" +
+    "      ng-required=\"required\"></textarea>\n" +
+    "\n" +
+    "  <ul class=\"input-error list-unstyled\" ng-show=\"form[name].$dirty && form[name].$invalid\">\n" +
+    "    <li ng-show=\"form[name].$error.required\" translate>required</li>\n" +
+    "    <li ng-repeat=\"error in form[name].errors\">{{error}}</li>\n" +
+    "  </ul>\n" +
+    "\n" +
+    "  <p ng-show=\"help\" class=\"help-block\">{{help | translate}}</p>\n" +
+    "\n" +
+    "</div>\n" +
+    "");
 }]);
 
 angular.module("notification/notification-confirm-modal.tpl.html", []).run(["$templateCache", function($templateCache) {

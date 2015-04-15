@@ -2,7 +2,9 @@
 
 agate.config = angular.module('agate.config', [
   'obiba.form',
+  'ngObiba',
   'ngResource',
   'ngRoute',
-  'pascalprecht.translate'
+  'pascalprecht.translate',
+  'ui.bootstrap'
 ]);
