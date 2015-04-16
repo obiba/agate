@@ -16,8 +16,8 @@
     <i class="fa fa-plus"></i> <span translate>application.add</span>
   </a>
 
-  <div class="table-responsive">
-    <table class="table table-striped table-hover table-bordered">
+  <div class="table-responsive voffset3">
+    <table class="table table-striped table-hover table-bordered" ng-show="applications && applications.length > 0">
       <thead>
       <tr>
         <th translate>application.name</th>
@@ -40,13 +40,13 @@
         <td>
           <ul class="list-inline">
             <li>
-              <a ng-href="#/application/{{application.id}}" translate>view</a>
+              <a ng-href="#/application/{{application.id}}" class="action"><i class="fa fa-eye"></i></a>
             </li>
             <li>
-              <a ng-href="#/application/{{application.id}}/edit" translate>edit</a>
+              <a ng-href="#/application/{{application.id}}/edit" class="action"><i class="fa fa-pencil"></i></a>
             </li>
             <li>
-              <a ng-href="#/application/{{application.id}}/delete" translate>delete</a>
+              <a href="" ng-click="deleteApplication(application)" class="action"><i class="fa fa-trash-o"></i></a>
             </li>
           </ul>
         </td>

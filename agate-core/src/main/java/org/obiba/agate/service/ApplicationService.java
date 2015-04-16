@@ -38,6 +38,10 @@ public class ApplicationService {
   @Inject
   private Environment env;
 
+  public Application find(@NotNull String id) {
+    return applicationRepository.findOne(id);
+  }
+
   public List<Application> findAll() {
     return applicationRepository.findAll();
   }
@@ -56,4 +60,7 @@ public class ApplicationService {
     applicationRepository.save(application);
   }
 
+  public void delete(@NotNull String id) {
+    applicationRepository.delete(id);
+  }
 }

@@ -1,0 +1,27 @@
+<div>
+  <h2 translate>application.titleView</h2>
+  <div class="row">
+    <div class="col-md-6">
+      <table class="table table-striped">
+        <tbody>
+        <tr>
+          <td translate>application.name</td>
+          <td>{{application.name}}</td>
+        </tr>
+        <tr>
+          <td translate>application.description</td>
+          <td>{{application.description}}</td>
+        </tr>
+        <tr>
+          <td translate>application.key</td>
+          <td>{{application.key}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <a href="#/application/{{application.id}}/edit" class="btn btn-primary">
+    <i class="fa fa-pencil-square-o"></i> <span translate>edit</span>
+  </a>
+</div>

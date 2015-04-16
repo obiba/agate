@@ -22,6 +22,7 @@ agate.application
   .factory('ApplicationResource', ['$resource',
     function ($resource) {
       return $resource('ws/application/:id', {}, {
-        'get': {method: 'GET', params: {id: '@id'}}
+        'get': {method: 'GET', params: {id: '@id'}},
+        'update': { method:'PUT', params: {id: '@id'}}
       });
     }]);

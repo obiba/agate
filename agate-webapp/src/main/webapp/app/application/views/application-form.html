@@ -1,0 +1,25 @@
+<div>
+  <h2 translate>application.titleEdit</h2>
+  <div class="row">
+    <div class="col-md-6">
+      <form name="form" role="form" novalidate ng-submit="save(form)">
+        <div form-input name="name" model="application.name" label="application.name" required="true"></div>
+
+        <div form-textarea name="description" model="application.description" label="application.description"></div>
+
+        <div form-input name="key" model="application.key" label="application.key"></div>
+
+        <a href="#/applications" class="btn btn-default">
+          <span translate>cancel</span>
+        </a>
+
+        <button type="submit" class="btn btn-info">
+          <span translate>save</span>
+        </button>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+
