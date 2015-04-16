@@ -28,7 +28,7 @@ module.exports = function (grunt) {
         },
         files: {
           // target.css file: source.less file
-          "src/main/webapp/styles/agate.css": "src/main/webapp/less/agate.less"
+          'src/main/webapp/styles/agate.css': 'src/main/webapp/less/agate.less'
         }
       }
     },
@@ -53,7 +53,6 @@ module.exports = function (grunt) {
       }
     },
     autoprefixer: {
-      options: ['last 1 version'],
       dist: {
         files: [
           {
@@ -184,7 +183,16 @@ module.exports = function (grunt) {
     useminPrepare: {
       html: 'src/main/webapp/{,*/}*.html',
       options: {
-        dest: '<%= yeoman.dist %>'
+        dest: '<%= yeoman.dist %>',
+        flow: {
+          html: {
+            steps: {
+              css: ['concat', 'cssmin'],
+              js: ['concat', 'uglifyjs']
+            },
+            post: {}
+          }
+        }
       }
     },
     usemin: {
@@ -312,18 +320,6 @@ module.exports = function (grunt) {
         html: ['<%= yeoman.dist %>/*.html']
       }
     },
-    ngmin: {
-      dist: {
-        files: [
-          {
-            expand: true,
-            cwd: '.tmp/concat/scripts',
-            src: '*.js',
-            dest: '.tmp/concat/scripts'
-          }
-        ]
-      }
-    },
     replace: {
       dist: {
         src: ['<%= yeoman.dist %>/index.html'],
@@ -336,13 +332,9 @@ module.exports = function (grunt) {
         ]
       }
     },
-    uglify: {
-      dist: {
-        files: {
-          '<%= yeoman.dist %>/scripts/scripts.js': [
-            '<%= yeoman.dist %>/scripts/scripts.js'
-          ]
-        }
+    wiredep: {
+      task: {
+        src: 'src/main/webapp/index.html'
       }
     }
   });
@@ -354,6 +346,7 @@ module.exports = function (grunt) {
 
     grunt.task.run([
       'clean:server',
+      'jshint',
       'concurrent:server',
       'autoprefixer',
       'configureProxies',
@@ -372,12 +365,13 @@ module.exports = function (grunt) {
 
   grunt.registerTask('build', [
     'clean:dist',
+    'less',
+    'jshint',
     'useminPrepare',
     'concurrent:dist',
     'autoprefixer',
     'concat',
     'copy:dist',
-    'ngmin',
     'cssmin',
     'replace',
     'uglify',
@@ -389,4 +383,6 @@ module.exports = function (grunt) {
     'test',
     'build'
   ]);
+
+  grunt.loadNpmTasks('grunt-wiredep');
 };
