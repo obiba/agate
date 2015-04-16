@@ -1,0 +1,40 @@
+{
+  "name": "angularUtils-pagination",
+  "version": "0.6.1",
+  "homepage": "https://github.com/michaelbromley/angularUtils/tree/master/src/directives/pagination",
+  "authors": [
+    "Michael Bromley <michael@michaelbromley.co.uk>"
+  ],
+  "description": "Magical automatic pagination for anything in AngularJS",
+  "main": [
+    "dirPagination.js",
+    "dirPagination.tpl.html"
+  ],
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "angularjs",
+    "pagination",
+    "directive",
+    "paging",
+    "angular"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "0.6.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.6.1",
+    "commit": "592bbbe3c0257aa64ea9d222a5d8e40fff63f20e"
+  },
+  "_source": "git://github.com/michaelbromley/angularUtils-pagination.git",
+  "_target": "~0.6.0",
+  "_originalSource": "angular-utils-pagination"
+}
