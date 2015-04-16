@@ -12,18 +12,41 @@
 
 agate.application
 
-  .controller('ApplicationListController', ['$scope', 'ApplicationsResource',
+  .controller('ApplicationListController', ['$scope', 'ApplicationsResource', 'ApplicationResource',
 
-    function ($scope, ApplicationsResource) {
+    function ($scope, ApplicationsResource, ApplicationResource) {
 
       $scope.applications = ApplicationsResource.query();
 
-      $scope.deleteApplication = function (id) {
-        //TODO ask confirmation
-        ApplicationResource.delete({id: id},
+      $scope.deleteApplication = function (application) {
+        ApplicationResource.delete({id: application.id},
           function () {
             $scope.applications = ApplicationsResource.query();
           });
       };
+    }])
 
+  .controller('ApplicationViewController', ['$scope', '$location', '$routeParams', 'ApplicationResource',
+
+    function ($scope, $location, $routeParams, ApplicationResource) {
+      $scope.application = $routeParams.id ? ApplicationResource.get({id: $routeParams.id}) : {};
+    }])
+
+  .controller('ApplicationEditController', ['$scope', '$location', '$routeParams', 'ApplicationsResource', 'ApplicationResource',
+
+    function ($scope, $location, $routeParams, ApplicationsResource, ApplicationResource) {
+
+      $scope.application = $routeParams.id ? ApplicationResource.get({id: $routeParams.id}) : {};
+
+      $scope.save = function() {
+        var onSuccess = function() {
+          $location.path('/applications');
+        };
+
+        if ($scope.application.id) {
+          ApplicationResource.update({id: $scope.application.id}, $scope.application, onSuccess);
+        } else {
+          ApplicationsResource.save($scope.application, onSuccess);
+        }
+      };
     }]);

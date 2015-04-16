@@ -10,12 +10,12 @@
 
 package org.obiba.agate.web.rest.application;
 
-import java.util.List;
-
 import javax.inject.Inject;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import org.apache.shiro.authz.annotation.RequiresRoles;
@@ -24,32 +24,35 @@ import org.obiba.agate.service.ApplicationService;
 import org.obiba.agate.web.model.Agate;
 import org.obiba.agate.web.model.Dtos;
 import org.springframework.stereotype.Component;
-import com.google.common.collect.ImmutableList;
 
 @Component
 @RequiresRoles("agate-administrator")
-@Path("/applications")
-public class ApplicationsResource {
-
-  @Inject
-  private ApplicationService applicationService;
+@Path("/application/{id}")
+public class ApplicationResource {
 
   @Inject
   private Dtos dtos;
 
+  @Inject
+  private ApplicationService applicationService;
+
   @GET
-  public List<Agate.ApplicationDto> get() {
-    ImmutableList.Builder<Agate.ApplicationDto> builder = ImmutableList.builder();
-    for(Application application : applicationService.findAll()) {
-      builder.add(dtos.asDto(application));
-    }
-    return builder.build();
+  public Agate.ApplicationDto getApplication(@PathParam("id")String id) {
+    return dtos.asDto(applicationService.find(id));
   }
 
-  @POST
-  public Response create(Agate.ApplicationDto dto) {
-    applicationService.save(dtos.fromDto(dto));
+  @PUT
+  public Response updateApplication(@PathParam("id")String id, Agate.ApplicationDto dto) {
+    Application application = dtos.fromDto(dto);
+    applicationService.save(application);
 
-    return Response.ok().build();
+    return Response.noContent().build();
+  }
+
+  @DELETE
+  public Response delete(@PathParam("id")String id) {
+    applicationService.delete(id);
+
+    return Response.noContent().build();
   }
 }

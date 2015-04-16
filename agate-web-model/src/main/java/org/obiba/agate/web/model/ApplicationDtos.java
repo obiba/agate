@@ -32,4 +32,12 @@ class ApplicationDtos {
     return builder.build();
   }
 
+  @NotNull
+  Application fromDto(@NotNull Agate.ApplicationDto dto) {
+    Application application = new Application(dto.getName(), dto.getKey());
+
+    if (dto.hasDescription()) application.setDescription(dto.getDescription());
+
+    return application;
+  }
 }

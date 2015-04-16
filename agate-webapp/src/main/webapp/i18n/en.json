@@ -179,6 +179,8 @@
   },
   "applications": "Applications",
   "application": {
+    "titleView": "Application Details",
+    "titleEdit": "Edit Application",
     "add": "Add Application",
     "actions": "Actions",
     "name": "Name",

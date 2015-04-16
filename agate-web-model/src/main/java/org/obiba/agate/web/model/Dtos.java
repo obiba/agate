@@ -66,4 +66,8 @@ public class Dtos {
     return configurationDtos.fromDto(dto);
   }
 
+  @NotNull
+  public Application fromDto(@NotNull Agate.ApplicationDto dto) {
+    return applicationDtos.fromDto(dto);
+  }
 }
