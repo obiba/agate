@@ -18,12 +18,13 @@ var agate = angular.module('agate', [
   'ngRoute',
   'pascalprecht.translate',
   'tmh.dynamicLocale',
-  'ui.bootstrap'
+  'ui.bootstrap',
+  'angularUtils.directives.dirPagination'
 ]);
 
 agate
-  .config(['$routeProvider', '$httpProvider', '$translateProvider', 'tmhDynamicLocaleProvider', 'USER_ROLES',
-    function ($routeProvider, $httpProvider, $translateProvider, tmhDynamicLocaleProvider, USER_ROLES) {
+  .config(['$routeProvider', '$httpProvider', '$translateProvider', 'tmhDynamicLocaleProvider', 'USER_ROLES', 'paginationTemplateProvider',
+    function ($routeProvider, $httpProvider, $translateProvider, tmhDynamicLocaleProvider, USER_ROLES, paginationTemplateProvider) {
       $routeProvider
         .when('/login', {
           templateUrl: 'app/views/login.html',
@@ -77,6 +78,7 @@ agate
         .fallbackLanguage('en')
         .useCookieStorage();
 
+      paginationTemplateProvider.setPath('app/views/pagination-template.html');
       tmhDynamicLocaleProvider.localeLocationPattern('bower_components/angular-i18n/angular-locale_{{locale}}.js');
       tmhDynamicLocaleProvider.useCookieStorage('NG_TRANSLATE_LANG_KEY');
     }])
