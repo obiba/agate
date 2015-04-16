@@ -151,6 +151,7 @@
     "actions": "Actions",
     "create" : "Create",
     "import" : "Import",
+    "userAttributes": "User Attributes",
     "keys": {
       "titleCreate": "Create Certificate",
       "titleImport": "Import Certificate",
@@ -164,6 +165,16 @@
       "size": "Size",
       "private": "Private Key",
       "public": "Public Key"
+    },
+    "attributes": {
+      "actions": "Actions",
+      "addAttribute": "Add attribute",
+      "editTitle": "Edit attributes",
+      "type": "Type",
+      "name": "Name",
+      "values": "Values",
+      "valuesHelp": "Comma separated values",
+      "required": "Required"
     }
   },
   "applications": "Applications",

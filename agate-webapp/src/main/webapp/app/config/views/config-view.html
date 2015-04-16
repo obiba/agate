@@ -46,4 +46,45 @@
     <i class="fa fa-download"></i> <span translate>config.downloadCertificate</span>
   </a>
 
+  <h2 translate>config.userAttributes</h2>
+
+  <button type="button" class="btn btn-info btn-sm voffset2" ng-click="editAttribute()">
+    <i class="fa fa-plus"></i> <span translate>config.attributes.addAttribute</span>
+  </button>
+
+  <div ng-show="agateConfig.userAttributes || agateConfig.userAttributes.length > 0">
+    <div class="voffset3">
+      <table class="table table-striped attributes-column">
+        <thead>
+        <tr>
+          <th translate>config.attributes.name</th>
+          <th translate>config.attributes.type</th>
+          <th translate>config.attributes.values</th>
+          <th translate>config.attributes.required</th>
+          <th translate>config.attributes.actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="attribute in agateConfig.userAttributes">
+          <td>
+            {{attribute.name}}
+          </td>
+          <td>
+            {{attribute.type}}
+          </td>
+          <td>
+            {{attribute.values.join(', ') }}
+          </td>
+          <td>
+            <span ng-show="attribute.required"><i class="fa fa-check"></i></span>
+          </td>
+          <td>
+            <a href="" ng-click="editAttribute(attribute)" class="action"><i class="fa fa-pencil"></i></a>
+            <a href="" ng-click="deleteAttribute(attribute)" class="action"><i class="fa fa-trash-o"></i></a>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>

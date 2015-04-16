@@ -5,13 +5,18 @@ agate.config
     '$modal', 'KeyStoreResource',
 
     function ($scope, $resource, $route, $log, $window, ConfigurationResource, $modal, KeyStoreResource) {
-      $scope.agateConfig = ConfigurationResource.get();
+      $scope.agateConfig = {userAttributes: []};
+
+      ConfigurationResource.get(function(config) {
+        $scope.agateConfig = config;
+        $scope.agateConfig.userAttributes = $scope.agateConfig.userAttributes || [];
+      });
 
       $scope.createKeyPair = function () {
         $modal.open({
           templateUrl: 'app/config/views/config-modal-create-keypair.html',
           controller: 'CreateKeyPairModalController'
-        }).result.then(function(data) {
+        }).result.then(function (data) {
             KeyStoreResource.save(data, function () {
               $route.reload();
             });
@@ -33,7 +38,70 @@ agate.config
         $window.open('ws/config/keystore/system/https', '_blank', '');
       };
 
+      $scope.editAttribute = function (att) {
+        $modal.open({
+          templateUrl: 'app/config/views/attribute-modal-form.html',
+          controller: 'AttributeModalController',
+          resolve: {
+            'attribute': function () {
+              return angular.copy(att);
+            }
+          }
+        }).result.then(function (attribute) {
+            var idx = $scope.agateConfig.userAttributes.indexOf(att);
+            var newConfig = angular.copy($scope.agateConfig);
+
+            if (idx > -1) {
+              newConfig.userAttributes.splice(idx, 1);
+              newConfig.userAttributes.splice(idx, 0, attribute);
+            } else {
+              newConfig.userAttributes.push(attribute);
+            }
+
+            ConfigurationResource.save(newConfig, function () {
+              $route.reload();
+            });
+          });
+      };
+
+      $scope.deleteAttribute = function(attribute) {
+        var idx = $scope.agateConfig.userAttributes.indexOf(attribute);
+        $scope.agateConfig.userAttributes.splice(idx, 1);
+
+        ConfigurationResource.save($scope.agateConfig, function () {
+          $route.reload();
+        });
+      };
     }])
+
+  .controller('AttributeModalController', ['$scope', '$modalInstance', 'attribute', function($scope, $modalInstance, attribute) {
+    var types = ['STRING', 'INTEGER', 'DECIMAL', 'BOOLEAN'];
+    $scope.availableTypes = types.map(function(e) {
+      return {id: e, label: e};
+    });
+
+    $scope.attribute = attribute || {type: 'STRING'};
+    $scope.attribute.values = !$scope.attribute.values ? '' : $scope.attribute.values.join(', ');
+    $scope.data = {selectedType: $scope.availableTypes[types.indexOf($scope.attribute.type)]};
+
+    $scope.save = function (form) {
+      if (!form.$valid) {
+        form.saveAttempted = true;
+        return;
+      }
+
+      $scope.attribute.values = $scope.data.selectedType.id !== 'BOOLEAN' ? $scope.attribute.values.split(',').map(function(s) {
+        return s.trim();
+      }) : null;
+
+      $scope.attribute.type = $scope.data.selectedType.id;
+      $modalInstance.close($scope.attribute);
+    };
+
+    $scope.cancel = function () {
+      $modalInstance.dismiss('cancel');
+    };
+  }])
 
   .controller('ImportKeyPairModalController', ['$scope', '$location', '$modalInstance',
     function($scope, $location, $modalInstance) {
