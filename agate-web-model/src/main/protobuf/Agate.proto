@@ -64,7 +64,7 @@ message UserDto {
 }
 
 message GroupDto {
-  required string id = 1;
+  optional string id = 1;
   required string name = 2;
   optional string description = 3;
   optional TimestampsDto timestamps = 4;

@@ -45,9 +45,9 @@ public class User extends AbstractAuditableDocument {
 
   private String role = Roles.AGATE_USER.toString();
 
-  private Set<String> groups;
+  private Set<String> groups = Sets.newHashSet();
 
-  private Set<String> applications;
+  private Set<String> applications = Sets.newHashSet();
 
   public User() {
   }

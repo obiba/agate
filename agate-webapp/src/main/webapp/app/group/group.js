@@ -15,6 +15,7 @@ agate.group = angular.module('agate.group', [
   'obiba.form',
   'agate.localized',
   'obiba.notification',
+  'ngObiba',
   'ngResource',
   'ngRoute',
   'ui.bootstrap',
