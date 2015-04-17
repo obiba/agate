@@ -12,18 +12,53 @@
 
 agate.group
 
-  .controller('GroupListController', ['$scope', 'GroupsResource',
+  .controller('GroupListController', ['$rootScope', '$scope', '$route', 'GroupsResource', 'GroupResource', 'NOTIFICATION_EVENTS',
 
-    function ($scope, GroupsResource) {
+    function ($rootScope, $scope, $route, GroupsResource, GroupResource, NOTIFICATION_EVENTS) {
 
       $scope.groups = GroupsResource.query();
 
       $scope.deleteGroup = function (id) {
-        //TODO ask confirmation
-        GroupResource.delete({id: id},
-          function () {
-            $scope.groups = GroupsResource.query();
-          });
+        $scope.groupToDelete = id;
+        $rootScope.$broadcast(NOTIFICATION_EVENTS.showConfirmDialog,
+          {title: 'Delete Group', message: 'Are you sure to delete the group?'}, id);
       };
 
+      $scope.$on(NOTIFICATION_EVENTS.confirmDialogAccepted, function (event, id) {
+        if ($scope.groupToDelete === id) {
+
+          GroupResource.delete({id: id},
+            function () {
+              $route.reload();
+            });
+        }
+      });
+
+    }])
+  .controller('GroupEditController', ['$scope', '$routeParams', '$location', 'GroupsResource', 'GroupResource',
+
+    function ($scope, $routeParams, $location, GroupsResource, GroupResource) {
+      $scope.group = $routeParams.id ? GroupResource.get({id: $routeParams.id}) : {};
+
+      $scope.save = function(form) {
+        if (!form.$valid) {
+          form.saveAttempted = true;
+          return;
+        }
+
+        if (!$scope.group.id) {
+          GroupsResource.save($scope.group, function () {
+            $location.path('/groups');
+          });
+        } else {
+          GroupResource.update({id: $scope.group.id}, $scope.group, function () {
+            $location.path('/groups');
+          });
+        }
+      };
+    }])
+  .controller('GroupViewController', ['$scope', '$routeParams', 'GroupResource',
+
+    function ($scope, $routeParams, GroupResource) {
+      $scope.group = GroupResource.get({id: $routeParams.id});
     }]);

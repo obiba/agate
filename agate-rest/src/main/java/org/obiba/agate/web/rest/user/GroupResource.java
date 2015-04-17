@@ -11,6 +11,7 @@
 package org.obiba.agate.web.rest.user;
 
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -38,32 +39,37 @@ public class GroupResource {
   @Inject
   private Dtos dtos;
 
-  @PathParam("id")
-  private String id;
-
   @GET
-  public Agate.GroupDto get() {
+  public Agate.GroupDto get(@PathParam("id") String id) {
     Group group = userService.getGroup(id);
     return dtos.asDto(group);
   }
 
   @PUT
-  public Response update(@FormParam("description") String description) {
-    Group group = userService.getGroup(id);
-    group.setDescription(description);
+  public Response update(@PathParam("id") String id, Agate.GroupDto groupDto) {
+    Group group = userService.findGroup(groupDto.getName());
+
+    if(group != null && !group.getId().equals(id)) {
+      throw new BadRequestException("Group already exists: " + group);
+    }
+
+    group = userService.getGroup(id);
+    group.setName(groupDto.getName());
+    group.setDescription(groupDto.getDescription());
     userService.save(group);
+
     return Response.noContent().build();
   }
 
   @DELETE
-  public Response delete() {
+  public Response delete(@PathParam("id") String id) {
     try {
       Group group = userService.getGroup(id);
       userService.delete(group);
     } catch (NoSuchGroupException e) {
       // ignore
     }
+
     return Response.noContent().build();
   }
-
 }

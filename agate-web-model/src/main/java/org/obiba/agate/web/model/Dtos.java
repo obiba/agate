@@ -29,6 +29,9 @@ public class Dtos {
   private ApplicationDtos applicationDtos;
 
   @Inject
+  private GroupDtos groupDtos;
+
+  @Inject
   private ConfigurationDtos configurationDtos;
 
   @NotNull
@@ -69,5 +72,10 @@ public class Dtos {
   @NotNull
   public Application fromDto(@NotNull Agate.ApplicationDto dto) {
     return applicationDtos.fromDto(dto);
+  }
+
+  @NotNull
+  public Group fromDto(@NotNull Agate.GroupDto dto) {
+    return groupDtos.fromDto(dto);
   }
 }

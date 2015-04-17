@@ -22,6 +22,7 @@ agate.group
   .factory('GroupResource', ['$resource',
     function ($resource) {
       return $resource('ws/group/:id', {}, {
-        'get': {method: 'GET', params: {id: '@id'}}
+        'get': {method: 'GET', params: {id: '@id'}},
+        'update': {method: 'PUT', params: {id: '@id'}}
       });
     }]);

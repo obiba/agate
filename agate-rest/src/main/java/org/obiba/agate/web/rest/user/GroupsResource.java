@@ -44,12 +44,14 @@ public class GroupsResource {
   private Dtos dtos;
 
   @POST
-  public Response create(@FormParam("name") String name, @FormParam("description") String description) {
-    if(Strings.isNullOrEmpty(name)) throw new BadRequestException("Group name cannot be empty");
-    Group group = userService.findGroup(name);
-    if(group != null) throw new BadRequestException("Group already exists: " + name);
+  public Response create(Agate.GroupDto groupDto) {
+    Group group = userService.findGroup(groupDto.getName());
 
-    userService.save(new Group(name, description));
+    if(group != null) throw new BadRequestException("Group already exists: " + group);
+
+    group = dtos.fromDto(groupDto);
+    userService.save(group);
+
     return Response
         .created(UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(GroupResource.class).build(group.getId()))
         .build();
@@ -58,9 +60,11 @@ public class GroupsResource {
   @GET
   public List<Agate.GroupDto> get() {
     ImmutableList.Builder<Agate.GroupDto> builder = ImmutableList.builder();
+
     for(Group group : userService.findGroups()) {
       builder.add(dtos.asDto(group));
     }
+
     return builder.build();
   }
 

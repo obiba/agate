@@ -189,6 +189,8 @@
   },
   "groups": "Groups",
   "group": {
+    "titleEdit" : "Edit Group",
+    "titleView": "Group Details",
     "add": "Add Group",
     "actions": "Actions",
     "name": "Name",

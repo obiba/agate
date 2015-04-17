@@ -9,15 +9,14 @@
   -->
 
 <div>
-
   <h2 translate>groups</h2>
 
   <a ng-href="#/group/new" class="btn btn-info">
     <i class="fa fa-plus"></i> <span translate>group.add</span>
   </a>
 
-  <div class="table-responsive">
-    <table class="table table-striped table-hover table-bordered">
+  <div class="table-responsive voffset3">
+    <table class="table table-striped table-hover table-bordered" ng-show="groups && groups.length > 0">
       <thead>
       <tr>
         <th translate>group.name</th>
@@ -36,13 +35,13 @@
         <td>
           <ul class="list-inline">
             <li>
-              <a ng-href="#/group/{{group.id}}" translate>view</a>
+              <a ng-href="#/group/{{group.id}}" translate><i class="fa fa-eye"></i></a>
             </li>
             <li>
-              <a ng-href="#/group/{{group.id}}/edit" translate>edit</a>
+              <a ng-href="#/group/{{group.id}}/edit" translate><i class="fa fa-pencil"></i></a>
             </li>
             <li>
-              <a ng-href="#/group/{{group.id}}/delete" translate>delete</a>
+              <a href="" ng-click="deleteGroup(group.id)" translate><i class="fa fa-trash-o"></i></a>
             </li>
           </ul>
         </td>
