@@ -35,13 +35,24 @@ agate.application
   .controller('ApplicationEditController', ['$scope', '$location', '$routeParams', 'ApplicationsResource', 'ApplicationResource',
 
     function ($scope, $location, $routeParams, ApplicationsResource, ApplicationResource) {
-
+      $scope.showKey = false;
       $scope.application = $routeParams.id ? ApplicationResource.get({id: $routeParams.id}) : {};
 
-      $scope.save = function() {
-        var onSuccess = function() {
+      $scope.save = function(form) {
+        if (!form.$valid || $scope.confirmKey !== $scope.key) {
+          form.saveAttempted = true;
+          return;
+        }
+
+        var onSuccess = function () {
           $location.path('/applications');
         };
+
+        if ($scope.key) {
+          $scope.application.key = $scope.key;
+        } else {
+          delete $scope.application.key;
+        }
 
         if ($scope.application.id) {
           ApplicationResource.update({id: $scope.application.id}, $scope.application, onSuccess);

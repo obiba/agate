@@ -13,6 +13,7 @@ package org.obiba.agate.web.rest.application;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -40,15 +41,23 @@ public class ApplicationsResource {
   @GET
   public List<Agate.ApplicationDto> get() {
     ImmutableList.Builder<Agate.ApplicationDto> builder = ImmutableList.builder();
+
     for(Application application : applicationService.findAll()) {
       builder.add(dtos.asDto(application));
     }
+
     return builder.build();
   }
 
   @POST
   public Response create(Agate.ApplicationDto dto) {
-    applicationService.save(dtos.fromDto(dto));
+    if (applicationService.findByName(dto.getName()) != null) {
+      throw new BadRequestException("Application already exists.");
+    }
+
+    Application application = dtos.fromDto(dto);
+    application.setKey(applicationService.hashKey(application.getKey()));
+    applicationService.save(application);
 
     return Response.ok().build();
   }

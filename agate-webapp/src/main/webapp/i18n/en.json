@@ -185,7 +185,9 @@
     "actions": "Actions",
     "name": "Name",
     "description": "Description",
-    "key": "Key"
+    "key": "Key",
+    "confirmKey": "Confirm key",
+    "changeKey": "Change Key"
   },
   "groups": "Groups",
   "group": {

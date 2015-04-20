@@ -11,6 +11,7 @@
 package org.obiba.agate.web.rest.application;
 
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
@@ -38,12 +39,24 @@ public class ApplicationResource {
 
   @GET
   public Agate.ApplicationDto getApplication(@PathParam("id")String id) {
-    return dtos.asDto(applicationService.find(id));
+    return dtos.asDto(applicationService.getApplication(id));
   }
 
   @PUT
   public Response updateApplication(@PathParam("id")String id, Agate.ApplicationDto dto) {
-    Application application = dtos.fromDto(dto);
+    Application application = applicationService.getApplication(id);
+
+    if (!application.getName().equals(dto.getName()) && applicationService.findByName(dto.getName()) != null) {
+      throw new BadRequestException("Application with name " + dto.getName() + " already exists");
+    }
+
+    application.setDescription(dto.getDescription());
+    application.setName(dto.getName());
+
+    if (dto.hasKey()) {
+      application.setKey(applicationService.hashKey(dto.getKey()));
+    }
+
     applicationService.save(application);
 
     return Response.noContent().build();
