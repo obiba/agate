@@ -22,6 +22,6 @@ agate.ticket
   .factory('TicketResource', ['$resource',
     function ($resource) {
       return $resource('ws/ticket/:id', {}, {
-        'get': {method: 'GET', params: {id: '@id'}}
+        'get': {method: 'GET'}
       });
     }]);

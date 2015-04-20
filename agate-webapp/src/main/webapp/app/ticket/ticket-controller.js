@@ -12,18 +12,31 @@
 
 agate.ticket
 
-  .controller('TicketListController', ['$scope', 'TicketsResource',
+  .controller('TicketListController', ['$rootScope', '$scope', 'TicketsResource',
+    'TicketResource', 'NOTIFICATION_EVENTS',
 
-    function ($scope, TicketsResource) {
+    function ($rootScope, $scope, TicketsResource, TicketResource, NOTIFICATION_EVENTS) {
 
       $scope.tickets = TicketsResource.query();
 
       $scope.deleteTicket = function (id) {
-        //TODO ask confirmation
-        TicketResource.delete({id: id},
-          function () {
-            $scope.tickets = TicketsResource.query();
-          });
+        $scope.groupToDelete = id;
+        $rootScope.$broadcast(NOTIFICATION_EVENTS.showConfirmDialog,
+          {title: 'Delete Ticket', message: 'Are you sure to delete the ticket?'}, id);
       };
 
+      $scope.$on(NOTIFICATION_EVENTS.confirmDialogAccepted, function (event, id) {
+        if ($scope.groupToDelete === id) {
+
+          TicketResource.delete({id: id},
+            function () {
+              $scope.tickets = TicketsResource.query();
+            });
+        }
+      });
+    }])
+  .controller('TicketViewController', ['$scope', '$routeParams', 'TicketResource',
+
+    function ($scope, $routeParams, TicketResource) {
+      $scope.ticket = TicketResource.get({id: $routeParams.id});
     }]);

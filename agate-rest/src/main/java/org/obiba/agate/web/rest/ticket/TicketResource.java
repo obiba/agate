@@ -21,10 +21,13 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.service.TicketService;
 import org.obiba.agate.service.UserService;
+import org.obiba.agate.web.model.Agate;
 import org.obiba.web.model.AuthDtos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,9 +42,6 @@ public class TicketResource extends BaseTicketResource {
 
   private static final Logger log = LoggerFactory.getLogger(TicketResource.class);
 
-  @PathParam("token")
-  private String token;
-
   @Inject
   private TicketService ticketService;
 
@@ -49,39 +49,51 @@ public class TicketResource extends BaseTicketResource {
   private UserService userService;
 
   @GET
-  @Path("/subject")
-  public AuthDtos.SubjectDto get(@Context HttpServletRequest servletRequest) {
-    validateApplication(servletRequest);
+  @RequiresRoles("agate-administrator")
+  public Agate.TicketDto getToken(@PathParam("token") String token) {
+    return dtos.asDto(ticketService.getTicket(token));
+  }
 
+  @GET
+  @Path("/subject")
+  public AuthDtos.SubjectDto get(@PathParam("token") String token, @Context HttpServletRequest servletRequest) {
     Ticket ticket = ticketService.getTicket(token);
     ticket.addEvent(getApplicationName(), "subject");
     ticketService.save(ticket);
 
     User user = userService.findUser(ticket.getUsername());
     AuthDtos.SubjectDto subject;
+
     if(user != null) {
       subject = dtos.asDto(user, true);
     } else {
       subject = AuthDtos.SubjectDto.newBuilder().setUsername(ticket.getUsername()).build();
     }
+
     return subject;
   }
 
   @GET
   @Path("/username")
-  public Response getUsername(@Context HttpServletRequest servletRequest) {
+  public Response getUsername(@PathParam("token") String token, @Context HttpServletRequest servletRequest) {
     validateApplication(servletRequest);
 
     Ticket ticket = ticketService.getTicket(token);
     ticket.addEvent(getApplicationName(), "validate");
     ticketService.save(ticket);
+
     return Response.ok().entity(ticket.getUsername()).build();
   }
 
   @DELETE
-  public Response logout(@Context HttpServletRequest servletRequest) {
-    validateApplication(servletRequest);
+  public Response logout(@PathParam("token") String token, @Context HttpServletRequest servletRequest) {
+    if(SecurityUtils.getSubject().hasRole("agate-administrator")) {
+      ticketService.delete(token);
 
+      return Response.ok().build();
+    }
+
+    validateApplication(servletRequest);
     ticketService.delete(token);
 
     return Response.noContent().header(HttpHeaders.SET_COOKIE,

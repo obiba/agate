@@ -198,6 +198,7 @@
   },
   "tickets": "Tickets",
   "ticket": {
+    "titleView": "Ticket Details",
     "actions": "Actions",
     "created": "Created",
     "events": "Events",
@@ -205,7 +206,10 @@
     "none": "No ticket.",
     "remembered": "Remember-me",
     "token": "Token",
-    "username": "User Name"
+    "username": "User Name",
+    "eventAction": "Action",
+    "eventTime": "Time",
+    "eventApplication": "Application"
   },
   "users": "Users",
   "user": {
