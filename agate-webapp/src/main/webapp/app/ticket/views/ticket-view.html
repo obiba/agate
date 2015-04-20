@@ -1,0 +1,48 @@
+<div>
+  <h2 translate>ticket.titleView</h2>
+  <div class="row">
+    <div class="col-md-6">
+      <table class="table table-striped">
+        <tbody>
+        <tr>
+          <td translate>ticket.token</td>
+          <td>{{ticket.token}}</td>
+        </tr>
+        <tr>
+          <td translate>ticket.username</td>
+          <td>{{ticket.username}}</td>
+        </tr>
+        <tr>
+          <td translate>ticket.created</td>
+          <td>{{ticket.timestamps.created | amDateFormat:'YYYY-MM-DD HH:mm:ss'}}</td>
+        </tr>
+        <tr>
+          <td translate>ticket.expires</td>
+          <td>{{ticket.expires | amDateFormat:'YYYY-MM-DD HH:mm:ss'}}</td>
+        </tr>
+        <tr>
+          <td translate>ticket.remembered</td>
+          <td><i class="fa fa-check-square-o" ng-hide="!ticket.remembered"></i><i class="fa fa-square-o" ng-hide="ticket.remembered"></i></td>
+        </tr>
+        </tbody>
+      </table>
+      <h3 translate>ticket.events</h3>
+      <table class="table table-striped voffset3">
+        <thead>
+        <tr>
+          <th translate>ticket.eventApplication</th>
+          <th translate>ticket.eventAction</th>
+          <th translate>ticket.eventTime</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="event in ticket.events">
+          <td>{{event.application}}</td>
+          <td>{{event.action}}</td>
+          <td>{{event.time | amDateFormat:'YYYY-MM-DD HH:mm:ss'}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
