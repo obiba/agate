@@ -26,6 +26,16 @@ public class AttributeConfiguration implements Serializable {
 
   private static final long serialVersionUID = 4346306569488908166L;
 
+  public AttributeConfiguration() {
+  }
+
+  public AttributeConfiguration(String name, Type type, boolean required, List<String> values) {
+    this.name = name;
+    this.type = type;
+    this.required = required;
+    this.values = values;
+  }
+
   @NotNull
   private String name;
 
