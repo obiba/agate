@@ -2,21 +2,31 @@
   <h2 translate>application.titleEdit</h2>
   <div class="row">
     <div class="col-md-6">
-      <form name="form" role="form" novalidate ng-submit="save(form)">
+      <form name="form" role="form" novalidate ng-submit="save(form)" autocomplete="off">
+        <p class="alert alert-danger" ng-show="form.saveAttempted && form.$invalid" translate="">fix-error</p>
+
         <div form-input name="name" model="application.name" label="application.name" required="true"></div>
 
         <div form-textarea name="description" model="application.description" label="application.description"></div>
 
-        <div form-input name="key" model="application.key" label="application.key"></div>
+        <a href="" ng-click="showKey = !showKey" ng-show="application.id">
+          <span ng-class="{'glyphicon-plus': !showKey, 'glyphicon-minus': showKey}" class="glyphicon"></span> <span translate>application.changeKey</span></a>
 
-        <a href="#/applications" class="btn btn-default">
-          <span translate>cancel</span>
-        </a>
+        <div collapse="application.id && !showKey" class="voffset3">
+          <div form-input type="password" name="key" model="key" label="application.key"></div>
 
-        <button type="submit" class="btn btn-info">
-          <span translate>save</span>
-        </button>
+          <div form-input type="password" name="confirmKey" model="confirmKey" label="application.confirmKey"></div>
+        </div>
 
+        <div class="voffset4">
+          <a href="#/applications" class="btn btn-default">
+            <span translate>cancel</span>
+          </a>
+
+          <button type="submit" class="btn btn-info">
+            <span translate>save</span>
+          </button>
+        </div>
       </form>
     </div>
   </div>

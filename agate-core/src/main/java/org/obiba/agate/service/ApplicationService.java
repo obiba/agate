@@ -15,10 +15,12 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
+import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.obiba.agate.domain.Application;
 import org.obiba.agate.repository.ApplicationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +40,14 @@ public class ApplicationService {
   @Inject
   private Environment env;
 
+  public Application getApplication(@NotNull String id) throws NoSuchApplicationException {
+    Application application = applicationRepository.findOne(id);
+
+    if (application == null) throw NoSuchApplicationException.withId(id);
+
+    return application;
+  }
+
   public Application find(@NotNull String id) {
     return applicationRepository.findOne(id);
   }
@@ -52,7 +62,7 @@ public class ApplicationService {
   }
 
   public boolean isValid(String name, String key) {
-    List<Application> applications = applicationRepository.findByNameAndKey(name, key);
+    List<Application> applications = applicationRepository.findByNameAndKey(name, hashKey(key));
     return applications != null && !applications.isEmpty();
   }
 
@@ -62,5 +72,11 @@ public class ApplicationService {
 
   public void delete(@NotNull String id) {
     applicationRepository.delete(id);
+  }
+
+  public String hashKey(String key) {
+    RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "shiro.password.");
+    return new Sha512Hash(key, propertyResolver.getProperty("salt"),
+      propertyResolver.getProperty("nbHashIterations", Integer.class)).toString();
   }
 }
