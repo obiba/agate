@@ -78,6 +78,11 @@ message ApplicationDto {
   optional TimestampsDto timestamps = 5;
 }
 
+message ConfirmForm {
+  required string username = 1;
+  required string key = 2;
+  required string password = 3;
+}
 
 enum KeyType {
   KEY_PAIR = 0;

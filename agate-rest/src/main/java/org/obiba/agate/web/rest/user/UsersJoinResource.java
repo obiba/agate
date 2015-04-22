@@ -25,6 +25,7 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.obiba.agate.domain.AttributeConfiguration;
 import org.obiba.agate.domain.User;
+import org.obiba.agate.domain.UserStatus;
 import org.obiba.agate.security.AgateUserRealm;
 import org.obiba.agate.security.Roles;
 import org.obiba.agate.service.ConfigurationService;
@@ -35,6 +36,7 @@ import org.springframework.stereotype.Component;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.common.eventbus.EventBus;
 
 /**
  * Public resource for user join requests. Default realm is {@link org.obiba.agate.security.AgateUserRealm}.
@@ -58,11 +60,15 @@ public class UsersJoinResource {
     @Context HttpServletRequest request) {
     if(Strings.isNullOrEmpty(username)) throw new BadRequestException("User name cannot be empty");
 
-    if(userService.findUser(username) != null) throw new BadRequestException("User already exists: " + username);
-
     if(CURRENT_USER_NAME.equals(username)) throw new BadRequestException("Reserved user name: " + CURRENT_USER_NAME);
 
-    final User user = User.newBuilder().name(username).realm(AgateUserRealm.AGATE_REALM).role(Roles.AGATE_USER)
+    User user = userService.findUser(username);
+
+    if(user != null && user.getStatus() != UserStatus.INACTIVE && user.getStatus() != UserStatus.PENDING) {
+      throw new BadRequestException("User already exists: " + username);
+    }
+
+    user = User.newBuilder().name(username).realm(AgateUserRealm.AGATE_REALM).role(Roles.AGATE_USER)
       .pending().firstName(firstName).lastName(lastName).email(email).build();
     user.setGroups(Sets.newHashSet(groups));
     user.setApplications(Sets.newHashSet(application));

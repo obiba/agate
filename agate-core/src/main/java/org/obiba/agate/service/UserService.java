@@ -1,5 +1,6 @@
 package org.obiba.agate.service;
 
+import java.security.SignatureException;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -11,6 +12,9 @@ import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.obiba.agate.domain.Group;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.domain.UserCredentials;
+import org.obiba.agate.domain.UserStatus;
+import org.obiba.agate.event.UserApprovedEvent;
+import org.obiba.agate.event.UserJoinedEvent;
 import org.obiba.agate.repository.GroupRepository;
 import org.obiba.agate.repository.UserCredentialsRepository;
 import org.obiba.agate.repository.UserRepository;
@@ -18,9 +22,15 @@ import org.obiba.agate.security.AgateUserRealm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring4.SpringTemplateEngine;
+
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 
 /**
  * Service class for managing users.
@@ -42,6 +52,18 @@ public class UserService {
 
   @Inject
   private Environment env;
+
+  @Inject
+  private EventBus eventBus;
+
+  @Inject
+  private SpringTemplateEngine templateEngine;
+
+  @Inject
+  private MailService mailService;
+
+  @Inject
+  private ConfigurationService configurationService;
 
   /**
    * Find all {@link org.obiba.agate.domain.User}.
@@ -96,18 +118,58 @@ public class UserService {
    */
   public User save(@NotNull User user) {
     userRepository.save(user);
+
     if(user.getGroups() != null) {
       for(String groupName : user.getGroups()) {
         Group group = findGroup(groupName);
         if(group == null) groupRepository.save(new Group(groupName));
       }
     }
+
+    if(user.getStatus() == UserStatus.PENDING) {
+      eventBus.post(new UserJoinedEvent(user));
+    } else if (user.getStatus() == UserStatus.APPROVED) {
+      eventBus.post(new UserApprovedEvent(user));
+    }
+
     return user;
   }
 
   public UserCredentials save(@NotNull UserCredentials userCredentials) {
     userCredentialsRepository.save(userCredentials);
     return userCredentials;
+  }
+
+  @Subscribe
+  public void sendPendingEmail(UserJoinedEvent userJoinedEvent) throws SignatureException {
+    log.info("Sending pending review email: {}", userJoinedEvent.getPersistable());
+    final RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "registration.");
+    final List<User> administrators = userRepository.findByRole("agate-administrator");
+    final Context ctx = new Context();
+    final User user = userJoinedEvent.getPersistable();
+    ctx.setVariable("user", user);
+    ctx.setVariable("publicUrl", configurationService.getConfiguration().getDomain());
+
+    administrators.stream().forEach(u -> mailService
+        .sendEmail(u.getEmail(), propertyResolver.getProperty("pendingForReviewSubject"),
+          templateEngine.process("pendingForReviewEmail", ctx)));
+
+    mailService.sendEmail(user.getEmail(), propertyResolver.getProperty("pendingForApprovalSubject"),
+      templateEngine.process("pendingForApprovalEmail", ctx));
+  }
+
+  @Subscribe
+  public void sendConfirmationEmail(UserApprovedEvent userApprovedEvent) throws SignatureException {
+    log.info("Sending confirmation email: {}", userApprovedEvent.getPersistable());
+    final RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "registration.");
+    final Context ctx = new Context();
+    final User user = userApprovedEvent.getPersistable();
+    ctx.setVariable("user", user);
+    ctx.setVariable("publicUrl", configurationService.getConfiguration().getDomain());
+    ctx.setVariable("key", configurationService.encrypt(user.getName()));
+
+    mailService.sendEmail(user.getEmail(), propertyResolver.getProperty("confirmationSubject"),
+      templateEngine.process("confirmationEmail", ctx));
   }
 
   /**
@@ -240,7 +302,15 @@ public class UserService {
         throw NotOrphanGroupException.withName(group.getName());
       }
     }
+
     groupRepository.delete(group);
   }
 
+  public void confirmUser(@NotNull User user, String password) {
+    UserCredentials credentials = UserCredentials.newBuilder().name(user.getName()).password(hashPassword(password))
+      .build();
+    userCredentialsRepository.save(credentials);
+    user.setStatus(UserStatus.ACTIVE);
+    save(user);
+  }
 }
