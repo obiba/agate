@@ -71,7 +71,7 @@ public class UserServiceTest {
   @Test
   public void testSavePublishesJoinEvent() {
     User user = User.newBuilder().name("toto").pending().build();
-    userService.save(user);
+    userService.createUser(user);
     verify(eventBus).post(any(UserJoinedEvent.class));
   }
 
@@ -79,7 +79,7 @@ public class UserServiceTest {
   public void testSavePublishesApprovedEvent() {
     User user = User.newBuilder().name("toto").build();
     user.setStatus(UserStatus.APPROVED);
-    userService.save(user);
+    userService.createUser(user);
     verify(eventBus).post(any(UserApprovedEvent.class));
   }
 }

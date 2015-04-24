@@ -60,7 +60,7 @@ public class UsersJoinResourceTests {
       ((User) args[0]).setId("id");
 
       return null;
-    }).when(userService).save(any(User.class));
+    }).when(userService).createUser(any(User.class));
   }
 
   @Test
@@ -76,7 +76,7 @@ public class UsersJoinResourceTests {
     ArgumentCaptor<User> user = ArgumentCaptor.forClass(User.class);
 
     resource.create("un", "fn", "ln", "test@localhost.domain", "app", Lists.newArrayList("g1", "g2"), request);
-    verify(userService).save(user.capture());
+    verify(userService).createUser(user.capture());
     assertEquals("id", user.getValue().getId());
     assertEquals("test@localhost.domain", user.getValue().getEmail());
     assertEquals("fn", user.getValue().getFirstName());

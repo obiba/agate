@@ -36,7 +36,6 @@ import org.springframework.stereotype.Component;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.common.eventbus.EventBus;
 
 /**
  * Public resource for user join requests. Default realm is {@link org.obiba.agate.security.AgateUserRealm}.
@@ -74,7 +73,7 @@ public class UsersJoinResource {
     user.setApplications(Sets.newHashSet(application));
     user.setAttributes(extractAttributes(request));
 
-    userService.save(user);
+    userService.createUser(user);
 
     return Response
       .created(UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(UserResource.class).build(user.getId())).build();
