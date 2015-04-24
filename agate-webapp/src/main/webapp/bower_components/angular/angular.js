@@ -15956,8 +15956,8 @@ function FormController(element, attrs, $scope, $animate) {
  * forms are valid as well. However, browsers do not allow nesting of `<form>` elements, so
  * Angular provides the {@link ng.directive:ngForm `ngForm`} directive which behaves identically to
  * `<form>` but can be nested.  This allows you to have nested forms, which is very useful when
- * using Angular validation directives in forms that are dynaagatelly generated using the
- * {@link ng.directive:ngRepeat `ngRepeat`} directive. Since you cannot dynaagatelly generate the `name`
+ * using Angular validation directives in forms that are dynamically generated using the
+ * {@link ng.directive:ngRepeat `ngRepeat`} directive. Since you cannot dynamically generate the `name`
  * attribute of input elements using interpolation, you have to wrap each set of repeated inputs in an
  * `ngForm` directive and nest these in an outer `form` element.
  *
@@ -17670,7 +17670,7 @@ var CONSTANT_VALUE_REGEXP = /^(true|false|\d+)$/;
  * that when the element is selected, the `ngModel` of that element is set to the
  * bound value.
  *
- * `ngValue` is useful when dynaagatelly generating lists of radio buttons using `ng-repeat`, as
+ * `ngValue` is useful when dynamically generating lists of radio buttons using `ng-repeat`, as
  * shown below.
  *
  * @element input
@@ -18035,7 +18035,7 @@ function classDirective(name, selector) {
  * @restrict AC
  *
  * @description
- * The `ngClass` directive allows you to dynaagatelly set CSS classes on an HTML element by databinding
+ * The `ngClass` directive allows you to dynamically set CSS classes on an HTML element by databinding
  * an expression that represents all classes to be added.
  *
  * The directive operates in three different ways, depending on which of three types the expression
@@ -20813,7 +20813,7 @@ var ngOptionsMinErr = minErr('ngOptions');
  *
  * # `ngOptions`
  *
- * The `ngOptions` attribute can be used to dynaagatelly generate a list of `<option>`
+ * The `ngOptions` attribute can be used to dynamically generate a list of `<option>`
  * elements for the `<select>` element using the array or object obtained by evaluating the
  * `ngOptions` comprehension_expression.
  *

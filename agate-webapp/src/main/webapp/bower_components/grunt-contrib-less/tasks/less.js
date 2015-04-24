@@ -15,14 +15,14 @@ var chalk = require('chalk');
 var maxmin = require('maxmin');
 var less = require('less');
 
-module.exports = function (grunt) {
+module.exports = function(grunt) {
   var lessOptions = {
     parse: ['paths', 'optimization', 'filename', 'strictImports', 'syncImport', 'dumpLineNumbers', 'relativeUrls', 'rootpath'],
     render: ['compress', 'cleancss', 'ieCompat', 'strictMath', 'strictUnits',
-      'sourceMap', 'sourceMapFilename', 'sourceMapURL', 'sourceMapBasepath', 'sourceMapRootpath', 'outputSourceFiles']
+       'sourceMap', 'sourceMapFilename', 'sourceMapURL', 'sourceMapBasepath', 'sourceMapRootpath', 'outputSourceFiles']
   };
 
-  grunt.registerMultiTask('less', 'Compile LESS files to CSS', function () {
+  grunt.registerMultiTask('less', 'Compile LESS files to CSS', function() {
     var done = this.async();
 
     var options = this.options({
@@ -33,10 +33,10 @@ module.exports = function (grunt) {
       grunt.verbose.warn('Destination not written because no source files were provided.');
     }
 
-    async.eachSeries(this.files, function (f, nextFileObj) {
+    async.eachSeries(this.files, function(f, nextFileObj) {
       var destFile = f.dest;
 
-      var files = f.src.filter(function (filepath) {
+      var files = f.src.filter(function(filepath) {
         // Warn on and remove invalid source files (if nonull was set).
         if (!grunt.file.exists(filepath)) {
           grunt.log.warn('Source file "' + filepath + '" not found.');
@@ -56,8 +56,8 @@ module.exports = function (grunt) {
       }
 
       var compiledMax = [], compiledMin = [];
-      async.concatSeries(files, function (file, next) {
-        compileLess(file, options, function (css, err) {
+      async.concatSeries(files, function(file, next) {
+        compileLess(file, options, function(css, err) {
           if (!err) {
             if (css.max) {
               compiledMax.push(css.max);
@@ -71,7 +71,7 @@ module.exports = function (grunt) {
           grunt.file.write(options.sourceMapFilename, sourceMapContent);
           grunt.log.writeln('File ' + chalk.cyan(options.sourceMapFilename) + ' created.');
         });
-      }, function () {
+      }, function() {
         if (compiledMin.length < 1) {
           grunt.log.warn('Destination not written because compiled files were empty.');
         } else {
@@ -86,7 +86,7 @@ module.exports = function (grunt) {
     }, done);
   });
 
-  var compileLess = function (srcFile, options, callback, sourceMapCallback) {
+  var compileLess = function(srcFile, options, callback, sourceMapCallback) {
     options = _.assign({filename: srcFile}, options);
     options.paths = options.paths || [path.dirname(srcFile)];
 
@@ -117,16 +117,16 @@ module.exports = function (grunt) {
     var modifyVarsOutput = parseVariableOptions(options['modifyVars']);
     srcCode += modifyVarsOutput;
 
-    parser.parse(srcCode, function (parse_err, tree) {
+    parser.parse(srcCode, function(parse_err, tree) {
       if (parse_err) {
         lessError(parse_err, srcFile);
-        callback('', true);
+        callback('',true);
       }
 
       // Load custom functions
       if (options.customFunctions) {
-        Object.keys(options.customFunctions).forEach(function (name) {
-          less.tree.functions[name.toLowerCase()] = function () {
+        Object.keys(options.customFunctions).forEach(function(name) {
+          less.tree.functions[name.toLowerCase()] = function() {
             var args = [].slice.call(arguments);
             args.unshift(less);
             var res = options.customFunctions[name].apply(this, args);
@@ -151,21 +151,21 @@ module.exports = function (grunt) {
     });
   };
 
-  var parseVariableOptions = function (options) {
+  var parseVariableOptions = function(options) {
     var pairs = _.pairs(options);
     var output = '';
-    pairs.forEach(function (pair) {
+    pairs.forEach(function(pair) {
       output += '@' + pair[0] + ':' + pair[1] + ';';
     });
     return output;
   };
 
-  var formatLessError = function (e) {
+  var formatLessError = function(e) {
     var pos = '[' + 'L' + e.line + ':' + ('C' + e.column) + ']';
     return e.filename + ': ' + pos + ' ' + e.message;
   };
 
-  var lessError = function (e, file) {
+  var lessError = function(e, file) {
     var message = less.formatError ? less.formatError(e) : formatLessError(e);
 
     grunt.log.error(message);

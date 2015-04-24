@@ -2,6 +2,7 @@
 // Dropdown menus
 // --------------------------------------------------
 
+
 // Dropdown arrow/caret
 .caret {
   display: inline-block;
@@ -9,9 +10,9 @@
   height: 0;
   margin-left: 2px;
   vertical-align: middle;
-  border-top: @caret-width-base solid @dropdown-caret-color;
+  border-top:   @caret-width-base solid @dropdown-caret-color;
   border-right: @caret-width-base solid transparent;
-  border-left: @caret-width-base solid transparent;
+  border-left:  @caret-width-base solid transparent;
   // Firefox fix for https://github.com/twbs/bootstrap/issues/9538. Once fixed,
   // we can just straight up remove this.
   border-bottom: 0 dotted;
@@ -45,7 +46,7 @@
   border: 1px solid @dropdown-fallback-border; // IE8 fallback
   border: 1px solid @dropdown-border;
   border-radius: @border-radius-base;
-  .box-shadow(0 6px 12px rgba(0, 0, 0, .175));
+  .box-shadow(0 6px 12px rgba(0,0,0,.175));
   background-clip: padding-box;
 
   // Aligns the dropdown menu to right
@@ -104,7 +105,6 @@
     color: @dropdown-link-disabled-color;
   }
 }
-
 // Nuke hover/focus effects
 .dropdown-menu > .disabled > a {
   &:hover,
@@ -177,6 +177,7 @@
     margin-bottom: 1px;
   }
 }
+
 
 // Component alignment
 //

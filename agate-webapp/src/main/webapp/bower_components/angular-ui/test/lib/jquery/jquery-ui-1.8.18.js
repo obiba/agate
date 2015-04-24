@@ -11155,7 +11155,7 @@ $.widget( "ui.tabs", {
 
 		this.anchors.each(function( i, a ) {
 			var href = $( a ).attr( "href" );
-			// For dynaagatelly created HTML that contains a hash as href IE < 8 expands
+			// For dynamically created HTML that contains a hash as href IE < 8 expands
 			// such href to the full page url with hash and then misinterprets tab as ajax.
 			// Same consideration applies for an added tab with a fragment identifier
 			// since a[href=#fragment-identifier] does unexpectedly not match.

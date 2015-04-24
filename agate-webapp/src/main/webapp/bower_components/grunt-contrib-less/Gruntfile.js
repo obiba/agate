@@ -8,7 +8,7 @@
 
 'use strict';
 
-module.exports = function (grunt) {
+module.exports = function(grunt) {
 
   // Project configuration.
   grunt.initConfig({
@@ -55,7 +55,7 @@ module.exports = function (grunt) {
       },
       pathsFunction: {
         options: {
-          paths: function (srcFile) {
+          paths: function(srcFile) {
             var path = require('path');
             return [path.dirname(srcFile) + '/include'];
           }
@@ -94,7 +94,7 @@ module.exports = function (grunt) {
       nofiles: {
       },
       nomatchedfiles: {
-        files: { "tmp/nomatchedfiles.css": 'test/nonexistent/*.less' }
+        files: { "tmp/nomatchedfiles.css" : 'test/nonexistent/*.less' }
       },
       compressReport: {
         options: {
@@ -157,7 +157,7 @@ module.exports = function (grunt) {
         options: {
           sourceMap: true,
           sourceMapFilename: 'tmp/sourceMapBasepath.css.map',
-          sourceMapBasepath: function (dest) {
+          sourceMapBasepath: function(dest) {
             var path = require('path');
             return path.dirname(dest);
           }
@@ -186,14 +186,14 @@ module.exports = function (grunt) {
       testCustomFunctions: {
         options: {
           customFunctions: {
-            'get-color': function (less, color) {
+            'get-color': function(less, color) {
               return 'red';
             },
-            'multiple-args': function (less, arg1, arg2) {
+            'multiple-args': function(less, arg1, arg2) {
               return (((arg1.value * 1) + (arg2.value))) + arg1.unit.numerator[0];
             },
-            'string-result': function (less, arg1) {
-              return "\"Hello\"";
+            'string-result': function(less, arg1) {
+                return "\"Hello\"";
             }
           }
         },
