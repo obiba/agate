@@ -24,6 +24,8 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.obiba.agate.domain.User;
+import org.obiba.agate.domain.UserStatus;
+import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.model.Agate;
 import org.obiba.agate.web.model.Dtos;
@@ -44,6 +46,9 @@ public class UsersResource {
   private UserService userService;
 
   @Inject
+  private ConfigurationService configurationService;
+
+  @Inject
   private Dtos dtos;
 
   @GET
@@ -61,15 +66,38 @@ public class UsersResource {
     @FormParam("lastname") String lastName, @FormParam("email") String email, @FormParam("group") List<String> groups,
     @FormParam("application") List<String> applications) {
     if(Strings.isNullOrEmpty(username)) throw new BadRequestException("User name cannot be empty");
+
     User user = userService.findUser(username);
+
     if(user != null) throw new BadRequestException("User already exists: " + username);
+
     if(CURRENT_USER_NAME.equals(username)) throw new BadRequestException("Reserved user name: " + CURRENT_USER_NAME);
 
     user = User.newBuilder().name(username).realm(realm).role(role).firstName(firstName).lastName(lastName).email(email)
       .groups(groups).applications(applications).build();
+
     userService.save(user);
+
     return Response
       .created(UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(UserResource.class).build(user.getId())).build();
   }
 
+  @GET
+  @Path("/_confirm")
+  public Response confirm(Agate.ConfirmForm confirmForm) {
+    User user = userService.findUser(confirmForm.getUsername());
+
+    if (user == null)
+      throw new BadRequestException("User not found");
+
+    if (!configurationService.encrypt(user.getName()).equals(confirmForm.getKey()))
+      throw new BadRequestException("Invalid key");
+
+    if (user.getStatus() != UserStatus.APPROVED)
+      throw new BadRequestException("Invalid user status.");
+
+    userService.confirmUser(user, confirmForm.getPassword());
+
+    return Response.ok().build();
+  }
 }

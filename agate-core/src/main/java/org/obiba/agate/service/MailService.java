@@ -47,6 +47,7 @@ public class MailService {
     message.setFrom(from);
     message.setSubject(subject);
     message.setText(text);
+
     try {
       javaMailSender.send(message);
       log.debug("Sent e-mail to User '{}'!", to);

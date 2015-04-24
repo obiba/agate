@@ -1,4 +1,4 @@
-package org.obiba.agate.service.ticket;
+package org.obiba.agate.service;
 
 import java.io.File;
 import java.io.IOException;

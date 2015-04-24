@@ -31,3 +31,13 @@ spring:
 
 metrics:
     jmx.enabled: false
+
+shiro:
+  password:
+    nbHashIterations: 10000
+    salt: agate
+
+registration:
+    pendingForApprovalSubject: Account Registration
+    pendingForReviewSubject: Registration Pending
+    confirmationSubject: Registration Approved
