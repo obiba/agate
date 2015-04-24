@@ -3,13 +3,13 @@
 var grunt = require('grunt');
 var fs = require('fs');
 
-var read = function (src) {
+var read = function(src) {
   return grunt.util.normalizelf(grunt.file.read(src));
 };
 
 
 exports.less = {
-  compile: function (test) {
+  compile: function(test) {
     test.expect(2);
 
     var actual = read('tmp/less.css');
@@ -22,7 +22,7 @@ exports.less = {
 
     test.done();
   },
-  compress: function (test) {
+  compress: function(test) {
     test.expect(1);
 
     var actual = read('tmp/compress.css');
@@ -31,7 +31,7 @@ exports.less = {
 
     test.done();
   },
-  nopaths: function (test) {
+  nopaths: function(test) {
     test.expect(1);
 
     var actual = read('tmp/nopaths.css');
@@ -40,7 +40,7 @@ exports.less = {
 
     test.done();
   },
-  pathsFunction: function (test) {
+  pathsFunction: function(test) {
     test.expect(1);
 
     var actual = read('tmp/pathsFunction.css');
@@ -48,7 +48,7 @@ exports.less = {
     test.equal(expected, actual, 'should accept function that returns paths');
     test.done();
   },
-  cleancss: function (test) {
+  cleancss: function(test) {
     test.expect(2);
 
     var actual = read('tmp/cleancss.css');
@@ -61,12 +61,12 @@ exports.less = {
 
     test.done();
   },
-  ieCompat: function (test) {
+  ieCompat: function(test) {
     test.expect(2);
 
     var actual = read('tmp/ieCompatFalse.css');
     var expected = read('test/expected/ieCompatFalse.css');
-    test.equal(expected.length, actual.length, 'should generate data-uris no matter the size when ieCompat option is true');
+    test.equal(expected.length, actual.length,  'should generate data-uris no matter the size when ieCompat option is true');
 
     actual = read('tmp/ieCompatTrue.css');
     expected = read('test/expected/ieCompatTrue.css');
@@ -74,7 +74,7 @@ exports.less = {
 
     test.done();
   },
-  variablesAsLess: function (test) {
+  variablesAsLess: function(test) {
     test.expect(1);
 
     var actual = read('tmp/variablesAsLess.css');
@@ -83,7 +83,7 @@ exports.less = {
 
     test.done();
   },
-  modifyVars: function (test) {
+  modifyVars: function(test) {
     test.expect(1);
 
     var actual = grunt.file.read('tmp/modifyVars.css');
@@ -92,7 +92,7 @@ exports.less = {
 
     test.done();
   },
-  sourceMap: function (test) {
+  sourceMap: function(test) {
     test.expect(1);
 
     var actual = read('tmp/sourceMap.css');
@@ -100,7 +100,7 @@ exports.less = {
 
     test.done();
   },
-  sourceMapFilename: function (test) {
+  sourceMapFilename: function(test) {
     test.expect(1);
 
     var sourceMap = grunt.file.readJSON('tmp/sourceMapFilename.css.map');
@@ -108,14 +108,14 @@ exports.less = {
 
     test.done();
   },
-  sourceMapURL: function (test) {
+  sourceMapURL: function(test) {
     test.expect(1);
 
     var actual = read('tmp/sourceMapWithCustomURL.css');
     test.ok(actual.indexOf('/*# sourceMappingURL=custom/url/for/sourceMap.css.map') !== -1, 'compiled file should have a custom source map URL.');
     test.done();
   },
-  sourceMapBasepath: function (test) {
+  sourceMapBasepath: function(test) {
     test.expect(1);
 
     var sourceMap = grunt.file.readJSON('tmp/sourceMapBasepath.css.map');
@@ -123,7 +123,7 @@ exports.less = {
 
     test.done();
   },
-  sourceMapBasepathFunction: function (test) {
+  sourceMapBasepathFunction: function(test) {
     test.expect(1);
 
     var sourceMap = grunt.file.readJSON('tmp/sourceMapBasepath.css.map');
@@ -131,7 +131,7 @@ exports.less = {
 
     test.done();
   },
-  sourceMapRootpath: function (test) {
+  sourceMapRootpath: function(test) {
     test.expect(1);
 
     var sourceMap = grunt.file.readJSON('tmp/sourceMapRootpath.css.map');
@@ -139,7 +139,7 @@ exports.less = {
 
     test.done();
   },
-  sourceMapLessInline: function (test) {
+  sourceMapLessInline: function(test) {
     test.expect(1);
 
     var expected = read('test/fixtures/style3.less');
@@ -148,7 +148,7 @@ exports.less = {
 
     test.done();
   },
-  customFunctions: function (test) {
+  customFunctions: function(test) {
     test.expect(1);
 
     var actual = read('tmp/customFunctions.css');

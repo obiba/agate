@@ -284,19 +284,19 @@ angular.module('pascalprecht.translate').provider('$translate', [
           var deferred = $q.defer();
           translationId = translationId.trim();
           var promiseToWaitFor = function () {
-            var promise = $preferredLanguage ? langPromises[$preferredLanguage] : langPromises[$uses];
-            fallbackIndex = 0;
-            if ($storageFactory && !promise) {
-              var langKey = Storage.get($storageKey);
-              promise = langPromises[langKey];
-              if ($fallbackLanguage && $fallbackLanguage.length) {
-                var index = indexOf($fallbackLanguage, langKey);
-                fallbackIndex = index > -1 ? index += 1 : 0;
-                $fallbackLanguage.push($preferredLanguage);
+              var promise = $preferredLanguage ? langPromises[$preferredLanguage] : langPromises[$uses];
+              fallbackIndex = 0;
+              if ($storageFactory && !promise) {
+                var langKey = Storage.get($storageKey);
+                promise = langPromises[langKey];
+                if ($fallbackLanguage && $fallbackLanguage.length) {
+                  var index = indexOf($fallbackLanguage, langKey);
+                  fallbackIndex = index > -1 ? index += 1 : 0;
+                  $fallbackLanguage.push($preferredLanguage);
+                }
               }
-            }
-            return promise;
-          }();
+              return promise;
+            }();
           if (!promiseToWaitFor) {
             determineTranslation(translationId, interpolateParams, interpolationId).then(deferred.resolve, deferred.reject);
           } else {
@@ -587,17 +587,14 @@ angular.module('pascalprecht.translate').provider('$translate', [
             throw new Error('Couldn\'t refresh translation table, no loader registered!');
           }
           var deferred = $q.defer();
-
           function resolve() {
             deferred.resolve();
             $rootScope.$emit('$translateRefreshEnd');
           }
-
           function reject() {
             deferred.reject();
             $rootScope.$emit('$translateRefreshEnd');
           }
-
           $rootScope.$emit('$translateRefreshStart');
           if (!langKey) {
             var tables = [];
@@ -694,16 +691,16 @@ angular.module('pascalprecht.translate').factory('$translateDefaultInterpolation
   '$interpolate',
   function ($interpolate) {
     var $translateInterpolator = {}, $locale, $identifier = 'default', $sanitizeValueStrategy = null, sanitizeValueStrategies = {
-      escaped: function (params) {
-        var result = {};
-        for (var key in params) {
-          if (params.hasOwnProperty(key)) {
-            result[key] = angular.element('<div></div>').text(params[key]).html();
+        escaped: function (params) {
+          var result = {};
+          for (var key in params) {
+            if (params.hasOwnProperty(key)) {
+              result[key] = angular.element('<div></div>').text(params[key]).html();
+            }
           }
+          return result;
         }
-        return result;
-      }
-    };
+      };
     var sanitizeParams = function (params) {
       var result;
       if (angular.isFunction(sanitizeValueStrategies[$sanitizeValueStrategy])) {
@@ -794,36 +791,36 @@ angular.module('pascalprecht.translate').directive('translate', [
             }
           };
           var updateTranslationFn = function () {
-            if (!translateValuesExist && !translateValueExist) {
-              return function () {
-                var unwatch = scope.$watch('translationId', function (value) {
-                  if (scope.translationId && value) {
-                    $translate(value, {}, translateInterpolation).then(function (translation) {
-                      applyElementContent(translation, scope, true);
-                      unwatch();
-                    }, function (translationId) {
-                      applyElementContent(translationId, scope, false);
-                      unwatch();
-                    });
-                  }
-                }, true);
-              };
-            } else {
-              return function () {
-                var updateTranslations = function () {
-                  if (scope.translationId && scope.interpolateParams) {
-                    $translate(scope.translationId, scope.interpolateParams, translateInterpolation).then(function (translation) {
-                      applyElementContent(translation, scope, true);
-                    }, function (translationId) {
-                      applyElementContent(translationId, scope, false);
-                    });
-                  }
+              if (!translateValuesExist && !translateValueExist) {
+                return function () {
+                  var unwatch = scope.$watch('translationId', function (value) {
+                      if (scope.translationId && value) {
+                        $translate(value, {}, translateInterpolation).then(function (translation) {
+                          applyElementContent(translation, scope, true);
+                          unwatch();
+                        }, function (translationId) {
+                          applyElementContent(translationId, scope, false);
+                          unwatch();
+                        });
+                      }
+                    }, true);
                 };
-                scope.$watch('interpolateParams', updateTranslations, true);
-                scope.$watch('translationId', updateTranslations);
-              };
-            }
-          }();
+              } else {
+                return function () {
+                  var updateTranslations = function () {
+                    if (scope.translationId && scope.interpolateParams) {
+                      $translate(scope.translationId, scope.interpolateParams, translateInterpolation).then(function (translation) {
+                        applyElementContent(translation, scope, true);
+                      }, function (translationId) {
+                        applyElementContent(translationId, scope, false);
+                      });
+                    }
+                  };
+                  scope.$watch('interpolateParams', updateTranslations, true);
+                  scope.$watch('translationId', updateTranslations);
+                };
+              }
+            }();
           var unbind = $rootScope.$on('$translateChangeSuccess', updateTranslationFn);
           updateTranslationFn();
           scope.$on('$destroy', unbind);

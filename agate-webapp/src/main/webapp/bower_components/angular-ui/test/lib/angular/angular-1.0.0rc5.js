@@ -11410,7 +11410,7 @@ function classDirective(name, selector) {
  * @name angular.module.ng.$compileProvider.directive.ngClass
  *
  * @description
- * The `ngClass` allows you to set CSS class on HTML element dynaagatelly by databinding an
+ * The `ngClass` allows you to set CSS class on HTML element dynamically by databinding an
  * expression that represents all classes to be added.
  *
  * The directive won't add duplicate classes if a particular class was already set.
@@ -12999,7 +12999,7 @@ var scriptDirective = ['$templateCache', function($templateCache) {
  *
  * # `ngOptions`
  *
- * Optionally `ngOptions` attribute can be used to dynaagatelly generate a list of `<option>`
+ * Optionally `ngOptions` attribute can be used to dynamically generate a list of `<option>`
  * elements for a `<select>` element using an array or an object obtained by evaluating the
  * `ngOptions` expression.
  *ËË

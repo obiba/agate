@@ -1,5 +1,5 @@
 /*global module:false*/
-module.exports = function (grunt) {
+module.exports = function(grunt) {
 
   grunt.initConfig({
 
@@ -67,7 +67,7 @@ module.exports = function (grunt) {
         },
         files: {
           'build/loading-bar.css': 'src/loading-bar.css',
-          'build/loading-bar.js': 'src/loading-bar.js',
+          'build/loading-bar.js':  'src/loading-bar.js',
         }
       }
     }
