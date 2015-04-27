@@ -11,6 +11,13 @@ agate.user
             authorizedRoles: ['agate-administrator']
           }
         })
+        .when('/users/requests', {
+          templateUrl: 'app/user/views/user-request-list.html',
+          controller: 'UserRequestListController',
+          access: {
+            authorizedRoles: ['agate-administrator']
+          }
+        })
         .when('/user/new', {
           templateUrl: 'app/user/views/user-form.html',
           controller: 'UserEditController',

@@ -19,6 +19,7 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
@@ -52,11 +53,14 @@ public class UsersResource {
   private Dtos dtos;
 
   @GET
-  public List<Agate.UserDto> get() {
+  public List<Agate.UserDto> get(@QueryParam("status") String status) {
     ImmutableList.Builder<Agate.UserDto> builder = ImmutableList.builder();
-    for(User user : userService.findUsers()) {
+    List<User> users = status != null ? userService.findUsers(UserStatus.valueOf(status.toUpperCase())) : userService.findUsers();
+
+    for(User user : users) {
       builder.add(dtos.asDto(user));
     }
+
     return builder.build();
   }
 

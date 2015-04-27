@@ -1,0 +1,63 @@
+<div>
+
+  <h2 translate>user.pending-requests</h2>
+
+  <div class="row voffset4">
+    <div class="col-xs-4">
+      <span class="input-group input-group-sm no-padding-top">
+        <span class="input-group-addon" id="study-search"><i class="glyphicon glyphicon-search"></i></span>
+        <input ng-model="searchText" type="text" class="form-control width25" aria-describedby="user-search">
+      </span>
+    </div>
+    <div class="col-xs-8">
+      <dir-pagination-controls class="pull-right"></dir-pagination-controls>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-striped table-hover table-bordered">
+      <thead>
+      <tr>
+        <th translate>user.name</th>
+        <th translate>user.fullName</th>
+        <th translate>user.email</th>
+        <th translate>user.groups</th>
+        <th translate>user.applications</th>
+        <th translate>user.actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr dir-paginate="user in users | filter:searchText | itemsPerPage: 20">
+        <td>
+          {{user.name}}
+        </td>
+        <td>
+          {{user.firstName}} {{user.lastName}}
+        </td>
+        <td>
+          <a href="mailto:{{user.email}}" target="_blank">{{user.email}}</a>
+        </td>
+        <td>
+          {{user.groups.join(', ')}}
+        </td>
+        <td>
+          {{user.applications.join(', ')}}
+        </td>
+        <td>
+          <ul class="list-inline">
+            <li>
+              <a ng-href="#/user/{{user.id}}" translate><i class="fa fa-eye"></i></a>
+            </li>
+            <li>
+              <a href="" ng-click="approve(user)" translate><i class="fa fa-check"></i></a>
+            </li>
+            <li>
+              <a href="" ng-click="reject(user)" translate><i class="fa fa-ban"></i></a>
+            </li>
+          </ul>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

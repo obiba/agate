@@ -23,16 +23,12 @@ import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.domain.UserStatus;
 import org.obiba.agate.service.NoSuchUserException;
-import org.obiba.agate.web.model.Dtos;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiresRoles("agate-administrator")
 @Path("/user/{id}")
 public class UserResource extends AbstractUserResource {
-
-  @Inject
-  private Dtos dtos;
 
   @PathParam("id")
   private String id;
@@ -50,8 +46,8 @@ public class UserResource extends AbstractUserResource {
   @Path("/status")
   public Response updateStatus(@FormParam("status") String status) {
     User user = userService.getUser(id);
-    user.setStatus(UserStatus.valueOf(status.toUpperCase()));
-    userService.save(user);
+    userService.updateUserStatus(user, UserStatus.valueOf(status.toUpperCase()));
+
     return Response.noContent().build();
   }
 

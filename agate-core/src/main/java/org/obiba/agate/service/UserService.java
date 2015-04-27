@@ -22,7 +22,6 @@ import org.obiba.agate.security.AgateUserRealm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
-import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -72,6 +71,10 @@ public class UserService {
    */
   public List<User> findUsers() {
     return userRepository.findAll();
+  }
+
+  public List<User> findUsers(UserStatus status) {
+    return userRepository.findByStatus(status);
   }
 
   /**
@@ -126,18 +129,27 @@ public class UserService {
       }
     }
 
-    if(user.getStatus() == UserStatus.PENDING) {
-      eventBus.post(new UserJoinedEvent(user));
-    } else if (user.getStatus() == UserStatus.APPROVED) {
-      eventBus.post(new UserApprovedEvent(user));
-    }
-
     return user;
   }
 
   public UserCredentials save(@NotNull UserCredentials userCredentials) {
     userCredentialsRepository.save(userCredentials);
     return userCredentials;
+  }
+
+  public void createUser(User user) {
+    save(user);
+    eventBus.post(new UserJoinedEvent(user));
+  }
+
+  public void updateUserStatus(User user, UserStatus status) {
+    UserStatus prevStatus = user.getStatus();
+
+    user.setStatus(status);
+    save(user);
+
+    if(prevStatus == UserStatus.PENDING && user.getStatus() == UserStatus.APPROVED)
+      eventBus.post(new UserApprovedEvent(user));
   }
 
   @Subscribe

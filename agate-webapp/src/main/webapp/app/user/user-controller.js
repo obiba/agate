@@ -181,4 +181,32 @@ agate.user
         $location.path('/study' + ($scope.study.id ? '/' + $scope.study.id : '')).replace();
       };
 
+    }])
+
+  .controller('UserRequestListController', ['$rootScope', '$scope', '$route', '$http', 'UsersResource', 'UserResource', 'NOTIFICATION_EVENTS',
+
+    function ($rootScope, $scope, $route, $http, UsersResource, UserResource, NOTIFICATION_EVENTS) {
+      $scope.users = UsersResource.query({status: 'pending'});
+
+      $scope.reject = function (user) {
+        $scope.requestToDelete = user.id;
+        $rootScope.$broadcast(NOTIFICATION_EVENTS.showConfirmDialog,
+          {title: 'Delete Request', message: 'Are you sure to delete the request?'}, user.id);
+      };
+
+      $scope.$on(NOTIFICATION_EVENTS.confirmDialogAccepted, function (event, id) {
+        if ($scope.requestToDelete === id) {
+          UserResource.delete({id: id}, function() {
+            $route.reload();
+          });
+        }
+      });
+
+      $scope.approve = function (user) {
+        $http.put('ws/user/' + user.id + '/status', $.param({status: 'approved'}), {
+          headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        }).success(function() {
+          $route.reload();
+        });
+      };
     }]);
