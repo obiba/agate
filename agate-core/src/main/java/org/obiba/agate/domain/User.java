@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Email;
+import org.joda.time.DateTime;
 import org.obiba.agate.security.AgateUserRealm;
 import org.obiba.agate.security.Roles;
 import org.obiba.mongodb.domain.AbstractAuditableDocument;
@@ -48,6 +49,8 @@ public class User extends AbstractAuditableDocument {
   private Set<String> groups = Sets.newHashSet();
 
   private Set<String> applications = Sets.newHashSet();
+
+  private DateTime lastLogin;
 
   public User() {
   }
@@ -202,6 +205,14 @@ public class User extends AbstractAuditableDocument {
 
   public static Builder newBuilder() {
     return new Builder();
+  }
+
+  public DateTime getLastLogin() {
+    return lastLogin;
+  }
+
+  public void setLastLogin(DateTime lastLogin) {
+    this.lastLogin = lastLogin;
   }
 
   public static class Builder {
