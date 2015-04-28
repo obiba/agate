@@ -10,8 +10,11 @@
 
 package org.obiba.agate.web.rest.user;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -45,6 +48,9 @@ import com.google.common.collect.Sets;
 public class UsersJoinResource {
 
   private static final String CURRENT_USER_NAME = "_current";
+
+  private static final String[] REQUIRED_PARAMS = new String[] { "username", "firstname", "lastname", "application", //
+    "email", "groups" };
 
   @Inject
   private UserService userService;
@@ -80,49 +86,62 @@ public class UsersJoinResource {
   }
 
   private Map<String, String> extractAttributes(HttpServletRequest request) {
-    final List<AttributeConfiguration> attributes = configurationService.getConfiguration().getUserAttributes();
+    final Map<String, AttributeConfiguration> attributes = configurationService.getConfiguration().getUserAttributes()
+      .stream().collect(Collectors.toMap(a -> a.getName(), a -> a));
     final Map<String, String[]> params = request.getParameterMap();
+    final Set<String> extraParams = Sets.difference(params.keySet(), Sets.newHashSet(Arrays.asList(REQUIRED_PARAMS)));
+
     Map<String, String> res = Maps.newHashMap();
 
-    for(AttributeConfiguration a : attributes) {
+    attributes.values().forEach(a -> {
       if(!params.containsKey(a.getName())) {
         if(a.isRequired()) throw new BadRequestException("Missing attribute " + a.getName());
-        continue;
       }
+    });
 
-      String[] values = params.get(a.getName());
+    for(String param : extraParams) {
+      String[] values = params.get(param);
 
       if(values.length > 1) {
-        throw new BadRequestException("Invalid repeated parameter " + a.getName());
+        throw new BadRequestException("Invalid repeated parameter " + param);
       }
 
-      String parsedValue;
-
-      try {
-        switch(a.getType()) {
-          case INTEGER:
-            parsedValue = Integer.valueOf(values[0]).toString();
-            break;
-          case BOOLEAN:
-            parsedValue = Boolean.valueOf(values[0]).toString();
-            break;
-          case DECIMAL:
-            parsedValue = Float.valueOf(values[0]).toString();
-            break;
-          default:
-            parsedValue = values[0];
-        }
-      } catch(NumberFormatException e) {
-        throw new BadRequestException("Invalid value " + values[0]);
+      if(attributes.containsKey(param)) {
+        AttributeConfiguration attribute = attributes.get(param);
+        res.put(attribute.getName(), getParsedAttribute(attribute, values[0]));
+      } else {
+        res.put(param, params.get(param)[0]);
       }
-
-      if(a.hasValues() && !a.getValues().contains(parsedValue)) {
-        throw new BadRequestException("Invalid value " + parsedValue);
-      }
-
-      res.put(a.getName(), parsedValue);
     }
 
     return res;
+  }
+
+  private String getParsedAttribute(AttributeConfiguration attribute, String value) {
+    String parsedValue;
+
+    try {
+      switch(attribute.getType()) {
+        case INTEGER:
+          parsedValue = Integer.valueOf(value).toString();
+          break;
+        case BOOLEAN:
+          parsedValue = Boolean.valueOf(value).toString();
+          break;
+        case DECIMAL:
+          parsedValue = Float.valueOf(value).toString();
+          break;
+        default:
+          parsedValue = value;
+      }
+    } catch(NumberFormatException e) {
+      throw new BadRequestException("Invalid value " + value);
+    }
+
+    if(attribute.hasValues() && !attribute.getValues().contains(parsedValue)) {
+      throw new BadRequestException("Invalid value " + parsedValue);
+    }
+
+    return parsedValue;
   }
 }
