@@ -17,8 +17,7 @@ agate.user
         'delete': {method: 'DELETE', params: {id: '@id'}, errorHandler: true}
       });
     }])
-
-  .factory('UserStatusResource', ['$log','$filter', function($log, $filter) {
+  .factory('UserStatusResource', ['$log', '$filter', function ($log, $filter) {
     var nameValueList = [
       {label: $filter('translate')('user_status.active'), value: 'ACTIVE'},
       {label: $filter('translate')('user_status.pending'), value: 'PENDING'},
@@ -27,16 +26,22 @@ agate.user
     ];
 
     return {
-      'activeIndex': function() {
+      'activeIndex': function () {
         return 0;
       },
 
-      'listAsNameValue': function() {
+      'listAsNameValue': function () {
         return nameValueList;
       },
 
-      'findIndex': function(status) {
+      'findIndex': function (status) {
         return status.indexOf(status);
       }
     };
-  }]);
+  }])
+  .factory('UserResetPasswordResource', ['$resource',
+    function ($resource) {
+      return $resource('ws/user/:id/reset_password', {}, {
+        'resetPassword': {method: 'PUT', params: {id: '@id'}}
+      });
+    }]);

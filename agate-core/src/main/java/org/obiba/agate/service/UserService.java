@@ -1,6 +1,8 @@
 package org.obiba.agate.service;
 
+import java.io.IOException;
 import java.security.SignatureException;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -9,6 +11,7 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.crypto.hash.Sha512Hash;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.DateTime;
 import org.obiba.agate.domain.Group;
 import org.obiba.agate.domain.User;
@@ -152,6 +155,7 @@ public class UserService {
   }
 
   public void createUser(User user) {
+    save(user);
     eventBus.post(new UserJoinedEvent(save(user)));
   }
 
@@ -357,5 +361,24 @@ public class UserService {
       u.setStatus(UserStatus.INACTIVE);
       userRepository.save(u);
     });
+  }
+
+  public void resetPassword(User user) throws IOException {
+    ObjectMapper mapper = new ObjectMapper();
+    String keyData = mapper.writeValueAsString(new HashMap<String, String>() {{
+      put("username", user.getName());
+      put("expire", DateTime.now().plusHours(1).toString());
+    }});
+
+    String key = configurationService.encrypt(keyData);
+
+    final RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "registration.");
+    final Context ctx = new Context();
+    ctx.setVariable("user", user);
+    ctx.setVariable("publicUrl", configurationService.getConfiguration().getDomain());
+    ctx.setVariable("key", key);
+
+    mailService.sendEmail(user.getEmail(), propertyResolver.getProperty("resetPasswordSubject"),
+      templateEngine.process("resetPasswordEmail", ctx));
   }
 }
