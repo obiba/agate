@@ -10,7 +10,9 @@
 
 package org.obiba.agate.web.rest.user;
 
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,8 +28,12 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
+import org.joda.time.DateTime;
 import org.obiba.agate.domain.AttributeConfiguration;
 import org.obiba.agate.domain.User;
+import org.obiba.agate.domain.UserCredentials;
 import org.obiba.agate.domain.UserStatus;
 import org.obiba.agate.security.AgateUserRealm;
 import org.obiba.agate.security.Roles;
@@ -44,8 +50,8 @@ import com.google.common.collect.Sets;
  * Public resource for user join requests. Default realm is {@link org.obiba.agate.security.AgateUserRealm}.
  */
 @Component
-@Path("/users/_join")
-public class UsersJoinResource {
+@Path("/users")
+public class UsersPublicResource {
 
   private static final String CURRENT_USER_NAME = "_current";
 
@@ -59,6 +65,53 @@ public class UsersJoinResource {
   private ConfigurationService configurationService;
 
   @POST
+  @Path("/_confirm")
+  public Response confirm(@FormParam("username")String username, @FormParam("key")String key, @FormParam("password")String password) {
+    User user = userService.findUser(username);
+
+    if (user == null)
+      throw new BadRequestException("User not found");
+
+    if (!configurationService.decrypt(key).equals(username))
+      throw new BadRequestException("Invalid key");
+
+    if (user.getStatus() != UserStatus.APPROVED)
+      throw new BadRequestException("Invalid user status.");
+
+    userService.confirmUser(user, password);
+
+    return Response.ok().build();
+  }
+
+  @POST
+  @Path("/_reset_password")
+  public Response resetPassword(@FormParam("key")String key, @FormParam("password")String password)
+    throws IOException {
+    ObjectMapper mapper = new ObjectMapper();
+    Map<String, String> data = mapper
+      .readValue(configurationService.decrypt(key), new TypeReference<HashMap<String, String>>() {});
+
+    if(DateTime.now().isAfter(DateTime.parse(data.get("expire")))) {
+      throw new BadRequestException("Invalid key");
+    }
+
+    User user = userService.findUser(data.get("username"));
+
+    if(user == null) throw new BadRequestException("User not found");
+
+    UserCredentials userCredentials = userService.findUserCredentials(user.getName());
+
+    if(userCredentials == null) new BadRequestException("user has no credentials defined");
+
+    userCredentials.setPassword(userService.hashPassword(password));
+
+    userService.save(userCredentials);
+
+    return Response.noContent().build();
+  }
+
+  @POST
+  @Path("/_join")
   public Response create(@FormParam("username") String username, @FormParam("firstname") String firstName,
     @FormParam("lastname") String lastName, @FormParam("email") String email,
     @FormParam("application") String application, @FormParam("groups") List<String> groups,

@@ -2,7 +2,11 @@
 
   <h2 translate>user.pending-requests</h2>
 
-  <div class="row voffset4">
+  <p class="voffset3" ng-hide="users.length > 0">
+    <span translate>user.none-requests</span>
+  </p>
+
+  <div class="row voffset4" ng-hide="users.length == 0">
     <div class="col-xs-4">
       <span class="input-group input-group-sm no-padding-top">
         <span class="input-group-addon" id="study-search"><i class="glyphicon glyphicon-search"></i></span>
@@ -14,7 +18,7 @@
     </div>
   </div>
 
-  <div class="table-responsive">
+  <div class="table-responsive" ng-hide="users.length == 0">
     <table class="table table-striped table-hover table-bordered">
       <thead>
       <tr>

@@ -9,8 +9,8 @@
   Dear <span th:text="${user.firstName + ' ' + user.lastName}"></span>,
   <br/>
   Your registration request has been approved. Please follow <a href=""
-  th:href="@{${'https://' + publicUrl + '/#/profile'}(username=${user.name},key=${key})}" target="_blank">this link</a> to validate your
-  account.
+  th:href="@{'https://' + ${publicUrl} + '/#/confirm' + '?username=' + ${user.name} + '&amp;key=' + ${key}}"
+  target="_blank">this link</a> to validate your account.
 </p>
 </body>
 </html>

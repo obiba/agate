@@ -6,10 +6,8 @@ agate.user
     studyUpdated: 'event:study-updated'
   })
 
-  .controller('UserListController', ['$rootScope', '$scope', '$translate', 'UsersResource', 'UserResource', 'NOTIFICATION_EVENTS',
-
-    function ($rootScope, $scope, $translate, UsersResource, UserResource, NOTIFICATION_EVENTS) {
-
+  .controller('UserListController', ['$rootScope', '$scope', '$translate', 'UsersResource', 'UserResource', 'UserResetPasswordResource', 'NOTIFICATION_EVENTS',
+    function ($rootScope, $scope, $translate, UsersResource, UserResource, UserResetPasswordResource, NOTIFICATION_EVENTS) {
       $scope.users = UsersResource.query();
 
       /**
@@ -18,6 +16,7 @@ agate.user
        */
       $scope.delete = function (index) {
         var user = $scope.users[index];
+        $scope.userToDelete = user.id;
         if (user) {
           var titleKey = 'user.delete-dialog.title';
           var messageKey = 'user.delete-dialog.message';
@@ -33,12 +32,27 @@ agate.user
        * Delete use confirmation callback
        */
       $scope.$on(NOTIFICATION_EVENTS.confirmDialogAccepted, function (event, id) {
-        UserResource.delete({id: id},
-          function () {
-            $scope.users = UsersResource.query();
-          });
+        if ($scope.userToDelete === id) {
+          UserResource.delete({id: id},
+            function () {
+              $scope.users = UsersResource.query();
+            });
+
+          delete $scope.userToDelete;
+        }
       });
 
+      $scope.resetPassword = function (user) {
+        $scope.selectedUser = user.id;
+        $rootScope.$broadcast(NOTIFICATION_EVENTS.showConfirmDialog,
+          {title: 'Reset Password', message: 'Are you sure to send a reset password message for ' + user.name + '?'}, user.id);
+      };
+
+      $scope.$on(NOTIFICATION_EVENTS.confirmDialogAccepted, function (event, id) {
+        if ($scope.selectedUser === id) {
+          UserResetPasswordResource.resetPassword({id: id});
+        }
+      });
     }])
 
   .controller('UserEditController', ['$rootScope', '$scope', '$routeParams', '$log', '$location', 'UsersResource', 'UserResource', 'FormServerValidation', 'UserStatusResource', 'GroupsResource', 'ApplicationsResource', 'ConfigurationResource', 'AttributesService',
