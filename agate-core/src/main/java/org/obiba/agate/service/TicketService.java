@@ -123,7 +123,7 @@ public class TicketService {
   @Scheduled(cron = "0 0 0 * * ?")
   public void removeExpiredRemembered() {
     removeExpired(ticketRepository.findByCreatedDateBeforeAndRemembered(
-        DateTime.now().minusHours(configurationService.getConfiguration().getLongTimeout() * 3600), true));
+        DateTime.now().minusHours(configurationService.getConfiguration().getLongTimeout()), true));
   }
 
   /**
@@ -133,7 +133,7 @@ public class TicketService {
   @Scheduled(cron = "0 * 0 * * ?")
   public void removeExpiredNotRemembered() {
     removeExpired(ticketRepository.findByCreatedDateBeforeAndRemembered(
-        DateTime.now().minusHours(configurationService.getConfiguration().getShortTimeout() * 3600), false));
+        DateTime.now().minusHours(configurationService.getConfiguration().getShortTimeout()), false));
   }
 
   private void removeExpired(List<Ticket> tickets) {

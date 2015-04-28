@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.crypto.hash.Sha512Hash;
+import org.joda.time.DateTime;
 import org.obiba.agate.domain.Group;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.domain.UserCredentials;
@@ -23,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
@@ -324,5 +326,25 @@ public class UserService {
     userCredentialsRepository.save(credentials);
     user.setStatus(UserStatus.ACTIVE);
     save(user);
+  }
+
+  public void updateUserLastLogin(@NotNull String username) {
+    User user = findUser(username);
+
+    if(user != null) {
+      user.setLastLogin(DateTime.now());
+      save(user);
+    }
+  }
+
+  @Scheduled(cron = "0 0 0 * * ?") //every day at midnight
+  public void removeInactiveUsers() {
+    final List<User> inactiveUsers = userRepository.findByRoleAndLastLoginLessThan("agate-user",
+      DateTime.now().minusHours(configurationService.getConfiguration().getInactiveTimeout()));
+
+    inactiveUsers.forEach(u -> {
+      u.setStatus(UserStatus.INACTIVE);
+      userRepository.save(u);
+    });
   }
 }

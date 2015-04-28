@@ -21,6 +21,8 @@ public class Configuration extends AbstractAuditableDocument {
 
   public static final int DEFAULT_LONG_TIMEOUT = 24 * 30 * 3; // 3 months
 
+  public static final int DEFAULT_INACTIVE_TIMEOUT = 365 * 24; // 1 year (in hours)
+
   @NotBlank
   private String name = DEFAULT_NAME;
 
@@ -29,6 +31,8 @@ public class Configuration extends AbstractAuditableDocument {
   private int shortTimeout = DEFAULT_SHORT_TIMEOUT;
 
   private int longTimeout = DEFAULT_LONG_TIMEOUT;
+
+  private int inactiveTimeout = DEFAULT_INACTIVE_TIMEOUT;
 
   private String secretKey;
 
@@ -101,5 +105,13 @@ public class Configuration extends AbstractAuditableDocument {
       .add("domain", domain) //
       .add("shortTimeout", shortTimeout) //
       .add("longTimeout", longTimeout);
+  }
+
+  public int getInactiveTimeout() {
+    return inactiveTimeout;
+  }
+
+  public void setInactiveTimeout(int inactiveTimeout) {
+    this.inactiveTimeout = inactiveTimeout;
   }
 }

@@ -33,6 +33,7 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
+import org.joda.time.DateTime;
 import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
@@ -99,6 +100,10 @@ public class TicketsResource extends BaseTicketResource {
       int timeout = rememberMe ? configuration.getLongTimeout() : configuration.getShortTimeout();
       NewCookie cookie = new NewCookie(TICKET_COOKIE_NAME, ticket.getToken(), "/", configuration.getDomain(), null,
         timeout * 3600, false);
+
+      user.setLastLogin(DateTime.now());
+      userService.save(user);
+
       log.info("Successful Granting Ticket creation for user '{}' with ticket ID: {}", username, ticket.getToken());
       return Response
         .created(UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(TicketResource.class).build(ticket.getToken()))

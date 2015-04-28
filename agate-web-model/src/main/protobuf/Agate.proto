@@ -41,6 +41,7 @@ message ConfigurationDto {
   required int32 shortTimeout = 3; // hours
   required int32 longTimeout = 4; // hours
   repeated AttributeConfigurationDto userAttributes = 5;
+  required int32 inactiveTimeout = 6; // hours
 }
 
 message AttributeDto {

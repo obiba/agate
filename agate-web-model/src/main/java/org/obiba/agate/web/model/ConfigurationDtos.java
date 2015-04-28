@@ -14,7 +14,8 @@ class ConfigurationDtos {
     Agate.ConfigurationDto.Builder builder = Agate.ConfigurationDto.newBuilder() //
       .setName(configuration.getName()) //
       .setShortTimeout(configuration.getShortTimeout()) //
-      .setLongTimeout(configuration.getLongTimeout());
+      .setLongTimeout(configuration.getLongTimeout())//
+      .setInactiveTimeout(configuration.getInactiveTimeout());
     if(configuration.hasDomain()) builder.setDomain(configuration.getDomain());
     if(configuration.hasUserAttributes())
       configuration.getUserAttributes().forEach(c -> builder.addUserAttributes(asDto(c)));
@@ -29,6 +30,7 @@ class ConfigurationDtos {
     if(dto.hasDomain()) configuration.setDomain(dto.getDomain());
     configuration.setShortTimeout(dto.getShortTimeout());
     configuration.setLongTimeout(dto.getLongTimeout());
+    configuration.setInactiveTimeout(dto.getInactiveTimeout());
     if(dto.getUserAttributesCount() > 0)
       dto.getUserAttributesList().forEach(c -> configuration.addUserAttribute(fromDto(c)));
     return configuration;

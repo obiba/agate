@@ -9,6 +9,7 @@
  */
 package org.obiba.agate.web.rest.security;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -22,6 +23,7 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
+import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.rest.config.JerseyConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +35,9 @@ public class SessionsResource {
 
   private static final Logger log = LoggerFactory.getLogger(SessionsResource.class);
 
+  @Inject
+  private UserService userService;
+
   @POST
   @Path("/sessions")
   public Response createSession(@SuppressWarnings("TypeMayBeWeakened") @Context HttpServletRequest servletRequest,
@@ -42,6 +47,9 @@ public class SessionsResource {
       subject.login(new UsernamePasswordToken(username, password));
       ThreadContext.bind(subject);
       String sessionId = SecurityUtils.getSubject().getSession().getId().toString();
+
+      userService.updateUserLastLogin(username);
+
       log.info("Successful session creation for user '{}' session ID is '{}'.", username, sessionId);
       return Response.created(
           UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(SessionResource.class).build(sessionId))
