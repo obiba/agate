@@ -6,157 +6,180 @@ agate.user
     studyUpdated: 'event:study-updated'
   })
 
-  .controller('UserListController', ['$rootScope', '$scope', '$translate', 'UsersResource', 'UserResource', 'NOTIFICATION_EVENTS',
+  .controller('UserListController', ['$scope', 'UsersResource',
 
-    function ($rootScope, $scope, $translate, UsersResource, UserResource, NOTIFICATION_EVENTS) {
+    function ($scope, UsersResource) {
 
       $scope.users = UsersResource.query();
 
-      /**
-       * Deletes a user
-       * @param index
-       */
-      $scope.delete = function (index) {
-        var user = $scope.users[index];
-        if (user) {
-          var titleKey = 'user.delete-dialog.title';
-          var messageKey = 'user.delete-dialog.message';
-          $translate([titleKey, messageKey], {name: user.name})
-            .then(function (translation) {
-              $rootScope.$broadcast(NOTIFICATION_EVENTS.showConfirmDialog,
-                {title: translation[titleKey], message: translation[messageKey]}, user.id);
-            });
-        }
-      };
-
-      /**
-       * Delete use confirmation callback
-       */
-      $scope.$on(NOTIFICATION_EVENTS.confirmDialogAccepted, function (event, id) {
+      $scope.deleteStudy = function (id) {
+        //TODO ask confirmation
         UserResource.delete({id: id},
           function () {
             $scope.users = UsersResource.query();
           });
+      };
+
+    }])
+  .controller('StudyViewController', ['$rootScope', '$scope', '$routeParams', '$log', '$locale', '$location', 'DraftStudySummaryResource', 'DraftStudyResource', 'DraftStudyPublicationResource', 'AgateConfigResource', 'STUDY_EVENTS', 'NOTIFICATION_EVENTS', 'CONTACT_EVENTS',
+
+    function ($rootScope, $scope, $routeParams, $log, $locale, $location, DraftStudySummaryResource, DraftStudyResource, DraftStudyPublicationResource, AgateConfigResource, STUDY_EVENTS, NOTIFICATION_EVENTS, CONTACT_EVENTS) {
+
+      AgateConfigResource.get(function (agateConfig) {
+        $scope.tabs = [];
+        agateConfig.languages.forEach(function (lang) {
+          $scope.tabs.push({lang: lang});
+        });
       });
+
+      $scope.study = DraftStudyResource.get(
+        {id: $routeParams.id},
+        function (study) {
+          new $.AgateTimeline(new $.StudyDtoParser()).create('#timeline', study).addLegend();
+        });
+
+      $scope.studySummary = DraftStudySummaryResource.get({id: $routeParams.id});
+
+      $scope.months = $locale.DATETIME_FORMATS.MONTH;
+
+      $scope.emitStudyUpdated = function () {
+        $scope.$emit(STUDY_EVENTS.studyUpdated, $scope.study);
+      };
+
+      $scope.$on(STUDY_EVENTS.studyUpdated, function (event, studyUpdated) {
+        if (studyUpdated === $scope.study) {
+          $log.debug('save study', studyUpdated);
+
+          $scope.study.$save(function () {
+              $scope.study = DraftStudyResource.get({id: $scope.study.id});
+            },
+            function (response) {
+              $log.error('Error on study save:', response);
+              $rootScope.$broadcast(NOTIFICATION_EVENTS.showNotificationDialog, {
+                message: response.data ? response.data : angular.fromJson(response)
+              });
+            });
+        }
+      });
+      $scope.publish = function () {
+        DraftStudyPublicationResource.publish({id: $scope.study.id}, function () {
+          $scope.studySummary = DraftStudySummaryResource.get({id: $routeParams.id});
+        });
+      };
+
+      $scope.sortableOptions = {
+        stop: function () {
+          $scope.emitStudyUpdated();
+        }
+      };
+
+      $scope.$on(CONTACT_EVENTS.addInvestigator, function (event, study, contact) {
+        if (study === $scope.study) {
+          if (!$scope.study.investigators) {
+            $scope.study.investigators = [];
+          }
+          $scope.study.investigators.push(contact);
+          $scope.emitStudyUpdated();
+        }
+      });
+
+      $scope.$on(CONTACT_EVENTS.addContact, function (event, study, contact) {
+        if (study === $scope.study) {
+          if (!$scope.study.contacts) {
+            $scope.study.contacts = [];
+          }
+          $scope.study.contacts.push(contact);
+          $scope.emitStudyUpdated();
+        }
+      });
+
+      $scope.$on(CONTACT_EVENTS.contactUpdated, function (event, study) {
+        if (study === $scope.study) {
+          $scope.emitStudyUpdated();
+        }
+      });
+
+      $scope.$on(CONTACT_EVENTS.contactEditionCanceled, function (event, study) {
+        if (study === $scope.study) {
+          $scope.study = DraftStudyResource.get({id: $scope.study.id});
+        }
+      });
+
+      $scope.$on(CONTACT_EVENTS.contactDeleted, function (event, study, contact, isInvestigator) {
+        if (study === $scope.study) {
+          if (isInvestigator) {
+            var investigatorsIndex = $scope.study.investigators.indexOf(contact);
+            if (investigatorsIndex !== -1) {
+              $scope.study.investigators.splice(investigatorsIndex, 1);
+            }
+          } else {
+            var contactsIndex = $scope.study.contacts.indexOf(contact);
+            if (contactsIndex !== -1) {
+              $scope.study.contacts.splice(contactsIndex, 1);
+            }
+          }
+          $scope.emitStudyUpdated();
+        }
+      });
+
+
 
     }])
 
-  .controller('UserEditController', ['$rootScope', '$scope', '$routeParams', '$log', '$location', 'UsersResource', 'UserResource', 'FormServerValidation', 'UserStatusResource', 'GroupsResource', 'ApplicationsResource', 'ConfigurationResource', 'AttributesService',
+  .controller('StudyEditController', ['$rootScope', '$scope', '$routeParams', '$log', '$location', 'DraftStudyResource', 'DraftStudiesResource', 'AgateConfigResource', 'StringUtils', 'FormServerValidation',
 
-    function ($rootScope, $scope, $routeParams, $log, $location, UsersResource, UserResource, FormServerValidation, UserStatusResource, GroupsResource, ApplicationsResource, ConfigurationResource, AttributesService) {
+    function ($rootScope, $scope, $routeParams, $log, $location, DraftStudyResource, DraftStudiesResource, AgateConfigResource, StringUtils, FormServerValidation) {
 
-      $scope.roles = ["agate-administrator", "agate-user"];
-      $scope.attributesConfig = [];
-      ConfigurationResource.get(function(config) {
-        $scope.attributesConfig = config.userAttributes || [];
-        $scope.attributeConfigPairs = AttributesService.getAttributeConfigPairs($scope.user.attributes, $scope.attributesConfig);
-      });
+      $scope.study = $routeParams.id ? DraftStudyResource.get({id: $routeParams.id}) : {};
+      $log.debug('Edit study', $scope.study);
 
-      $scope.realmList = ["agate-user-realm"];
-      $scope.groupList = [];
-      GroupsResource.query().$promise.then(function(groups){
-        groups.forEach(function(group){
-          $scope.groupList.push(group.name);
+      AgateConfigResource.get(function (agateConfig) {
+        $scope.tabs = [];
+        $scope.languages = [];
+        agateConfig.languages.forEach(function (lang) {
+          $scope.tabs.push({ lang: lang });
+          $scope.languages.push(lang);
         });
       });
-
-      $scope.applicationList = [];
-      ApplicationsResource.query().$promise.then(function(applications){
-        applications.forEach(function(application){
-          $scope.applicationList.push(application.name);
-        });
-      });
-
-      $scope.userStatusList = UserStatusResource.listAsNameValue();
-      $scope.userStatus = $scope.userStatusList[UserStatusResource.activeIndex()];
-
-      $scope.user = $routeParams.id ?
-        UserResource.get({id: $routeParams.id}, function(user) {
-          $scope.userStatus = $scope.userStatusList[UserStatusResource.findIndex(user.status)]
-          $scope.attributeConfigPairs = AttributesService.getAttributeConfigPairs($scope.user.attributes, $scope.attributesConfig);
-          return user;
-        }) : {};
-
-      /**
-       * Updated an existing user properties and attributes
-       */
-      var updateUser = function () {
-        var pairedAttributes = $scope.attributeConfigPairs.map(function(attributeConfigPair){
-          return attributeConfigPair.attribute;
-        });
-
-        if ($scope.user.attributes && $scope.user.attributes.length > 0) {
-          $scope.user.attributes = $scope.user.attributes.concat(AttributesService.findNewAttributes($scope.user.attributes, pairedAttributes));
-        } else {
-          $scope.user.attributes = pairedAttributes;
-        }
-
-        $scope.user.$save(
-          function (user) {
-            $location.path('/user/' + user.id).replace();
-          },
-          saveErrorHandler);
-      };
-
-      /**
-       * Create a new user with properties and attributes
-       */
-      var createUser = function() {
-        $scope.user.status = $scope.userStatus.value;
-        $scope.user.attributes = $scope.attributeConfigPairs.map(function(attributeConfigPair){
-          return attributeConfigPair.attribute;
-        });
-
-        UsersResource.save($scope.user,
-          function (resource, getResponseHeaders) {
-            var parts = getResponseHeaders().location.split('/');
-            $location.path('/user/' + parts[parts.length - 1]).replace();
-          },
-          saveErrorHandler);
-      }
-
-      var saveErrorHandler = function (response) {
-        FormServerValidation.error(response, $scope.form);
-      };
 
       $scope.save = function () {
         if (!$scope.form.$valid) {
           $scope.form.saveAttempted = true;
           return;
         }
-
-        if ($scope.user.id) {
-          updateUser();
+        if ($scope.study.id) {
+          updateStudy();
         } else {
-          createUser();
+          createStudy();
         }
       };
 
-      /**
-       * Cancels the edit mode
-       */
+      var createStudy = function () {
+        $log.debug('Create new study', $scope.study);
+        DraftStudiesResource.save($scope.study,
+          function (resource, getResponseHeaders) {
+            var parts = getResponseHeaders().location.split('/');
+            $location.path('/study/' + parts[parts.length - 1]).replace();
+          },
+          saveErrorHandler);
+      };
+
+      var updateStudy = function () {
+        $log.debug('Update study', $scope.study);
+        $scope.study.$save(
+          function (study) {
+            $location.path('/study/' + study.id).replace();
+          },
+          saveErrorHandler);
+      };
+
+      var saveErrorHandler = function (response) {
+        FormServerValidation.error(response, $scope.form, $scope.languages);
+      };
+
       $scope.cancel = function () {
-        if ($scope.user.id) {
-          $location.path('/user' + ($scope.user.id ? '/' + $scope.user.id : '')).replace();
-        } else {
-          $location.path('/users');
-        }
+        $location.path('/study' + ($scope.study.id ? '/' + $scope.study.id : '')).replace();
       };
-
-    }])
-
-  .controller('UserViewController', ['$rootScope', '$scope', '$routeParams', '$log', '$location', 'UserResource', 'ConfigurationResource', 'AttributesService',
-
-    function ($rootScope, $scope, $routeParams, $log, $location, UserResource, ConfigurationResource, AttributesService) {
-      $scope.user = $routeParams.id ?
-        UserResource.get({id: $routeParams.id}, function(user) {
-          ConfigurationResource.get(function(config) {
-            $scope.userConfigAttributes = AttributesService.findConfigAttributes(user.attributes, config.userAttributes);
-            $scope.userNonConfigAttributes = AttributesService.findNonConfigAttributes(user.attributes, config.userAttributes);
-          });
-
-          return user;
-        }) : {};
 
     }])
 

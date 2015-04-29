@@ -23,8 +23,6 @@ import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.domain.UserStatus;
 import org.obiba.agate.service.NoSuchUserException;
-import org.obiba.agate.web.model.Agate;
-import org.obiba.agate.web.model.Dtos;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -32,20 +30,8 @@ import org.springframework.stereotype.Component;
 @Path("/user/{id}")
 public class UserResource extends AbstractUserResource {
 
-  @Inject
-  private Dtos dtos;
-
   @PathParam("id")
   private String id;
-
-  @PUT
-  public Response updateUser(Agate.UserDto userDto) {
-    userService.getUser(id);
-
-    User user = dtos.fromDto(userDto);
-    userService.save(user);
-    return Response.noContent().build();
-  }
 
   @PUT
   @Path("/role")

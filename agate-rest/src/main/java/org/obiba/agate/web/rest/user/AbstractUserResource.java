@@ -42,6 +42,17 @@ public abstract class AbstractUserResource {
   }
 
   @PUT
+  public Response update(@FormParam("firstname") String firstName, @FormParam("lastname") String lastName,
+      @FormParam("email") String email) {
+    User user = getUser();
+    user.setFirstName(firstName);
+    user.setLastName(lastName);
+    user.setEmail(email);
+    userService.save(user);
+    return Response.noContent().build();
+  }
+
+  @PUT
   @Path("/password")
   public Response updatePassword(@FormParam("password") String password) {
     if(Strings.isNullOrEmpty(password)) throw new BadRequestException("User password cannot be empty");
