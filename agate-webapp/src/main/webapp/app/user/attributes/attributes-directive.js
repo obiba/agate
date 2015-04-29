@@ -6,7 +6,8 @@ agate.user
       restrict: 'E',
       replace: true,
       scope: {
-        attributes: '='
+        attributes: '=',
+        attributesConfig: '='
       },
       templateUrl: 'app/user/attributes/views/attributes-view-template.html'
     };
@@ -27,7 +28,17 @@ agate.user
 
   .directive('attributeItem', ['$compile', 'AttributesService', function ($compile, AttributesService) {
     var linker = function(scope, element, attrs) {
-      element.html(AttributesService.getAttributeItemTemplate(scope.attributeConfig, scope.simple)).show();
+      if (scope.attributeConfig.type === 'BOOLEAN') {
+        scope.attribute.boolValue = scope.attribute.value === "true";
+      }
+
+      scope.$watch('attribute.boolValue', function () {
+        if (scope.attributeConfig.type === 'BOOLEAN') {
+          scope.attribute.value = scope.attribute.boolValue ? 'true' : 'false';
+        }
+      });
+
+      element.html(AttributesService.getAttributeItemTemplate(scope.attributeConfig)).show();
       $compile(element.contents())(scope);
     };
 
@@ -36,8 +47,7 @@ agate.user
       link: linker,
       scope: {
         attribute:'=',
-        attributeConfig:'=',
-        simple:'='
+        attributeConfig:'='
       }
     };
   }]);

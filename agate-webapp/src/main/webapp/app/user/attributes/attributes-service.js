@@ -22,7 +22,9 @@ agate.user
           if (attributes) {
             return attributes.filter(function (attribute) {
               return attributesConfig.filter(function (attributeConfig) {
-                  return attributeConfig.name === attribute.name;
+                  var found = attributeConfig.name === attribute.name;
+                  if (found) attribute.type = attributeConfig.type;
+                  return found;
               }).length > 0;
             });
           }
@@ -87,7 +89,7 @@ agate.user
           return result;
         },
 
-        'getAttributeItemTemplate' : function(attributeConfig, simple) {
+        'getAttributeItemTemplate' : function(attributeConfig) {
           var required = attributeConfig.required;
           var template = '';
           switch (attributeConfig.type) {

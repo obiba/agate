@@ -56,7 +56,10 @@
 
           <tr ng-repeat="userConfigAttribute in userConfigAttributes">
             <td>{{userConfigAttribute.name}}</td>
-            <td>{{userConfigAttribute.value}}</td>
+            <td>
+              <span ng-show="userConfigAttribute.type !== 'BOOLEAN'">{{userConfigAttribute.value}}</span>
+              <span ng-show="userConfigAttribute.type === 'BOOLEAN'"><i class="fa fa-check"></i></span>
+            </td>
           </tr>
           </tbody>
         </table>
