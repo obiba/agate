@@ -50,7 +50,7 @@ message AttributeDto {
 }
 
 message UserDto {
-  optional string id = 1;
+  required string id = 1;
   required string name = 2;
   required string realm = 3;
   optional string firstName = 4;

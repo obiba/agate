@@ -70,45 +70,6 @@ class UserDtos {
     return builder.build();
   }
 
-  @NotNull
-  User fromDto(@NotNull Agate.UserDto dto) {
-    User.Builder builder = User.newBuilder()
-      .name(dto.getName())
-      .realm(dto.getRealm())
-      .role(dto.getRole())
-      .status(dto.getStatus());
-
-    if (dto.hasId()) {
-      builder.id(dto.getId());
-    }
-
-    if (dto.hasFirstName()) {
-      builder.firstName(dto.getFirstName());
-    }
-
-    if (dto.hasLastName()) {
-      builder.lastName(dto.getLastName());
-    }
-
-    if (dto.hasEmail()) {
-      builder.email(dto.getEmail());
-    }
-
-    if (dto.getGroupsCount() > 0) {
-      builder.groups(dto.getGroupsList());
-    }
-
-    if (dto.getApplicationsCount() > 0) {
-      builder.applications(dto.getApplicationsList());
-    }
-
-    if (dto.getAttributesCount() > 0) {
-      dto.getAttributesList().forEach(att -> builder.attribute(att.getName(), att.getValue()));
-    }
-
-    return builder.build();
-  }
-
   private void addAttribute(AuthDtos.SubjectDto.Builder builder, String key, String value) {
     builder
       .addAttributes(AuthDtos.SubjectDto.AttributeDto.newBuilder().setKey(key).setValue(value == null ? "" : value));
