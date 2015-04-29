@@ -12,7 +12,7 @@
 
     <div class="modal-body">
       <p class="alert alert-danger" ng-show="form.saveAttempted && form.$invalid && form['attribute.name'].$error.required" translate="">required</p>
-      <p class="alert alert-danger" ng-show="form.saveAttempted && form.$invalid && form['attribute.name'].$error.duplicated">{{'attribute.error.duplicated' | translate: {name: duplicated} }}</p>
+      <p class="alert alert-danger" ng-show="form.saveAttempted && form.$invalid && form['attribute.name'].$error.duplicated">{{'attribute.error.duplicated' | translate: {name: duplicatedName} }}</p>
       <div form-input name="attribute.name" model="attribute.name" label="attribute.name" required="true"></div>
       <div form-input name="attribute.value" model="attribute.value" label="attribute.value"></div>
     </div>

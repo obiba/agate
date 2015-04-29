@@ -144,11 +144,8 @@ agate.user
           case 'DECIMAL':
           case 'INTEGER':
           case 'STRING':
-            if (attributeConfig.values && attributeConfig.values.length > 0) {
-              attribute.value = attributeConfig.values[0];
-            } else {
-              attribute.value = '';
-            }
+            // leave empty
+            break;
         }
 
         return attribute;

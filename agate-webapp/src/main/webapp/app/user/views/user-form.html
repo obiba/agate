@@ -24,7 +24,7 @@
       <tab select="tabGeneral=true" heading="{{'user.general-info' | translate}}">
         <div ng-if="tabGeneral" ng-include="'app/user/views/user-general-info-form.html'"></div>
       </tab>
-      <tab ng-show="attributesConfig && attributesConfig.length > 0" select="tabAttributes=true" heading="{{'attributes' | translate}}">
+      <tab select="tabAttributes=true" heading="{{'attributes' | translate}}">
         <attributes-form attributes="user.attributes" attributes-config="attributesConfig"></attributes-form>
       </tab>
     </tabset>
