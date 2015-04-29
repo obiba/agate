@@ -24,7 +24,6 @@ import javax.ws.rs.core.UriBuilder;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.domain.UserStatus;
-import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.model.Agate;
 import org.obiba.agate.web.model.Dtos;
@@ -42,9 +41,6 @@ public class UsersResource {
 
   @Inject
   private UserService userService;
-
-  @Inject
-  private ConfigurationService configurationService;
 
   @Inject
   private Dtos dtos;
@@ -73,24 +69,5 @@ public class UsersResource {
 
     return Response
       .created(UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(UserResource.class).build(user.getId())).build();
-  }
-
-  @GET
-  @Path("/_confirm")
-  public Response confirm(Agate.ConfirmForm confirmForm) {
-    User user = userService.findUser(confirmForm.getUsername());
-
-    if (user == null)
-      throw new BadRequestException("User not found");
-
-    if (!configurationService.encrypt(user.getName()).equals(confirmForm.getKey()))
-      throw new BadRequestException("Invalid key");
-
-    if (user.getStatus() != UserStatus.APPROVED)
-      throw new BadRequestException("Invalid user status.");
-
-    userService.confirmUser(user, confirmForm.getPassword());
-
-    return Response.ok().build();
   }
 }

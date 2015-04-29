@@ -10,7 +10,10 @@
 
 package org.obiba.agate.web.rest.user;
 
+import java.io.IOException;
+
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
@@ -21,6 +24,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.obiba.agate.domain.User;
+import org.obiba.agate.domain.UserCredentials;
 import org.obiba.agate.domain.UserStatus;
 import org.obiba.agate.service.NoSuchUserException;
 import org.obiba.agate.web.model.Agate;
@@ -61,6 +65,22 @@ public class UserResource extends AbstractUserResource {
   public Response updateStatus(@FormParam("status") String status) {
     User user = userService.getUser(id);
     userService.updateUserStatus(user, UserStatus.valueOf(status.toUpperCase()));
+
+    return Response.noContent().build();
+  }
+
+  @PUT
+  @Path("/reset_password")
+  public Response resetPassword() throws IOException {
+    User user = userService.getUser(id);
+
+    if(user == null) NoSuchUserException.withId(id);
+
+    UserCredentials userCredentials = userService.findUserCredentials(user.getName());
+
+    if(userCredentials == null) new BadRequestException("user has no credentials defined");
+
+    userService.resetPassword(user);
 
     return Response.noContent().build();
   }

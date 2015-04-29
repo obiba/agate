@@ -70,3 +70,4 @@ registration:
     pendingForApprovalSubject: Account Registration
     pendingForReviewSubject: Registration Pending
     confirmationSubject: Registration Approved
+    resetPasswordSubject: Password Reset

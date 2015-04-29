@@ -25,6 +25,28 @@ agate.factory('Password', ['$resource',
     });
   }]);
 
+agate.factory('ConfirmResource', ['$http',
+  function ($http) {
+    return {
+      post: function(data) {
+        return $http.post('ws/users/_confirm', $.param(data), {
+          headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        });
+      }
+    };
+  }]);
+
+agate.factory('PasswordResetResource', ['$http',
+  function ($http) {
+    return {
+      post: function(data) {
+        return $http.post('ws/users/_reset_password', $.param(data), {
+          headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        });
+      }
+    };
+  }]);
+
 agate.factory('Session', ['$cookieStore',
   function ($cookieStore) {
     this.create = function (login, role, realm) {
@@ -43,8 +65,8 @@ agate.factory('Session', ['$cookieStore',
     return this;
   }]);
 
-agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$cookieStore', 'authService', 'Session', 'CurrentSession',
-  function ($rootScope, $http, $cookieStore, authService, Session, CurrentSession) {
+agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$log', '$cookieStore', 'authService', 'Session', 'CurrentSession',
+  function ($rootScope, $http, $log, $cookieStore, authService, Session, CurrentSession) {
     return {
       login: function (param) {
         var data = 'username=' + param.username + '&password=' + param.password;
@@ -67,9 +89,18 @@ agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$cookieSto
         if (!Session.login) {
           // check if the user has a cookie
           if ($cookieStore.get('agate_subject') !== null) {
-            var account = JSON.parse($cookieStore.get('agate_subject'));
-            Session.create(account.login, account.role, account.realm);
-            $rootScope.account = Session;
+            var account;
+
+            try {
+              account = JSON.parse($cookieStore.get('agate_subject'));
+            } catch (e) {
+              $log.info('Invalid agate_subject cookie value. Ignoring.');
+            }
+
+            if (account) {
+              Session.create(account.login, account.role, account.realm);
+              $rootScope.account = Session;
+            }
           }
         }
         return !!Session.login;

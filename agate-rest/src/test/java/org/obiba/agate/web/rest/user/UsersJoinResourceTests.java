@@ -34,7 +34,7 @@ import static org.mockito.Mockito.when;
 public class UsersJoinResourceTests {
 
   @InjectMocks
-  UsersJoinResource resource;
+  UsersPublicResource resource;
 
   @Mock
   private UserService userService;
