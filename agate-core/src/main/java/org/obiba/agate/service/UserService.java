@@ -22,6 +22,7 @@ import org.obiba.agate.repository.UserRepository;
 import org.obiba.agate.security.AgateUserRealm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -122,16 +123,27 @@ public class UserService {
    * @return
    */
   public User save(@NotNull User user) {
-    userRepository.save(user);
+    User saved = user;
 
-    if(user.getGroups() != null) {
-      for(String groupName : user.getGroups()) {
+    if (!user.isNew()) {
+      saved = userRepository.findOne(user.getId());
+      if (saved == null) {
+        saved = user;
+      } else {
+        BeanUtils.copyProperties(user, saved, "id", "version", "createdBy", "createdDate", "lastModifiedBy",
+          "lastModifiedDate");
+      }
+    }
+
+    userRepository.save(saved);
+    if(saved.getGroups() != null) {
+      for(String groupName : saved.getGroups()) {
         Group group = findGroup(groupName);
         if(group == null) groupRepository.save(new Group(groupName));
       }
     }
 
-    return user;
+    return saved;
   }
 
   public UserCredentials save(@NotNull UserCredentials userCredentials) {
@@ -140,8 +152,7 @@ public class UserService {
   }
 
   public void createUser(User user) {
-    save(user);
-    eventBus.post(new UserJoinedEvent(user));
+    eventBus.post(new UserJoinedEvent(save(user)));
   }
 
   public void updateUserStatus(User user, UserStatus status) {

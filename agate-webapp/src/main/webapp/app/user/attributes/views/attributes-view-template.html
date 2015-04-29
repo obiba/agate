@@ -1,0 +1,24 @@
+<div ng-show="attributes && attributes.length > 0">
+
+  <h3 translate>attributes</h3>
+
+  <table class="table table-striped attributes-column">
+    <thead>
+    <tr>
+      <th class="width25" translate>attribute.name</th>
+      <th translate>attribute.value</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    <tr ng-repeat="attribute in attributes">
+      <td class="width25">
+        {{attribute.name}}
+      </td>
+      <td class="width25">
+        {{attribute.value}}
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

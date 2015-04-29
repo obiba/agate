@@ -90,7 +90,7 @@ agate.config
         return;
       }
 
-      $scope.attribute.values = $scope.data.selectedType.id !== 'BOOLEAN' ? $scope.attribute.values.split(',').map(function(s) {
+      $scope.attribute.values = $scope.data.selectedType.id !== 'BOOLEAN' &&  $scope.attribute.values.length > 0 ? $scope.attribute.values.split(',').map(function(s) {
         return s.trim();
       }) : null;
 
