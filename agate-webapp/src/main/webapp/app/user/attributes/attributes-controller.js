@@ -11,9 +11,14 @@ agate.user
       $scope.addAttribute = function() {
         $modal
           .open({
-            templateUrl: 'app/user/attributes/views/attributes-form-modal-template.html',
-            controller: 'AttributesFormModalController',
+            templateUrl: 'app/user/attributes/views/attribute-creation-form-modal.html',
+            controller: 'AttributeCreateFormModalController',
             resolve: {
+              usedNames: function() {
+                return $scope.attributesConfig.map(function(attributeConfig){
+                  return attributeConfig.name;
+                });
+              },
               attribute: function () {
                 return {};
               }
@@ -37,7 +42,7 @@ agate.user
       $scope.edit = function(attribute) {
         $modal
           .open({
-            templateUrl: 'app/user/attributes/views/attribute-form-modal-template.html',
+            templateUrl: 'app/user/attributes/views/attribute-form-modal.html',
             controller: 'AttributeFormModalController',
             resolve: {
               attribute: function () {
@@ -88,21 +93,28 @@ agate.user
     }])
 
 
-  .controller('AttributesFormModalController', ['$scope', '$modalInstance', '$log', 'attribute',
-    function ($scope, $modalInstance, $log, attribute) {
+  .controller('AttributeCreateFormModalController', ['$scope', '$modalInstance', '$log', 'attribute', 'usedNames',
+    function ($scope, $modalInstance, $log, attribute, usedNames) {
 
       $scope.attribute = attribute;
+      $scope.usedNames = usedNames;
+      $scope.duplicated = false;
 
       /**
        * Saves attribute changes
        * @param form
        */
       $scope.save = function (form) {
-        if (form.$valid) {
+        var duplicated = !form['attribute.name'].$error.required && usedNames.indexOf($scope.attribute.name) !== -1;
+        $scope.duplicatedName = duplicated ? $scope.attribute.name : ''; // For validation message only
+
+        if (form.$valid && !duplicated) {
           $modalInstance.close($scope.attribute);
         }
         else {
+          form['attribute.name'].$error.duplicated = duplicated;
           $scope.form = form;
+          $scope.form.$invalid = duplicated ? true : $scope.form.$invalid;
           $scope.form.saveAttempted = true;
         }
       };
@@ -118,7 +130,7 @@ agate.user
 
   .controller('AttributeFormModalController', ['$scope', '$modalInstance', '$log', 'attribute',
     function ($scope, $modalInstance, $log, attribute) {
-      $scope.attribute =  $.extend(true, {}, attribute);
+      $scope.attribute = $.extend(true, {}, attribute);
 
       /**
        * Saves attribute changes

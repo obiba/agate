@@ -266,7 +266,11 @@
     "delete-dialog": {
       "title": "Delete Attribute",
       "message": "Are you sure you want to delete attribute '{{name}}'?"
+    },
+    "error": {
+      "duplicated": "The '{{name}}' attribute already exists"
     }
+
   },
   "name": "Name",
   "edit": "Edit",
