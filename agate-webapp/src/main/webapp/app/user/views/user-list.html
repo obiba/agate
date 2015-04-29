@@ -19,7 +19,7 @@
   </div>
 
   <div class="table-responsive">
-    <table class="table table-striped table-hover table-bordered">
+    <table class="table table-striped">
       <thead>
       <tr>
         <th translate>user.name</th>
@@ -60,15 +60,15 @@
           {{user.realm}}
         </td>
         <td>
-          <ul class="list-inline">
+          <ul class="list-inline pull-right">
             <li>
-              <a ng-href="#/user/{{user.id}}" translate>view</a>
+              <a ng-href="#/user/{{user.id}}"><i class="fa fa-eye"></i></a>
             </li>
             <li>
-              <a ng-href="#/user/{{user.id}}/edit" translate>edit</a>
+              <a ng-href="#/user/{{user.id}}/edit"><i class="fa fa-pencil"></i></a>
             </li>
             <li>
-              <a ng-href="#/user/{{user.id}}/delete" translate>delete</a>
+              <a ng-click="delete($index)"><i class="fa fa-trash-o"></i></a>
             </li>
           </ul>
         </td>
