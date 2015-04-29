@@ -53,6 +53,20 @@ agate
             authorizedRoles: [USER_ROLES.all]
           }
         })
+        .when('/confirm', {
+          templateUrl: 'app/views/public_password.html',
+          controller: 'ResetPasswordController',
+          access: {
+            authorizedRoles: [USER_ROLES.all]
+          }
+        })
+        .when('/reset_password', {
+          templateUrl: 'app/views/public_password.html',
+          controller: 'ResetPasswordController',
+          access: {
+            authorizedRoles: [USER_ROLES.all]
+          }
+        })
         .when('/logout', {
           templateUrl: 'app/views/main.html',
           controller: 'LogoutController',
@@ -126,6 +140,7 @@ agate
         $rootScope.subject = Session;
 
         var authorizedRoles = next.access.authorizedRoles;
+
         if (!AuthenticationSharedService.isAuthorized(authorizedRoles)) {
           event.preventDefault();
           if (AuthenticationSharedService.isAuthenticated()) {

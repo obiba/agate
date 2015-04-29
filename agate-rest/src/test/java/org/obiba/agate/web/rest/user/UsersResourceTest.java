@@ -11,7 +11,6 @@ import org.obiba.agate.domain.User;
 import org.obiba.agate.domain.UserStatus;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.UserService;
-import org.obiba.agate.web.model.Agate;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -21,7 +20,7 @@ import static org.mockito.Mockito.when;
 public class UsersResourceTest {
 
   @InjectMocks
-  private UsersResource usersResource;
+  private UsersPublicResource usersResource;
 
   @Mock
   private UserService userService;
@@ -38,12 +37,12 @@ public class UsersResourceTest {
     User user = User.newBuilder().name("toto").build();
     user.setStatus(UserStatus.APPROVED);
     when(userService.findUser(anyString())).thenReturn(user);
-    when(configurationService.encrypt(anyString())).thenReturn("encryptedKey");
+    when(configurationService.decrypt(anyString())).thenReturn("toto");
   }
 
   @Test
   public void testConfirm() {
-    usersResource.confirm(Agate.ConfirmForm.newBuilder().setUsername("toto").setKey("encryptedKey").setPassword("password").build());
+    usersResource.confirm("encryptedKey", "password");
     verify(userService).confirmUser(any(User.class), anyString());
   }
 }

@@ -79,3 +79,29 @@ agate.controller('PasswordController', ['$scope', 'Password',
       }
     };
   }]);
+
+agate.controller('ResetPasswordController', ['$scope', '$location', 'ConfirmResource', 'PasswordResetResource',
+  function ($scope, $location, ConfirmResource, PasswordResetResource) {
+    var isReset = $location.path() === '/reset_password' ? true: false;
+
+    $scope.title = isReset ? 'Reset password' : 'Confirm';
+    $scope.key = $location.search().key;
+
+    $scope.changePassword = function () {
+      var resource = isReset ? PasswordResetResource : ConfirmResource;
+
+      if ($scope.password !== $scope.confirmPassword) {
+        $scope.doNotMatch = 'ERROR';
+      } else {
+        $scope.doNotMatch = null;
+        resource.post({
+          key: $scope.key,
+          password: $scope.password
+        })
+        .success(function () {
+          $location.url($location.path());
+          $location.path('/');
+        });
+      }
+    };
+  }]);
