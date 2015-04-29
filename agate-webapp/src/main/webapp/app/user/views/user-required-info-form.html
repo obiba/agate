@@ -1,0 +1,42 @@
+<!--
+  ~ Copyright (c) 2015 OBiBa. All rights reserved.
+  ~
+  ~ This program and the accompanying materials
+  ~ are made available under the terms of the GNU Public License v3.0.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<div form-input name="user.name" model="user.name" label="user.name" required="true"></div>
+
+<div class="form-group">
+  <label for="realm" class="control-label">
+    <span translate>user.realm</span> *
+  </label>
+  <select id="realm" chosen name="user.realm" ng-model="user.realm"
+    ng-options="realm for realm in realmList" class="chosen-select" required>
+  </select>
+</div>
+
+<div class="form-group">
+  <label for="role" class="control-label">
+    <span translate>user.role</span> *
+  </label>
+  <select id="role" chosen name="user.status" ng-model="user.role"
+    ng-options="role for role in roles" class="chosen-select" required>
+  </select>
+</div>
+
+<div class="form-group">
+  <label for="status" class="control-label">
+    <span translate>user.status</span> *
+  </label>
+  <select id="status" chosen name="user.status" ng-model="userStatus"
+    ng-options="status as status.label for status in userStatusList" class="chosen-select" required>
+  </select>
+</div>
+
+<div ng-repeat="attributeConfigPair in attributeConfigPairs | requiredConfigAttributes">
+  <attribute-item attribute="attributeConfigPair.attribute" attribute-config="attributeConfigPair.attributeConfig"></attribute-item>
+</div>

@@ -78,4 +78,9 @@ public class Dtos {
   public Group fromDto(@NotNull Agate.GroupDto dto) {
     return groupDtos.fromDto(dto);
   }
+  @NotNull
+  public User fromDto(@NotNull Agate.UserDto dto) {
+    return userDtos.fromDto(dto);
+  }
+
 }

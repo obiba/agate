@@ -218,7 +218,11 @@
   },
   "users": "Users",
   "user": {
+    "details": "Details",
+    "required-info": "Required Information",
+    "general-info": "General Information",
     "add": "Add User",
+    "label-edit": "Edit User",
     "actions": "Actions",
     "name": "Name",
     "realm": "Realm",
@@ -239,7 +243,34 @@
     "ACTIVE": "Active",
     "INACTIVE": "Inactive",
     "APPROVED": "Pending",
-    "PENDING": "Pending"
+    "PENDING": "Pending",
+    "delete-dialog": {
+      "title": "Delete User",
+      "message": "Are you sure you want to delete user '{{name}}'?"
+    }
+  },
+  "user_status": {
+    "active": "ACTIVE",
+    "pending": "PENDING",
+    "approved": "APPROVED",
+    "inactive": "INACTIVE"
+  },
+  "attributes": "Attributes",
+  "attribute": {
+    "actions": "Actions",
+    "add-label": "Add Attribute",
+    "edit-label": "Edit Attribute",
+    "action": "Action",
+    "name": "Name",
+    "value": "Value",
+    "delete-dialog": {
+      "title": "Delete Attribute",
+      "message": "Are you sure you want to delete attribute '{{name}}'?"
+    },
+    "error": {
+      "duplicated": "The '{{name}}' attribute already exists"
+    }
+
   },
   "name": "Name",
   "edit": "Edit",

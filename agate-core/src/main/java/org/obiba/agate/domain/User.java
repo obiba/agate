@@ -225,6 +225,11 @@ public class User extends AbstractAuditableDocument {
       realm(AgateUserRealm.AGATE_REALM);
     }
 
+    public Builder id(String id) {
+      user.setId(id);
+      return this;
+    }
+
     public Builder name(String name) {
       user.setName(name);
       return this;
@@ -257,6 +262,11 @@ public class User extends AbstractAuditableDocument {
 
     public Builder email(String email) {
       user.setEmail(email);
+      return this;
+    }
+
+    public Builder status(String status) {
+      user.setStatus(UserStatus.valueOf(status));
       return this;
     }
 
@@ -297,6 +307,16 @@ public class User extends AbstractAuditableDocument {
 
     public Builder applications(List<String> applications) {
       user.setApplications(Sets.newHashSet(applications));
+      return this;
+    }
+
+    public Builder attribute(String name, String value) {
+      user.setAttribute(name, value);
+      return this;
+    }
+
+    public Builder attributes(Map<String,String> attributes) {
+      user.setAttributes(attributes);
       return this;
     }
 
