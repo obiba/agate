@@ -55,7 +55,7 @@ message UserDto {
   required string realm = 3;
   optional string firstName = 4;
   optional string lastName = 5;
-  optional string email = 6;
+  required string email = 6;
   repeated AttributeDto attributes = 7;
   required string role = 8;
   required string status = 9;

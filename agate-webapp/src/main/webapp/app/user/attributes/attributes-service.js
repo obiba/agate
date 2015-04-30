@@ -7,7 +7,7 @@ agate.user
       return {
         'findNonConfigAttributes' : function(attributes, attributesConfig) {
 
-          if (attributes) {
+          if (attributes && attributesConfig) {
             return attributes.filter(function (attribute) {
               return attributesConfig.filter(function (attributeConfig) {
                   return attributeConfig.name === attribute.name;
@@ -19,7 +19,7 @@ agate.user
         },
 
         'findConfigAttributes' : function(attributes, attributesConfig) {
-          if (attributes) {
+          if (attributes && attributesConfig) {
             return attributes.filter(function (attribute) {
               return attributesConfig.filter(function (attributeConfig) {
                   var found = attributeConfig.name === attribute.name;
@@ -183,7 +183,7 @@ agate.user
       function singleChosenTemplate(required) {
         var requiredAttr = required ? 'required' : '';
         var requiredMarker = required ? '*' : '';
-        return '<div class="form-group"> <label for="attribute.name" class="control-label"> <span>{{attribute.name}}</span> '+ requiredMarker +' </label> <select id="attribute.name" chosen name="attribute.name" ng-model="attribute.value"ng-options="value for value in attributeConfig.values" class="chosen-select" '+requiredAttr+'> </select> </div>';
+        return '<div class="form-group"> <label for="attribute.name" class="control-label"> <span>{{attribute.name}}</span> '+ requiredMarker +' </label> <select id="attribute.name" name="attribute.name" class="form-control" ng-model="attribute.value" ng-options="t for t in attributeConfig.values"></select> </div>';
       }
 
       function booleanTemplate() {

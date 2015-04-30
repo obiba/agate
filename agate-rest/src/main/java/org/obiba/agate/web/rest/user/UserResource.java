@@ -45,10 +45,7 @@ public class UserResource extends AbstractUserResource {
   @PUT
   public Response updateUser(Agate.UserDto userDto) {
     userService.getUser(id);
-
-    User user = dtos.fromDto(userDto);
-    userService.save(user);
-    return Response.noContent().build();
+    return super.updateUser(userDto);
   }
 
   @PUT

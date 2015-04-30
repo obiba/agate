@@ -25,7 +25,7 @@ agate.user
             }
           })
           .result.then(function (attribute) {
-            if (attribute) {
+            if ($scope.attributes) {
               $scope.attributes.push(attribute);
             } else {
               $scope.attributes = [attribute];
@@ -51,7 +51,7 @@ agate.user
             }
           })
           .result.then(function (attribute) {
-            var index = $scope.attributes.map(function(item, index) {
+            var index = $scope.attributes.map(function(item) {
               return item.name === attribute.name;
             }).indexOf(true);
 

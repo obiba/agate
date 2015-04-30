@@ -274,6 +274,12 @@
     }
 
   },
+  "profile": {
+    "identification": "Identification",
+    "password": "Password",
+    "required": "{{name}} is a required field"
+
+  },
   "name": "Name",
   "edit": "Edit",
   "view": "View",
