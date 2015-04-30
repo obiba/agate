@@ -81,12 +81,15 @@ agate.user
         });
       });
 
-      $scope.userStatusList = UserStatusResource.listAsNameValue();
-      $scope.userStatus = $scope.userStatusList[UserStatusResource.activeIndex()];
+      var statusValueList = UserStatusResource.listAsNameValue();
+      $scope.status = {
+        list: statusValueList,
+        selected: statusValueList[UserStatusResource.activeIndex()]
+      };
 
       $scope.user = $routeParams.id ?
         UserResource.get({id: $routeParams.id}, function(user) {
-          $scope.userStatus = $scope.userStatusList[UserStatusResource.findIndex(user.status)]
+          $scope.status.selected = $scope.status.list[UserStatusResource.findIndex(user.status)];
           $scope.attributeConfigPairs = AttributesService.getAttributeConfigPairs($scope.user.attributes, $scope.attributesConfig);
           return user;
         }) : {};
@@ -116,7 +119,6 @@ agate.user
        * Create a new user with properties and attributes
        */
       var createUser = function() {
-        $scope.user.status = $scope.userStatus.value;
         $scope.user.attributes = $scope.attributeConfigPairs.map(function(attributeConfigPair){
           return attributeConfigPair.attribute;
         });
@@ -130,6 +132,7 @@ agate.user
       }
 
       var saveErrorHandler = function (response) {
+        $scope.form.saveAttempted = true;
         FormServerValidation.error(response, $scope.form);
       };
 
@@ -138,6 +141,8 @@ agate.user
           $scope.form.saveAttempted = true;
           return;
         }
+
+        $scope.user.status = $scope.status.selected.value;
 
         if ($scope.user.id) {
           updateUser();
@@ -166,7 +171,7 @@ agate.user
         UserResource.get({id: $routeParams.id}, function(user) {
           ConfigurationResource.get(function(config) {
             $scope.userConfigAttributes = AttributesService.findConfigAttributes(user.attributes, config.userAttributes);
-            $scope.userNonConfigAttributes = AttributesService.findNonConfigAttributes(user.attributes, config.userAttributes);
+            $scope.userNonConfigAttributes = config.userAttributes ? AttributesService.findNonConfigAttributes(user.attributes, config.userAttributes) : user.attributes;
           });
 
           return user;

@@ -17,6 +17,7 @@ agate.user
         'delete': {method: 'DELETE', params: {id: '@id'}, errorHandler: true}
       });
     }])
+
   .factory('UserStatusResource', ['$log', '$filter', function ($log, $filter) {
     var nameValueList = [
       {label: $filter('translate')('user_status.active'), value: 'ACTIVE'},
@@ -34,11 +35,14 @@ agate.user
         return nameValueList;
       },
 
-      'findIndex': function (status) {
-        return status.indexOf(status);
+      'findIndex': function (value) {
+        return nameValueList.map(function(nameValue) {
+          return nameValue.value;
+        }).indexOf(value);
       }
     };
   }])
+
   .factory('UserResetPasswordResource', ['$resource',
     function ($resource) {
       return $resource('ws/user/:id/reset_password', {}, {

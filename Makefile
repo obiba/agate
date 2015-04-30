@@ -43,6 +43,9 @@ core:
 rest:
 	cd agate-rest && ${mvn_exec} install
 
+proto:
+	cd agate-web-model && ${mvn_exec} install
+
 run:
 	cd agate-webapp && \
 	${mvn_exec} spring-boot:run -Pdev -DAGATE_HOME="${agate_home}" -DAGATE_LOG="${agate_log}"

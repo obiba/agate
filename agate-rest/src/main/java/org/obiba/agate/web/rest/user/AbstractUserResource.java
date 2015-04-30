@@ -58,6 +58,15 @@ public abstract class AbstractUserResource {
   }
 
   /**
+   * Updates user properties
+   */
+  protected Response updateUser(Agate.UserDto userDto) {
+    User user = dtos.fromDto(userDto);
+    userService.save(user);
+    return Response.noContent().build();
+  }
+
+  /**
    * Get the {@link org.obiba.agate.domain.User} that is being processed.
    *
    * @return
