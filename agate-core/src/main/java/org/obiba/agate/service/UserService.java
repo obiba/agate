@@ -8,6 +8,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.BadRequestException;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.crypto.hash.Sha512Hash;
@@ -34,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 
+import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -45,6 +47,8 @@ import com.google.common.eventbus.Subscribe;
 public class UserService {
 
   private static final Logger log = LoggerFactory.getLogger(UserService.class);
+
+  private static final int MINIMUM_LEMGTH = 8;
 
   @Inject
   private UserRepository userRepository;
@@ -110,6 +114,26 @@ public class UserService {
     currentUser.setEmail(email);
     userRepository.save(currentUser);
     log.debug("Changed information for User: {}", currentUser);
+  }
+
+  public void updateUserPassword(@NotNull User user, @NotNull String password) {
+    if(user == null) throw new BadRequestException("Invalid User");
+    if(Strings.isNullOrEmpty(password)) throw new BadRequestException("User password cannot be empty");
+    if(!user.getRealm().equals(AgateUserRealm.AGATE_REALM)) throw new BadRequestException("User password cannot be changed");
+    if(password.length() < MINIMUM_LEMGTH) throw new PasswordTooShortException(MINIMUM_LEMGTH);
+
+    UserCredentials userCredentials = findUserCredentials(user.getName());
+    String hashedPassword = hashPassword(password);
+
+    if (userCredentials == null) {
+      userCredentials = UserCredentials.newBuilder().name(user.getName()).password(hashPassword(password)).build();
+    } else if (userCredentials.getPassword().equals(hashedPassword)) {
+      throw new PasswordNotChangedException();
+    } else {
+      userCredentials.setPassword(hashPassword(password));
+    }
+
+    save(userCredentials);
   }
 
   public void updateCurrentUserPassword(String password) {
