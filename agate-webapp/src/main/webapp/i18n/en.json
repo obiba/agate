@@ -88,11 +88,11 @@
     }
   },
   "password": {
-    "title": "Password for [<b>{{username}}</b>]",
+    "title": "Change Password",
     "form": {
       "newpassword": "New password",
       "newpassword.placeholder": "New password",
-      "confirmpassword": "New password confirmation",
+      "confirmpassword": "Password confirmation",
       "confirmpassword.placeholder": "Confirm the new password",
       "button": "Save"
     },
@@ -276,9 +276,9 @@
   },
   "profile": {
     "identification": "Identification",
-    "password": "Password",
-    "required": "{{name}} is a required field"
-
+    "update-password": "Update password",
+    "required": "{{name}} is a required field",
+    "updated": "Profile settings updated successfully."
   },
   "name": "Name",
   "edit": "Edit",

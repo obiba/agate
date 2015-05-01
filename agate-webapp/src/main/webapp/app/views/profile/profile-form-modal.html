@@ -1,0 +1,39 @@
+<div class="modal-content">
+  <form name="form" role="form" novalidate
+    class="ng-scope ng-invalid ng-invalid-required ng-dirty" ng-submit="save(form)">
+
+    <div class="modal-header">
+      <button type="button" class="close" aria-hidden="true" ng-click="cancel()">&times;</button>
+      <h4 class="modal-title" id="myAttributeModal">
+        <span translate>global.menu.myProfile</span>
+      </h4>
+    </div>
+
+    <div class="modal-body">
+      <p class="alert alert-danger" ng-show="status && status === status_codes.ERROR">
+        {{'profile.required' | translate: {name: requiredField} }}
+      </p>
+      <div class="alert alert-success" ng-show="status && status === status_codes.SUCCESS">
+        <strong translate>settings.messages.success</strong>
+      </div>
+
+      <div>
+        <div form-input name="user.firstName" model="settingsAccount.firstName" label="user.firstName"></div>
+        <div form-input name="user.lastName" model="settingsAccount.lastName" label="user.lastName"></div>
+        <div form-input type="email" name="user.email" model="settingsAccount.email" label="user.email" required="true"></div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" ng-click="cancel()">
+        <span translate>cancel</span>
+      </button>
+
+      <button ng-disabled="form.$invalid" type="submit" class="btn btn-primary">
+        <span translate>save</span>
+      </button>
+    </div>
+
+  </form>
+</div>
+
