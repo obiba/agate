@@ -52,10 +52,7 @@ public class ApplicationResource {
 
     application.setDescription(dto.getDescription());
     application.setName(dto.getName());
-
-    if (dto.hasKey()) {
-      application.setKey(applicationService.hashKey(dto.getKey()));
-    }
+    application.setKey(applicationService.hashKey(dto.getKey()));
 
     applicationService.save(application);
 

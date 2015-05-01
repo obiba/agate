@@ -86,7 +86,7 @@ agate.controller('ProfileModalController', ['$scope', '$modalInstance', '$filter
     $scope.settingsAccount = settingsAccount;
     $scope.status = null;
     $scope.status_codes = {
-      ERROR: 0,
+      ERROR: -2,
       SUCCESS: 1
     };
 
@@ -121,7 +121,7 @@ agate.controller('PasswordModalController', ['$scope', '$modalInstance', 'Passwo
     $scope.status = null;
     $scope.status_codes = {
       NO_MACTH: -1,
-      ERROR: 0,
+      ERROR: -2,
       SUCCESS: 1
     };
 
