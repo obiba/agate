@@ -40,15 +40,15 @@ agate
           }
         })
         .when('/profile', {
-          templateUrl: 'app/views/profile.html',
+          templateUrl: 'app/views/profile/profile-view.html',
           controller: 'ProfileController',
           access: {
             authorizedRoles: [USER_ROLES.all]
           }
         })
-        .when('/password', {
-          templateUrl: 'app/views/password.html',
-          controller: 'PasswordController',
+        .when('/profile/edit', {
+          templateUrl: 'app/views/profile/profile-form-modal.html',
+          controller: 'ProfileController',
           access: {
             authorizedRoles: [USER_ROLES.all]
           }

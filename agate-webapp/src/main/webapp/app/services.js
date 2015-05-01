@@ -16,13 +16,19 @@ agate.factory('CurrentSession', ['$resource',
 agate.factory('Account', ['$resource',
   function ($resource) {
     return $resource('ws/user/_current', {}, {
+      'save': {method: 'PUT', params: {id: '@id'}, errorHandler: true}
     });
   }]);
 
-agate.factory('Password', ['$resource',
-  function ($resource) {
-    return $resource('ws/user/_current/password', {}, {
-    });
+agate.factory('Password', ['$resource', '$log', '$http',
+  function ($resource, $log, $http) {
+    return {
+      put: function(data) {
+        return $http.put('ws/user/_current/password', $.param(data), {
+          headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        });
+      }
+    };
   }]);
 
 agate.factory('ConfirmResource', ['$http',

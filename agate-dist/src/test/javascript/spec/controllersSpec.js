@@ -18,47 +18,6 @@ describe('Controllers Tests ', function () {
     });
   });
 
-  describe('PasswordController', function () {
-    var $scope,
-      PasswordService;
-
-    beforeEach(inject(function ($rootScope, $controller, Password) {
-      $scope = $rootScope.$new();
-      PasswordService = Password;
-      $controller('PasswordController', {$scope: $scope, Password: PasswordService});
-    }));
-
-    it('should show error if passwords do not match', function () {
-      //GIVEN
-      $scope.password = 'password1';
-      $scope.confirmPassword = 'password2';
-      //WHEN
-      $scope.changePassword();
-      //THEN
-      expect($scope.doNotMatch).toBe('ERROR');
-
-    });
-    it('should call Service and set OK on Success', function () {
-      //GIVEN
-      var pass = 'myPassword';
-      $scope.password = pass;
-      $scope.confirmPassword = pass;
-      //SET SPY
-      spyOn(PasswordService, 'save');
-
-      //WHEN
-      $scope.changePassword();
-
-      //THEN
-      expect(PasswordService.save).toHaveBeenCalled();
-      expect(PasswordService.save).toHaveBeenCalledWith(pass, jasmine.any(Function), jasmine.any(Function));
-      //SIMULATE SUCCESS CALLBACK CALL FROM SERVICE
-      PasswordService.save.calls.mostRecent().args[1]();
-      expect($scope.error).toBeNull();
-      expect($scope.success).toBe('OK');
-    });
-  });
-
   describe('SettingsController', function () {
     var $scope, AccountService;
 

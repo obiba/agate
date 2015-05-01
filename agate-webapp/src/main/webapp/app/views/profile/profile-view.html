@@ -1,0 +1,46 @@
+<div>
+
+  <h2 translate>global.menu.myProfile</h2>
+
+  <div class="voffset2">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="alert alert-success" ng-show="success">
+          <strong translate>profile.updated</strong>
+        </div>
+
+        <table class="table table-striped">
+          <tbody>
+          <tr>
+            <td translate>user.firstName</td>
+            <td>{{settingsAccount.firstName}}</td>
+          </tr>
+          <tr>
+            <td translate>user.lastName</td>
+            <td>{{settingsAccount.lastName}}</td>
+          </tr>
+          <tr>
+            <td translate>user.email</td>
+            <td>{{settingsAccount.email}}</td>
+          </tr>
+          <tr>
+            <td>
+            </td>
+            <td translate></td>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <button ng-click="updatePassword()" class="btn btn-info">
+      <span translate>profile.update-password</span>
+    </button>
+
+    <a ng-click="edit()" class="btn btn-primary">
+      <i class="fa fa-pencil-square-o"></i> <span translate>edit</span>
+    </a>
+
+  </div>
+</div>

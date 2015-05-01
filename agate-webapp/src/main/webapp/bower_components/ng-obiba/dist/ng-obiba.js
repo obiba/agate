@@ -3,7 +3,7 @@
  * https://github.com/obiba/ng-obiba
 
  * License: GNU Public License version 3
- * Date: 2015-04-13
+ * Date: 2015-04-30
  */
 'use strict';
 
@@ -150,7 +150,7 @@ angular.module('obiba.form')
           var setFieldError = function (field, error) {
             form[field].$dirty = true;
             form[field].$setValidity('server', false);
-            if (form[field].errors === null) {
+            if (!form[field].errors) {
               form[field].errors = [];
             }
             form[field].errors.push(StringUtils.capitaliseFirstLetter(error.message));
