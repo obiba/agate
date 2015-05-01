@@ -3,18 +3,14 @@
   <div class="row">
     <div class="col-md-6">
       <form name="form" role="form" novalidate ng-submit="save(form)" autocomplete="off">
-        <p class="alert alert-danger" ng-show="form.saveAttempted && form.$invalid" translate="">fix-error</p>
+        <p class="alert alert-danger" ng-show="status && status !== status_codes.SUCCESS" translate="">fix-error</p>
 
         <div form-input name="name" model="application.name" label="application.name" required="true"></div>
 
         <div form-textarea name="description" model="application.description" label="application.description"></div>
 
-        <a href="" ng-click="showKey = !showKey" ng-show="application.id">
-          <span ng-class="{'glyphicon-plus': !showKey, 'glyphicon-minus': showKey}" class="glyphicon"></span> <span translate>application.changeKey</span></a>
-
-        <div collapse="application.id && !showKey" class="voffset3">
-          <div form-input type="password" name="key" model="key" label="application.key"></div>
-
+        <div class="voffset3">
+          <div form-input type="password" name="key" model="key" label="application.key" required="true"></div>
           <div form-input type="password" name="confirmKey" model="confirmKey" label="application.confirmKey"></div>
         </div>
 

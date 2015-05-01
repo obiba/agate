@@ -32,20 +32,32 @@ agate.application
       $scope.application = $routeParams.id ? ApplicationResource.get({id: $routeParams.id}) : {};
     }])
 
-  .controller('ApplicationEditController', ['$scope', '$location', '$routeParams', 'ApplicationsResource', 'ApplicationResource',
+  .controller('ApplicationEditController', ['$scope', '$location', '$routeParams', 'ApplicationsResource', 'ApplicationResource','$log',
 
-    function ($scope, $location, $routeParams, ApplicationsResource, ApplicationResource) {
-      $scope.showKey = false;
+    function ($scope, $location, $routeParams, ApplicationsResource, ApplicationResource, $log) {
+      $scope.status_codes = {
+        NO_MATCH: -1,
+        ERROR: -2,
+        SUCCESS: 1
+      }
+      $scope.status = null;
       $scope.application = $routeParams.id ? ApplicationResource.get({id: $routeParams.id}) : {};
 
       $scope.save = function(form) {
         if (!form.$valid || $scope.confirmKey !== $scope.key) {
+          $scope.status = $scope.status_codes.NO_MATCH;
           form.saveAttempted = true;
           return;
         }
 
         var onSuccess = function () {
+          $scope.status = $scope.status_codes.SUCCESS;
           $location.path('/applications');
+        };
+
+        var onError = function () {
+          $log.debug('DEBUG', $scope, $scope.$parent);
+          $scope.status = $scope.status_codes.ERROR;
         };
 
         if ($scope.key) {
@@ -55,9 +67,9 @@ agate.application
         }
 
         if ($scope.application.id) {
-          ApplicationResource.update({id: $scope.application.id}, $scope.application, onSuccess);
+          ApplicationResource.update({id: $scope.application.id}, $scope.application, onSuccess, onError);
         } else {
-          ApplicationsResource.save($scope.application, onSuccess);
+          ApplicationsResource.save($scope.application, onSuccess, onError);
         }
       };
     }]);
