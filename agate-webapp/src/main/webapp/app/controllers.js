@@ -116,8 +116,8 @@ agate.controller('ProfileModalController', ['$scope', '$modalInstance', '$filter
     };
   }]);
 
-agate.controller('PasswordModalController', ['$scope', '$modalInstance', 'Password',
-  function ($scope, $modalInstance, Password) {
+agate.controller('PasswordModalController', ['$scope', '$modalInstance', 'Password', 'FormServerValidation',
+  function ($scope, $modalInstance, Password, FormServerValidation) {
     $scope.status = null;
     $scope.status_codes = {
       NO_MACTH: -1,
@@ -143,11 +143,13 @@ agate.controller('PasswordModalController', ['$scope', '$modalInstance', 'Passwo
             $scope.status = $scope.status_codes.SUCCESS;
             $modalInstance.close();
           })
-          .error(function() {
+          .error(function(response) {
             $scope.status = $scope.status_codes.ERROR;
+            FormServerValidation.error(response, $scope.form);
           });
       }
-    }
+    };
+
   }]);
 
 agate.controller('ResetPasswordController', ['$scope', '$location', 'ConfirmResource', 'PasswordResetResource',

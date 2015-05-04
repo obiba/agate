@@ -3,7 +3,7 @@
  * https://github.com/obiba/ng-obiba
 
  * License: GNU Public License version 3
- * Date: 2015-04-30
+ * Date: 2015-05-01
  */
 'use strict';
 
@@ -138,12 +138,9 @@ angular.module('obiba.form', [
 
 angular.module('obiba.form')
 
-  .service('FormServerValidation', ['$rootScope', '$log', 'StringUtils', 'NOTIFICATION_EVENTS',
-    function ($rootScope, $log, StringUtils, NOTIFICATION_EVENTS) {
+  .service('FormServerValidation', ['$rootScope', '$log', '$filter', 'StringUtils', 'NOTIFICATION_EVENTS',
+    function ($rootScope, $log, $filter, StringUtils, NOTIFICATION_EVENTS) {
       this.error = function (response, form, languages) {
-//        $log.debug('FormServerValidation response', response);
-//        $log.debug('FormServerValidation form', form);
-//        $log.debug('FormServerValidation languages', languages);
 
         if (response.data instanceof Array) {
 
@@ -170,11 +167,45 @@ angular.module('obiba.form')
         } else {
           $rootScope.$broadcast(NOTIFICATION_EVENTS.showNotificationDialog, {
             titleKey: 'form-server-error',
-            message: response.data ? response.data : angular.fromJson(response)
+            message: buildMessage(response)
           });
         }
 
       };
+
+      function buildMessage(response) {
+        var message = null;
+        var data = response.data ? response.data : response;
+
+        if (data) {
+          if (data.messageTemplate) {
+            message = $filter('translate')(data.messageTemplate, buildMessageArguments(data.arguments));
+            if (message === data.messageTemplate) {
+              message = null;
+            }
+          }
+
+          if (!message && data.message) {
+            message = 'Server Error ('+ data.code +'): ' + data.message;
+          }
+        }
+
+        return message ? message : angular.fromJson(response);
+      }
+
+      function buildMessageArguments(args) {
+        if (args &&  args instanceof Array) {
+          var messageArgs = {};
+          args.forEach(function(arg, index) {
+            messageArgs['arg'+index] = arg;
+          });
+
+          return messageArgs;
+        }
+
+        return {};
+      }
+
     }]);;'use strict';
 
 angular.module('obiba.form')

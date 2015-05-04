@@ -298,5 +298,14 @@
   "fix-error": "Please fix errors bellow",
   "dnd-reorder": "Drag and drop to reorder",
   "loading": "Loading...",
-  "error": "Error"
+  "error": "Error",
+  "server": {
+    "error": {
+      "password": {
+        "too-short": "Password is shorter than the required {{arg0}} characters",
+        "not-changed": "New password is identical to the current password"
+      }
+    }
+  }
+
 }
