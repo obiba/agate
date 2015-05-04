@@ -87,6 +87,14 @@ agate.user
         selected: statusValueList[UserStatusResource.activeIndex()]
       };
 
+      if (!$routeParams.id) {
+        // only for new users
+        $scope.profile = {
+          password: null,
+          condfirmPassword: null
+        };
+      }
+
       $scope.user = $routeParams.id ?
         UserResource.get({id: $routeParams.id}, function(user) {
           $scope.status.selected = $scope.status.list[UserStatusResource.findIndex(user.status)];
@@ -119,11 +127,18 @@ agate.user
        * Create a new user with properties and attributes
        */
       var createUser = function() {
+        if ($scope.profile.password !== $scope.profile.confirmPassword) {
+          $scope.form.saveAttempted = true;
+          $scope.form.$invalid = true;
+          return;
+        }
+
+        $scope.profile.user = $scope.user;
         $scope.user.attributes = $scope.attributeConfigPairs.map(function(attributeConfigPair){
           return attributeConfigPair.attribute;
         });
 
-        UsersResource.save($scope.user,
+        UsersResource.save($scope.profile,
           function (resource, getResponseHeaders) {
             var parts = getResponseHeaders().location.split('/');
             $location.path('/user/' + parts[parts.length - 1]).replace();

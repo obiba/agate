@@ -241,6 +241,7 @@
     "approve": "Approve",
     "reject": "Reject",
     "view": "View",
+    "password": "Password",
     "resetPassword": "Reset password",
     "ACTIVE": "Active",
     "INACTIVE": "Inactive",
