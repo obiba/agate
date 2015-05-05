@@ -58,14 +58,15 @@ public class UsersResource {
   }
 
   @POST
-  public Response create(Agate.UserDto userDto) {
+  public Response create(Agate.UserCreateFormDto userCreateFormDto) {
+    Agate.UserDto userDto = userCreateFormDto.getUser();
     String username = userDto.getName();
     User user = userService.findUser(username);
 
     if(user != null) throw new BadRequestException("User already exists: " + username);
     if(CURRENT_USER_NAME.equals(username)) throw new BadRequestException("Reserved user name: " + CURRENT_USER_NAME);
 
-    user = userService.save(dtos.fromDto(userDto));
+    user = userService.createUserWithPassword(dtos.fromDto(userDto), userCreateFormDto.getPassword());
 
     return Response
       .created(UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(UserResource.class).build(user.getId())).build();

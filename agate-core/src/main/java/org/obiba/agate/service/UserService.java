@@ -136,11 +136,9 @@ public class UserService {
     save(userCredentials);
   }
 
-  public void updateCurrentUserPassword(String password) {
-    UserCredentials currentUser = getCurrentUserCredentials();
-    currentUser.setPassword(hashPassword(password));
-    userCredentialsRepository.save(currentUser);
-    log.debug("Changed password for User: {}", currentUser);
+  public User createUserWithPassword(@NotNull User user, @NotNull String password) {
+    updateUserPassword(user, password);
+    return save(user);
   }
 
   /**
