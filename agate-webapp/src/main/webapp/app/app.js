@@ -12,6 +12,7 @@ var agate = angular.module('agate', [
   'agate.ticket',
   'agate.user',
   'agate.group',
+  'agate.passwordModal',
   'ngAnimate',
   'ngCookies',
   'ngResource',

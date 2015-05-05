@@ -42,20 +42,9 @@ agate.controller('ProfileController', ['$scope', '$location', '$modal', 'Account
     $scope.settingsAccount = Account.get();
     $scope.success = null;
 
-    /**
-     * Shows password popup
-     */
-    $scope.updatePassword = function() {
-      $modal
-        .open({
-          templateUrl: 'app/views/profile/profile-password-form-modal.html',
-          controller: 'PasswordModalController'
-        })
-        .result.then(function () {
-          $scope.success = true;
-        }, function () {
-        });
-    }
+    $scope.onPasswordUpdated = function() {
+      $scope.success = true;
+    };
 
     $scope.cancel = function () {
       $location.path('/profile');
@@ -114,42 +103,6 @@ agate.controller('ProfileModalController', ['$scope', '$modalInstance', '$filter
           $scope.status = $scope.status_codes.ERROR;
         });
     };
-  }]);
-
-agate.controller('PasswordModalController', ['$scope', '$modalInstance', 'Password', 'FormServerValidation',
-  function ($scope, $modalInstance, Password, FormServerValidation) {
-    $scope.status = null;
-    $scope.status_codes = {
-      NO_MACTH: -1,
-      ERROR: -2,
-      SUCCESS: 1
-    };
-
-    $scope.profile = {
-      password: null,
-      condfirmPassword: null
-    };
-
-    $scope.cancel = function() {
-      $modalInstance.dismiss('cancel');
-    };
-
-    $scope.save = function() {
-      if ($scope.profile.password !== $scope.profile.confirmPassword) {
-        $scope.status = $scope.status_codes.NO_MACTH;
-      } else {
-        Password.put({password: $scope.profile.password})
-          .success(function() {
-            $scope.status = $scope.status_codes.SUCCESS;
-            $modalInstance.close();
-          })
-          .error(function(response) {
-            $scope.status = $scope.status_codes.ERROR;
-            FormServerValidation.error(response, $scope.form);
-          });
-      }
-    };
-
   }]);
 
 agate.controller('ResetPasswordController', ['$scope', '$location', 'ConfirmResource', 'PasswordResetResource',
