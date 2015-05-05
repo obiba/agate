@@ -147,7 +147,7 @@
     "longTimeout": "Long term timeout (hours)",
     "longTimeout-help": "Ticket expiration timeout in hours when \"remember me\" option is selected",
     "inactiveTimeout": "Inactive timeout (days)",
-    "inactiveTimeout-help": "Ticket expiration timeout in days",
+    "inactiveTimeout-help": "User account expiration timeout in days",
     "encryptionKeys": "Encryption Keys",
     "addKeyPair": "Add Keys",
     "downloadCertificate": "Download Certificate",

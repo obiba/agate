@@ -78,7 +78,7 @@ public class UserSeed implements ApplicationListener<ContextRefreshedEvent> {
       .lastName("Good") //
       .email("user1@example.org") //
       .groups("group1", "group2") //
-      .applications("opal", "mica");
+      .applications("opal", "mica", "drupal");
 
     save(builder.build());
 
