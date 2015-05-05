@@ -34,9 +34,7 @@
       </div>
     </div>
 
-    <button ng-click="updatePassword()" class="btn btn-info">
-      <span translate>profile.update-password</span>
-    </button>
+    <update-password-button profile="profile" updated="onPasswordUpdated()" user-id="_current"></update-password-button>
 
     <a ng-click="edit()" class="btn btn-primary">
       <i class="fa fa-pencil-square-o"></i> <span translate>edit</span>
@@ -44,3 +42,4 @@
 
   </div>
 </div>
+

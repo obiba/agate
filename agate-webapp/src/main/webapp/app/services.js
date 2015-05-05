@@ -23,8 +23,8 @@ agate.factory('Account', ['$resource',
 agate.factory('Password', ['$resource', '$http',
   function ($resource, $http) {
     return {
-      put: function(data) {
-        return $http.put('ws/user/_current/password', $.param(data), {
+      put: function(userId, data) {
+        return $http.put('ws/user/'+userId+'/password', $.param(data), {
           headers: {'Content-Type': 'application/x-www-form-urlencoded'},
           errorHandler: true
         });
