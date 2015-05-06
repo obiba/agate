@@ -9,6 +9,8 @@ import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.service.ConfigurationService;
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Strings;
+
 @Component
 @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
 class TicketDtos {
@@ -20,23 +22,25 @@ class TicketDtos {
   Agate.TicketDto asDto(@NotNull Ticket ticket) {
     Agate.TicketDto.Builder builder = Agate.TicketDto.newBuilder();
     builder.setId(ticket.getId()) //
-        .setToken(ticket.getToken()) //
-        .setUsername(ticket.getUsername()) //
-        .setRemembered(ticket.isRemembered()) //
-        .setTimestamps(TimestampsDtos.asDto(ticket));
+      .setToken(ticket.getToken()) //
+      .setUsername(ticket.getUsername()) //
+      .setRemembered(ticket.isRemembered()) //
+      .setTimestamps(TimestampsDtos.asDto(ticket));
 
     for(Ticket.Event event : ticket.getEvents()) {
-      builder.addEvents(Agate.TicketDto.Event.newBuilder() //
-          .setApplication(event.getApplication()) //
-          .setAction(event.getAction()) //
-          .setTime(event.getTime().toString()));
+      Agate.TicketDto.Event.Builder eBuilder = Agate.TicketDto.Event.newBuilder() //
+
+        .setAction(event.getAction()) //
+        .setTime(event.getTime().toString());
+      if(!Strings.isNullOrEmpty(event.getApplication())) eBuilder.setApplication(event.getApplication());
+      builder.addEvents(eBuilder);
     }
 
     Configuration configuration = configurationService.getConfiguration();
     DateTime created = ticket.getCreatedDate();
     DateTime expires = ticket.isRemembered()
-        ? created.plusHours(configuration.getLongTimeout())
-        : created.plusHours(configuration.getShortTimeout());
+      ? created.plusHours(configuration.getLongTimeout())
+      : created.plusHours(configuration.getShortTimeout());
     builder.setExpires(expires.toString());
 
     return builder.build();
