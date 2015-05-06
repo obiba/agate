@@ -37,9 +37,30 @@ agate.controller('LogoutController', ['$location', 'AuthenticationSharedService'
     });
   }]);
 
-agate.controller('ProfileController', ['$scope', '$location', '$modal', 'Account',
-  function ($scope, $location, $modal, Account) {
-    $scope.settingsAccount = Account.get();
+agate.controller('ProfileController', ['$scope', '$location', '$modal', 'Account', 'ConfigurationResource', 'AttributesService',
+  function ($scope, $location, $modal, Account, ConfigurationResource, AttributesService) {
+
+    var getConfigAttributes = function() {
+      ConfigurationResource.get(function(config) {
+        $scope.attributesConfig = config.userAttributes || [];
+        $scope.attributeConfigPairs = AttributesService.getAttributeConfigPairs($scope.settingsAccount.attributes, $scope.attributesConfig);
+      });
+    };
+
+    var getSettingsAccount = function() {
+      $scope.settingsAccount = Account.get(function(user) {
+        ConfigurationResource.get(function(config) {
+          $scope.userConfigAttributes = AttributesService.findConfigAttributes(user.attributes, config.userAttributes);
+          $scope.userNonConfigAttributes = config.userAttributes ? AttributesService.findNonConfigAttributes(user.attributes, config.userAttributes) : user.attributes;
+        });
+
+        return user;
+      });
+    }
+
+    getConfigAttributes();
+    getSettingsAccount();
+
     $scope.success = null;
 
     $scope.onPasswordUpdated = function() {
@@ -51,18 +72,30 @@ agate.controller('ProfileController', ['$scope', '$location', '$modal', 'Account
     };
 
     $scope.edit = function() {
+      var settingsAccountClone = $.extend(true, {}, $scope.settingsAccount);
+      var attributeConfigPairs =
+        AttributesService.getAttributeConfigPairs(settingsAccountClone.attributes, $scope.attributesConfig);
+
+
       $modal
         .open({
           templateUrl: 'app/views/profile/profile-form-modal.html',
           controller: 'ProfileModalController',
           resolve: {
             settingsAccount: function () {
-              return $.extend(true, {}, $scope.settingsAccount);
+              return settingsAccountClone;
+            },
+            attributeConfigPairs: function () {
+              return attributeConfigPairs;
+            },
+            attributesConfig: function () {
+              return $scope.attributesConfig;
             }
           }
         })
         .result.then(function () {
-          $scope.settingsAccount = Account.get();
+          $scope.success = true;
+          getSettingsAccount();
         }, function () {
         });
     };
@@ -70,9 +103,11 @@ agate.controller('ProfileController', ['$scope', '$location', '$modal', 'Account
 
   }]);
 
-agate.controller('ProfileModalController', ['$scope', '$modalInstance', '$filter', 'Account', 'settingsAccount',
-  function ($scope, $modalInstance, $filter, Account, settingsAccount) {
+agate.controller('ProfileModalController', ['$scope', '$modalInstance', '$filter', 'Account', 'settingsAccount', 'attributeConfigPairs', 'attributesConfig', 'AttributesService',
+  function ($scope, $modalInstance, $filter, Account, settingsAccount, attributeConfigPairs, attributesConfig, AttributesService) {
     $scope.settingsAccount = settingsAccount;
+    $scope.attributeConfigPairs = attributeConfigPairs;
+    $scope.attributesConfig = attributesConfig;
     $scope.status = null;
     $scope.status_codes = {
       ERROR: -2,
@@ -93,11 +128,12 @@ agate.controller('ProfileModalController', ['$scope', '$modalInstance', '$filter
       }
 
       form.$pristine = true;
+      $scope.settingsAccount.attributes =
+        AttributesService.mergeConfigPairAttributes($scope.settingsAccount.attributes, $scope.attributeConfigPairs);
 
       Account.save($scope.settingsAccount,
         function () {
-          $scope.status = $scope.status_codes.SUCCESS;
-          $modalInstance.close();
+          $modalInstance.close($scope.attributeConfigPairs);
         },
         function () {
           $scope.status = $scope.status_codes.ERROR;

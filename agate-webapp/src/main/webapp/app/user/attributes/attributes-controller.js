@@ -2,8 +2,13 @@
 
 agate.user
 
-  .controller('AttributesFormController', ['$rootScope', '$scope', '$translate', '$log', '$modal', 'NOTIFICATION_EVENTS',
-    function ($rootScope, $scope, $translate, $log, $modal, NOTIFICATION_EVENTS) {
+  .controller('AttributesFormController', ['$rootScope', '$scope', '$translate', '$log', '$modal', 'AttributesService', 'NOTIFICATION_EVENTS',
+    function ($rootScope, $scope, $translate, $log, $modal, AttributesService, NOTIFICATION_EVENTS) {
+
+      $scope.$watch('attributes', function() {
+        $scope.nonConfigAttributes = AttributesService.findNonConfigAttributes($scope.attributes, $scope.attributesConfig);
+      }, true);
+
 
       /**
        * Pops modal for adding new attribute

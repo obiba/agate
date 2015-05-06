@@ -10,18 +10,30 @@
     </div>
 
     <div class="modal-body">
-      <p class="alert alert-danger" ng-show="status && status === status_codes.ERROR">
-        {{'profile.required' | translate: {name: requiredField} }}
-      </p>
-      <div class="alert alert-success" ng-show="status && status === status_codes.SUCCESS">
-        <strong translate>settings.messages.success</strong>
-      </div>
+      <tabset>
+        <tab select="tabGeneral=true" heading="{{'user.general-info' | translate}}">
+          <p class="alert alert-danger" ng-show="status && status === status_codes.ERROR">
+            {{'profile.required' | translate: {name: requiredField} }}
+          </p>
+          <div class="alert alert-success" ng-show="status && status === status_codes.SUCCESS">
+            <strong translate>settings.messages.success</strong>
+          </div>
 
-      <div>
-        <div form-input name="user.firstName" model="settingsAccount.firstName" label="user.firstName"></div>
-        <div form-input name="user.lastName" model="settingsAccount.lastName" label="user.lastName"></div>
-        <div form-input type="email" name="user.email" model="settingsAccount.email" label="user.email" required="true"></div>
-      </div>
+          <div>
+            <div form-input name="user.firstName" model="settingsAccount.firstName" label="user.firstName"></div>
+            <div form-input name="user.lastName" model="settingsAccount.lastName" label="user.lastName"></div>
+            <div form-input type="email" name="user.email" model="settingsAccount.email" label="user.email" required="true"></div>
+
+            <div ng-repeat="attributeConfigPair in attributeConfigPairs">
+              <attribute-item attribute="attributeConfigPair.attribute" attribute-config="attributeConfigPair.attributeConfig"></attribute-item>
+            </div>
+
+          </div>
+        </tab>
+        <tab select="tabAttributes=true" heading="{{'attributes' | translate}}">
+          <attributes-form attributes="settingsAccount.attributes" attributes-config="attributesConfig"></attributes-form>
+        </tab>
+      </tabset>
     </div>
 
     <div class="modal-footer">
@@ -29,7 +41,7 @@
         <span translate>cancel</span>
       </button>
 
-      <button ng-disabled="form.$invalid" type="submit" class="btn btn-primary">
+      <button type="submit" class="btn btn-primary">
         <span translate>save</span>
       </button>
     </div>

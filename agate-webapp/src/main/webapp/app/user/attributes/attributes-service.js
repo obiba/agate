@@ -109,6 +109,18 @@ agate.user
           }
 
           return template;
+        },
+
+        'mergeConfigPairAttributes': function(attributes, attributeConfigPairs) {
+          var pairedAttributes = attributeConfigPairs.map(function(attributeConfigPair){
+            return attributeConfigPair.attribute;
+          });
+
+          if (attributes && attributes.length > 0) {
+            return attributes.concat(this.findNewAttributes(attributes, pairedAttributes));
+          }
+
+          return pairedAttributes;
         }
       };
 

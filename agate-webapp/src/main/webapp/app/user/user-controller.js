@@ -104,15 +104,8 @@ agate.user
        * Updated an existing user properties and attributes
        */
       var updateUser = function () {
-        var pairedAttributes = $scope.attributeConfigPairs.map(function(attributeConfigPair){
-          return attributeConfigPair.attribute;
-        });
-
-        if ($scope.user.attributes && $scope.user.attributes.length > 0) {
-          $scope.user.attributes = $scope.user.attributes.concat(AttributesService.findNewAttributes($scope.user.attributes, pairedAttributes));
-        } else {
-          $scope.user.attributes = pairedAttributes;
-        }
+        $scope.user.attributes =
+          AttributesService.mergeConfigPairAttributes($scope.user.attributes, $scope.attributeConfigPairs);
 
         $scope.user.$save(
           function (user) {
