@@ -10,7 +10,7 @@ message SessionDto {
 
 message TicketDto {
   message Event {
-    required string application = 1;
+    optional string application = 1;
     required string action = 2;
     required string time = 3;
   }

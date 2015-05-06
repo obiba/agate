@@ -14,7 +14,6 @@ import javax.inject.Inject;
 
 import org.obiba.agate.config.Profiles;
 import org.obiba.agate.domain.User;
-import org.obiba.agate.domain.UserCredentials;
 import org.obiba.agate.security.Roles;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Profile;
@@ -108,10 +107,11 @@ public class UserSeed implements ApplicationListener<ContextRefreshedEvent> {
   private void save(User user) {
     if(userService.findUser(user.getName()) == null) {
       userService.save(user);
-      userService.save(UserCredentials.newBuilder() //
-        .name(user.getName()) //
-        .password(userService.hashPassword("password")) //
-        .build());
+      try {
+        userService.updateUserPassword(user, "password");
+      } catch (PasswordNotChangedException e) {
+        // ignored
+      }
     }
   }
 }
