@@ -229,7 +229,7 @@ public class UserService {
    * @param id
    */
   public void delete(@NotNull String id) {
-    userRepository.delete(id);
+    delete(userRepository.findOne(id));
   }
 
   /**
@@ -238,6 +238,8 @@ public class UserService {
    * @param user
    */
   public void delete(@NotNull User user) {
+    UserCredentials userCredentials = findUserCredentials(user.getName());
+    if (userCredentials != null) userCredentialsRepository.delete(userCredentials);
     userRepository.delete(user);
   }
 

@@ -208,7 +208,7 @@
     "created": "Created",
     "events": "Events",
     "expires": "Expires",
-    "none": "No ticket.",
+    "none": "No open tickets.",
     "remembered": "Remember-me",
     "token": "Token",
     "username": "User Name",
@@ -218,7 +218,8 @@
   },
   "users": "Users",
   "user": {
-    "details": "Details",
+    "none": "No users created.",
+    "details": "User Details",
     "required-info": "Required Information",
     "general-info": "General Information",
     "add": "Add User",

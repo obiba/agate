@@ -24,13 +24,26 @@
             <td>{{settingsAccount.email}}</td>
           </tr>
           <tr>
+            <td translate>user.role</td>
+            <td>{{user.role}}</td>
+          </tr>
+          <tr>
+            <td translate>user.groups</td>
+            <td>{{user.groups.join(', ')}}</td>
+          </tr>
+
+          <tr ng-repeat="userConfigAttribute in userConfigAttributes">
+            <td>{{userConfigAttribute.name}}</td>
             <td>
-            </td>
-            <td translate></td>
+              <span ng-show="userConfigAttribute.type !== 'BOOLEAN'">{{userConfigAttribute.value}}</span>
+              <span ng-show="userConfigAttribute.type === 'BOOLEAN' && userConfigAttribute.value"><i class="fa fa-check"></i></span>
             </td>
           </tr>
           </tbody>
         </table>
+
+        <attributes-view attributes='userNonConfigAttributes'></attributes-view>
+
       </div>
     </div>
 
