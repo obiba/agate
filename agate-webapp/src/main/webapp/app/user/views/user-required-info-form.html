@@ -11,7 +11,7 @@
 <div form-input name="user.name" model="user.name" label="user.name" required="true"></div>
 <div form-input type="email" name="user.email" model="user.email" label="user.email" required="true"></div>
 
-<div ng-show="profile">
+<div ng-if="profile">
   <div form-input type="password" name="user.password" model="profile.password" label="password.form.newpassword" required="true"></div>
   <div form-input type="password" name="user.password" model="profile.confirmPassword" label="password.form.confirmpassword" required="true"></div>
 </div>

@@ -183,7 +183,7 @@ agate.user
       function singleChosenTemplate(required) {
         var requiredAttr = required ? 'required' : '';
         var requiredMarker = required ? '*' : '';
-        return '<div class="form-group"> <label for="attribute.name" class="control-label"> <span>{{attribute.name}}</span> '+ requiredMarker +' </label> <select id="attribute.name" name="attribute.name" class="form-control" ng-model="attribute.value" ng-options="t for t in attributeConfig.values"></select> </div>';
+        return '<div class="form-group"> <label for="attribute.name" class="control-label"> <span>{{attribute.name}}</span> '+ requiredMarker +' </label> <select id="attribute.name" name="attribute.name" class="form-control" ng-model="attribute.value" ng-options="t for t in attributeConfig.values"'+requiredAttr+'></select> </div>';
       }
 
       function booleanTemplate() {
