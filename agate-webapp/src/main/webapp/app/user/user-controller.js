@@ -87,18 +87,16 @@ agate.user
         selected: statusValueList[UserStatusResource.activeIndex()]
       };
 
-      if (!$routeParams.id) {
-        // only for new users
-        $scope.profile = {
-          password: null,
-          condfirmPassword: null
-        };
-      }
+      $scope.profile = {
+        password: null,
+        condfirmPassword: null
+      };
 
       $scope.user = $routeParams.id ?
         UserResource.get({id: $routeParams.id}, function(user) {
           $scope.status.selected = $scope.status.list[UserStatusResource.findIndex(user.status)];
           $scope.attributeConfigPairs = AttributesService.getAttributeConfigPairs($scope.user.attributes, $scope.attributesConfig);
+          $scope.profile = null;
           return user;
         }) : {};
 
