@@ -96,6 +96,11 @@
       "confirmpassword.placeholder": "Confirm the new password",
       "button": "Save"
     },
+    "success": "<strong>Password changed!</strong>",
+    "error": {
+      "global": "The password could not be changed.",
+      "dontmatch": "The password and its confirmation do not match!"
+    },
     "messages": {
       "error": {
         "global": "<strong>An error has occured!</strong> The password could not be changed.",
@@ -190,7 +195,11 @@
     "description": "Description",
     "key": "Key",
     "confirmKey": "Confirm key",
-    "changeKey": "Change Key"
+    "changeKey": "Change Key",
+    "delete-dialog": {
+      "title": "Delete Application",
+      "message": "Are you sure you want to delete application '{{arg0}}'?"
+    }
   },
   "groups": "Groups",
   "group": {
@@ -199,7 +208,11 @@
     "add": "Add Group",
     "actions": "Actions",
     "name": "Name",
-    "description": "Description"
+    "description": "Description",
+    "delete-dialog": {
+      "title": "Delete Group",
+      "message": "Are you sure you want to delete group '{{arg0}}'?"
+    }
   },
   "tickets": "Tickets",
   "ticket": {
@@ -250,7 +263,10 @@
     "PENDING": "Pending",
     "delete-dialog": {
       "title": "Delete User",
-      "message": "Are you sure you want to delete user '{{name}}'?"
+      "message": "Are you sure you want to delete user '{{arg0}}'?"
+    },
+    "success": {
+      "updated": "User settings updated successfully."
     }
   },
   "user_status": {
@@ -269,18 +285,19 @@
     "value": "Value",
     "delete-dialog": {
       "title": "Delete Attribute",
-      "message": "Are you sure you want to delete attribute '{{name}}'?"
+      "message": "Are you sure you want to delete attribute '{{arg0}}'?"
     },
     "error": {
-      "duplicated": "The '{{name}}' attribute already exists"
+      "duplicated": "The '{{arg0}}' attribute already exists or it is a configuration attribute."
     }
-
   },
   "profile": {
     "identification": "Identification",
     "update-password": "Update password",
     "required": "{{name}} is a required field",
-    "updated": "Profile settings updated successfully."
+    "success": {
+      "updated": "Profile settings updated successfully."
+    }
   },
   "name": "Name",
   "edit": "Edit",
@@ -295,7 +312,7 @@
   "by": "By",
   "other": "Other",
   "notification": "Notification",
-  "required": "Required",
+  "required": "Required fields cannot be empty.",
   "suppl-info": "Supplementary information",
   "fix-error": "Please fix errors bellow",
   "dnd-reorder": "Drag and drop to reorder",

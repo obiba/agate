@@ -12,18 +12,34 @@
 
 agate.application
 
-  .controller('ApplicationListController', ['$scope', 'ApplicationsResource', 'ApplicationResource',
+  .controller('ApplicationListController', ['$rootScope', '$scope', 'ApplicationsResource', 'ApplicationResource', 'NOTIFICATION_EVENTS',
 
-    function ($scope, ApplicationsResource, ApplicationResource) {
+    function ($rootScope, $scope, ApplicationsResource, ApplicationResource, NOTIFICATION_EVENTS) {
 
       $scope.applications = ApplicationsResource.query();
 
       $scope.deleteApplication = function (application) {
-        ApplicationResource.delete({id: application.id},
-          function () {
-            $scope.applications = ApplicationsResource.query();
-          });
+        $scope.applicationToDelete = application.id;
+
+        $rootScope.$broadcast(NOTIFICATION_EVENTS.showConfirmDialog,
+          {
+            titleKey: 'application.delete-dialog.title',
+            messageKey:'application.delete-dialog.message',
+            messageArgs: [application.name]
+          }, application.id
+        );
       };
+
+      $scope.$on(NOTIFICATION_EVENTS.confirmDialogAccepted, function (event, id) {
+        if ($scope.applicationToDelete === id) {
+
+          ApplicationResource.delete({id: application.id},
+            function () {
+              $scope.applications = ApplicationsResource.query();
+            });
+        }
+      });
+
     }])
 
   .controller('ApplicationViewController', ['$scope', '$location', '$routeParams', 'ApplicationResource',

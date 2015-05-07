@@ -89,12 +89,30 @@ agate.user
           return result;
         },
 
+        'getUsedAttributeNames': function (attributes, attributesConfig) {
+          var result = [];
+
+          if (attributes) {
+            result = result.concat(attributes.map(function (attribute) {
+              return attribute.name;
+            }));
+          }
+
+          if (attributesConfig) {
+            result = result.concat(attributesConfig.map(function (attribute) {
+              return attribute.name;
+            }));
+          }
+
+          return result;
+        },
+
         'getAttributeItemTemplate' : function(attributeConfig) {
           var required = attributeConfig.required;
           var template = '';
           switch (attributeConfig.type) {
             case 'BOOLEAN':
-                template = booleanTemplate();
+                template = booleanTemplate(required);
               break;
             case 'DECIMAL':
             case 'INTEGER':
@@ -198,8 +216,9 @@ agate.user
         return '<div class="form-group"> <label for="attribute.name" class="control-label"> <span>{{attribute.name}}</span> '+ requiredMarker +' </label> <select id="attribute.name" name="attribute.name" class="form-control" ng-model="attribute.value" ng-options="t for t in attributeConfig.values"'+requiredAttr+'></select> </div>';
       }
 
-      function booleanTemplate() {
-        return '<div form-checkbox name="{{attribute.name}}" model="attribute.boolValue" help="{{attribute.name}}"></div>';
+      function booleanTemplate(required) {
+        var requiredAttr = required ? 'required="true"' : '';
+        return '<div form-checkbox name="{{attribute.name}}" model="attribute.boolValue" help="{{attribute.name}}" '+ requiredAttr + '></div>';
       }
 
     }]);

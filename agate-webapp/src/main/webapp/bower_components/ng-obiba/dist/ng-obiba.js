@@ -3,7 +3,7 @@
  * https://github.com/obiba/ng-obiba
 
  * License: GNU Public License version 3
- * Date: 2015-05-04
+ * Date: 2015-05-08
  */
 'use strict';
 
@@ -13,7 +13,27 @@ angular.module('obiba.utils', [])
     this.capitaliseFirstLetter = function (string) {
       return string ? string.charAt(0).toUpperCase() + string.slice(1) : null;
     };
-  });
+  })
+
+  .service('LocaleStringUtils', ['$filter', function ($filter) {
+    this.translate = function (key, args) {
+
+      function buildMessageArguments(args) {
+        if (args &&  args instanceof Array) {
+          var messageArgs = {};
+          args.forEach(function(arg, index) {
+            messageArgs['arg'+index] = arg;
+          });
+
+          return messageArgs;
+        }
+
+        return {};
+      }
+
+      return $filter('translate')(key, buildMessageArguments(args));
+    };
+  }]);
 ;'use strict';
 
 angular.module('obiba.notification', [
@@ -82,10 +102,17 @@ angular.module('obiba.notification')
 
     }])
 
-  .controller('NotificationConfirmationController', ['$scope', '$modalInstance', 'confirm',
-    function ($scope, $modalInstance, confirm) {
+  .controller('NotificationConfirmationController', ['$scope', '$modalInstance', 'confirm', 'LocaleStringUtils',
+    function ($scope, $modalInstance, confirm, LocaleStringUtils) {
 
-      $scope.confirm = confirm;
+      function getMessage() {
+        return {
+          title: confirm.titleKey ? LocaleStringUtils.translate(confirm.titleKey) : confirm.title,
+          message: confirm.messageKey ? LocaleStringUtils.translate(confirm.messageKey, confirm.messageArgs) : confirm.message
+        };
+      }
+
+      $scope.confirm = getMessage();
 
       $scope.ok = function () {
         $modalInstance.close();
@@ -138,8 +165,8 @@ angular.module('obiba.form', [
 
 angular.module('obiba.form')
 
-  .service('FormServerValidation', ['$rootScope', '$log', '$filter', 'StringUtils', 'NOTIFICATION_EVENTS',
-    function ($rootScope, $log, $filter, StringUtils, NOTIFICATION_EVENTS) {
+  .service('FormServerValidation', ['$rootScope', '$log', 'StringUtils', 'LocaleStringUtils', 'NOTIFICATION_EVENTS',
+    function ($rootScope, $log, StringUtils, LocaleStringUtils, NOTIFICATION_EVENTS) {
       this.error = function (response, form, languages) {
 
         if (response.data instanceof Array) {
@@ -179,7 +206,7 @@ angular.module('obiba.form')
 
         if (data) {
           if (data.messageTemplate) {
-            message = $filter('translate')(data.messageTemplate, buildMessageArguments(data.arguments));
+            message = LocaleStringUtils.translate(data.messageTemplate, data.arguments);
             if (message === data.messageTemplate) {
               message = null;
             }
@@ -191,19 +218,6 @@ angular.module('obiba.form')
         }
 
         return message ? message : angular.fromJson(response);
-      }
-
-      function buildMessageArguments(args) {
-        if (args &&  args instanceof Array) {
-          var messageArgs = {};
-          args.forEach(function(arg, index) {
-            messageArgs['arg'+index] = arg;
-          });
-
-          return messageArgs;
-        }
-
-        return {};
       }
 
     }]);;'use strict';
@@ -246,9 +260,6 @@ angular.module('obiba.form')
         if (!attrs.type) { attrs.type = 'text'; }
         return {
           post: function (scope, elem, attr, ctrl) {
-            if (angular.isUndefined(scope.model) || scope.model === null) {
-              scope.model = '';
-            }
             scope.form = ctrl;
           }
         };
@@ -273,9 +284,6 @@ angular.module('obiba.form')
         if (!attrs.type) { attrs.type = 'text'; }
         return {
           post: function ($scope, elem, attr, ctrl) {
-            if (angular.isUndefined($scope.model) || $scope.model === null) {
-              $scope.model = '';
-            }
             $scope.form = ctrl;
           }
         };
@@ -297,9 +305,6 @@ angular.module('obiba.form')
       },
       templateUrl: 'form/form-localized-input-template.tpl.html',
       link: function ($scope, elem, attr, ctrl) {
-        if (angular.isUndefined($scope.model) || $scope.model === null) {
-          $scope.model = '';
-        }
         $scope.form = ctrl;
       }
     };
@@ -317,9 +322,6 @@ angular.module('obiba.form')
       },
       templateUrl: 'form/form-checkbox-template.tpl.html',
       link: function ($scope, elem, attr, ctrl) {
-        if (angular.isUndefined($scope.model) || $scope.model === null) {
-          $scope.model = false;
-        }
         $scope.form = ctrl;
       }
     };
@@ -369,11 +371,126 @@ angular.module('obiba.form')
   }]);
 ;'use strict';
 
+angular.module('obiba.alert', [
+  'templates-main',
+  'pascalprecht.translate',
+  'ui.bootstrap',
+  'ngSanitize'
+]);
+;'use strict';
+
+angular.module('obiba.alert')
+
+  .constant('ALERT_EVENTS', {
+    showAlert: 'event:show-alert'
+  })
+
+  .service('AlertService', ['$rootScope', '$log', 'LocaleStringUtils', 'ALERT_EVENTS',
+    function ($rootScope, $log, LocaleStringUtils, ALERT_EVENTS) {
+
+      function getValidMessage(options) {
+        var value = LocaleStringUtils.translate(options.msgKey, options.msgArgs);
+        if (value === options.msgKey) {
+          if (options.msg) {
+            return options.msg;
+          }
+
+          $log.error('No message was provided for the alert!');
+          return '';
+        }
+
+        return value;
+      }
+
+      this.alert = function (options) {
+        $rootScope.$broadcast(ALERT_EVENTS.showAlert, {
+          uid: new Date().getTime(), // useful for delay closing and cleanup
+          message: getValidMessage(options),
+          type: options.type ? options.type : 'info',
+          timeoutDelay: options.delay ? Math.max(0, options.delay) : 0
+        }, options.id);
+      };
+    }]);
+;'use strict';
+
+angular.module('obiba.alert')
+
+  .directive('obibaAlert', ['$rootScope', '$timeout', '$log', 'ALERT_EVENTS',
+    function ($rootScope, $timeout, $log, ALERT_EVENTS) {
+      var alertsMap = {};
+
+      $rootScope.$on(ALERT_EVENTS.showAlert, function (event, alert, id) {
+        if (alertsMap[id]) {
+          alertsMap[id].push(alert);
+        }
+      });
+
+      return {
+        restrict: 'E',
+        //template: '<alert ng-repeat="alert in alerts" type="alert.type" close="close($index)" ng-bind-html="alert.message"></alert>',
+        template: '<alert ng-repeat="alert in alerts" type="alert.type" close="close($index)">{{alert.message}}</alert>',
+        compile: function(element) {
+          var id = element.attr('id');
+          if (!id) {
+            $log.error('ObibaAlert directive must have a DOM id attribute.');
+          } else {
+            alertsMap[id] = [];
+          }
+
+          return {
+            post: function (scope) {
+              if (!id) {
+                return;
+              }
+
+              scope.alerts = alertsMap[id];
+
+              /**
+               * Called when user manually closes or the timeout has expired
+               * @param index
+               */
+              scope.close = function(index) {
+                scope.alerts.splice(index, 1);
+              };
+
+              /**
+               * Called when timeout has expired
+               * @param uid
+               */
+              scope.closeByUid = function(uid) {
+                var index = scope.alerts.map(function(alert) {
+                  return alert.uid === uid;
+                }).indexOf(true);
+
+                if (index !== -1) {
+                  scope.close(index);
+                }
+              };
+
+              /**
+               * when all alerts have been added, proceed with setting the timeout for those that have timeoutDelay > 0
+               */
+              scope.$watch('alerts', function(newAlerts, oldAlerts) {
+                if (newAlerts.length - oldAlerts.length > 0) {
+                  newAlerts.filter(function(alert) {
+                    return alert.timeoutDelay > 0;
+                  }).forEach(function(alert) {
+                    $timeout(scope.closeByUid.bind(null, alert.uid), alert.timeoutDelay);
+                  });
+                }
+              }, true);
+            }
+          };
+        }
+    };
+  }]);;'use strict';
+
 angular.module('ngObiba', [
   'obiba.form',
   'obiba.notification',
   'obiba.rest',
-  'obiba.utils'
+  'obiba.utils',
+  'obiba.alert'
 ]);
 ;angular.module('templates-main', ['form/form-checkbox-template.tpl.html', 'form/form-input-template.tpl.html', 'form/form-localized-input-template.tpl.html', 'form/form-textarea-template.tpl.html', 'notification/notification-confirm-modal.tpl.html', 'notification/notification-modal.tpl.html']);
 
@@ -391,7 +508,8 @@ angular.module("form/form-checkbox-template.tpl.html", []).run(["$templateCache"
     "      type=\"checkbox\"\n" +
     "      id=\"{{name}}\"\n" +
     "      name=\"{{name}}\"\n" +
-    "      form-server-error>\n" +
+    "      form-server-error\n" +
+    "      ng-required=\"required\">\n" +
     "\n" +
     "  <ul class=\"input-error list-unstyled\" ng-show=\"form[name].$dirty && form[name].$invalid\">\n" +
     "    <li ng-show=\"form[name].$error.required\" translate>required</li>\n" +

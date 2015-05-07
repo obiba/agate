@@ -2,6 +2,7 @@
 
 agate.config = angular.module('agate.config', [
   'obiba.form',
+  'obiba.notification',
   'ngObiba',
   'ngResource',
   'ngRoute',

@@ -18,4 +18,10 @@ agate.user
     return function(attributeConfigPairs) {
       return AttributesService.findNonRequiredConfigAttributes(attributeConfigPairs);
     };
+  }])
+
+  .filter('namesFromAttributeConfigPairs', ['AttributesService', function(AttributesService) {
+    return function(attributeConfigPairs) {
+      return AttributesService.getUsedAttributeNames(attributeConfigPairs);
+    };
   }]);

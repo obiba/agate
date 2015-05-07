@@ -15,7 +15,7 @@
   <form name="form" role="form" novalidate
     class="ng-scope ng-invalid ng-invalid-required ng-dirty" ng-submit="save()">
 
-    <p class="alert alert-danger" ng-show="form.saveAttempted && form.$invalid" translate="">fix-error</p>
+    <obiba-alert id="UserEditController"></obiba-alert>
 
     <tabset>
       <tab select="tabRequired=true" heading="{{'user.required-info' | translate}}">
@@ -25,7 +25,7 @@
         <div ng-if="tabGeneral" ng-include="'app/user/views/user-general-info-form.html'"></div>
       </tab>
       <tab select="tabAttributes=true" heading="{{'attributes' | translate}}">
-        <attributes-form attributes="user.attributes" attributes-config="attributesConfig"></attributes-form>
+        <attributes-form attributes="user.attributes" attributes-config="attributesConfig" used-attribute-names="usedAttributeNames"></attributes-form>
       </tab>
     </tabset>
 
