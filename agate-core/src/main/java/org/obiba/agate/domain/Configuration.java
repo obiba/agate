@@ -87,7 +87,7 @@ public class Configuration extends AbstractAuditableDocument {
   }
 
   public List<AttributeConfiguration> getUserAttributes() {
-    return userAttributes;
+    return userAttributes == null ? userAttributes = Lists.newArrayList() : userAttributes;
   }
 
   public void setUserAttributes(List<AttributeConfiguration> userAttributes) {
