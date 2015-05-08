@@ -37,9 +37,12 @@ import org.obiba.agate.domain.UserCredentials;
 import org.obiba.agate.domain.UserStatus;
 import org.obiba.agate.security.AgateUserRealm;
 import org.obiba.agate.security.Roles;
+import org.obiba.agate.service.ApplicationService;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.rest.config.JerseyConfiguration;
+import org.obiba.shiro.authc.HttpAuthorizationToken;
+import org.obiba.shiro.realm.ObibaRealm;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
@@ -60,6 +63,9 @@ public class UsersPublicResource {
 
   @Inject
   private UserService userService;
+
+  @Inject
+  private ApplicationService applicationService;
 
   @Inject
   private ConfigurationService configurationService;
@@ -112,23 +118,29 @@ public class UsersPublicResource {
   @Path("/_join")
   public Response create(@FormParam("username") String username, @FormParam("firstname") String firstName,
     @FormParam("lastname") String lastName, @FormParam("email") String email,
-    @FormParam("application") String application, @FormParam("groups") List<String> groups,
+    @FormParam("application") List<String> applications, @FormParam("group") List<String> groups,
     @Context HttpServletRequest request) {
-    if(Strings.isNullOrEmpty(username)) throw new BadRequestException("User name cannot be empty");
+    if(Strings.isNullOrEmpty(email)) throw new BadRequestException("Email cannot be empty");
 
-    if(CURRENT_USER_NAME.equals(username)) throw new BadRequestException("Reserved user name: " + CURRENT_USER_NAME);
+    String name = Strings.isNullOrEmpty(username) ? email : username;
 
-    User user = userService.findUser(username);
+    if(CURRENT_USER_NAME.equals(name)) throw new BadRequestException("Reserved user name: " + CURRENT_USER_NAME);
 
-    if(user != null && user.getStatus() != UserStatus.INACTIVE && user.getStatus() != UserStatus.PENDING) {
-      throw new BadRequestException("User already exists: " + username);
+    User user = userService.findUser(name);
+
+    if(user != null) {
+      throw new BadRequestException("User already exists: " + name);
     }
 
-    user = User.newBuilder().name(username).realm(AgateUserRealm.AGATE_REALM).role(Roles.AGATE_USER)
+    user = User.newBuilder().name(name).realm(AgateUserRealm.AGATE_REALM).role(Roles.AGATE_USER)
       .pending().firstName(firstName).lastName(lastName).email(email).build();
     user.setGroups(Sets.newHashSet(groups));
-    user.setApplications(Sets.newHashSet(application));
+    user.setApplications(Sets.newHashSet(applications));
     user.setAttributes(extractAttributes(request));
+
+    if (isRequestedByApplication(request)) {
+      user.setStatus(UserStatus.ACTIVE);
+    }
 
     userService.createUser(user);
 
@@ -194,5 +206,13 @@ public class UsersPublicResource {
     }
 
     return parsedValue;
+  }
+
+  protected boolean isRequestedByApplication(HttpServletRequest servletRequest) {
+    String appAuthHeader = servletRequest.getHeader(ObibaRealm.APPLICATION_AUTH_HEADER);
+    if (appAuthHeader == null) return false;
+
+    HttpAuthorizationToken token = new HttpAuthorizationToken(ObibaRealm.APPLICATION_AUTH_SCHEMA, appAuthHeader);
+    return applicationService.isValid(token.getUsername(), new String(token.getPassword()));
   }
 }
