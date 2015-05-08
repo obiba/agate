@@ -37,9 +37,8 @@ agate.controller('LogoutController', ['$location', 'AuthenticationSharedService'
     });
   }]);
 
-agate.controller('ProfileController', ['$scope', '$location', '$modal', 'Account', 'ConfigurationResource', 'AttributesService',
-  function ($scope, $location, $modal, Account, ConfigurationResource, AttributesService) {
-
+agate.controller('ProfileController', ['$scope', '$location', '$modal', 'Account', 'ConfigurationResource', 'AttributesService', 'AlertService',
+  function ($scope, $location, $modal, Account, ConfigurationResource, AttributesService, AlertService) {
     var getConfigAttributes = function() {
       ConfigurationResource.get(function(config) {
         $scope.attributesConfig = config.userAttributes || [];
@@ -61,10 +60,8 @@ agate.controller('ProfileController', ['$scope', '$location', '$modal', 'Account
     getConfigAttributes();
     getSettingsAccount();
 
-    $scope.success = null;
-
     $scope.onPasswordUpdated = function() {
-      $scope.success = true;
+      AlertService.alert({id: 'ProfileController', type: 'success', msgKey: 'profile.success.updated', delay: 5000});
     };
 
     $scope.cancel = function () {
@@ -94,7 +91,7 @@ agate.controller('ProfileController', ['$scope', '$location', '$modal', 'Account
           }
         })
         .result.then(function () {
-          $scope.success = true;
+          AlertService.alert({id: 'ProfileController', type: 'success', msgKey: 'profile.success.updated', delay: 5000});
           getSettingsAccount();
         }, function () {
         });
@@ -103,16 +100,11 @@ agate.controller('ProfileController', ['$scope', '$location', '$modal', 'Account
 
   }]);
 
-agate.controller('ProfileModalController', ['$scope', '$modalInstance', '$filter', 'Account', 'settingsAccount', 'attributeConfigPairs', 'attributesConfig', 'AttributesService',
-  function ($scope, $modalInstance, $filter, Account, settingsAccount, attributeConfigPairs, attributesConfig, AttributesService) {
+agate.controller('ProfileModalController', ['$scope', '$modalInstance', '$filter', 'Account', 'settingsAccount', 'attributeConfigPairs', 'attributesConfig', 'AttributesService', 'AlertService',
+  function ($scope, $modalInstance, $filter, Account, settingsAccount, attributeConfigPairs, attributesConfig, AttributesService, AlertService) {
     $scope.settingsAccount = settingsAccount;
     $scope.attributeConfigPairs = attributeConfigPairs;
     $scope.attributesConfig = attributesConfig;
-    $scope.status = null;
-    $scope.status_codes = {
-      ERROR: -2,
-      SUCCESS: 1
-    };
 
     $scope.requiredField = $filter('translate')('user.email');
 
@@ -123,7 +115,7 @@ agate.controller('ProfileModalController', ['$scope', '$modalInstance', '$filter
     $scope.save = function (form) {
       if (!form.$valid) {
         form.saveAttempted = true;
-        $scope.status = $scope.status_codes.ERROR;
+        AlertService.alert({id: 'ProfileModalController', type: 'danger', msgKey: 'fix-error'});
         return;
       }
 
@@ -136,7 +128,7 @@ agate.controller('ProfileModalController', ['$scope', '$modalInstance', '$filter
           $modalInstance.close($scope.attributeConfigPairs);
         },
         function () {
-          $scope.status = $scope.status_codes.ERROR;
+          AlertService.alert({id: 'ProfileModalController', type: 'danger', msgKey: 'fix-error'});
         });
     };
   }]);

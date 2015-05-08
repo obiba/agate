@@ -6,8 +6,8 @@ agate.user
     studyUpdated: 'event:study-updated'
   })
 
-  .controller('UserListController', ['$rootScope', '$scope', '$translate', 'UsersResource', 'UserResource', 'UserResetPasswordResource', 'NOTIFICATION_EVENTS',
-    function ($rootScope, $scope, $translate, UsersResource, UserResource, UserResetPasswordResource, NOTIFICATION_EVENTS) {
+  .controller('UserListController', ['$rootScope', '$scope', '$translate', 'UsersResource', 'UserResource', 'UserResetPasswordResource', 'NOTIFICATION_EVENTS', 'LocaleStringUtils',
+    function ($rootScope, $scope, $translate, UsersResource, UserResource, UserResetPasswordResource, NOTIFICATION_EVENTS, LocaleStringUtils) {
       $scope.users = UsersResource.query();
 
       /**
@@ -18,13 +18,13 @@ agate.user
         var user = $scope.users[index];
         $scope.userToDelete = user.id;
         if (user) {
-          var titleKey = 'user.delete-dialog.title';
-          var messageKey = 'user.delete-dialog.message';
-          $translate([titleKey, messageKey], {name: user.name})
-            .then(function (translation) {
-              $rootScope.$broadcast(NOTIFICATION_EVENTS.showConfirmDialog,
-                {title: translation[titleKey], message: translation[messageKey]}, user.id);
-            });
+          $rootScope.$broadcast(NOTIFICATION_EVENTS.showConfirmDialog,
+            {
+              titleKey: 'user.delete-dialog.title',
+              messageKey:'user.delete-dialog.message',
+              messageArgs: [user.name]
+            }, user.id
+          );
         }
       };
 
@@ -55,15 +55,16 @@ agate.user
       });
     }])
 
-  .controller('UserEditController', ['$rootScope', '$scope', '$routeParams', '$log', '$location', 'UsersResource', 'UserResource', 'FormServerValidation', 'UserStatusResource', 'GroupsResource', 'ApplicationsResource', 'ConfigurationResource', 'AttributesService',
+  .controller('UserEditController', ['$rootScope', '$scope', '$routeParams', '$log', '$location', 'UsersResource', 'UserResource', 'FormServerValidation', 'UserStatusResource', 'GroupsResource', 'ApplicationsResource', 'ConfigurationResource', 'AttributesService', 'AlertService',
 
-    function ($rootScope, $scope, $routeParams, $log, $location, UsersResource, UserResource, FormServerValidation, UserStatusResource, GroupsResource, ApplicationsResource, ConfigurationResource, AttributesService) {
+    function ($rootScope, $scope, $routeParams, $log, $location, UsersResource, UserResource, FormServerValidation, UserStatusResource, GroupsResource, ApplicationsResource, ConfigurationResource, AttributesService, AlertService) {
 
       $scope.roles = ["agate-administrator", "agate-user"];
       $scope.attributesConfig = [];
       ConfigurationResource.get(function(config) {
         $scope.attributesConfig = config.userAttributes || [];
         $scope.attributeConfigPairs = AttributesService.getAttributeConfigPairs($scope.user.attributes, $scope.attributesConfig);
+        $scope.usedAttributeNames = AttributesService.getUsedAttributeNames($scope.user.attributes, $scope.attributesConfig);
       });
 
       $scope.realmList = ["agate-user-realm"];
@@ -96,6 +97,7 @@ agate.user
         UserResource.get({id: $routeParams.id}, function(user) {
           $scope.status.selected = $scope.status.list[UserStatusResource.findIndex(user.status)];
           $scope.attributeConfigPairs = AttributesService.getAttributeConfigPairs($scope.user.attributes, $scope.attributesConfig);
+          $scope.usedAttributeNames = AttributesService.getUsedAttributeNames($scope.user.attributes, $scope.attributesConfig);
           $scope.profile = null;
           return user;
         }) : {};
@@ -139,12 +141,14 @@ agate.user
 
       var saveErrorHandler = function (response) {
         $scope.form.saveAttempted = true;
+        AlertService.alert({id: 'UserEditController', type: 'danger', msgKey: 'fix-error'});
         FormServerValidation.error(response, $scope.form);
       };
 
       $scope.save = function () {
         if (!$scope.form.$valid) {
           $scope.form.saveAttempted = true;
+          AlertService.alert({id: 'UserEditController', type: 'danger', msgKey: 'fix-error'});
           return;
         }
 
@@ -170,9 +174,10 @@ agate.user
 
     }])
 
-  .controller('UserViewController', ['$rootScope', '$scope', '$routeParams', '$log', '$location', 'UserResource', 'ConfigurationResource', 'AttributesService',
+  .controller('UserViewController', ['$rootScope', '$scope', '$routeParams', '$log', '$location', 'UserResource', 'ConfigurationResource', 'AttributesService', 'AlertService',
 
-    function ($rootScope, $scope, $routeParams, $log, $location, UserResource, ConfigurationResource, AttributesService) {
+    function ($rootScope, $scope, $routeParams, $log, $location, UserResource, ConfigurationResource, AttributesService, AlertService) {
+
       $scope.user = $routeParams.id ?
         UserResource.get({id: $routeParams.id}, function(user) {
           ConfigurationResource.get(function(config) {
@@ -182,6 +187,10 @@ agate.user
 
           return user;
         }) : {};
+
+      $scope.onPasswordUpdated = function() {
+        AlertService.alert({id: 'UserViewController', type: 'success', msgKey: 'password.success', delay: 5000});
+      };
 
     }])
 

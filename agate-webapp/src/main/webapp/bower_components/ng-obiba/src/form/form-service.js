@@ -2,8 +2,8 @@
 
 angular.module('obiba.form')
 
-  .service('FormServerValidation', ['$rootScope', '$log', '$filter', 'StringUtils', 'NOTIFICATION_EVENTS',
-    function ($rootScope, $log, $filter, StringUtils, NOTIFICATION_EVENTS) {
+  .service('FormServerValidation', ['$rootScope', '$log', 'StringUtils', 'LocaleStringUtils', 'NOTIFICATION_EVENTS',
+    function ($rootScope, $log, StringUtils, LocaleStringUtils, NOTIFICATION_EVENTS) {
       this.error = function (response, form, languages) {
 
         if (response.data instanceof Array) {
@@ -43,7 +43,7 @@ angular.module('obiba.form')
 
         if (data) {
           if (data.messageTemplate) {
-            message = $filter('translate')(data.messageTemplate, buildMessageArguments(data.arguments));
+            message = LocaleStringUtils.translate(data.messageTemplate, data.arguments);
             if (message === data.messageTemplate) {
               message = null;
             }
@@ -55,19 +55,6 @@ angular.module('obiba.form')
         }
 
         return message ? message : angular.fromJson(response);
-      }
-
-      function buildMessageArguments(args) {
-        if (args &&  args instanceof Array) {
-          var messageArgs = {};
-          args.forEach(function(arg, index) {
-            messageArgs['arg'+index] = arg;
-          });
-
-          return messageArgs;
-        }
-
-        return {};
       }
 
     }]);

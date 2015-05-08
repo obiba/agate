@@ -20,9 +20,7 @@ agate.user
             controller: 'AttributeCreateFormModalController',
             resolve: {
               usedNames: function() {
-                return $scope.attributesConfig.map(function(attributeConfig){
-                  return attributeConfig.name;
-                });
+                return $scope.usedAttributeNames;
               },
               attribute: function () {
                 return {};
@@ -35,6 +33,8 @@ agate.user
             } else {
               $scope.attributes = [attribute];
             }
+
+            $scope.usedAttributeNames.push(attribute.name);
 
           }, function () {
           });
@@ -98,8 +98,8 @@ agate.user
     }])
 
 
-  .controller('AttributeCreateFormModalController', ['$scope', '$modalInstance', '$log', 'attribute', 'usedNames',
-    function ($scope, $modalInstance, $log, attribute, usedNames) {
+  .controller('AttributeCreateFormModalController', ['$scope', '$modalInstance', '$log', 'attribute', 'usedNames', 'AlertService',
+    function ($scope, $modalInstance, $log, attribute, usedNames, AlertService) {
 
       $scope.attribute = attribute;
       $scope.usedNames = usedNames;
@@ -111,12 +111,18 @@ agate.user
        */
       $scope.save = function (form) {
         var duplicated = !form['attribute.name'].$error.required && usedNames.indexOf($scope.attribute.name) !== -1;
-        $scope.duplicatedName = duplicated ? $scope.attribute.name : ''; // For validation message only
+        var duplicatedName = duplicated ? $scope.attribute.name : ''; // For validation message only
 
         if (form.$valid && !duplicated) {
           $modalInstance.close($scope.attribute);
         }
         else {
+          if (duplicated) {
+            AlertService.alert({id: 'AttributeCreateFormModalController', type: 'danger', msgKey: 'attribute.error.duplicated', msgArgs: [duplicatedName]});
+          } else {
+            AlertService.alert({id: 'AttributeCreateFormModalController', type: 'danger', msgKey: 'required', msgArgs: [duplicatedName]});
+          }
+
           form['attribute.name'].$error.duplicated = duplicated;
           $scope.form = form;
           $scope.form.$invalid = duplicated ? true : $scope.form.$invalid;

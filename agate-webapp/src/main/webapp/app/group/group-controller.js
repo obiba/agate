@@ -18,10 +18,16 @@ agate.group
 
       $scope.groups = GroupsResource.query();
 
-      $scope.deleteGroup = function (id) {
-        $scope.groupToDelete = id;
+      $scope.deleteGroup = function (group) {
+        $scope.groupToDelete = group.id;
+
         $rootScope.$broadcast(NOTIFICATION_EVENTS.showConfirmDialog,
-          {title: 'Delete Group', message: 'Are you sure to delete the group?'}, id);
+          {
+            titleKey: 'group.delete-dialog.title',
+            messageKey:'group.delete-dialog.message',
+            messageArgs: [group.name]
+          }, group.id
+        );
       };
 
       $scope.$on(NOTIFICATION_EVENTS.confirmDialogAccepted, function (event, id) {
@@ -35,6 +41,7 @@ agate.group
       });
 
     }])
+
   .controller('GroupEditController', ['$scope', '$routeParams', '$location', 'GroupsResource', 'GroupResource',
 
     function ($scope, $routeParams, $location, GroupsResource, GroupResource) {

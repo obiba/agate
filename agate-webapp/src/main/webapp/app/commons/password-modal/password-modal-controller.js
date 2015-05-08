@@ -1,15 +1,10 @@
+'use strict';
+
 agate.passwordModal
 
-  .controller('PasswordModalController', ['$scope', '$modalInstance', '$modal', 'Password', 'FormServerValidation', 'userId',
-    function ($scope, $modalInstance, $modal, Password, FormServerValidation, userId) {
+  .controller('PasswordModalController', ['$scope', '$modalInstance', '$modal', 'Password', 'FormServerValidation', 'userId', 'AlertService',
+    function ($scope, $modalInstance, $modal, Password, FormServerValidation, userId, AlertService) {
       $scope.userId = userId;
-      $scope.status = null;
-      $scope.status_codes = {
-        NO_MACTH: -1,
-        ERROR: -2,
-        SUCCESS: 1
-      };
-
       $scope.profile = {
         password: null,
         condfirmPassword: null
@@ -21,15 +16,14 @@ agate.passwordModal
 
       $scope.save = function() {
         if ($scope.profile.password !== $scope.profile.confirmPassword) {
-          $scope.status = $scope.status_codes.NO_MACTH;
+          AlertService.alert({id: 'PasswordModalController', type: 'danger', msgKey: 'password.error.dontmatch'});
         } else {
           Password.put($scope.userId, {password: $scope.profile.password})
             .success(function() {
-              $scope.status = $scope.status_codes.SUCCESS;
               $modalInstance.close();
             })
             .error(function(response) {
-              $scope.status = $scope.status_codes.ERROR;
+              AlertService.alert({id: 'PasswordModalController', type: 'danger', msgKey: 'password.error.global'});
               FormServerValidation.error(response, $scope.form);
             });
         }

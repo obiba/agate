@@ -1,10 +1,10 @@
 'use strict';
 
 agate.config
-  .controller('ConfigurationController', ['$scope', '$resource', '$route', '$log', '$window', 'ConfigurationResource',
-    '$modal', 'KeyStoreResource',
+  .controller('ConfigurationController', ['$rootScope', '$scope', '$resource', '$route', '$log', '$window', 'ConfigurationResource',
+    'NOTIFICATION_EVENTS', '$modal', 'KeyStoreResource',
 
-    function ($scope, $resource, $route, $log, $window, ConfigurationResource, $modal, KeyStoreResource) {
+    function ($rootScope, $scope, $resource, $route, $log, $window, ConfigurationResource, NOTIFICATION_EVENTS, $modal, KeyStoreResource) {
       $scope.agateConfig = {userAttributes: []};
 
       ConfigurationResource.get(function(config) {
@@ -65,11 +65,23 @@ agate.config
       };
 
       $scope.deleteAttribute = function(attribute) {
-        var idx = $scope.agateConfig.userAttributes.indexOf(attribute);
-        $scope.agateConfig.userAttributes.splice(idx, 1);
+        $scope.attributeToDelete = $scope.agateConfig.userAttributes.indexOf(attribute);
 
-        ConfigurationResource.save($scope.agateConfig, function () {
-          $route.reload();
+        $rootScope.$broadcast(NOTIFICATION_EVENTS.showConfirmDialog,
+          {
+            titleKey: 'attribute.delete-dialog.title',
+            messageKey:'attribute.delete-dialog.message',
+            messageArgs: [attribute.name]
+          }, $scope.attributeToDelete
+        );
+
+        $scope.$on(NOTIFICATION_EVENTS.confirmDialogAccepted, function (event, id) {
+          if ($scope.attributeToDelete === id) {
+            $scope.agateConfig.userAttributes.splice(id, 1);
+            ConfigurationResource.save($scope.agateConfig, function () {
+              $route.reload();
+            });
+          }
         });
       };
     }])
@@ -82,6 +94,8 @@ agate.config
 
     $scope.attribute = attribute || {type: 'STRING'};
     $scope.attribute.values = !$scope.attribute.values ? '' : $scope.attribute.values.join(', ');
+    $scope.attribute.required = attribute && attribute.required === true ? attribute.required : false;
+
     $scope.data = {selectedType: $scope.availableTypes[types.indexOf($scope.attribute.type)]};
 
     $scope.save = function (form) {

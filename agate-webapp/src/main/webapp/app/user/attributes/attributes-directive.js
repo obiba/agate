@@ -20,7 +20,8 @@ agate.user
       controller: 'AttributesFormController',
       scope: {
         attributes: '=',
-        attributesConfig: '='
+        attributesConfig: '=',
+        usedAttributeNames: '='
       },
       templateUrl: 'app/user/attributes/views/attributes-form-template.html'
     };
