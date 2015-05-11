@@ -93,6 +93,19 @@ agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$log', '$c
         });
       },
       isAuthenticated: function () {
+        // WORKAROUND: until next angular update, cookieStore always returns NULL event 'agatesid' cookie exists
+        function getAgateSidCookie() {
+          var regexp = /agatesid=([^;]+)/g;
+          var result = regexp.exec(document.cookie);
+          return (result === null) ? null : result[1];
+        }
+
+        if (!getAgateSidCookie()) {
+          // session has terminated, cleanup
+          Session.destroy();
+          return false;
+        }
+
         if (!Session.login) {
           // check if the user has a cookie
           if ($cookieStore.get('agate_subject') !== null) {
