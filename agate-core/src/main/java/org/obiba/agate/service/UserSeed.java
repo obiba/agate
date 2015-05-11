@@ -72,12 +72,30 @@ public class UserSeed implements ApplicationListener<ContextRefreshedEvent> {
     save(builder.build());
 
     builder = User.newBuilder() //
+      .name("editor") //
+      .firstName("Julie") //
+      .email("editor@example.org") //
+      .groups("mica-editor") //
+      .applications("opal", "mica", "drupal");
+
+    save(builder.build());
+
+    builder = User.newBuilder() //
+      .name("reviewer") //
+      .firstName("Christine") //
+      .email("reviewer@example.org") //
+      .groups("mica-reviewer") //
+      .applications("opal", "mica", "drupal");
+
+    save(builder.build());
+
+    builder = User.newBuilder() //
       .name("user1") //
       .firstName("Johnny B.") //
       .lastName("Good") //
       .email("user1@example.org") //
       .groups("group1", "group2") //
-      .applications("opal", "mica", "drupal");
+      .applications("mica", "drupal");
 
     save(builder.build());
 
@@ -88,7 +106,7 @@ public class UserSeed implements ApplicationListener<ContextRefreshedEvent> {
       .lastName("Tremblay") //
       .email("user2@example.org") //
       .groups("group1", "group3") //
-      .applications("opal", "mica");
+      .applications("mica", "drupal");
 
     save(builder.build());
 
