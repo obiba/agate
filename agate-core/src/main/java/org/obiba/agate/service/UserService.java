@@ -119,15 +119,16 @@ public class UserService {
   public void updateUserPassword(@NotNull User user, @NotNull String password) {
     if(user == null) throw new BadRequestException("Invalid User");
     if(Strings.isNullOrEmpty(password)) throw new BadRequestException("User password cannot be empty");
-    if(!user.getRealm().equals(AgateUserRealm.AGATE_REALM)) throw new BadRequestException("User password cannot be changed");
+    if(!user.getRealm().equals(AgateUserRealm.AGATE_REALM))
+      throw new BadRequestException("User password cannot be changed");
     if(password.length() < MINIMUM_LEMGTH) throw new PasswordTooShortException(MINIMUM_LEMGTH);
 
     UserCredentials userCredentials = findUserCredentials(user.getName());
     String hashedPassword = hashPassword(password);
 
-    if (userCredentials == null) {
+    if(userCredentials == null) {
       userCredentials = UserCredentials.newBuilder().name(user.getName()).password(hashPassword(password)).build();
-    } else if (userCredentials.getPassword().equals(hashedPassword)) {
+    } else if(userCredentials.getPassword().equals(hashedPassword)) {
       throw new PasswordNotChangedException();
     } else {
       userCredentials.setPassword(hashPassword(password));
@@ -150,9 +151,9 @@ public class UserService {
   public User save(@NotNull User user) {
     User saved = user;
 
-    if (!user.isNew()) {
+    if(!user.isNew()) {
       saved = userRepository.findOne(user.getId());
-      if (saved == null) {
+      if(saved == null) {
         saved = user;
       } else {
         BeanUtils.copyProperties(user, saved, "id", "version", "createdBy", "createdDate", "lastModifiedBy",
@@ -178,7 +179,12 @@ public class UserService {
 
   public void createUser(User user) {
     save(user);
-    eventBus.post(new UserJoinedEvent(save(user)));
+    if(user.getStatus() == UserStatus.PENDING) {
+      eventBus.post(new UserJoinedEvent(user));
+    }
+    else if(user.getStatus() == UserStatus.APPROVED) {
+      eventBus.post(new UserApprovedEvent(user));
+    }
   }
 
   public void updateUserStatus(User user, UserStatus status) {
@@ -202,8 +208,8 @@ public class UserService {
     ctx.setVariable("publicUrl", configurationService.getConfiguration().getDomain());
 
     administrators.stream().forEach(u -> mailService
-        .sendEmail(u.getEmail(), propertyResolver.getProperty("pendingForReviewSubject"),
-          templateEngine.process("pendingForReviewEmail", ctx)));
+      .sendEmail(u.getEmail(), propertyResolver.getProperty("pendingForReviewSubject"),
+        templateEngine.process("pendingForReviewEmail", ctx)));
 
     mailService.sendEmail(user.getEmail(), propertyResolver.getProperty("pendingForApprovalSubject"),
       templateEngine.process("pendingForApprovalEmail", ctx));
@@ -239,7 +245,7 @@ public class UserService {
    */
   public void delete(@NotNull User user) {
     UserCredentials userCredentials = findUserCredentials(user.getName());
-    if (userCredentials != null) userCredentialsRepository.delete(userCredentials);
+    if(userCredentials != null) userCredentialsRepository.delete(userCredentials);
     userRepository.delete(user);
   }
 
