@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.PropertyResolver;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -200,10 +201,10 @@ public class UserService {
   @Subscribe
   public void sendPendingEmail(UserJoinedEvent userJoinedEvent) throws SignatureException {
     log.info("Sending pending review email: {}", userJoinedEvent.getPersistable());
-    final RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "registration.");
-    final List<User> administrators = userRepository.findByRole("agate-administrator");
-    final Context ctx = new Context();
-    final User user = userJoinedEvent.getPersistable();
+    PropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "registration.");
+    List<User> administrators = userRepository.findByRole("agate-administrator");
+    Context ctx = new Context();
+    User user = userJoinedEvent.getPersistable();
     ctx.setVariable("user", user);
     ctx.setVariable("publicUrl", configurationService.getConfiguration().getDomain());
 
@@ -218,9 +219,9 @@ public class UserService {
   @Subscribe
   public void sendConfirmationEmail(UserApprovedEvent userApprovedEvent) throws SignatureException {
     log.info("Sending confirmation email: {}", userApprovedEvent.getPersistable());
-    final RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "registration.");
-    final Context ctx = new Context();
-    final User user = userApprovedEvent.getPersistable();
+    PropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "registration.");
+    Context ctx = new Context();
+    User user = userApprovedEvent.getPersistable();
     ctx.setVariable("user", user);
     ctx.setVariable("publicUrl", configurationService.getConfiguration().getDomain());
     ctx.setVariable("key", configurationService.encrypt(user.getName()));

@@ -20,10 +20,10 @@ agate.user
 
   .factory('UserStatusResource', ['$log', '$filter', function ($log, $filter) {
     var nameValueList = [
-      {label: $filter('translate')('user_status.active'), value: 'ACTIVE'},
-      {label: $filter('translate')('user_status.pending'), value: 'PENDING'},
-      {label: $filter('translate')('user_status.approved'), value: 'APPROVED'},
-      {label: $filter('translate')('user_status.inactive'), value: 'INACTIVE'}
+      {label: $filter('translate')('user.ACTIVE'), value: 'ACTIVE'},
+      {label: $filter('translate')('user.PENDING'), value: 'PENDING'},
+      {label: $filter('translate')('user.APPROVED'), value: 'APPROVED'},
+      {label: $filter('translate')('user.INACTIVE'), value: 'INACTIVE'}
     ];
 
     return {

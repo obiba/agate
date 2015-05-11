@@ -259,7 +259,7 @@
     "resetPassword": "Reset password",
     "ACTIVE": "Active",
     "INACTIVE": "Inactive",
-    "APPROVED": "Pending",
+    "APPROVED": "Approved",
     "PENDING": "Pending",
     "delete-dialog": {
       "title": "Delete User",
@@ -268,12 +268,6 @@
     "success": {
       "updated": "User settings updated successfully."
     }
-  },
-  "user_status": {
-    "active": "ACTIVE",
-    "pending": "PENDING",
-    "approved": "APPROVED",
-    "inactive": "INACTIVE"
   },
   "attributes": "Attributes",
   "attribute": {
