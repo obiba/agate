@@ -139,7 +139,7 @@ public class UsersPublicResource {
     user.setAttributes(extractAttributes(request));
 
     if (isRequestedByApplication(request)) {
-      user.setStatus(UserStatus.ACTIVE);
+      user.setStatus(UserStatus.APPROVED);
     }
 
     userService.createUser(user);
