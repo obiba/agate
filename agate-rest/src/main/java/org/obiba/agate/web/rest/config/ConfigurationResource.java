@@ -12,6 +12,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.KeyStoreService;
 import org.obiba.agate.web.model.Agate;
@@ -39,6 +40,7 @@ public class ConfigurationResource {
 
   @PUT
   @Timed
+  @RequiresRoles("agate-administrator")
   public Response create(@SuppressWarnings("TypeMayBeWeakened") Agate.ConfigurationDto dto) {
     configurationService.save(dtos.fromDto(dto));
     return Response.noContent().build();
@@ -47,6 +49,7 @@ public class ConfigurationResource {
   @PUT
   @Path("/keystore/{name}/{alias}")
   @Timed
+  @RequiresRoles("agate-administrator")
   public Response updateEncryptionKey(@PathParam("name") String name, @PathParam("alias") String alias,
     Agate.KeyForm keyForm) {
     if(keyForm.getKeyType() == Agate.KeyType.KEY_PAIR) {
@@ -61,6 +64,7 @@ public class ConfigurationResource {
   @GET
   @Path("/keystore/{name}/{alias}")
   @Timed
+  @RequiresRoles("agate-administrator")
   public Response getEncryptionKeyCertificate(@PathParam("name") String name, @PathParam("alias") String alias)
     throws IOException, KeyStoreException {
 
