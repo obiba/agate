@@ -4,13 +4,16 @@
     <div class="col-md-6">
       <form name="form" role="form" novalidate ng-submit="save(form)" autocomplete="off">
         <p class="alert alert-danger" ng-show="status && status !== status_codes.SUCCESS" translate="">fix-error</p>
+        <div class="alert alert-danger" ng-show="status === status_codes.NO_MATCH" translate="password.messages.error.dontmatch">
+          The key and its confirmation do not match!
+        </div>
 
         <div form-input disabled="application.id" name="name" model="application.name" label="application.name" required="true"></div>
 
         <div form-textarea name="description" model="application.description" label="application.description"></div>
 
         <div class="voffset3">
-          <div form-input type="password" name="key" model="key" label="application.key" required="true"></div>
+          <div form-input type="password" name="key" model="key" label="application.key" required="!application.id"></div>
           <div form-input type="password" name="confirmKey" model="confirmKey" label="application.confirmKey"></div>
         </div>
 

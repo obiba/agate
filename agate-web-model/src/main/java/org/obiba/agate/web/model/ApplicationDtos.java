@@ -24,7 +24,6 @@ class ApplicationDtos {
     Agate.ApplicationDto.Builder builder = Agate.ApplicationDto.newBuilder();
     builder.setId(application.getId()) //
         .setName(application.getName()) //
-        .setKey(application.getKey()) //
         .setTimestamps(TimestampsDtos.asDto(application));
 
     if(application.hasDescription()) builder.setDescription(application.getDescription());
@@ -34,9 +33,11 @@ class ApplicationDtos {
 
   @NotNull
   Application fromDto(@NotNull Agate.ApplicationDto dto) {
-    Application application = new Application(dto.getName(), dto.getKey());
+    Application application = new Application(dto.getName());
 
     if (dto.hasDescription()) application.setDescription(dto.getDescription());
+
+    if (dto.hasKey()) application.setKey(dto.getKey());
 
     return application;
   }

@@ -20,4 +20,6 @@ public interface UserRepository extends MongoRepository<User, String> {
   List<User> findByStatus(UserStatus status);
 
   List<User> findByRoleAndLastLoginLessThan(String role, DateTime dateTime);
+
+  List<User> findByApplications(String application);
 }

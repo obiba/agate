@@ -3,7 +3,7 @@
  * https://github.com/obiba/ng-obiba
 
  * License: GNU Public License version 3
- * Date: 2015-05-12
+ * Date: 2015-05-13
  */
 'use strict';
 
@@ -251,7 +251,7 @@ angular.module('obiba.form')
         disabled: '=',
         type: '@',
         label: '@',
-        required: '@',
+        required: '=',
         min: '@',
         max: '@',
         step: '@',
@@ -278,7 +278,7 @@ angular.module('obiba.form')
         model: '=',
         disabled: '=',
         label: '@',
-        required: '@',
+        required: '=',
         help: '@'
       },
       templateUrl: 'form/form-textarea-template.tpl.html',
@@ -302,7 +302,7 @@ angular.module('obiba.form')
         name: '@',
         model: '=',
         label: '@',
-        required: '@',
+        required: '=',
         help: '@'
       },
       templateUrl: 'form/form-localized-input-template.tpl.html',

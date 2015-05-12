@@ -87,7 +87,7 @@ message GroupDto {
 message ApplicationDto {
   optional string id = 1;
   required string name = 2;
-  required string key = 3;
+  optional string key = 3;
   optional string description = 4;
   optional TimestampsDto timestamps = 5;
 }

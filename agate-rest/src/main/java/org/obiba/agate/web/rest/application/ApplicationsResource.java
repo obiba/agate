@@ -55,6 +55,10 @@ public class ApplicationsResource {
       throw new BadRequestException("Application already exists.");
     }
 
+    if (!dto.hasKey()) {
+      throw new BadRequestException("Missing application key argument.");
+    }
+
     Application application = dtos.fromDto(dto);
     application.setKey(applicationService.hashKey(application.getKey()));
     applicationService.save(application);

@@ -22,4 +22,5 @@ public interface GroupRepository extends MongoRepository<Group, String> {
 
   List<Group> findByName(String name);
 
+  List<Group> findByApplications(String application);
 }

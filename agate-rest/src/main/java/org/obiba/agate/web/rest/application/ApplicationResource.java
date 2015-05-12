@@ -11,7 +11,6 @@
 package org.obiba.agate.web.rest.application;
 
 import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
@@ -46,7 +45,10 @@ public class ApplicationResource {
   public Response updateApplication(@PathParam("id")String id, Agate.ApplicationDto dto) {
     Application application = applicationService.getApplication(id);
     application.setDescription(dto.getDescription());
-    application.setKey(applicationService.hashKey(dto.getKey()));
+
+    if (dto.hasKey()) {
+      application.setKey(applicationService.hashKey(dto.getKey()));
+    }
 
     applicationService.save(application);
 

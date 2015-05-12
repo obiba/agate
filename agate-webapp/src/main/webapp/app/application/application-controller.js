@@ -33,7 +33,7 @@ agate.application
       $scope.$on(NOTIFICATION_EVENTS.confirmDialogAccepted, function (event, id) {
         if ($scope.applicationToDelete === id) {
 
-          ApplicationResource.delete({id: application.id},
+          ApplicationResource.delete({id: id},
             function () {
               $scope.applications = ApplicationsResource.query();
             });
@@ -55,13 +55,13 @@ agate.application
         NO_MATCH: -1,
         ERROR: -2,
         SUCCESS: 1
-      }
+      };
       $scope.status = null;
       $scope.application = $routeParams.id ? ApplicationResource.get({id: $routeParams.id}) : {};
 
       $scope.save = function(form) {
         if (!form.$valid || $scope.confirmKey !== $scope.key) {
-          $scope.status = $scope.status_codes.NO_MATCH;
+          $scope.status = $scope.confirmKey !== $scope.key ? $scope.status_codes.NO_MATCH : $scope.status_codes.ERROR;
           form.saveAttempted = true;
           return;
         }
