@@ -5,7 +5,7 @@
       <form name="form" role="form" novalidate ng-submit="save(form)">
         <p class="alert alert-danger" ng-show="form.saveAttempted && form.$invalid" translate="">fix-error</p>
 
-        <div form-input name="name" model="group.name" label="group.name" required="true"></div>
+        <div form-input disabled="group.id" name="name" model="group.name" label="group.name" required="true"></div>
 
         <div form-textarea name="description" model="group.description" label="group.description"></div>
 

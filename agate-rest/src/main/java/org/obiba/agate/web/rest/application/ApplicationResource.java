@@ -45,13 +45,7 @@ public class ApplicationResource {
   @PUT
   public Response updateApplication(@PathParam("id")String id, Agate.ApplicationDto dto) {
     Application application = applicationService.getApplication(id);
-
-    if (!application.getName().equals(dto.getName()) && applicationService.findByName(dto.getName()) != null) {
-      throw new BadRequestException("Application with name " + dto.getName() + " already exists");
-    }
-
     application.setDescription(dto.getDescription());
-    application.setName(dto.getName());
     application.setKey(applicationService.hashKey(dto.getKey()));
 
     applicationService.save(application);
