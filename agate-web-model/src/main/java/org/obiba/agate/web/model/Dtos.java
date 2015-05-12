@@ -51,7 +51,7 @@ public class Dtos {
 
   @NotNull
   public Agate.GroupDto asDto(@NotNull Group group) {
-    return userDtos.asDto(group);
+    return groupDtos.asDto(group);
   }
 
   @NotNull

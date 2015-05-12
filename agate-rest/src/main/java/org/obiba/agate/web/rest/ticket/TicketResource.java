@@ -11,12 +11,11 @@
 package org.obiba.agate.web.rest.ticket;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
@@ -28,6 +27,7 @@ import org.obiba.agate.domain.User;
 import org.obiba.agate.service.TicketService;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.model.Agate;
+import org.obiba.shiro.realm.ObibaRealm;
 import org.obiba.web.model.AuthDtos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +56,7 @@ public class TicketResource extends BaseTicketResource {
 
   @GET
   @Path("/subject")
-  public AuthDtos.SubjectDto get(@PathParam("token") String token, @Context HttpServletRequest servletRequest) {
+  public AuthDtos.SubjectDto get(@PathParam("token") String token) {
     Ticket ticket = ticketService.getTicket(token);
     ticket.addEvent(getApplicationName(), "subject");
     ticketService.save(ticket);
@@ -75,8 +75,8 @@ public class TicketResource extends BaseTicketResource {
 
   @GET
   @Path("/username")
-  public Response getUsername(@PathParam("token") String token, @Context HttpServletRequest servletRequest) {
-    validateApplication(servletRequest);
+  public Response getUsername(@PathParam("token") String token, @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) {
+    validateApplication(authHeader);
 
     Ticket ticket = ticketService.getTicket(token);
     ticket.addEvent(getApplicationName(), "validate");
@@ -86,20 +86,19 @@ public class TicketResource extends BaseTicketResource {
   }
 
   @DELETE
-  public Response logout(@PathParam("token") String token, @Context HttpServletRequest servletRequest) {
+  public Response logout(@PathParam("token") String token, @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) {
     if(SecurityUtils.getSubject().hasRole("agate-administrator")) {
       ticketService.delete(token);
 
       return Response.ok().build();
     }
 
-    validateApplication(servletRequest);
+    validateApplication(authHeader);
     ticketService.delete(token);
 
     return Response.noContent().header(HttpHeaders.SET_COOKIE,
         new NewCookie(TicketsResource.TICKET_COOKIE_NAME, null, "/", getConfiguration().getDomain(),
             "Obiba session deleted", 0, false)).build();
   }
-
 }
 

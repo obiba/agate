@@ -59,18 +59,6 @@ class UserDtos {
   }
 
   @NotNull
-  Agate.GroupDto asDto(@NotNull Group group) {
-    Agate.GroupDto.Builder builder = Agate.GroupDto.newBuilder();
-    builder.setId(group.getId()) //
-      .setName(group.getName()) //
-      .setTimestamps(TimestampsDtos.asDto(group));
-
-    if(group.hasDescription()) builder.setDescription(group.getDescription());
-
-    return builder.build();
-  }
-
-  @NotNull
   User fromDto(@NotNull Agate.UserDto dto) {
     User.Builder builder = User.newBuilder()
       .name(dto.getName())

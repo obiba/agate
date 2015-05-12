@@ -10,6 +10,8 @@
 
 package org.obiba.agate.domain;
 
+import java.util.Set;
+
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
@@ -19,6 +21,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
 
 /**
  * A group.
@@ -33,6 +36,8 @@ public class Group extends AbstractAuditableDocument {
   private String name;
 
   private String description;
+
+  private Set<String> applications = Sets.newHashSet();
 
   public Group() {
   }
@@ -99,4 +104,19 @@ public class Group extends AbstractAuditableDocument {
         .add("description", description);
   }
 
+  public Set<String> getApplications() {
+    return applications;
+  }
+
+  public void setApplications(Set<String> applications) {
+    this.applications = applications;
+  }
+
+  public boolean hasApplication(String application) {
+    return applications.contains(application);
+  }
+
+  public void addApplication(String application) {
+    applications.add(application);
+  }
 }

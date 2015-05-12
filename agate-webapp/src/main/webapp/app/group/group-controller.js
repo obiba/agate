@@ -42,10 +42,17 @@ agate.group
 
     }])
 
-  .controller('GroupEditController', ['$scope', '$routeParams', '$location', 'GroupsResource', 'GroupResource',
+  .controller('GroupEditController', ['$scope', '$routeParams', '$location', 'GroupsResource', 'GroupResource', 'ApplicationsResource',
 
-    function ($scope, $routeParams, $location, GroupsResource, GroupResource) {
+    function ($scope, $routeParams, $location, GroupsResource, GroupResource, ApplicationsResource) {
       $scope.group = $routeParams.id ? GroupResource.get({id: $routeParams.id}) : {};
+
+      $scope.applicationList = [];
+      ApplicationsResource.query().$promise.then(function(applications){
+        applications.forEach(function(application){
+          $scope.applicationList.push(application.name);
+        });
+      });
 
       $scope.save = function(form) {
         if (!form.$valid) {
