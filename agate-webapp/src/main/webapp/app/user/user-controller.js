@@ -8,7 +8,21 @@ agate.user
 
   .controller('UserListController', ['$rootScope', '$scope', '$translate', 'UsersResource', 'UserResource', 'UserResetPasswordResource', 'NOTIFICATION_EVENTS', 'LocaleStringUtils',
     function ($rootScope, $scope, $translate, UsersResource, UserResource, UserResetPasswordResource, NOTIFICATION_EVENTS, LocaleStringUtils) {
-      $scope.users = UsersResource.query();
+      $scope.users = UsersResource.query(function(res){
+
+        res.forEach(function(u) {
+          u.applicationsGroups = {};
+
+          if (u.groupApplications) {
+            u.groupApplications.forEach(function (ga) {
+              if (!u.applicationsGroups[ga.application])
+                u.applicationsGroups[ga.application] = [];
+
+              u.applicationsGroups[ga.application].push(ga.group);
+            });
+          }
+        });
+      });
 
       /**
        * Deletes a user

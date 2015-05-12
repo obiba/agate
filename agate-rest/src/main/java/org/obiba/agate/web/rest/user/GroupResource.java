@@ -28,6 +28,8 @@ import org.obiba.agate.web.model.Agate;
 import org.obiba.agate.web.model.Dtos;
 import org.springframework.stereotype.Component;
 
+import com.google.common.collect.Sets;
+
 @Component
 @RequiresRoles("agate-administrator")
 @Path("/group/{id}")
@@ -47,15 +49,17 @@ public class GroupResource {
 
   @PUT
   public Response update(@PathParam("id") String id, Agate.GroupDto groupDto) {
-    Group group = userService.findGroup(groupDto.getName());
+    Group existingGroup = userService.findGroup(groupDto.getName());
 
-    if(group != null && !group.getId().equals(id)) {
-      throw new BadRequestException("Group already exists: " + group);
+    if(existingGroup != null && !existingGroup.getId().equals(id)) {
+      throw new BadRequestException("Group already exists: " + existingGroup);
     }
 
-    group = userService.getGroup(id);
+    final Group group = userService.getGroup(id);
     group.setName(groupDto.getName());
     group.setDescription(groupDto.getDescription());
+    group.setApplications(Sets.newHashSet(groupDto.getApplicationsList()));
+
     userService.save(group);
 
     return Response.noContent().build();

@@ -33,6 +33,7 @@
       <tr>
         <th translate>group.name</th>
         <th translate>group.description</th>
+        <th translate>group.applications</th>
         <th translate>group.actions</th>
       </tr>
       </thead>
@@ -43,6 +44,9 @@
         </td>
         <td>
           {{group.description}}
+        </td>
+        <td>
+          {{group.applications.join(', ')}}
         </td>
         <td>
           <ul class="list-inline">

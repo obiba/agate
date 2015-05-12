@@ -66,7 +66,14 @@ message UserDto {
   required string status = 9;
   repeated string groups = 10;
   repeated string applications = 11;
+
   optional TimestampsDto timestamps = 12;
+  repeated GroupApplicationDto groupApplications = 13;
+}
+
+message GroupApplicationDto {
+  required string group = 1;
+  required string application = 2;
 }
 
 message GroupDto {
@@ -74,6 +81,7 @@ message GroupDto {
   required string name = 2;
   optional string description = 3;
   optional TimestampsDto timestamps = 4;
+  repeated string applications = 5;
 }
 
 message ApplicationDto {
