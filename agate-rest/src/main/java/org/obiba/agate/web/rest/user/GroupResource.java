@@ -49,14 +49,7 @@ public class GroupResource {
 
   @PUT
   public Response update(@PathParam("id") String id, Agate.GroupDto groupDto) {
-    Group existingGroup = userService.findGroup(groupDto.getName());
-
-    if(existingGroup != null && !existingGroup.getId().equals(id)) {
-      throw new BadRequestException("Group already exists: " + existingGroup);
-    }
-
     final Group group = userService.getGroup(id);
-    group.setName(groupDto.getName());
     group.setDescription(groupDto.getDescription());
     group.setApplications(Sets.newHashSet(groupDto.getApplicationsList()));
 
