@@ -47,7 +47,7 @@ public class Group extends AbstractAuditableDocument {
   }
 
   public void setNameAsId() {
-    setId(getName().replaceAll("\\s+", "+"));
+    setId(getName().replaceAll("\\s+", "+").toLowerCase());
   }
 
   public String getName() {
