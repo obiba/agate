@@ -20,23 +20,27 @@ import org.springframework.stereotype.Component;
 class GroupDtos {
 
   @NotNull
-  Agate.GroupDto asDto(@NotNull Group Group) {
+  Agate.GroupDto asDto(@NotNull Group group) {
     Agate.GroupDto.Builder builder = Agate.GroupDto.newBuilder();
-    builder.setId(Group.getId()) //
-        .setName(Group.getName()) //
-        .setTimestamps(TimestampsDtos.asDto(Group));
+    builder.setId(group.getId()) //
+        .setName(group.getName()) //
+        .setTimestamps(TimestampsDtos.asDto(group));
 
-    if(Group.hasDescription()) builder.setDescription(Group.getDescription());
+    if(group.hasDescription()) builder.setDescription(group.getDescription());
+
+    builder.addAllApplications(group.getApplications());
 
     return builder.build();
   }
 
   @NotNull
   Group fromDto(@NotNull Agate.GroupDto dto) {
-    Group Group = new Group(dto.getName());
+    Group group = new Group(dto.getName());
 
-    if (dto.hasDescription()) Group.setDescription(dto.getDescription());
+    if(dto.hasDescription()) group.setDescription(dto.getDescription());
 
-    return Group;
+    dto.getApplicationsList().forEach(a -> group.addApplication(a));
+
+    return group;
   }
 }

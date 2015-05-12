@@ -11,7 +11,6 @@
 package org.obiba.agate.web.rest.ticket;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.ForbiddenException;
 
 import org.obiba.agate.domain.Configuration;
@@ -34,8 +33,7 @@ public class BaseTicketResource {
 
   private String applicationName;
 
-  protected void validateApplication(HttpServletRequest servletRequest) {
-    String appAuthHeader = servletRequest.getHeader(ObibaRealm.APPLICATION_AUTH_HEADER);
+  protected void validateApplication(String appAuthHeader) {
     if (appAuthHeader == null) throw new ForbiddenException();
 
     HttpAuthorizationToken token = new HttpAuthorizationToken(ObibaRealm.APPLICATION_AUTH_SCHEMA, appAuthHeader);

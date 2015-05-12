@@ -10,10 +10,14 @@
 
 package org.obiba.agate.web.model;
 
+import java.util.Optional;
+
+import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
 import org.obiba.agate.domain.Group;
 import org.obiba.agate.domain.User;
+import org.obiba.agate.service.UserService;
 import org.obiba.web.model.AuthDtos;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +26,9 @@ import com.google.common.base.Strings;
 @Component
 @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
 class UserDtos {
+
+  @Inject
+  UserService userService;
 
   @NotNull
   Agate.UserDto asDto(@NotNull User user) {
@@ -38,7 +45,18 @@ class UserDtos {
     if(!Strings.isNullOrEmpty(user.getEmail())) builder.setEmail(user.getEmail());
     if(user.hasAttributes()) user.getAttributes()
       .forEach((n, v) -> builder.addAttributes(Agate.AttributeDto.newBuilder().setName(n).setValue(v)));
-    if(user.hasGroups()) builder.addAllGroups(user.getGroups());
+
+    if(user.hasGroups()) {
+      builder.addAllGroups(user.getGroups());
+
+      user.getGroups().forEach(g -> Optional.ofNullable(userService.findGroup(g)).flatMap(r -> {
+          r.getApplications().forEach(
+            a -> builder.addGroupApplications(Agate.GroupApplicationDto.newBuilder().setGroup(g).setApplication(a))
+              .build());
+          return Optional.of(r);
+        }));
+    }
+
     if(user.hasApplications()) builder.addAllApplications(user.getApplications());
 
     return builder.build();
@@ -54,18 +72,6 @@ class UserDtos {
       addAttribute(builder, "email", user.getEmail());
       user.getAttributes().forEach((n, v) -> addAttribute(builder, n, v));
     }
-
-    return builder.build();
-  }
-
-  @NotNull
-  Agate.GroupDto asDto(@NotNull Group group) {
-    Agate.GroupDto.Builder builder = Agate.GroupDto.newBuilder();
-    builder.setId(group.getId()) //
-      .setName(group.getName()) //
-      .setTimestamps(TimestampsDtos.asDto(group));
-
-    if(group.hasDescription()) builder.setDescription(group.getDescription());
 
     return builder.build();
   }

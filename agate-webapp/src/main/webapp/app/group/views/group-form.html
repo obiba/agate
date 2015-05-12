@@ -9,6 +9,15 @@
 
         <div form-textarea name="description" model="group.description" label="group.description"></div>
 
+        <div class="form-group" style="width: 100% !important;">
+          <label for="applications" class="control-label">
+            <span translate>applications</span>
+          </label>
+          <select chosen multiple id="applications" name="applications" ng-model="group.applications"
+            ng-options="application for application in applicationList" class="chosen-select">
+          </select>
+        </div>
+
         <a href="#/groups" class="btn btn-default">
           <span translate>cancel</span>
         </a>
