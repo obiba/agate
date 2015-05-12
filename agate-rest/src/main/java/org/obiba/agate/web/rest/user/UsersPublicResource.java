@@ -103,7 +103,7 @@ public class UsersPublicResource {
 
     UserCredentials userCredentials = userService.findUserCredentials(user.getName());
 
-    if(userCredentials == null) new BadRequestException("user has no credentials defined");
+    if(userCredentials == null) throw new BadRequestException("user has no credentials defined");
 
     userCredentials.setPassword(userService.hashPassword(password));
 
