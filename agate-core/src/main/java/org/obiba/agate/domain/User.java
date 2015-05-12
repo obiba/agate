@@ -60,6 +60,10 @@ public class User extends AbstractAuditableDocument {
     this.realm = realm;
   }
 
+  public void setNameAsId() {
+    setId(getName().replaceAll("\\s+", "+"));
+  }
+
   public String getName() {
     return name;
   }

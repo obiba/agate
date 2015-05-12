@@ -8,6 +8,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import javax.ws.rs.BadRequestException;
 
 import org.apache.shiro.SecurityUtils;
@@ -138,9 +139,16 @@ public class UserService {
     save(userCredentials);
   }
 
-  public User createUserWithPassword(@NotNull User user, @NotNull String password) {
-    updateUserPassword(user, password);
-    return save(user);
+  public User createUser(@NotNull User user, @Nullable String password) {
+    User saved = save(user);
+    if(!Strings.isNullOrEmpty(password)) {
+      updateUserPassword(user, password);
+    } else if(user.getStatus() == UserStatus.PENDING) {
+      eventBus.post(new UserJoinedEvent(user));
+    } else if(user.getStatus() == UserStatus.APPROVED) {
+      eventBus.post(new UserApprovedEvent(user));
+    }
+    return saved;
   }
 
   /**
@@ -152,7 +160,9 @@ public class UserService {
   public User save(@NotNull User user) {
     User saved = user;
 
-    if(!user.isNew()) {
+    if(user.isNew()) {
+      user.setNameAsId();
+    } else {
       saved = userRepository.findOne(user.getId());
       if(saved == null) {
         saved = user;
@@ -166,7 +176,7 @@ public class UserService {
     if(saved.getGroups() != null) {
       for(String groupName : saved.getGroups()) {
         Group group = findGroup(groupName);
-        if(group == null) groupRepository.save(new Group(groupName));
+        if(group == null) save(new Group(groupName));
       }
     }
 
@@ -178,14 +188,8 @@ public class UserService {
     return userCredentials;
   }
 
-  public void createUser(User user) {
-    save(user);
-    if(user.getStatus() == UserStatus.PENDING) {
-      eventBus.post(new UserJoinedEvent(user));
-    }
-    else if(user.getStatus() == UserStatus.APPROVED) {
-      eventBus.post(new UserApprovedEvent(user));
-    }
+  public User createUser(User user) {
+    return createUser(user, null);
   }
 
   public void updateUserStatus(User user, UserStatus status) {
@@ -347,6 +351,9 @@ public class UserService {
    * @return
    */
   public Group save(@NotNull Group group) {
+    if (group.isNew()) {
+      group.setNameAsId();
+    }
     groupRepository.save(group);
     return group;
   }

@@ -10,6 +10,8 @@
 
 package org.obiba.agate.domain;
 
+import javax.validation.constraints.NotNull;
+
 import org.obiba.mongodb.domain.AbstractAuditableDocument;
 import org.springframework.data.mongodb.core.index.Indexed;
 
@@ -20,7 +22,8 @@ public class Application extends AbstractAuditableDocument {
 
   private static final long serialVersionUID = 4710884170897922907L;
 
-  @Indexed
+  @NotNull
+  @Indexed(unique = true)
   private String name;
 
   private String description;
@@ -33,6 +36,10 @@ public class Application extends AbstractAuditableDocument {
   public Application(String name, String key) {
     this.name = name;
     this.key = key;
+  }
+
+  public void setNameAsId() {
+    setId(getName().replaceAll("\\s+", "+"));
   }
 
   public String getName() {
