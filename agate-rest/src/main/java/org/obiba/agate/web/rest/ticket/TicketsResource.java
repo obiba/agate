@@ -18,6 +18,7 @@ import javax.ws.rs.DefaultValue;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -35,6 +36,7 @@ import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
 import org.joda.time.DateTime;
 import org.obiba.agate.domain.Configuration;
+import org.obiba.agate.domain.Group;
 import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.domain.UserStatus;
@@ -42,6 +44,7 @@ import org.obiba.agate.service.TicketService;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.model.Agate;
 import org.obiba.agate.web.rest.config.JerseyConfiguration;
+import org.obiba.shiro.realm.ObibaRealm;
 import org.obiba.web.model.AuthDtos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,9 +83,8 @@ public class TicketsResource extends BaseTicketResource {
   public Response login(@Context HttpServletRequest servletRequest,
     @QueryParam("rememberMe") @DefaultValue("false") boolean rememberMe,
     @QueryParam("renew") @DefaultValue("false") boolean renew, @FormParam("username") String username,
-    @FormParam("password") String password) {
-
-    validateApplication(servletRequest);
+    @FormParam("password") String password, @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) {
+    validateApplication(authHeader);
 
     Subject subject = null;
     try {
@@ -121,9 +123,9 @@ public class TicketsResource extends BaseTicketResource {
 
   @GET
   @Path("/subject/{username}")
-  public AuthDtos.SubjectDto get(@Context HttpServletRequest servletRequest, @PathParam("username") String username,
-    @QueryParam("application") String application, @QueryParam("key") String key) {
-    validateApplication(servletRequest);
+  public AuthDtos.SubjectDto get(@PathParam("username") String username, @QueryParam("application") String application,
+    @QueryParam("key") String key, @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) {
+    validateApplication(authHeader);
 
     User user = userService.findUser(username);
     AuthDtos.SubjectDto subject;
@@ -164,9 +166,14 @@ public class TicketsResource extends BaseTicketResource {
   }
 
   private void validateApplication(HttpServletRequest servletRequest, User user) {
+    String appName = getApplicationName();
+
     // check application
-    if(!user.hasApplication(getApplicationName())) {
-      log.info("Application '{}' not allowed for user '{}' at ip: '{}'", getApplicationName(), user.getName(),
+    if(!user.hasApplication(appName) && user.getGroups().stream().noneMatch(g -> {
+      Group group = userService.findGroup(g);
+      return group != null && group.hasApplication(appName);
+    })) {
+      log.info("Application '{}' not allowed for user '{}' at ip: '{}'", appName, user.getName(),
         servletRequest.getRemoteAddr());
       throw new ForbiddenException();
     }
@@ -180,6 +187,4 @@ public class TicketsResource extends BaseTicketResource {
       throw new ForbiddenException();
     }
   }
-
 }
-
