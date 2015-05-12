@@ -67,6 +67,7 @@ public class ApplicationService {
   }
 
   public void save(@NotNull Application application) {
+    if (application.isNew()) application.setNameAsId();
     applicationRepository.save(application);
   }
 

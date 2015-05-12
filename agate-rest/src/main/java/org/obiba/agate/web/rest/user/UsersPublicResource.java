@@ -72,15 +72,13 @@ public class UsersPublicResource {
 
   @POST
   @Path("/_confirm")
-  public Response confirm(@FormParam("key")String key, @FormParam("password")String password) {
+  public Response confirm(@FormParam("key") String key, @FormParam("password") String password) {
     String username = configurationService.decrypt(key);
     User user = userService.findUser(username);
 
-    if (user == null)
-      throw new BadRequestException("User not found");
+    if(user == null) throw new BadRequestException("User not found");
 
-    if (user.getStatus() != UserStatus.APPROVED)
-      throw new BadRequestException("Invalid user status.");
+    if(user.getStatus() != UserStatus.APPROVED) throw new BadRequestException("Invalid user status.");
 
     userService.confirmUser(user, password);
 
@@ -89,7 +87,7 @@ public class UsersPublicResource {
 
   @POST
   @Path("/_reset_password")
-  public Response resetPassword(@FormParam("key")String key, @FormParam("password")String password)
+  public Response resetPassword(@FormParam("key") String key, @FormParam("password") String password)
     throws IOException {
     ObjectMapper mapper = new ObjectMapper();
     Map<String, String> data = mapper
@@ -119,7 +117,7 @@ public class UsersPublicResource {
   public Response create(@FormParam("username") String username, @FormParam("firstname") String firstName,
     @FormParam("lastname") String lastName, @FormParam("email") String email,
     @FormParam("application") List<String> applications, @FormParam("group") List<String> groups,
-    @Context HttpServletRequest request) {
+    @FormParam("password") String password, @Context HttpServletRequest request) {
     if(Strings.isNullOrEmpty(email)) throw new BadRequestException("Email cannot be empty");
 
     String name = Strings.isNullOrEmpty(username) ? email : username;
@@ -132,17 +130,17 @@ public class UsersPublicResource {
       throw new BadRequestException("User already exists: " + name);
     }
 
-    user = User.newBuilder().name(name).realm(AgateUserRealm.AGATE_REALM).role(Roles.AGATE_USER)
-      .pending().firstName(firstName).lastName(lastName).email(email).build();
+    user = User.newBuilder().name(name).realm(AgateUserRealm.AGATE_REALM).role(Roles.AGATE_USER).pending()
+      .firstName(firstName).lastName(lastName).email(email).build();
     user.setGroups(Sets.newHashSet(groups));
     user.setApplications(Sets.newHashSet(applications));
     user.setAttributes(extractAttributes(request));
 
-    if (isRequestedByApplication(request)) {
+    if(isRequestedByApplication(request)) {
       user.setStatus(UserStatus.APPROVED);
     }
 
-    userService.createUser(user);
+    userService.createUser(user, password);
 
     return Response
       .created(UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(UserResource.class).build(user.getId())).build();
@@ -210,7 +208,7 @@ public class UsersPublicResource {
 
   protected boolean isRequestedByApplication(HttpServletRequest servletRequest) {
     String appAuthHeader = servletRequest.getHeader(ObibaRealm.APPLICATION_AUTH_HEADER);
-    if (appAuthHeader == null) return false;
+    if(appAuthHeader == null) return false;
 
     HttpAuthorizationToken token = new HttpAuthorizationToken(ObibaRealm.APPLICATION_AUTH_SCHEMA, appAuthHeader);
     return applicationService.isValid(token.getUsername(), new String(token.getPassword()));

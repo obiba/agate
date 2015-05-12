@@ -25,6 +25,7 @@ import com.google.common.collect.Sets;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -60,7 +61,7 @@ public class UsersJoinResourceTests {
       ((User) args[0]).setId("id");
 
       return null;
-    }).when(userService).createUser(any(User.class));
+    }).when(userService).createUser(any(User.class), any(String.class));
   }
 
   @Test
@@ -75,8 +76,10 @@ public class UsersJoinResourceTests {
 
     ArgumentCaptor<User> user = ArgumentCaptor.forClass(User.class);
 
-    resource.create("un", "fn", "ln", "test@localhost.domain", Lists.newArrayList("app"), Lists.newArrayList("g1", "g2"), request);
-    verify(userService).createUser(user.capture());
+    resource
+      .create("un", "fn", "ln", "test@localhost.domain", Lists.newArrayList("app"), Lists.newArrayList("g1", "g2"),
+        "password", request);
+    verify(userService).createUser(user.capture(), eq("password"));
     assertEquals("id", user.getValue().getId());
     assertEquals("test@localhost.domain", user.getValue().getEmail());
     assertEquals("fn", user.getValue().getFirstName());
@@ -95,6 +98,8 @@ public class UsersJoinResourceTests {
 
     exception.expect(BadRequestException.class);
     exception.expectMessage(Matchers.containsString("att1"));
-    resource.create("un", "fn", "ln", "test@localhost.domain", Lists.newArrayList("app"), Lists.newArrayList("g1", "g2"), request);
+    resource
+      .create("un", "fn", "ln", "test@localhost.domain", Lists.newArrayList("app"), Lists.newArrayList("g1", "g2"),
+        null, request);
   }
 }
