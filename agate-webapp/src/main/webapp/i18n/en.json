@@ -314,6 +314,7 @@
   "error": "Error",
   "server": {
     "error": {
+      "403": "Server rejected your request, please make sure you are logged in and try again.",
       "password": {
         "too-short": "Password is shorter than the required {{arg0}} characters",
         "not-changed": "New password is identical to the current password"
