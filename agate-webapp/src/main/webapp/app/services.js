@@ -54,6 +54,23 @@ agate.factory('PasswordResetResource', ['$http',
     };
   }]);
 
+agate.factory('JoinResource', ['$http',
+  function ($http) {
+    return {
+      post: function(data) {
+        return $http.post('ws/users/_join', $.param(data), {
+          headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        });
+      }
+    };
+  }]);
+
+agate.factory('JoinConfigResource', ['$resource',
+  function ($resource) {
+    return $resource('ws/config/join');
+  }]);
+
+
 agate.factory('Session', ['$cookieStore',
   function ($cookieStore) {
     this.create = function (login, role, realm) {

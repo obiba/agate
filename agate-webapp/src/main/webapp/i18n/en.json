@@ -52,6 +52,12 @@
       }
     }
   },
+  "join":{
+    "form": {
+      "button": "Sign Up",
+      "submit": "Join"
+    }
+  },
   "settings": {
     "title": "User settings for [<b>{{username}}</b>]",
     "form": {
