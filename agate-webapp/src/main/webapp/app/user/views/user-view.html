@@ -24,20 +24,6 @@
             <td>{{user.name}}</td>
           </tr>
           <tr>
-            <td translate>user.realm</td>
-            <td>{{user.realm}}</td>
-          </tr>
-          <tr>
-            <td translate>user.role</td>
-            <td>{{user.role}}</td>
-          </tr>
-          <tr>
-            <td translate>user.status</td>
-            <td translate>
-              {{user.status}}
-            </td>
-          </tr>
-          <tr>
             <td translate>user.firstName</td>
             <td>{{user.firstName}}</td>
           </tr>
@@ -56,6 +42,20 @@
           <tr>
             <td translate>user.applications</td>
             <td>{{user.applications.join(', ')}}</td>
+          </tr>
+          <tr>
+            <td translate>user.realm</td>
+            <td>{{user.realm}}</td>
+          </tr>
+          <tr>
+            <td translate>user.role</td>
+            <td>{{user.role}}</td>
+          </tr>
+          <tr>
+            <td translate>user.status</td>
+            <td translate>
+              {{user.status}}
+            </td>
           </tr>
 
           <tr ng-repeat="userConfigAttribute in userConfigAttributes">

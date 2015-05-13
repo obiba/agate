@@ -33,7 +33,6 @@
         <th translate>user.role</th>
         <th translate>user.groups</th>
         <th translate>user.applications</th>
-        <th translate>user.realm</th>
         <th translate>user.actions</th>
       </tr>
       </thead>
@@ -59,9 +58,6 @@
         </td>
         <td>
           {{user.applications.join(', ')}}<span ng-repeat="(app, appGroups) in user.applicationsGroups" title="{{appGroups.join(', ')}}"><span ng-if="$first && user.applications.length">, </span><em>{{app}}</em><span ng-if="!$last">, </span></span>
-        </td>
-        <td>
-          {{user.realm}}
         </td>
         <td class="action-column">
           <ul class="list-inline pull-right">

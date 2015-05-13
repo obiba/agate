@@ -140,6 +140,9 @@ agate.user
           return;
         }
 
+        // no support for other realms yet
+        $scope.user.realm = "agate-user-realm";
+
         $scope.profile.user = $scope.user;
         $scope.user.attributes = $scope.attributeConfigPairs.map(function(attributeConfigPair){
           return attributeConfigPair.attribute;

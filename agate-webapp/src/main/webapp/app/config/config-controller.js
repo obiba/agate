@@ -87,7 +87,7 @@ agate.config
     }])
 
   .controller('AttributeModalController', ['$scope', '$modalInstance', 'attribute', function($scope, $modalInstance, attribute) {
-    var types = ['STRING', 'INTEGER', 'DECIMAL', 'BOOLEAN'];
+    var types = ['STRING', 'INTEGER', 'NUMBER', 'BOOLEAN'];
     $scope.availableTypes = types.map(function(e) {
       return {id: e, label: e};
     });

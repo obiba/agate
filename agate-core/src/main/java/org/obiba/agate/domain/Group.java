@@ -10,6 +10,7 @@
 
 package org.obiba.agate.domain;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -118,5 +119,42 @@ public class Group extends AbstractAuditableDocument {
 
   public void addApplication(String application) {
     applications.add(application);
+  }
+
+  public static Builder newBuilder() {
+    return new Builder();
+  }
+
+  public static class Builder {
+
+    private Group group;
+
+    private Builder() {
+      group = new Group();
+    }
+
+    public Builder name(String name) {
+      group.setName(name);
+      return this;
+    }
+
+    public Builder description(String description) {
+      group.setDescription(description);
+      return this;
+    }
+
+    public Builder applications(String... applications) {
+      group.setApplications(Sets.newHashSet(applications));
+      return this;
+    }
+
+    public Builder applications(List<String> applications) {
+      group.setApplications(Sets.newHashSet(applications));
+      return this;
+    }
+
+    public Group build() {
+      return group;
+    }
   }
 }

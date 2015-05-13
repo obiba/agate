@@ -109,6 +109,6 @@ public class AttributeConfiguration implements Serializable {
   }
 
   public enum Type {
-    STRING, INTEGER, DECIMAL, BOOLEAN
+    STRING, INTEGER, NUMBER, BOOLEAN
   }
 }
