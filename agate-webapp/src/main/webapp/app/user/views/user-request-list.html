@@ -45,7 +45,7 @@
           {{user.groups.join(', ')}}
         </td>
         <td>
-          {{user.applications.join(', ')}}
+          {{user.applications.join(', ')}}<span ng-repeat="(app, appGroups) in user.applicationsGroups" title="{{appGroups.join(', ')}}"><span ng-if="$first && user.applications.length">, </span><em>{{app}}</em><span ng-if="!$last">, </span></span>
         </td>
         <td>
           <ul class="list-inline">

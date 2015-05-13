@@ -214,7 +214,21 @@ agate.user
   .controller('UserRequestListController', ['$rootScope', '$scope', '$route', '$http', 'UsersResource', 'UserResource', 'NOTIFICATION_EVENTS',
 
     function ($rootScope, $scope, $route, $http, UsersResource, UserResource, NOTIFICATION_EVENTS) {
-      $scope.users = UsersResource.query({status: 'pending'});
+      $scope.users = UsersResource.query({status: 'pending'}, function(res){
+
+        res.forEach(function(u) {
+          u.applicationsGroups = {};
+
+          if (u.groupApplications) {
+            u.groupApplications.forEach(function (ga) {
+              if (!u.applicationsGroups[ga.application])
+                u.applicationsGroups[ga.application] = [];
+
+              u.applicationsGroups[ga.application].push(ga.group);
+            });
+          }
+        });
+      });
 
       $scope.reject = function (user) {
         $scope.requestToDelete = user.id;
