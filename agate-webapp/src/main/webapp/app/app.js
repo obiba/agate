@@ -20,7 +20,9 @@ var agate = angular.module('agate', [
   'pascalprecht.translate',
   'tmh.dynamicLocale',
   'ui.bootstrap',
-  'angularUtils.directives.dirPagination'
+  'angularUtils.directives.dirPagination',
+  'schemaForm',
+  'obiba.utils'
 ]);
 
 agate
@@ -30,6 +32,13 @@ agate
         .when('/login', {
           templateUrl: 'app/views/login.html',
           controller: 'LoginController',
+          access: {
+            authorizedRoles: [USER_ROLES.all]
+          }
+        })
+        .when('/join', {
+          templateUrl: 'app/views/join.html',
+          controller: 'JoinController',
           access: {
             authorizedRoles: [USER_ROLES.all]
           }

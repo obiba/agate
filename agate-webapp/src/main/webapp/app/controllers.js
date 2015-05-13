@@ -2,9 +2,9 @@
 
 /* Controllers */
 
-agate.controller('MainController', [ function () {} ]);
+agate.controller('MainController', [function () {}]);
 
-agate.controller('AdminController', [ function () {} ]);
+agate.controller('AdminController', [function () {}]);
 
 agate.controller('LanguageController', ['$scope', '$translate',
   function ($scope, $translate) {
@@ -13,7 +13,7 @@ agate.controller('LanguageController', ['$scope', '$translate',
     };
   }]);
 
-agate.controller('MenuController', [ function () {} ]);
+agate.controller('MenuController', [function () {}]);
 
 agate.controller('LoginController', ['$scope', '$location', 'AuthenticationSharedService',
   function ($scope, $location, AuthenticationSharedService) {
@@ -28,6 +28,38 @@ agate.controller('LoginController', ['$scope', '$location', 'AuthenticationShare
     };
   }]);
 
+agate.controller('JoinController', ['$scope', '$location', 'JoinConfigResource', 'JoinResource', 'LocaleStringUtils',
+  function ($scope, $location, JoinConfigResource, JoinResource, LocaleStringUtils) {
+
+    $scope.joinConfig = JoinConfigResource.get(function (res) {
+      res.definition.push(
+        {
+          type: "submit",
+          title: LocaleStringUtils.translate("join.form.submit")
+        }
+      );
+      return res;
+    });
+
+    $scope.model = {};
+
+    $scope.onSubmit = function (form) {
+      // First we broadcast an event so all fields validate themselves
+      $scope.$broadcast('schemaFormValidate');
+
+      // Then we check if the form is valid
+      if (form.$valid) {
+        // Submit join request
+        JoinResource.post($scope.model)
+          .success(function () {
+            $location.url($location.path());
+            $location.path('/');
+          });
+      }
+    };
+
+  }]);
+
 agate.controller('LogoutController', ['$location', 'AuthenticationSharedService',
   function ($location, AuthenticationSharedService) {
     AuthenticationSharedService.logout({
@@ -39,16 +71,16 @@ agate.controller('LogoutController', ['$location', 'AuthenticationSharedService'
 
 agate.controller('ProfileController', ['$scope', '$location', '$modal', 'Account', 'ConfigurationResource', 'AttributesService', 'AlertService',
   function ($scope, $location, $modal, Account, ConfigurationResource, AttributesService, AlertService) {
-    var getConfigAttributes = function() {
-      ConfigurationResource.get(function(config) {
+    var getConfigAttributes = function () {
+      ConfigurationResource.get(function (config) {
         $scope.attributesConfig = config.userAttributes || [];
         $scope.attributeConfigPairs = AttributesService.getAttributeConfigPairs($scope.settingsAccount.attributes, $scope.attributesConfig);
       });
     };
 
-    var getSettingsAccount = function() {
-      $scope.settingsAccount = Account.get(function(user) {
-        ConfigurationResource.get(function(config) {
+    var getSettingsAccount = function () {
+      $scope.settingsAccount = Account.get(function (user) {
+        ConfigurationResource.get(function (config) {
           $scope.userConfigAttributes = AttributesService.findConfigAttributes(user.attributes, config.userAttributes);
           $scope.userNonConfigAttributes = config.userAttributes ? AttributesService.findNonConfigAttributes(user.attributes, config.userAttributes) : user.attributes;
         });
@@ -60,7 +92,7 @@ agate.controller('ProfileController', ['$scope', '$location', '$modal', 'Account
     getConfigAttributes();
     getSettingsAccount();
 
-    $scope.onPasswordUpdated = function() {
+    $scope.onPasswordUpdated = function () {
       AlertService.alert({id: 'ProfileController', type: 'success', msgKey: 'profile.success.updated', delay: 5000});
     };
 
@@ -68,7 +100,7 @@ agate.controller('ProfileController', ['$scope', '$location', '$modal', 'Account
       $location.path('/profile');
     };
 
-    $scope.edit = function() {
+    $scope.edit = function () {
       var settingsAccountClone = $.extend(true, {}, $scope.settingsAccount);
       var attributeConfigPairs =
         AttributesService.getAttributeConfigPairs(settingsAccountClone.attributes, $scope.attributesConfig);
@@ -91,7 +123,12 @@ agate.controller('ProfileController', ['$scope', '$location', '$modal', 'Account
           }
         })
         .result.then(function () {
-          AlertService.alert({id: 'ProfileController', type: 'success', msgKey: 'profile.success.updated', delay: 5000});
+          AlertService.alert({
+            id: 'ProfileController',
+            type: 'success',
+            msgKey: 'profile.success.updated',
+            delay: 5000
+          });
           getSettingsAccount();
         }, function () {
         });
@@ -108,7 +145,7 @@ agate.controller('ProfileModalController', ['$scope', '$modalInstance', '$filter
 
     $scope.requiredField = $filter('translate')('user.email');
 
-    $scope.cancel = function() {
+    $scope.cancel = function () {
       $modalInstance.dismiss('cancel');
     };
 
@@ -135,7 +172,7 @@ agate.controller('ProfileModalController', ['$scope', '$modalInstance', '$filter
 
 agate.controller('ResetPasswordController', ['$scope', '$location', 'ConfirmResource', 'PasswordResetResource',
   function ($scope, $location, ConfirmResource, PasswordResetResource) {
-    var isReset = $location.path() === '/reset_password' ? true: false;
+    var isReset = $location.path() === '/reset_password' ? true : false;
 
     $scope.title = isReset ? 'Reset password' : 'Confirm';
     $scope.key = $location.search().key;
@@ -151,10 +188,10 @@ agate.controller('ResetPasswordController', ['$scope', '$location', 'ConfirmReso
           key: $scope.key,
           password: $scope.password
         })
-        .success(function () {
-          $location.url($location.path());
-          $location.path('/');
-        });
+          .success(function () {
+            $location.url($location.path());
+            $location.path('/');
+          });
       }
     };
   }]);

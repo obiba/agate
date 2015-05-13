@@ -5,18 +5,21 @@
 
       <p><span translate>main.subtitle</span></p>
 
-      <div class="alert alert-success" ng-hide="!(authenticated && hasRole('agate-user'))"
+      <div class="alert alert-success" ng-if="authenticated && hasRole('agate-user')"
           translate translate-values="{username: '{{subject.login}}'}">
       main.logged.userMessage
       </div>
-      <div class="alert alert-warning" ng-hide="!(authenticated && hasRole('agate-administrator'))"
+      <div class="alert alert-warning" ng-if="authenticated && hasRole('agate-administrator')"
           translate translate-values="{username: '{{subject.login}}'}">
         main.logged.adminMessage
       </div>
-      <a href="#/login" class="btn btn-info" ng-hide="authenticated">
+      <a href="#/login" class="btn btn-info" ng-if="!authenticated">
         <span translate>login.form.button</span>
       </a>
-      <a href="#/profile" class="btn btn-info" ng-show="authenticated && hasProfile">
+      <a href="#/join" class="btn btn-default" ng-if="!authenticated">
+        <span translate>join.form.button</span>
+      </a>
+      <a href="#/profile" class="btn btn-info" ng-if="authenticated && hasProfile">
         <span translate>global.menu.myProfile</span>
       </a>
 
