@@ -44,7 +44,8 @@
       "password": "Password",
       "password.placeholder": "Your password",
       "rememberme": "Automatic Login",
-      "button": "Sign In"
+      "button": "Sign In",
+      "forgot-login": "Can't access your account?"
     },
     "messages": {
       "error": {
@@ -127,6 +128,15 @@
         }
       }
     }
+  },
+  "forgot-login": {
+    "title": "Login Recovery",
+    "success": "Check your email to complete your login recovery.",
+    "username-option": "I forgot my username.",
+    "username": "Username",
+    "email": "Email",
+    "password-option": "I forgot my password.",
+    "submit": "Submit"
   },
   "sessions": {
     "title": "Active sessions for [<b>{{username}}</b>]",

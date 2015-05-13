@@ -201,3 +201,36 @@ agate.controller('ResetPasswordController', ['$scope', '$location', 'ConfirmReso
       }
     };
   }]);
+
+agate.controller('ForgotLoginDetailsController', ['$scope', 'AlertService', 'ForgotUsernameResource', 'ForgotPasswordResource',
+  function ($scope, AlertService, ForgotUsernameResource, ForgotPasswordResource) {
+    $scope.title = '';
+    $scope.forgotPassword = true;
+    $scope.email = '';
+    $scope.username = '';
+
+    $scope.sendRequest = function(form) {
+      if (!form.$valid) {
+        form.saveAttempted = true;
+        AlertService.alert({id: 'ForgotLoginDetailsController', type: 'danger', msgKey: 'fix-error', delay: 5000});
+        return;
+      }
+
+      var successHandler = function() {
+        AlertService.alert({id: 'ForgotLoginDetailsController', type: 'success', msgKey: 'forgot-login.success'});
+        $scope.email = '';
+        $scope.username = '';
+        form.$setPristine();
+      };
+
+      var errorHandler = function() {
+        AlertService.alert({id: 'ForgotLoginDetailsController', type: 'danger', msgKey: 'error', delay: 5000});
+      };
+
+      if ($scope.forgotPassword) {
+        ForgotPasswordResource.post({username: $scope.username}).success(successHandler).error(errorHandler);
+      } else {
+        ForgotUsernameResource.post({email: $scope.email}).success(successHandler).error(errorHandler);
+      }
+    };
+  }]);
