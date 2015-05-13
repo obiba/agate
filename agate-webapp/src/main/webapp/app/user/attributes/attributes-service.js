@@ -218,7 +218,7 @@ agate.user
 
       function booleanTemplate(required) {
         var requiredAttr = required ? 'required="true"' : '';
-        return '<div form-checkbox name="{{attribute.name}}" model="attribute.boolValue" help="{{attribute.name}}" '+ requiredAttr + '></div>';
+        return '<div form-checkbox name="{{attribute.name}}" model="attribute.boolValue" label="{{attribute.name}}" '+ requiredAttr + '></div>';
       }
 
     }]);
