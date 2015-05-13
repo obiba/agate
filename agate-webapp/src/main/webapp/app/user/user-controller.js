@@ -56,6 +56,10 @@ agate.user
         }
       });
 
+      $scope.getStatusTitle = function(status) {
+        return LocaleStringUtils.translate('user.' + status);
+      }
+
       $scope.resetPassword = function (user) {
         $scope.selectedUser = user.id;
         $rootScope.$broadcast(NOTIFICATION_EVENTS.showConfirmDialog,

@@ -152,7 +152,7 @@ angular.module('obiba.notification')
 angular.module('obiba.rest', ['obiba.notification'])
 
   .config(['$httpProvider', function ($httpProvider) {
-    $httpProvider.responseInterceptors.push('httpErrorsInterceptor');
+    $httpProvider.interceptors.push('httpErrorsInterceptor');
   }])
 
   .factory('httpErrorsInterceptor', ['$q', '$rootScope', 'NOTIFICATION_EVENTS', 'ServerErrorUtils',
@@ -429,7 +429,7 @@ angular.module('obiba.alert')
 
       return {
         restrict: 'E',
-        template: '<alert ng-repeat="alert in alerts" type="alert.type" close="close($index)"><span ng-bind-html="alert.message"></span></alert>',
+        template: '<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="close($index)"><span ng-bind-html="alert.message"></span></alert>',
         compile: function(element) {
           var id = element.attr('id');
           if (!id) {
@@ -501,17 +501,16 @@ angular.module("form/form-checkbox-template.tpl.html", []).run(["$templateCache"
     "<div class=\"checkbox\" ng-class=\"{'has-error': (form[fieldName].$dirty || form.saveAttempted) && form[name].$invalid}\">\n" +
     "\n" +
     "  <label for=\"{{name}}\" class=\"control-label\">\n" +
-    "    {{label | translate}}\n" +
     "    <span ng-show=\"required\">*</span>\n" +
+    "    <input\n" +
+    "          ng-model=\"model\"\n" +
+    "          type=\"checkbox\"\n" +
+    "          id=\"{{name}}\"\n" +
+    "          name=\"{{name}}\"\n" +
+    "          form-server-error\n" +
+    "          ng-required=\"required\">\n" +
+    "      {{label | translate}}\n" +
     "  </label>\n" +
-    "\n" +
-    "  <input\n" +
-    "      ng-model=\"model\"\n" +
-    "      type=\"checkbox\"\n" +
-    "      id=\"{{name}}\"\n" +
-    "      name=\"{{name}}\"\n" +
-    "      form-server-error\n" +
-    "      ng-required=\"required\">\n" +
     "\n" +
     "  <ul class=\"input-error list-unstyled\" ng-show=\"form[name].$dirty && form[name].$invalid\">\n" +
     "    <li ng-show=\"form[name].$error.required\" translate>required</li>\n" +
