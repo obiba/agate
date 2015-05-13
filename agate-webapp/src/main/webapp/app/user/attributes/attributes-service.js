@@ -114,7 +114,7 @@ agate.user
             case 'BOOLEAN':
                 template = booleanTemplate(required);
               break;
-            case 'DECIMAL':
+            case 'NUMBER':
             case 'INTEGER':
             case 'STRING':
               if (attributeConfig.values && attributeConfig.values.length > 0) {
@@ -173,7 +173,7 @@ agate.user
           case 'BOOLEAN':
             attribute.value = 'false';
             break;
-          case 'DECIMAL':
+          case 'NUMBER':
           case 'INTEGER':
           case 'STRING':
             // leave empty

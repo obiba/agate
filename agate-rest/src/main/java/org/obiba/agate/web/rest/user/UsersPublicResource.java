@@ -189,7 +189,7 @@ public class UsersPublicResource {
         case BOOLEAN:
           parsedValue = Boolean.valueOf(value).toString();
           break;
-        case DECIMAL:
+        case NUMBER:
           parsedValue = Float.valueOf(value).toString();
           break;
         default:
