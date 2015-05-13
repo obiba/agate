@@ -17,7 +17,11 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.obiba.agate.domain.Application;
+import org.obiba.agate.domain.Group;
+import org.obiba.agate.domain.User;
 import org.obiba.agate.repository.ApplicationRepository;
+import org.obiba.agate.repository.GroupRepository;
+import org.obiba.agate.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
@@ -36,6 +40,12 @@ public class ApplicationService {
 
   @Inject
   private ApplicationRepository applicationRepository;
+
+  @Inject
+  private UserRepository userRepository;
+
+  @Inject
+  private GroupRepository groupRepository;
 
   @Inject
   private Environment env;
@@ -72,7 +82,15 @@ public class ApplicationService {
   }
 
   public void delete(@NotNull String id) {
-    applicationRepository.delete(id);
+    Application application = getApplication(id);
+    List<User> users = userRepository.findByApplications(application.getName());
+    List<Group> groups = groupRepository.findByApplications(application.getName());
+
+    if(!users.isEmpty() || !groups.isEmpty()) {
+      throw NotOrphanApplicationException.withName(application.getName());
+    }
+
+    applicationRepository.delete(application);
   }
 
   public String hashKey(String key) {

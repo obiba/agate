@@ -33,6 +33,10 @@ public class Application extends AbstractAuditableDocument {
   public Application() {
   }
 
+  public Application(String name) {
+    this.name = name;
+  }
+
   public Application(String name, String key) {
     this.name = name;
     this.key = key;
