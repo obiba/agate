@@ -207,10 +207,6 @@ public class User extends AbstractAuditableDocument {
         .add("email", email);
   }
 
-  public static Builder newBuilder() {
-    return new Builder();
-  }
-
   public DateTime getLastLogin() {
     return lastLogin;
   }
@@ -219,9 +215,13 @@ public class User extends AbstractAuditableDocument {
     this.lastLogin = lastLogin;
   }
 
+  public static Builder newBuilder() {
+    return new Builder();
+  }
+
   public static class Builder {
 
-    User user;
+    private User user;
 
     private Builder() {
       user = new User();

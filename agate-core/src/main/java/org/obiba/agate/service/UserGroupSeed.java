@@ -13,22 +13,48 @@ package org.obiba.agate.service;
 import javax.inject.Inject;
 
 import org.obiba.agate.config.Profiles;
+import org.obiba.agate.domain.Group;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.security.Roles;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import com.google.common.collect.Lists;
+
 @Component
-@Profile(Profiles.DEV)
-public class UserSeed implements ApplicationListener<ContextRefreshedEvent> {
+public class UserGroupSeed implements ApplicationListener<ContextRefreshedEvent> {
 
   @Inject
   private UserService userService;
 
+  @Inject
+  private Environment env;
+
   @Override
   public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
+    seedGroups();
+    if(Lists.newArrayList(env.getActiveProfiles()).contains(Profiles.DEV)) seedUsers();
+  }
+
+  private void seedGroups() {
+    save(Group.newBuilder().name("mica-administrator").description("Administrate Mica").applications("mica").build());
+    save(Group.newBuilder().name("mica-reviewer").description("Edit and publish Mica content")
+      .applications("opal", "mica", "drupal").build());
+    save(Group.newBuilder().name("mica-editor").description("Edit Mica content").applications("opal", "mica", "drupal")
+      .build());
+    save(Group.newBuilder().name("mica-user").description("View Mica content").applications("mica", "drupal").build());
+    save(Group.newBuilder().name("opal-administrator").description("Administrate Opal").applications("opal").build());
+  }
+
+  private void save(Group group) {
+    if(userService.findGroup(group.getName()) == null) {
+      userService.save(group);
+    }
+  }
+
+  private void seedUsers() {
     User.Builder builder;
 
     builder = User.newBuilder() //
@@ -36,8 +62,7 @@ public class UserSeed implements ApplicationListener<ContextRefreshedEvent> {
       .firstName("Mica") //
       .lastName("Administrator") //
       .email("mica@example.org") //
-      .groups("mica-administrator") //
-      .applications("mica");
+      .groups("mica-administrator");
 
     save(builder.build());
 
@@ -46,8 +71,7 @@ public class UserSeed implements ApplicationListener<ContextRefreshedEvent> {
       .firstName("Opal") //
       .lastName("Administrator") //
       .email("opal@example.org") //
-      .groups("opal-administrator") //
-      .applications("opal");
+      .groups("opal-administrator");
 
     save(builder.build());
 
@@ -66,8 +90,7 @@ public class UserSeed implements ApplicationListener<ContextRefreshedEvent> {
       .lastName("Administrator") //
       .email("super@example.org") //
       .role(Roles.AGATE_ADMIN) //
-      .groups("opal-administrator", "mica-administrator") //
-      .applications("opal", "mica");
+      .groups("opal-administrator", "mica-administrator");
 
     save(builder.build());
 
@@ -75,8 +98,7 @@ public class UserSeed implements ApplicationListener<ContextRefreshedEvent> {
       .name("editor") //
       .firstName("Julie") //
       .email("editor@example.org") //
-      .groups("mica-editor") //
-      .applications("opal", "mica", "drupal");
+      .groups("mica-editor");
 
     save(builder.build());
 
@@ -84,8 +106,7 @@ public class UserSeed implements ApplicationListener<ContextRefreshedEvent> {
       .name("reviewer") //
       .firstName("Christine") //
       .email("reviewer@example.org") //
-      .groups("mica-reviewer") //
-      .applications("opal", "mica", "drupal");
+      .groups("mica-reviewer");
 
     save(builder.build());
 
@@ -127,7 +148,7 @@ public class UserSeed implements ApplicationListener<ContextRefreshedEvent> {
       userService.save(user);
       try {
         userService.updateUserPassword(user, "password");
-      } catch (PasswordNotChangedException e) {
+      } catch(PasswordNotChangedException e) {
         // ignored
       }
     }

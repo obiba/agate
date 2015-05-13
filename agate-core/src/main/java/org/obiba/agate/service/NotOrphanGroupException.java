@@ -10,9 +10,9 @@
 
 package org.obiba.agate.service;
 
-import java.util.NoSuchElementException;
+import javax.ws.rs.BadRequestException;
 
-public class NotOrphanGroupException extends NoSuchElementException {
+public class NotOrphanGroupException extends BadRequestException {
 
   private static final long serialVersionUID = 458553132519693383L;
 
