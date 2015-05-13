@@ -18,11 +18,15 @@
     <obiba-alert id="UserEditController"></obiba-alert>
 
     <tabset>
-      <tab select="tabRequired=true" heading="{{'user.required-info' | translate}}">
-        <div ng-if="tabRequired" ng-include="'app/user/views/user-required-info-form.html'"></div>
-      </tab>
-      <tab select="tabGeneral=true" heading="{{'user.general-info' | translate}}">
-        <div ng-if="tabGeneral" ng-include="'app/user/views/user-general-info-form.html'"></div>
+      <tab select="tabInfo=true" heading="{{'user.general-info' | translate}}">
+        <div class="row" ng-if="tabInfo">
+          <div class="col-md-6">
+            <div  ng-include="'app/user/views/user-required-info-form.html'"></div>
+          </div>
+          <div class="col-md-6">
+            <div  ng-include="'app/user/views/user-general-info-form.html'"></div>
+          </div>
+        </div>
       </tab>
       <tab select="tabAttributes=true" heading="{{'attributes' | translate}}">
         <attributes-form attributes="user.attributes" attributes-config="attributesConfig" used-attribute-names="usedAttributeNames"></attributes-form>
