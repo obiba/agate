@@ -8,6 +8,7 @@ agate.user = angular.module('agate.user', [
   'obiba.notification',
   'ngResource',
   'ngRoute',
+  'ui.select',
   'ui.bootstrap',
   'ui',
   'pascalprecht.translate'

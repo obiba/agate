@@ -75,6 +75,7 @@ agate.controller('ProfileController', ['$scope', '$location', '$modal', 'Account
       ConfigurationResource.get(function (config) {
         $scope.attributesConfig = config.userAttributes || [];
         $scope.attributeConfigPairs = AttributesService.getAttributeConfigPairs($scope.settingsAccount.attributes, $scope.attributesConfig);
+        $scope.usedAttributeNames = AttributesService.getUsedAttributeNames($scope.settingsAccount.attributes, $scope.attributesConfig);
       });
     };
 
@@ -83,6 +84,7 @@ agate.controller('ProfileController', ['$scope', '$location', '$modal', 'Account
         ConfigurationResource.get(function (config) {
           $scope.userConfigAttributes = AttributesService.findConfigAttributes(user.attributes, config.userAttributes);
           $scope.userNonConfigAttributes = config.userAttributes ? AttributesService.findNonConfigAttributes(user.attributes, config.userAttributes) : user.attributes;
+          $scope.usedAttributeNames = AttributesService.getUsedAttributeNames($scope.settingsAccount.attributes, $scope.attributesConfig);
         });
 
         return user;
@@ -119,6 +121,9 @@ agate.controller('ProfileController', ['$scope', '$location', '$modal', 'Account
             },
             attributesConfig: function () {
               return $scope.attributesConfig;
+            },
+            usedAttributeNames: function () {
+              return $scope.usedAttributeNames;
             }
           }
         })
@@ -137,11 +142,12 @@ agate.controller('ProfileController', ['$scope', '$location', '$modal', 'Account
 
   }]);
 
-agate.controller('ProfileModalController', ['$scope', '$modalInstance', '$filter', 'Account', 'settingsAccount', 'attributeConfigPairs', 'attributesConfig', 'AttributesService', 'AlertService',
-  function ($scope, $modalInstance, $filter, Account, settingsAccount, attributeConfigPairs, attributesConfig, AttributesService, AlertService) {
+agate.controller('ProfileModalController', ['$scope', '$modalInstance', '$filter', 'Account', 'settingsAccount', 'attributeConfigPairs', 'attributesConfig', 'usedAttributeNames', 'AttributesService', 'AlertService',
+  function ($scope, $modalInstance, $filter, Account, settingsAccount, attributeConfigPairs, attributesConfig, usedAttributeNames, AttributesService, AlertService) {
     $scope.settingsAccount = settingsAccount;
     $scope.attributeConfigPairs = attributeConfigPairs;
     $scope.attributesConfig = attributesConfig;
+    $scope.usedAttributeNames = usedAttributeNames;
 
     $scope.requiredField = $filter('translate')('user.email');
 
