@@ -1,6 +1,11 @@
 <div>
 
-  <h2 translate>user.pending-requests</h2>
+  <h2>
+    <ol class="agate-breadcrumb">
+      <li><a href="#/users" translate>users</a></li>
+      <li class="active"translate>user.pending-requests</li>
+    </ol>
+  </h2>
 
   <p class="voffset3" ng-hide="users.length > 0">
     <span translate>user.none-requests</span>
@@ -42,10 +47,13 @@
           <a href="mailto:{{user.email}}" target="_blank">{{user.email}}</a>
         </td>
         <td>
-          {{user.groups.join(', ')}}
+          <span class="label label-default hoffset-right" ng-repeat="group in user.groups">{{group}}</span>
         </td>
         <td>
-          {{user.applications.join(', ')}}<span ng-repeat="(app, appGroups) in user.applicationsGroups" title="{{appGroups.join(', ')}}"><span ng-if="$first && user.applications.length">, </span><em>{{app}}</em><span ng-if="!$last">, </span></span>
+          <ul class="no-style-list">
+            <li ng-if="user.applications && user.applications.length > 0"><span class="label label-default hoffset-right" ng-repeat="app in user.applications">{{app}}</span></li>
+            <li><span class="label label-info hoffset-right" ng-repeat="(app, appGroups) in user.applicationsGroups" title="{{'group.inherited-applications' | translate: {groups: appGroups.join(', ')} }}">{{app}}</span></li>
+          </ul>
         </td>
         <td>
           <ul class="list-inline">

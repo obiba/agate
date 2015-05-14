@@ -12,10 +12,10 @@
 @import "../bower_components/bootstrap/less/code";
 @import "../bower_components/bootstrap/less/grid";
 @import "../bower_components/bootstrap/less/tables";
-@import "../bower_components/bootstrap/less/forms";
 @import "../bower_components/bootstrap/less/buttons";
 @import "../bower_components/bootstrap/less/component-animations";
 @import "../bower_components/bootstrap/less/glyphicons";
+@import "../bower_components/bootstrap/less/forms";
 @import "../bower_components/bootstrap/less/dropdowns";
 @import "../bower_components/bootstrap/less/button-groups";
 @import "../bower_components/bootstrap/less/input-groups";
@@ -210,6 +210,10 @@ td.action-column {
   margin-top: 150px;
 }
 
+.hoffset-right {
+  margin-right: 2px;
+}
+
 /* start Password strength bar style */
 ul#strength {
   display: inline;
@@ -218,6 +222,12 @@ ul#strength {
   margin-left: 15px;
   padding: 0;
   vertical-align: 2px;
+}
+
+ul.no-style-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .point:last {
@@ -270,4 +280,10 @@ ul.sortable {
   padding: 2px;
   border: 1px solid transparent;
   border-radius: 4px;
+}
+
+.agate-breadcrumb {
+  .breadcrumb;
+  background: none;
+  padding: 0 0;
 }

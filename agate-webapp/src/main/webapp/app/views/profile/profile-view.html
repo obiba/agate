@@ -23,11 +23,15 @@
           </tr>
           <tr>
             <td translate>user.role</td>
-            <td>{{user.role}}</td>
+            <td>{{settingsAccount.role}}</td>
           </tr>
           <tr>
             <td translate>user.groups</td>
-            <td>{{user.groups.join(', ')}}</td>
+            <td><span class="label label-default hoffset-right" ng-repeat="group in settingsAccount.groups">{{group}}</span></td>
+          </tr>
+          <tr>
+            <td translate>user.applications</td>
+            <td><span class="label label-default hoffset-right" ng-repeat="app in settingsAccount.applications">{{app}}</span></td>
           </tr>
 
           <tr ng-repeat="userConfigAttribute in userConfigAttributes">

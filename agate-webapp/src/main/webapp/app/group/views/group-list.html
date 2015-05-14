@@ -46,7 +46,7 @@
           {{group.description}}
         </td>
         <td>
-          {{group.applications.join(', ')}}
+          <span class="label label-default hoffset-right" ng-repeat="app in group.applications">{{app}}</span>
         </td>
         <td>
           <ul class="list-inline">

@@ -1,5 +1,11 @@
 <div>
-  <h2 translate>group.titleEdit</h2>
+  <h2>
+    <ol class="agate-breadcrumb">
+      <li><a href="#/groups" translate>groups</a></li>
+      <li class="active"><span ng-if="group.name">{{group.name}}</span><span ng-if="!group.name" translate>group.new</span></li>
+    </ol>
+  </h2>
+
   <div class="row">
     <div class="col-md-6">
       <form name="form" role="form" novalidate ng-submit="save(form)">
@@ -9,13 +15,16 @@
 
         <div form-textarea name="description" model="group.description" label="group.description"></div>
 
-        <div class="form-group" style="width: 100% !important;">
-          <label for="applications" class="control-label">
+        <div class="form-group">
+          <label class="control-label">
             <span translate>applications</span>
           </label>
-          <select chosen multiple id="applications" name="applications" ng-model="group.applications"
-            ng-options="application for application in applicationList" class="chosen-select">
-          </select>
+          <ui-select multiple theme="bootstrap" ng-model="group.applications" reset-search-input="false">
+            <ui-select-match><span ng-bind-html="$select.selected[$index]"></span></ui-select-match>
+            <ui-select-choices  repeat="application in applicationList">
+              {{application}}
+            </ui-select-choices>
+          </ui-select>
         </div>
 
         <a href="#/groups" class="btn btn-default">
