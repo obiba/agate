@@ -14,8 +14,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.util.Optional;
@@ -127,7 +125,7 @@ public class KeyStoreService {
   private String validateNameAndOrganizationInfo(String cn, String ou, String o) {
     Optional<String> hostname = Optional.ofNullable(configurationService.getConfiguration().getDomain());
 
-    return String.format("CN=%s, OU=%s, O=%s", cn.isEmpty() ? hostname.get() : cn, ou.isEmpty() ? "opal" : ou,
+    return String.format("CN=%s, OU=%s, O=%s", cn.isEmpty() ? hostname.get() : cn, ou.isEmpty() ? "agate" : ou,
       o.isEmpty() ? hostname.get() : o);
   }
 }
