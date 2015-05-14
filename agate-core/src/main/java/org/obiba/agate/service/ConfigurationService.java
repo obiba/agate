@@ -95,15 +95,13 @@ public class ConfigurationService {
     JSONObject properties = new JSONObject();
     properties.put("email", newProperty("string", "Email") //
       .put("pattern", "^\\S+@\\S+$") //
-      .put("description", "Email is required.") //
       .put("validationMessage", "Not a valid email.") //
     );
-    properties.put("username", newProperty("string", "User Name").put("minLength", 3)
-      .put("description", "If not specified, user name will be the user email."));
+    properties.put("username", newProperty("string", "User Name").put("minLength", 3));
     properties.put("firstname", newProperty("string", "First Name"));
     properties.put("lastname", newProperty("string", "Last Name"));
 
-    JSONArray required = new JSONArray(Lists.newArrayList("email"));
+    JSONArray required = new JSONArray(Lists.newArrayList("username","email"));
 
     if(config.hasUserAttributes()) {
       config.getUserAttributes().forEach(a -> {
@@ -135,8 +133,8 @@ public class ConfigurationService {
 
   private JSONArray getJoinDefinition(Configuration config) throws JSONException {
     JSONArray definition = new JSONArray();
-    definition.put("email");
     definition.put("username");
+    definition.put("email");
     definition.put("firstname");
     definition.put("lastname");
     if(config.hasUserAttributes()) {
