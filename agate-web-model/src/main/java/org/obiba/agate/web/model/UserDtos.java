@@ -15,7 +15,6 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
-import org.obiba.agate.domain.Group;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.service.UserService;
 import org.obiba.web.model.AuthDtos;
@@ -58,6 +57,8 @@ class UserDtos {
     }
 
     if(user.hasApplications()) builder.addAllApplications(user.getApplications());
+
+    if (user.getLastLogin() != null) builder.setLastLogin(user.getLastLogin().toString());
 
     return builder.build();
   }
