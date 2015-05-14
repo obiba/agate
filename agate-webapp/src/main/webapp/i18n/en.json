@@ -54,6 +54,7 @@
     }
   },
   "join":{
+    "title": "Request an Account",
     "form": {
       "button": "Sign Up",
       "submit": "Join"
@@ -130,12 +131,12 @@
     }
   },
   "forgot-login": {
-    "title": "Login Recovery",
+    "title": "Can't access your account?",
     "success": "Check your email to complete your login recovery.",
-    "username-option": "I forgot my username.",
+    "username-option": "I forgot my username",
     "username": "Username",
     "email": "Email",
-    "password-option": "I forgot my password.",
+    "password-option": "I forgot my password",
     "submit": "Submit"
   },
   "sessions": {

@@ -31,16 +31,7 @@ agate.controller('LoginController', ['$scope', '$location', 'AuthenticationShare
 agate.controller('JoinController', ['$scope', '$location', 'JoinConfigResource', 'JoinResource', 'LocaleStringUtils',
   function ($scope, $location, JoinConfigResource, JoinResource, LocaleStringUtils) {
 
-    $scope.joinConfig = JoinConfigResource.get(function (res) {
-      res.definition.push(
-        {
-          type: "submit",
-          title: LocaleStringUtils.translate("join.form.submit")
-        }
-      );
-      return res;
-    });
-
+    $scope.joinConfig = JoinConfigResource.get();
     $scope.model = {};
 
     $scope.onSubmit = function (form) {

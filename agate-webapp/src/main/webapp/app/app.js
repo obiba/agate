@@ -77,8 +77,8 @@ agate
             authorizedRoles: [USER_ROLES.all]
           }
         })
-        .when('/forgot_login_details', {
-          templateUrl: 'app/views/forgot_login_details.html',
+        .when('/forgotten', {
+          templateUrl: 'app/views/forgotten.html',
           controller: 'ForgotLoginDetailsController',
           access: {
             authorizedRoles: [USER_ROLES.all]
