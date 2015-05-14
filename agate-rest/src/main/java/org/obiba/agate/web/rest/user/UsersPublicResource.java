@@ -40,7 +40,6 @@ import org.obiba.agate.security.AgateUserRealm;
 import org.obiba.agate.security.Roles;
 import org.obiba.agate.service.ApplicationService;
 import org.obiba.agate.service.ConfigurationService;
-import org.obiba.agate.service.NoSuchUserException;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.rest.config.JerseyConfiguration;
 import org.obiba.shiro.authc.HttpAuthorizationToken;
@@ -134,9 +133,9 @@ public class UsersPublicResource {
     @FormParam("password") String password, @Context HttpServletRequest request) {
     if(Strings.isNullOrEmpty(email)) throw new BadRequestException("Email cannot be empty");
 
-    if(Strings.isNullOrEmpty(username)) throw new BadRequestException("username cannot be empty");
+    if(Strings.isNullOrEmpty(username)) throw new BadRequestException("User name cannot be empty");
 
-    if(new EmailValidator().isValid(username, null)) throw new BadRequestException("username cannot be an email address.");
+    if(new EmailValidator().isValid(username, null)) throw new BadRequestException("User name cannot be an email address.");
 
     String name = username;
 
