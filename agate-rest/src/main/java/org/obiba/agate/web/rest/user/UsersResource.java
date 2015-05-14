@@ -22,6 +22,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
 import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.hibernate.validator.internal.constraintvalidators.EmailValidator;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.domain.UserStatus;
 import org.obiba.agate.service.UserService;
@@ -61,9 +62,17 @@ public class UsersResource {
   public Response create(Agate.UserCreateFormDto userCreateFormDto) {
     Agate.UserDto userDto = userCreateFormDto.getUser();
     String username = userDto.getName();
+
+    if (new EmailValidator().isValid(username, null)) throw new BadRequestException("username can not be an email address.");
+
     User user = userService.findUser(username);
 
     if(user != null) throw new BadRequestException("User already exists: " + username);
+
+    user = userService.findUserByEmail(userDto.getEmail());
+
+    if(user != null) throw new BadRequestException("Email already in use: " + user.getEmail());
+
     if(CURRENT_USER_NAME.equals(username)) throw new BadRequestException("Reserved user name: " + CURRENT_USER_NAME);
 
     user = userService.createUser(dtos.fromDto(userDto), userCreateFormDto.getPassword());

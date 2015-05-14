@@ -4,12 +4,10 @@ import java.io.IOException;
 import java.security.SignatureException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 import javax.ws.rs.BadRequestException;
 
 import org.apache.shiro.SecurityUtils;
@@ -103,6 +101,11 @@ public class UserService {
     return users == null || users.isEmpty() ? null : users.get(0);
   }
 
+  public @Nullable User findUserByEmail(@NotNull String email) {
+    List<User> users = userRepository.findByEmail(email);
+    return users == null || users.isEmpty() ? null : users.get(0);
+  }
+
   public
   @Nullable
   UserCredentials findUserCredentials(@NotNull String username) {
@@ -142,6 +145,7 @@ public class UserService {
 
   public User createUser(@NotNull User user, @Nullable String password) {
     User saved = save(user);
+
     if(!Strings.isNullOrEmpty(password)) {
       updateUserPassword(user, password);
     } else if(user.getStatus() == UserStatus.PENDING) {
@@ -149,6 +153,7 @@ public class UserService {
     } else if(user.getStatus() == UserStatus.APPROVED) {
       eventBus.post(new UserApprovedEvent(user));
     }
+
     return saved;
   }
 
@@ -168,12 +173,13 @@ public class UserService {
       if(saved == null) {
         saved = user;
       } else {
-        BeanUtils.copyProperties(user, saved, "id", "version", "createdBy", "createdDate", "lastModifiedBy",
+        BeanUtils.copyProperties(user, saved, "id", "name", "version", "createdBy", "createdDate", "lastModifiedBy",
           "lastModifiedDate");
       }
     }
 
     userRepository.save(saved);
+
     if(saved.getGroups() != null) {
       for(String groupName : saved.getGroups()) {
         Group group = findGroup(groupName);
@@ -426,21 +432,5 @@ public class UserService {
 
     mailService.sendEmail(user.getEmail(), propertyResolver.getProperty("resetPasswordSubject"),
       templateEngine.process("resetPasswordEmail", ctx));
-  }
-
-  public void sendUsernameEmail(String email) throws IOException {
-    List<User> users = userRepository.findByEmail(email);
-
-    if (users.isEmpty()) return;
-
-    List<String> userNames = users.stream().map(u -> u.getName()).collect(Collectors.toList());
-
-    final RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "registration.");
-    final Context ctx = new Context();
-    ctx.setVariable("user", users.get(0));
-    ctx.setVariable("userNames", userNames);
-
-    mailService.sendEmail(users.get(0).getEmail(), propertyResolver.getProperty("forgotUsernameSubject"),
-      templateEngine.process("forgotUsernameEmail", ctx));
   }
 }
