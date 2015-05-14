@@ -8,8 +8,7 @@
 <p>
   Dear <span th:text="${user.firstName + ' ' + user.lastName}"></span>,
   <br/>
-  Please follow <a href="" th:href="@{'https://' + ${publicUrl} + '/#/reset_password' + '?key=' + ${key}}"
-  target="_blank">this link</a> to change your password.
+  You are registered with the following username(s): <span th:each="un: ${userNames}"><strong th:text="${un}"></strong><span th:if="!${unStat.last}">, </span></span>.
 </p>
 </body>
 </html>

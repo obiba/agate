@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.security.SignatureException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -374,9 +375,16 @@ public class UserService {
   }
 
   public void confirmUser(@NotNull User user, String password) {
-    UserCredentials credentials = UserCredentials.newBuilder().name(user.getName()).password(hashPassword(password))
-      .build();
-    userCredentialsRepository.save(credentials);
+    UserCredentials userCredentials = findUserCredentials(user.getName());
+
+    if(userCredentials == null) {
+      userCredentials = UserCredentials.newBuilder().name(user.getName()).build();
+    }
+
+    userCredentials.setPassword(hashPassword(password));
+
+    userCredentialsRepository.save(userCredentials);
+
     user.setStatus(UserStatus.ACTIVE);
     save(user);
   }
@@ -418,5 +426,21 @@ public class UserService {
 
     mailService.sendEmail(user.getEmail(), propertyResolver.getProperty("resetPasswordSubject"),
       templateEngine.process("resetPasswordEmail", ctx));
+  }
+
+  public void sendUsernameEmail(String email) throws IOException {
+    List<User> users = userRepository.findByEmail(email);
+
+    if (users.isEmpty()) return;
+
+    List<String> userNames = users.stream().map(u -> u.getName()).collect(Collectors.toList());
+
+    final RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "registration.");
+    final Context ctx = new Context();
+    ctx.setVariable("user", users.get(0));
+    ctx.setVariable("userNames", userNames);
+
+    mailService.sendEmail(users.get(0).getEmail(), propertyResolver.getProperty("forgotUsernameSubject"),
+      templateEngine.process("forgotUsernameEmail", ctx));
   }
 }

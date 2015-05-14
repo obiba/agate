@@ -39,6 +39,7 @@ import org.obiba.agate.security.AgateUserRealm;
 import org.obiba.agate.security.Roles;
 import org.obiba.agate.service.ApplicationService;
 import org.obiba.agate.service.ConfigurationService;
+import org.obiba.agate.service.NoSuchUserException;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.rest.config.JerseyConfiguration;
 import org.obiba.shiro.authc.HttpAuthorizationToken;
@@ -81,6 +82,25 @@ public class UsersPublicResource {
     if(user.getStatus() != UserStatus.APPROVED) throw new BadRequestException("Invalid user status.");
 
     userService.confirmUser(user, password);
+
+    return Response.ok().build();
+  }
+
+  @POST
+  @Path("/_forgot_password")
+  public Response forgotPassword(@FormParam("username")String username) throws IOException {
+    User user = userService.findUser(username);
+    UserCredentials userCredentials = userService.findUserCredentials(username);
+
+    if (user != null && userCredentials != null) userService.resetPassword(user);
+
+    return Response.ok().build();
+  }
+
+  @POST
+  @Path("/_forgot_username")
+  public Response forgotUsername(@FormParam("email")String email) throws IOException {
+    userService.sendUsernameEmail(email);
 
     return Response.ok().build();
   }

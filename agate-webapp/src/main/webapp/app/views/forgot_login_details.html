@@ -1,0 +1,40 @@
+<div class="row">
+  <div class="col-md-4"></div>
+  <div class="col-md-4">
+    <h2 translate>forgot-login.title</h2>
+    <obiba-alert id="ForgotLoginDetailsController"></obiba-alert>
+
+    <div class="well">
+      <form name="form" role="form" novalidate ng-submit="sendRequest(form)">
+        <div class="radio">
+          <label>
+            <input type="radio" ng-model="forgotPassword" ng-value="true">
+            <span translate>forgot-login.password-option</span>
+          </label>
+        </div>
+
+        <div class="radio">
+          <label>
+            <input type="radio" ng-model="forgotPassword" ng-value="false">
+            <span translate>forgot-login.username-option</span>
+          </label>
+        </div>
+
+        <div form-input type="text" name="username" model="username" label="forgot-login.username"
+          ng-show="forgotPassword" required="forgotPassword"></div>
+
+        <div form-input type="email" name="email" model="email" label="forgot-login.email" ng-show="!forgotPassword"
+          required="!forgotPassword"></div>
+
+        <button type="submit" class="btn btn-primary">
+          <span translate>forgot-login.submit</span>
+        </button>
+
+        <a href="#/" type="button" class="btn btn-default">
+          <span translate>cancel</span>
+        </a>
+      </form>
+    </div>
+  </div>
+</div>
+

@@ -22,4 +22,6 @@ public interface UserRepository extends MongoRepository<User, String> {
   List<User> findByRoleAndLastLoginLessThan(String role, DateTime dateTime);
 
   List<User> findByApplications(String application);
+
+  List<User> findByEmail(String email);
 }
