@@ -30,6 +30,7 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
+import org.hibernate.validator.internal.constraintvalidators.EmailValidator;
 import org.joda.time.DateTime;
 import org.obiba.agate.domain.AttributeConfiguration;
 import org.obiba.agate.domain.User;
@@ -90,17 +91,10 @@ public class UsersPublicResource {
   @Path("/_forgot_password")
   public Response forgotPassword(@FormParam("username")String username) throws IOException {
     User user = userService.findUser(username);
-    UserCredentials userCredentials = userService.findUserCredentials(username);
+    if(user == null) user = userService.findUserByEmail(username);
+    UserCredentials userCredentials = user != null ? userService.findUserCredentials(user.getName()) : null;
 
     if (user != null && userCredentials != null) userService.resetPassword(user);
-
-    return Response.ok().build();
-  }
-
-  @POST
-  @Path("/_forgot_username")
-  public Response forgotUsername(@FormParam("email")String email) throws IOException {
-    userService.sendUsernameEmail(email);
 
     return Response.ok().build();
   }
@@ -140,15 +134,21 @@ public class UsersPublicResource {
     @FormParam("password") String password, @Context HttpServletRequest request) {
     if(Strings.isNullOrEmpty(email)) throw new BadRequestException("Email cannot be empty");
 
-    String name = Strings.isNullOrEmpty(username) ? email : username;
+    if(Strings.isNullOrEmpty(username)) throw new BadRequestException("username cannot be empty");
+
+    if(new EmailValidator().isValid(username, null)) throw new BadRequestException("username cannot be an email address.");
+
+    String name = username;
 
     if(CURRENT_USER_NAME.equals(name)) throw new BadRequestException("Reserved user name: " + CURRENT_USER_NAME);
 
     User user = userService.findUser(name);
 
-    if(user != null) {
-      throw new BadRequestException("User already exists: " + name);
-    }
+    if(user != null) throw new BadRequestException("User already exists: " + name);
+
+    user = userService.findUserByEmail(email);
+
+    if(user != null) throw new BadRequestException("Email already in use: " + user.getEmail());
 
     user = User.newBuilder().name(name).realm(AgateUserRealm.AGATE_REALM).role(Roles.AGATE_USER).pending()
       .firstName(firstName).lastName(lastName).email(email).build();

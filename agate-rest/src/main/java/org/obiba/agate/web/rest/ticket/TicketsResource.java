@@ -89,6 +89,9 @@ public class TicketsResource extends BaseTicketResource {
     Subject subject = null;
     try {
       User user = userService.findUser(username);
+
+      if(user == null) user = userService.findUserByEmail(username);
+
       validateUser(servletRequest, username, user);
       validateApplication(servletRequest, user);
 

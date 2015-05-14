@@ -38,6 +38,7 @@ public class User extends AbstractAuditableDocument {
   private String lastName;
 
   @Email
+  @Indexed(unique = true)
   private String email;
 
   private Map<String,String> attributes = Maps.newHashMap();

@@ -11,6 +11,7 @@
 package org.obiba.agate.web.rest.user;
 
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
@@ -40,6 +41,7 @@ public abstract class AbstractUserResource {
   @Path("/password")
   public Response updatePassword(@FormParam("password") String password) {
     userService.updateUserPassword(getUser(), password);
+
     return Response.noContent().build();
   }
 
@@ -47,8 +49,13 @@ public abstract class AbstractUserResource {
    * Updates user properties
    */
   protected Response updateUser(Agate.UserDto userDto) {
-    User user = dtos.fromDto(userDto);
+    User user = userService.findUserByEmail(userDto.getEmail());
+
+    if(user != null) throw new BadRequestException("Email already in user: " + user.getEmail());
+
+    user = dtos.fromDto(userDto);
     userService.save(user);
+
     return Response.noContent().build();
   }
 

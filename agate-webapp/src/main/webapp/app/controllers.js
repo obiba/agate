@@ -193,11 +193,8 @@ agate.controller('ResetPasswordController', ['$scope', '$location', 'ConfirmReso
     };
   }]);
 
-agate.controller('ForgotLoginDetailsController', ['$scope', 'AlertService', 'ForgotUsernameResource', 'ForgotPasswordResource',
-  function ($scope, AlertService, ForgotUsernameResource, ForgotPasswordResource) {
-    $scope.title = '';
-    $scope.forgotPassword = true;
-    $scope.email = '';
+agate.controller('ForgotLoginDetailsController', ['$scope', 'AlertService', 'ForgotPasswordResource',
+  function ($scope, AlertService, ForgotPasswordResource) {
     $scope.username = '';
 
     $scope.sendRequest = function(form) {
@@ -218,10 +215,6 @@ agate.controller('ForgotLoginDetailsController', ['$scope', 'AlertService', 'For
         AlertService.alert({id: 'ForgotLoginDetailsController', type: 'danger', msgKey: 'error', delay: 5000});
       };
 
-      if ($scope.forgotPassword) {
-        ForgotPasswordResource.post({username: $scope.username}).success(successHandler).error(errorHandler);
-      } else {
-        ForgotUsernameResource.post({email: $scope.email}).success(successHandler).error(errorHandler);
-      }
+      ForgotPasswordResource.post({username: $scope.username}).success(successHandler).error(errorHandler);
     };
   }]);
