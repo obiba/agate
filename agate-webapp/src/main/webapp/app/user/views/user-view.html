@@ -9,86 +9,86 @@
   -->
 
 <div>
+  <h2>
+    <ol class="agate-breadcrumb">
+      <li><a href="#/users" translate>users</a></li>
+      <li class="active">{{user.name}}</li>
+    </ol>
+  </h2>
 
-  <h2 translate>user.details</h2>
+  <div class="row">
+    <div class="col-md-6">
+      <obiba-alert id="UserViewController"></obiba-alert>
 
-  <div class="voffset2">
-    <div class="row">
-      <div class="col-md-6">
-        <obiba-alert id="UserViewController"></obiba-alert>
+      <table class="table table-striped">
+        <tbody>
+        <tr>
+          <td translate>user.name</td>
+          <td>{{user.name}}</td>
+        </tr>
+        <tr>
+          <td translate>user.firstName</td>
+          <td>{{user.firstName}}</td>
+        </tr>
+        <tr>
+          <td translate>user.lastName</td>
+          <td>{{user.lastName}}</td>
+        </tr>
+        <tr>
+          <td translate>user.email</td>
+          <td>{{user.email}}</td>
+        </tr>
+        <tr>
+          <td translate>user.groups</td>
+          <td><span class="label label-default hoffset-right" ng-repeat="group in user.groups">{{group}}</span></td>
+        </tr>
+        <tr>
+          <td translate>user.applications</td>
+          <td><span class="label label-default hoffset-right" ng-repeat="app in user.applications">{{app}}</span></td>
+        </tr>
+        <tr>
+          <td translate>user.realm</td>
+          <td>{{user.realm}}</td>
+        </tr>
+        <tr>
+          <td translate>user.role</td>
+          <td>{{user.role}}</td>
+        </tr>
+        <tr>
+          <td translate>user.status</td>
+          <td translate="user.{{user.status}}">
+          </td>
+        </tr>
+        <tr>
+          <td translate>user.createdDate</td>
+          <td>
+            {{user.timestamps.created | amDateFormat:'YYYY-MM-DD HH:mm:ss'}}
+          </td>
+        </tr>
+        <tr>
+          <td translate>user.lastLogin</td>
+          <td>
+            <span am-time-ago="user.lastLogin"></span>
+          </td>
+        </tr>
+        <tr ng-repeat="userConfigAttribute in userConfigAttributes">
+          <td>{{userConfigAttribute.name}}</td>
+          <td>
+            <span ng-show="userConfigAttribute.type !== 'BOOLEAN'">{{userConfigAttribute.value}}</span>
+            <span ng-show="userConfigAttribute.type === 'BOOLEAN' && userConfigAttribute.value === 'true'"><i class="fa fa-check"></i></span>
+          </td>
+        </tr>
+        </tbody>
+      </table>
 
-        <table class="table table-striped">
-          <tbody>
-          <tr>
-            <td translate>user.name</td>
-            <td>{{user.name}}</td>
-          </tr>
-          <tr>
-            <td translate>user.firstName</td>
-            <td>{{user.firstName}}</td>
-          </tr>
-          <tr>
-            <td translate>user.lastName</td>
-            <td>{{user.lastName}}</td>
-          </tr>
-          <tr>
-            <td translate>user.email</td>
-            <td>{{user.email}}</td>
-          </tr>
-          <tr>
-            <td translate>user.groups</td>
-            <td>{{user.groups.join(', ')}}</td>
-          </tr>
-          <tr>
-            <td translate>user.applications</td>
-            <td>{{user.applications.join(', ')}}</td>
-          </tr>
-          <tr>
-            <td translate>user.realm</td>
-            <td>{{user.realm}}</td>
-          </tr>
-          <tr>
-            <td translate>user.role</td>
-            <td>{{user.role}}</td>
-          </tr>
-          <tr>
-            <td translate>user.status</td>
-            <td translate>
-              {{user.status}}
-            </td>
-          </tr>
-          <tr>
-            <td translate>user.createdDate</td>
-            <td>
-              {{user.timestamps.created | amDateFormat:'YYYY-MM-DD HH:mm:ss'}}
-            </td>
-          </tr>
-          <tr>
-            <td translate>user.lastLogin</td>
-            <td>
-              <span am-time-ago="user.lastLogin"></span>
-            </td>
-          </tr>
-
-          <tr ng-repeat="userConfigAttribute in userConfigAttributes">
-            <td>{{userConfigAttribute.name}}</td>
-            <td>
-              <span ng-show="userConfigAttribute.type !== 'BOOLEAN'">{{userConfigAttribute.value}}</span>
-              <span ng-show="userConfigAttribute.type === 'BOOLEAN' && userConfigAttribute.value === 'true'"><i class="fa fa-check"></i></span>
-            </td>
-          </tr>
-          </tbody>
-        </table>
-
-        <attributes-view attributes='userNonConfigAttributes'></attributes-view>
-      </div>
+      <attributes-view attributes='userNonConfigAttributes'></attributes-view>
     </div>
-
-    <update-password-button profile="profile" updated="onPasswordUpdated()" user-id="{{user.id}}"></update-password-button>
-
-    <a ng-href="#/user/{{user.id}}/edit" class="btn btn-primary">
-      <i class="fa fa-pencil-square-o"></i> <span translate>edit</span>
-    </a>
-
   </div>
+
+  <update-password-button profile="profile" updated="onPasswordUpdated()" user-id="{{user.id}}"></update-password-button>
+
+  <a ng-href="#/user/{{user.id}}/edit" class="btn btn-primary">
+    <i class="fa fa-pencil-square-o"></i> <span translate>edit</span>
+  </a>
+
 </div>

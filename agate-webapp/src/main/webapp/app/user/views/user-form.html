@@ -10,7 +10,12 @@
 
 <div>
 
-  <h2 class="voffset5" translate>user.label-edit</h2>
+  <h2>
+    <ol class="agate-breadcrumb">
+      <li><a href="#/users" translate>users</a></li>
+      <li class="active"><span ng-if="user.name">{{user.name}}</span><span ng-if="!user.name" translate>user.new</span></li>
+    </ol>
+  </h2>
 
   <form name="form" role="form" novalidate
     class="ng-scope ng-invalid ng-invalid-required ng-dirty" ng-submit="save()">

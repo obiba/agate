@@ -52,10 +52,13 @@
         <td translate="user.{{user.role}}">
         </td>
         <td>
-          {{user.groups.join(', ')}}
+          <span class="label label-default hoffset-right" ng-repeat="group in user.groups">{{group}}</span>
         </td>
         <td>
-          {{user.applications.join(', ')}}<span ng-repeat="(app, appGroups) in user.applicationsGroups" title="{{appGroups.join(', ')}}"><span ng-if="$first && user.applications.length">, </span><em>{{app}}</em><span ng-if="!$last">, </span></span>
+          <ul class="no-style-list">
+            <li ng-if="user.applications && user.applications.length > 0"><span class="label label-default hoffset-right" ng-repeat="app in user.applications">{{app}}</span></li>
+            <li><span class="label label-info hoffset-right" ng-repeat="(app, appGroups) in user.applicationsGroups" title="{{'group.inherited-applications' | translate: {groups: appGroups.join(', ')} }}">{{app}}</span></li>
+          </ul>
         </td>
         <td class="action-column">
           <ul class="list-inline pull-right">

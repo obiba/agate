@@ -1,5 +1,10 @@
 <div>
-  <h2 translate>application.titleEdit</h2>
+  <h2>
+    <ol class="agate-breadcrumb">
+      <li><a href="#/applications" translate>applications</a></li>
+      <li class="active"><span ng-if="application.name">{{application.name}}</span><span ng-if="!application.name" translate>application.new</span></li>
+    </ol>
+  </h2>
   <div class="row">
     <div class="col-md-6">
       <form name="form" role="form" novalidate ng-submit="save(form)" autocomplete="off">
