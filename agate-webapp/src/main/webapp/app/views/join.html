@@ -16,12 +16,20 @@
       <strong>Authentication failed!</strong> Please check your credentials and try again.
     </div>
     <div class="well">
+      <h4 translate>join.title</h4>
       <div ng-controller="JoinController">
-        <form name="joinForm"
-          sf-schema="joinConfig.schema"
-          sf-form="joinConfig.definition"
-          sf-model="model"
-          ng-submit="onSubmit(joinForm)"></form>
+        <form name="joinForm">
+
+          <div sf-schema="joinConfig.schema" sf-form="joinConfig.definition" sf-model="model"></div>
+
+          <button type="submit" class="btn btn-primary" ng-click="onSubmit(joinForm)">
+            <span translate>join.form.submit</span>
+          </button>
+
+          <a href="#/" type="button" class="btn btn-default">
+            <span translate>cancel</span>
+          </a>
+        </form>
       </div>
     </div>
     <div class="col-md-2"></div>
