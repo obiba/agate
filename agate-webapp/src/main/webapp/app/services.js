@@ -76,17 +76,6 @@ agate.factory('ForgotUsernameResource', ['$http',
     };
   }]);
 
-agate.factory('ForgotUsernameResource', ['$http',
-  function ($http) {
-    return {
-      post: function(data) {
-        return $http.post('ws/users/_forgot_username', $.param(data), {
-          headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-        });
-      }
-    };
-  }]);
-
 agate.factory('ForgotPasswordResource', ['$http',
   function ($http) {
     return {

@@ -39,7 +39,7 @@
   "login": {
     "title": "Authentication",
     "form": {
-      "username": "User Name",
+      "username": "User Name or Email",
       "username.placeholder": "Your login",
       "password": "Password",
       "password.placeholder": "Your password",
@@ -134,7 +134,7 @@
     "title": "Can't access your account?",
     "success": "Check your email to complete your login recovery.",
     "username-option": "I forgot my username",
-    "username": "Username",
+    "username": "Username or Email",
     "email": "Email",
     "password-option": "I forgot my password",
     "submit": "Submit"
