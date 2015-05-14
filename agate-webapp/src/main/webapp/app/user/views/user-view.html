@@ -57,6 +57,18 @@
               {{user.status}}
             </td>
           </tr>
+          <tr>
+            <td translate>user.createdDate</td>
+            <td>
+              {{user.timestamps.created | amDateFormat:'YYYY-MM-DD HH:mm:ss'}}
+            </td>
+          </tr>
+          <tr>
+            <td translate>user.lastLogin</td>
+            <td>
+              <span am-time-ago="user.lastLogin"></span>
+            </td>
+          </tr>
 
           <tr ng-repeat="userConfigAttribute in userConfigAttributes">
             <td>{{userConfigAttribute.name}}</td>

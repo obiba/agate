@@ -265,6 +265,8 @@
     "role": "Role",
     "groups": "Groups",
     "applications": "Applications",
+    "createdDate": "Created Date",
+    "lastLogin": "Last Logged-in",
     "agate-administrator": "Administrator",
     "agate-user": "User",
     "pending-requests": "Pending Requests",
