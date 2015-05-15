@@ -22,7 +22,8 @@ var agate = angular.module('agate', [
   'ui.bootstrap',
   'angularUtils.directives.dirPagination',
   'schemaForm',
-  'obiba.utils'
+  'obiba.utils',
+  'vcRecaptcha'
 ]);
 
 agate

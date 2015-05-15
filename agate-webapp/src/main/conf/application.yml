@@ -72,3 +72,10 @@ registration:
     confirmationSubject: Registration Approved
     resetPasswordSubject: Password Reset
     forgotUsernameSubject: Account Login Details
+
+recaptcha:
+    verifyUrl: https://www.google.com/recaptcha/api/siteverify
+    secret: 6Lfo7gYTAAAAADym-vSDvPBeBCXaxIprA0QXLk_b
+
+client:
+    reCaptchaKey: 6Lfo7gYTAAAAAOyl8_MHuH-AVBzRDtpIuJrjL3Pb

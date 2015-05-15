@@ -28,23 +28,45 @@ agate.controller('LoginController', ['$scope', '$location', 'AuthenticationShare
     };
   }]);
 
-agate.controller('JoinController', ['$scope', '$location', 'JoinConfigResource', 'JoinResource', 'LocaleStringUtils',
-  function ($scope, $location, JoinConfigResource, JoinResource, LocaleStringUtils) {
+agate.controller('JoinController', ['$rootScope', '$scope', '$location', 'JoinConfigResource', 'JoinResource', 'ClientConfig',
+  'NOTIFICATION_EVENTS', 'ServerErrorUtils', 'AlertService', 'vcRecaptchaService',
+  function ($rootScope, $scope, $location, JoinConfigResource, JoinResource, ClientConfig, NOTIFICATION_EVENTS, ServerErrorUtils, AlertService, vcRecaptchaService) {
 
     $scope.joinConfig = JoinConfigResource.get();
     $scope.model = {};
+    $scope.response = null;
+    $scope.widgetId = null;
+    $scope.config = ClientConfig;
+
+    $scope.setResponse = function (response) {
+      $scope.response = response;
+    };
+
+    $scope.setWidgetId = function (widgetId) {
+      $scope.widgetId = widgetId;
+    };
 
     $scope.onSubmit = function (form) {
       // First we broadcast an event so all fields validate themselves
       $scope.$broadcast('schemaFormValidate');
 
-      // Then we check if the form is valid
+      if (!$scope.response) {
+        AlertService.alert({id: 'JoinController', type: 'danger', msgKey: 'missing-reCaptcha-error'});
+        return;
+      }
+
       if (form.$valid) {
-        // Submit join request
-        JoinResource.post($scope.model)
+        JoinResource.post(angular.extend({}, $scope.model, {reCaptchaResponse: $scope.response}))
           .success(function () {
             $location.url($location.path());
             $location.path('/');
+          })
+          .error(function (data) {
+            $rootScope.$broadcast(NOTIFICATION_EVENTS.showNotificationDialog, {
+              message: ServerErrorUtils.buildMessage(data)
+            });
+
+            vcRecaptchaService.reload($scope.widgetId);
           });
       }
     };
