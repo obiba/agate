@@ -78,7 +78,7 @@ public class UsersJoinResourceTests {
 
     resource
       .create("un", "fn", "ln", "test@localhost.domain", Lists.newArrayList("app"), Lists.newArrayList("g1", "g2"),
-        "password", request);
+        "password", null, request);
     verify(userService).createUser(user.capture(), eq("password"));
     assertEquals("id", user.getValue().getId());
     assertEquals("test@localhost.domain", user.getValue().getEmail());
@@ -100,6 +100,6 @@ public class UsersJoinResourceTests {
     exception.expectMessage(Matchers.containsString("att1"));
     resource
       .create("un", "fn", "ln", "test@localhost.domain", Lists.newArrayList("app"), Lists.newArrayList("g1", "g2"),
-        null, request);
+        null, null, request);
   }
 }
