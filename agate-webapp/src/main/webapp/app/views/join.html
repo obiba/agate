@@ -12,15 +12,21 @@
   <div class="col-md-2"></div>
   <div class="col-md-6">
 
-    <div class="alert alert-danger" ng-show="authenticationError" translate="login.messages.error.authentication">
-      <strong>Authentication failed!</strong> Please check your credentials and try again.
-    </div>
+    <obiba-alert id="JoinController"></obiba-alert>
+
     <div class="well">
       <h4 translate>join.title</h4>
       <div ng-controller="JoinController">
-        <form name="joinForm">
+        <form name="joinForm" ng-submit="submit(form)">
 
           <div sf-schema="joinConfig.schema" sf-form="joinConfig.definition" sf-model="model"></div>
+
+          <div class="form-group"
+            vc-recaptcha
+            theme="'light'"
+            key="config.reCaptchaKey"
+            on-create="setWidgetId(widgetId)"
+            on-success="setResponse(response)"></div>
 
           <button type="submit" class="btn btn-primary" ng-click="onSubmit(joinForm)">
             <span translate>join.form.submit</span>

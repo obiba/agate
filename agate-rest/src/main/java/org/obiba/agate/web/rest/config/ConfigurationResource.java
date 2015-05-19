@@ -15,10 +15,14 @@ import javax.ws.rs.core.Response;
 
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.json.JSONException;
+import org.obiba.agate.config.ClientConfiguration;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.KeyStoreService;
 import org.obiba.agate.web.model.Agate;
 import org.obiba.agate.web.model.Dtos;
+import org.springframework.boot.bind.RelaxedPropertyResolver;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.PropertyResolver;
 
 import com.codahale.metrics.annotation.Timed;
 
@@ -35,6 +39,9 @@ public class ConfigurationResource {
 
   @Inject
   private Dtos dtos;
+
+  @Inject
+  private ClientConfiguration clientConfiguration;
 
   @GET
   @Timed
@@ -53,6 +60,13 @@ public class ConfigurationResource {
   @Timed
   public Response getJoinConfiguration() throws JSONException {
     return Response.ok(configurationService.getJoinConfiguration().toString()).build();
+  }
+
+  @GET
+  @Path("/client")
+  @Produces(APPLICATION_JSON)
+  public ClientConfiguration getClientConfiguration() throws JSONException {
+    return clientConfiguration;
   }
 
   @PUT

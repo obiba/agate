@@ -92,9 +92,9 @@ agate.factory('JoinConfigResource', ['$resource',
     return $resource('ws/config/join');
   }]);
 
-agate.factory('JoinConfigResource', ['$resource',
+agate.factory('ClientConfigResource', ['$resource',
   function ($resource) {
-    return $resource('ws/config/join');
+    return $resource('ws/config/client');
   }]);
 
 agate.factory('Session', ['$cookieStore',

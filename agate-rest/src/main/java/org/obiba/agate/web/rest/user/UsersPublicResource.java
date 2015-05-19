@@ -40,6 +40,7 @@ import org.obiba.agate.security.AgateUserRealm;
 import org.obiba.agate.security.Roles;
 import org.obiba.agate.service.ApplicationService;
 import org.obiba.agate.service.ConfigurationService;
+import org.obiba.agate.service.ReCaptchaService;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.rest.config.JerseyConfiguration;
 import org.obiba.shiro.authc.HttpAuthorizationToken;
@@ -70,6 +71,9 @@ public class UsersPublicResource {
 
   @Inject
   private ConfigurationService configurationService;
+
+  @Inject
+  private ReCaptchaService reCaptchaService;
 
   @POST
   @Path("/_confirm")
@@ -130,12 +134,14 @@ public class UsersPublicResource {
   public Response create(@FormParam("username") String username, @FormParam("firstname") String firstName,
     @FormParam("lastname") String lastName, @FormParam("email") String email,
     @FormParam("application") List<String> applications, @FormParam("group") List<String> groups,
-    @FormParam("password") String password, @Context HttpServletRequest request) {
+    @FormParam("password") String password, @FormParam("reCaptchaResponse") String reCaptchaResponse, @Context HttpServletRequest request) {
     if(Strings.isNullOrEmpty(email)) throw new BadRequestException("Email cannot be empty");
 
     if(Strings.isNullOrEmpty(username)) throw new BadRequestException("User name cannot be empty");
 
-    if(new EmailValidator().isValid(username, null)) throw new BadRequestException("User name cannot be an email address.");
+    if(new EmailValidator().isValid(username, null)) throw new BadRequestException("User name cannot be an email address");
+
+    if (!Strings.isNullOrEmpty(reCaptchaResponse) && !reCaptchaService.verify(reCaptchaResponse)) throw new BadRequestException("Invalid recaptcha response");
 
     String name = username;
 
