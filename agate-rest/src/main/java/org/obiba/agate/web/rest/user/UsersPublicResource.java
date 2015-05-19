@@ -60,8 +60,8 @@ public class UsersPublicResource {
 
   private static final String CURRENT_USER_NAME = "_current";
 
-  private static final String[] REQUIRED_PARAMS = new String[] { "username", "firstname", "lastname", "application", //
-    "email", "groups" };
+  private static final String[] BUILTIN_PARAMS = new String[] { "username", "firstname", "lastname", "application", //
+    "email", "groups", "reCaptchaResponse" };
 
   @Inject
   private UserService userService;
@@ -175,7 +175,7 @@ public class UsersPublicResource {
     final Map<String, AttributeConfiguration> attributes = configurationService.getConfiguration().getUserAttributes()
       .stream().collect(Collectors.toMap(a -> a.getName(), a -> a));
     final Map<String, String[]> params = request.getParameterMap();
-    final Set<String> extraParams = Sets.difference(params.keySet(), Sets.newHashSet(Arrays.asList(REQUIRED_PARAMS)));
+    final Set<String> extraParams = Sets.difference(params.keySet(), Sets.newHashSet(Arrays.asList(BUILTIN_PARAMS)));
 
     Map<String, String> res = Maps.newHashMap();
 
