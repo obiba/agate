@@ -51,7 +51,7 @@ public abstract class AbstractUserResource {
   protected Response updateUser(Agate.UserDto userDto) {
     User user = userService.findUserByEmail(userDto.getEmail());
 
-    if(user != null) throw new BadRequestException("Email already in user: " + user.getEmail());
+    if(user != null && !user.getName().equals(userDto.getName())) throw new BadRequestException("Email already in user: " + user.getEmail());
 
     user = dtos.fromDto(userDto);
     userService.save(user);
