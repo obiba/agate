@@ -333,6 +333,7 @@
   "required": "Required fields cannot be empty.",
   "suppl-info": "Supplementary information",
   "fix-error": "Please fix errors bellow",
+  "missing-reCaptcha-error": "Missing reCaptcha response",
   "dnd-reorder": "Drag and drop to reorder",
   "loading": "Loading...",
   "error": "Error",

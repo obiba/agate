@@ -18,6 +18,7 @@ import org.obiba.agate.domain.AttributeConfiguration;
 import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.service.ConfigurationService;
+import org.obiba.agate.service.ReCaptchaService;
 import org.obiba.agate.service.UserService;
 
 import com.google.common.collect.Lists;
@@ -25,6 +26,7 @@ import com.google.common.collect.Sets;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
@@ -41,6 +43,9 @@ public class UsersJoinResourceTests {
   private UserService userService;
 
   @Mock
+  private ReCaptchaService reCaptchaService;
+
+  @Mock
   private ConfigurationService configurationService;
 
   @Rule
@@ -55,6 +60,8 @@ public class UsersJoinResourceTests {
       new AttributeConfiguration("att1", AttributeConfiguration.Type.INTEGER, true, Lists.newArrayList())));
 
     doReturn(conf).when(configurationService).getConfiguration();
+
+    when(reCaptchaService.verify(anyString())).thenReturn(true);
 
     doAnswer(invocation -> {
       Object[] args = invocation.getArguments();
@@ -78,7 +85,7 @@ public class UsersJoinResourceTests {
 
     resource
       .create("un", "fn", "ln", "test@localhost.domain", Lists.newArrayList("app"), Lists.newArrayList("g1", "g2"),
-        "password", request);
+        "password", "recaptchacode", request);
     verify(userService).createUser(user.capture(), eq("password"));
     assertEquals("id", user.getValue().getId());
     assertEquals("test@localhost.domain", user.getValue().getEmail());
@@ -100,6 +107,6 @@ public class UsersJoinResourceTests {
     exception.expectMessage(Matchers.containsString("att1"));
     resource
       .create("un", "fn", "ln", "test@localhost.domain", Lists.newArrayList("app"), Lists.newArrayList("g1", "g2"),
-        null, request);
+        null, "recaptchacode", request);
   }
 }
