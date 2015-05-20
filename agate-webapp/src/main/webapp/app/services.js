@@ -119,6 +119,7 @@ agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$log', '$c
   function ($rootScope, $http, $log, $cookieStore, authService, Session, CurrentSession) {
     return {
       login: function (param) {
+        $rootScope.authenticationError = false;
         var data = 'username=' + param.username + '&password=' + param.password;
         $http.post('ws/auth/sessions', data, {
           headers: {
@@ -132,6 +133,7 @@ agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$log', '$c
             authService.loginConfirmed(data);
           });
         }).error(function () {
+          $rootScope.authenticationError = true;
           Session.destroy();
         });
       },
