@@ -147,8 +147,8 @@ agate
     }]);
   }])
 
-  .run(['$rootScope', '$location', '$http', 'AuthenticationSharedService', 'Session', 'USER_ROLES',
-    function ($rootScope, $location, $http, AuthenticationSharedService, Session, USER_ROLES) {
+  .run(['$rootScope', '$location', '$http', 'AuthenticationSharedService', 'Session', 'USER_ROLES', 'ServerErrorUtils',
+    function ($rootScope, $location, $http, AuthenticationSharedService, Session, USER_ROLES, ServerErrorUtils) {
       $rootScope.$on('$routeChangeStart', function (event, next) {
         $rootScope.authenticated = AuthenticationSharedService.isAuthenticated();
         $rootScope.hasRole = AuthenticationSharedService.isAuthorized;
@@ -157,27 +157,10 @@ agate
         $rootScope.userRoles = USER_ROLES;
         $rootScope.subject = Session;
 
-        var authorizedRoles = next.access.authorizedRoles;
-
-        if (!AuthenticationSharedService.isAuthorized(authorizedRoles)) {
-          event.preventDefault();
-          if (AuthenticationSharedService.isAuthenticated()) {
-            // user is not allowed
-            $rootScope.$broadcast('event:auth-notAuthorized');
-          } else {
-            // user is not logged in
-            $rootScope.$broadcast('event:auth-loginRequired');
-          }
-        } else {
-          // Check if the customer is still authenticated on the server
-          // Try to load a protected 1 pixel image.
-//          $http({method: 'GET', url: '/protected/transparent.gif'}).
-//            error(function (response) {
-//              // Not authorized
-//              if (response.status === 401) {
-//                $rootScope.$broadcast("event:auth-notAuthorized");
-//              }
-//            })
+        if (!$rootScope.authenticated) {
+          $rootScope.$broadcast('event:auth-loginRequired');
+        } else if (!AuthenticationSharedService.isAuthorized(next.access.authorizedRoles)) {
+          $rootScope.$broadcast('event:auth-notAuthorized');
         }
       });
 
@@ -204,6 +187,11 @@ agate
           $rootScope.errorMessage = 'errors.403';
           $location.path('/error').replace();
         }
+      });
+
+      $rootScope.$on('event:unhandled-server-error', function (event, response) {
+        $rootScope.errorMessage = ServerErrorUtils.buildMessage(response);
+        $location.path('/error').replace();
       });
 
       // Call when the user logs out
