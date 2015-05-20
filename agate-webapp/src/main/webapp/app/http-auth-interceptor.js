@@ -37,40 +37,58 @@
       };
     }])
 
+    .factory('AgateHttpInterceptor', ['$rootScope', '$q', 'httpBuffer', function($rootScope, $q, httpBuffer) {
+      return {
+        // optional method
+        'request': function(config) {
+          // do something on success
+          return config;
+        },
+
+        // optional method
+        'requestError': function(rejection) {
+          // do something on error
+          return $q.reject(rejection);
+        },
+
+        // optional method
+        'response': function(response) {
+          // do something on success
+          return response;
+        },
+
+        // optional method
+        'responseError': function(response) {
+          if (response.status === 401 && !response.config.ignoreAuthModule) {
+            var deferred = $q.defer();
+            httpBuffer.append(response.config, deferred);
+            $rootScope.$broadcast('event:auth-loginRequired', response);
+            return deferred.promise;
+          } else {
+            if (!response.data.messageTemplate) {
+              response.data.messageTemplate = 'server.error.' + response.status;
+            }
+
+            if (response.status === 403 && !response.config.ignoreAuthModule) {
+              $rootScope.$broadcast('event:auth-notAuthorized', response);
+            } else if (!response.config.errorHandler) {
+              $rootScope.$broadcast('event:unhandled-server-error', response);
+            }
+          }
+
+          // otherwise, default behaviour
+          return $q.reject(response);
+        }
+      };
+    }])
+
   /**
    * $http interceptor.
    * On 401 response (without 'ignoreAuthModule' option) stores the request
    * and broadcasts 'event:angular-auth-loginRequired'.
    */
     .config(['$httpProvider', function ($httpProvider) {
-
-      var interceptor = ['$rootScope', '$q', 'httpBuffer', function ($rootScope, $q, httpBuffer) {
-        function success(response) {
-          return response;
-        }
-
-        function error(response) {
-          if (response.status === 401 && !response.config.ignoreAuthModule) {
-            var deferred = $q.defer();
-            httpBuffer.append(response.config, deferred);
-            $rootScope.$broadcast('event:auth-loginRequired', response);
-            return deferred.promise;
-          } else if (response.status === 403 && !response.config.ignoreAuthModule) {
-            if (!response.data.messageTemplate) {
-              response.data.messageTemplate = 'server.error.' + response.status;
-            }
-            $rootScope.$broadcast('event:auth-notAuthorized', response);
-          }
-          // otherwise, default behaviour
-          return $q.reject(response);
-        }
-
-        return function (promise) {
-          return promise.then(success, error);
-        };
-
-      }];
-      $httpProvider.interceptors.push(interceptor);
+      $httpProvider.interceptors.push('AgateHttpInterceptor');
     }]);
 
   /**
