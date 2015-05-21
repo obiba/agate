@@ -62,6 +62,7 @@ public class TicketResource extends BaseTicketResource {
     ticketService.save(ticket);
 
     User user = userService.findUser(ticket.getUsername());
+    if (user == null) user = userService.findUserByEmail(ticket.getUsername());
     AuthDtos.SubjectDto subject;
 
     if(user != null) {

@@ -97,10 +97,11 @@ public class TicketsResource extends BaseTicketResource {
 
       // check authentication
       subject = SecurityUtils.getSubject();
-      subject.login(new UsernamePasswordToken(username, password));
+      assert user != null;
+      subject.login(new UsernamePasswordToken(user.getName(), password));
       validateRealm(servletRequest, user, subject);
 
-      Ticket ticket = createTicket(username, renew, rememberMe, getApplicationName());
+      Ticket ticket = createTicket(user.getName(), renew, rememberMe, getApplicationName());
       Configuration configuration = getConfiguration();
       int timeout = rememberMe ? configuration.getLongTimeout() : configuration.getShortTimeout();
       NewCookie cookie = new NewCookie(TICKET_COOKIE_NAME, ticket.getToken(), "/", configuration.getDomain(), null,
