@@ -162,6 +162,8 @@
     "title-edit": "Edit Configuration",
     "name": "Name",
     "name-help": "Name of your organization",
+    "publicUrl": "Public Url",
+    "publicUrl-help": "Base Url to be included in the notification emails",
     "domain": "Domain",
     "domain-help": "Single sign-on cookie domain",
     "shortTimeout": "Short term timeout (hours)",

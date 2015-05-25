@@ -17,6 +17,7 @@ class ConfigurationDtos {
       .setLongTimeout(configuration.getLongTimeout())//
       .setInactiveTimeout(configuration.getInactiveTimeout());
     if(configuration.hasDomain()) builder.setDomain(configuration.getDomain());
+    if(configuration.hasPublicUrl()) builder.setPublicUrl(configuration.getPublicUrl());
     if(configuration.hasUserAttributes())
       configuration.getUserAttributes().forEach(c -> builder.addUserAttributes(asDto(c)));
 
@@ -28,6 +29,7 @@ class ConfigurationDtos {
     Configuration configuration = new Configuration();
     configuration.setName(dto.getName());
     if(dto.hasDomain()) configuration.setDomain(dto.getDomain());
+    if(dto.hasPublicUrl()) configuration.setPublicUrl(dto.getPublicUrl());
     configuration.setShortTimeout(dto.getShortTimeout());
     configuration.setLongTimeout(dto.getLongTimeout());
     configuration.setInactiveTimeout(dto.getInactiveTimeout());
