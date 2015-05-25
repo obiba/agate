@@ -108,7 +108,8 @@ agate
         })
         .preferredLanguage('en')
         .fallbackLanguage('en')
-        .useCookieStorage();
+        .useCookieStorage()
+        .useSanitizeValueStrategy('escaped');
 
       paginationTemplateProvider.setPath('app/views/pagination-template.html');
       tmhDynamicLocaleProvider.localeLocationPattern('bower_components/angular-i18n/angular-locale_{{locale}}.js');
@@ -159,7 +160,7 @@ agate
 
         if (!$rootScope.authenticated) {
           $rootScope.$broadcast('event:auth-loginRequired');
-        } else if (!AuthenticationSharedService.isAuthorized(next.access.authorizedRoles)) {
+        } else if (!AuthenticationSharedService.isAuthorized(next.access ? next.access.authorizedRoles : '*')) {
           $rootScope.$broadcast('event:auth-notAuthorized');
         }
       });
