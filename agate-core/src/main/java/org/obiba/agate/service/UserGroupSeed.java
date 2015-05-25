@@ -44,6 +44,8 @@ public class UserGroupSeed implements ApplicationListener<ContextRefreshedEvent>
       .applications("opal", "mica", "drupal").build());
     save(Group.newBuilder().name("mica-editor").description("Edit Mica content").applications("opal", "mica", "drupal")
       .build());
+    save(Group.newBuilder().name("mica-data-access-officer").description("Manage data access requests in Mica")
+      .applications("mica", "drupal").build());
     save(Group.newBuilder().name("mica-user").description("View Mica content").applications("mica", "drupal").build());
     save(Group.newBuilder().name("opal-administrator").description("Administrate Opal").applications("opal").build());
   }
@@ -107,6 +109,14 @@ public class UserGroupSeed implements ApplicationListener<ContextRefreshedEvent>
       .firstName("Christine") //
       .email("reviewer@example.org") //
       .groups("mica-reviewer");
+
+    save(builder.build());
+
+    builder = User.newBuilder() //
+      .name("dao") //
+      .firstName("Roger") //
+      .email("dao@example.org") //
+      .groups("mica-data-access-officer");
 
     save(builder.build());
 
