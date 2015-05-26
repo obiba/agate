@@ -14,6 +14,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.DateTime;
+import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.Group;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.domain.UserCredentials;
@@ -101,7 +102,9 @@ public class UserService {
     return users == null || users.isEmpty() ? null : users.get(0);
   }
 
-  public @Nullable User findUserByEmail(@NotNull String email) {
+  public
+  @Nullable
+  User findUserByEmail(@NotNull String email) {
     List<User> users = userRepository.findByEmail(email);
     return users == null || users.isEmpty() ? null : users.get(0);
   }
@@ -217,7 +220,8 @@ public class UserService {
     Context ctx = new Context();
     User user = userJoinedEvent.getPersistable();
     ctx.setVariable("user", user);
-    ctx.setVariable("publicUrl", configurationService.getConfiguration().getDomain());
+    ctx.setVariable("organization", configurationService.getConfiguration().getName());
+    ctx.setVariable("publicUrl", getPublicUrl());
 
     administrators.stream().forEach(u -> mailService
       .sendEmail(u.getEmail(), propertyResolver.getProperty("pendingForReviewSubject"),
@@ -234,7 +238,8 @@ public class UserService {
     Context ctx = new Context();
     User user = userApprovedEvent.getPersistable();
     ctx.setVariable("user", user);
-    ctx.setVariable("publicUrl", configurationService.getConfiguration().getDomain());
+    ctx.setVariable("organization", configurationService.getConfiguration().getName());
+    ctx.setVariable("publicUrl", getPublicUrl());
     ctx.setVariable("key", configurationService.encrypt(user.getName()));
 
     mailService.sendEmail(user.getEmail(), propertyResolver.getProperty("confirmationSubject"),
@@ -358,7 +363,7 @@ public class UserService {
    * @return
    */
   public Group save(@NotNull Group group) {
-    if (group.isNew()) {
+    if(group.isNew()) {
       group.setNameAsId();
     }
     groupRepository.save(group);
@@ -427,10 +432,24 @@ public class UserService {
     final RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "registration.");
     final Context ctx = new Context();
     ctx.setVariable("user", user);
-    ctx.setVariable("publicUrl", configurationService.getConfiguration().getDomain());
+    ctx.setVariable("organization", configurationService.getConfiguration().getName());
+    ctx.setVariable("publicUrl", getPublicUrl());
     ctx.setVariable("key", key);
 
     mailService.sendEmail(user.getEmail(), propertyResolver.getProperty("resetPasswordSubject"),
       templateEngine.process("resetPasswordEmail", ctx));
   }
+
+  public String getPublicUrl() {
+    Configuration config = configurationService.getConfiguration();
+
+    if(config.hasPublicUrl()) {
+      return config.getPublicUrl();
+    } else {
+      String host = env.getProperty("server.address");
+      String port = env.getProperty("https.port");
+      return "https://" + host + ":" + port;
+    }
+  }
+
 }

@@ -6,9 +6,9 @@
 </head>
 <body>
 <p>
-  <span th:text="${user.firstName + ' ' + user.lastName}"></span> requested a <span th:text="${user.groups}"></span>
+  <span th:text="${user.firstName + ' ' + user.lastName}"></span> requested a <span th:text="${organization}"></span>
   account and is awaiting approval.
-  You can <a href="" th:href="@{${'https://' + publicUrl + '/#/requests'}}" target="_blank">approve or
+  You can <a href="" th:href="@{${publicUrl} + '/#/users/requests'}" target="_blank">approve or
   reject</a> this request.
 </p>
 </body>

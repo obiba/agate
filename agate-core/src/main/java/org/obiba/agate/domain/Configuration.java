@@ -28,6 +28,8 @@ public class Configuration extends AbstractAuditableDocument {
 
   private String domain;
 
+  private String publicUrl;
+
   private int shortTimeout = DEFAULT_SHORT_TIMEOUT;
 
   private int longTimeout = DEFAULT_LONG_TIMEOUT;
@@ -56,6 +58,18 @@ public class Configuration extends AbstractAuditableDocument {
 
   public boolean hasDomain() {
     return !Strings.isNullOrEmpty(domain);
+  }
+
+  public boolean hasPublicUrl() {
+    return !Strings.isNullOrEmpty(publicUrl);
+  }
+
+  public String getPublicUrl() {
+    return publicUrl;
+  }
+
+  public void setPublicUrl(String publicUrl) {
+    this.publicUrl = publicUrl;
   }
 
   public int getShortTimeout() {
