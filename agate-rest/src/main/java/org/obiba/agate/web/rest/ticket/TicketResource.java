@@ -27,10 +27,12 @@ import org.obiba.agate.domain.User;
 import org.obiba.agate.service.TicketService;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.model.Agate;
+import org.obiba.agate.web.rest.application.ApplicationAwareResource;
 import org.obiba.shiro.realm.ObibaRealm;
 import org.obiba.web.model.AuthDtos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -38,7 +40,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Path("/ticket/{token}")
-public class TicketResource extends BaseTicketResource {
+@Scope("request")
+public class TicketResource extends ApplicationAwareResource {
 
   private static final Logger log = LoggerFactory.getLogger(TicketResource.class);
 
@@ -61,8 +64,8 @@ public class TicketResource extends BaseTicketResource {
     ticket.addEvent(getApplicationName(), "subject");
     ticketService.save(ticket);
 
-    User user = userService.findUser(ticket.getUsername());
-    if (user == null) user = userService.findUserByEmail(ticket.getUsername());
+    User user = userService.findActiveUser(ticket.getUsername());
+    if(user == null) user = userService.findActiveUserByEmail(ticket.getUsername());
     AuthDtos.SubjectDto subject;
 
     if(user != null) {
@@ -76,7 +79,8 @@ public class TicketResource extends BaseTicketResource {
 
   @GET
   @Path("/username")
-  public Response getUsername(@PathParam("token") String token, @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) {
+  public Response getUsername(@PathParam("token") String token,
+    @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) {
     validateApplication(authHeader);
 
     Ticket ticket = ticketService.getTicket(token);
@@ -87,7 +91,8 @@ public class TicketResource extends BaseTicketResource {
   }
 
   @DELETE
-  public Response logout(@PathParam("token") String token, @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) {
+  public Response logout(@PathParam("token") String token,
+    @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) {
     if(SecurityUtils.getSubject().hasRole("agate-administrator")) {
       ticketService.delete(token);
 
@@ -98,8 +103,8 @@ public class TicketResource extends BaseTicketResource {
     ticketService.delete(token);
 
     return Response.noContent().header(HttpHeaders.SET_COOKIE,
-        new NewCookie(TicketsResource.TICKET_COOKIE_NAME, null, "/", getConfiguration().getDomain(),
-            "Obiba session deleted", 0, false)).build();
+      new NewCookie(TicketsResource.TICKET_COOKIE_NAME, null, "/", getConfiguration().getDomain(),
+        "Obiba session deleted", 0, false)).build();
   }
 }
 

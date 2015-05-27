@@ -15,6 +15,8 @@ public interface UserRepository extends MongoRepository<User, String> {
 
   List<User> findByName(String username);
 
+  List<User> findByNameAndStatus(String username, UserStatus status);
+
   List<User> findByRole(String role);
 
   List<User> findByStatus(UserStatus status);
@@ -24,4 +26,10 @@ public interface UserRepository extends MongoRepository<User, String> {
   List<User> findByApplications(String application);
 
   List<User> findByEmail(String email);
+
+  List<User> findByEmailAndStatus(String email, UserStatus active);
+
+  List<User> findByStatusAndGroups(UserStatus status, String group);
+
+
 }
