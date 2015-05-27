@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Email;
@@ -41,7 +42,7 @@ public class User extends AbstractAuditableDocument {
   @Indexed(unique = true)
   private String email;
 
-  private Map<String,String> attributes = Maps.newHashMap();
+  private Map<String, String> attributes = Maps.newHashMap();
 
   private UserStatus status = UserStatus.PENDING;
 
@@ -149,6 +150,44 @@ public class User extends AbstractAuditableDocument {
     this.role = role.toString();
   }
 
+  /**
+   * Check if user is in the specified group.
+   *
+   * @param group any group if null or empty
+   * @return
+   */
+  public boolean hasGroup(@Nullable String group) {
+    return Strings.isNullOrEmpty(group) || groups != null && groups.contains(group);
+  }
+
+  /**
+   * Check if user is in one of the specified groups.
+   *
+   * @param groupNames any group if null or empty
+   * @return
+   */
+  public boolean hasOneOfGroup(@Nullable List<String> groupNames) {
+    return groupNames == null || groupNames.isEmpty() ||
+      hasOneOfGroup(groupNames.toArray(new String[groupNames.size()]));
+  }
+
+  /**
+   * Check if user is in one of the specified groups.
+   *
+   * @param groupNames any group if null or empty
+   * @return
+   */
+  public boolean hasOneOfGroup(String... groupNames) {
+    if(groupNames == null || groupNames.length == 0) return true;
+    if(groups == null || groups.isEmpty()) return false;
+
+    for(String groupName : groupNames) {
+      if(groups.contains(groupName)) return true;
+    }
+
+    return false;
+  }
+
   public Set<String> getGroups() {
     return groups;
   }
@@ -203,9 +242,9 @@ public class User extends AbstractAuditableDocument {
   @Override
   protected Objects.ToStringHelper toStringHelper() {
     return super.toStringHelper().add("name", name) //
-        .add("firstName", firstName) //
-        .add("lastName", lastName) //
-        .add("email", email);
+      .add("firstName", firstName) //
+      .add("lastName", lastName) //
+      .add("email", email);
   }
 
   public DateTime getLastLogin() {
@@ -320,7 +359,7 @@ public class User extends AbstractAuditableDocument {
       return this;
     }
 
-    public Builder attributes(Map<String,String> attributes) {
+    public Builder attributes(Map<String, String> attributes) {
       user.setAttributes(attributes);
       return this;
     }

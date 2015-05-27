@@ -90,7 +90,7 @@ public class TicketsResourceTests {
     Group group = new Group("group1");
     group.setApplications(Sets.newHashSet("mica"));
 
-    when(userService.findUser(anyString())).thenReturn(user);
+    when(userService.findActiveUser(anyString())).thenReturn(user);
     when(userService.findGroup("group1")).thenReturn(group);
 
     Response res = ticketsResource.login(httpServletRequest, false, false, "toto", "password", "Basic bWljYTpwYXNzd29yZA=="); //Basic mica:password

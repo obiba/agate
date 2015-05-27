@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.security.SignatureException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -38,6 +39,7 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -90,22 +92,61 @@ public class UserService {
   }
 
   /**
+   * Find active users having access to the provided application and optionally belonging to the specified group.
+   *
+   * @param application
+   * @param group any group if null or empty
+   * @return
+   */
+  public List<User> findActiveUsersByApplicationAndGroup(@NotNull String application, @Nullable String group) {
+    List<String> groupNames = groupRepository.findByApplications(application).stream() //
+      .map(Group::getName) //
+      .collect(Collectors.toList());
+
+    return (Strings.isNullOrEmpty(group)
+      ? userRepository.findByStatus(UserStatus.ACTIVE)
+      : userRepository.findByStatusAndGroups(UserStatus.ACTIVE, group)).stream() //
+      .filter(user -> (user.hasApplication(application) || user.hasOneOfGroup(groupNames)) && user.hasGroup(group)) //
+      .collect(Collectors.toList());
+  }
+
+  /**
+   * Find active users having access to the provided application.
+   *
+   * @param application
+   * @return
+   */
+  public List<User> findActiveUsersByApplication(@NotNull String application) {
+    return findActiveUsersByApplicationAndGroup(application, null);
+  }
+
+  /**
    * Find a {@link org.obiba.agate.domain.User} by its name.
    *
    * @param username
    * @return null if not found
    */
-  public
   @Nullable
-  User findUser(@NotNull String username) {
+  public User findUser(@NotNull String username) {
     List<User> users = userRepository.findByName(username);
     return users == null || users.isEmpty() ? null : users.get(0);
   }
 
-  public
   @Nullable
-  User findUserByEmail(@NotNull String email) {
+  public User findActiveUser(@NotNull String username) {
+    List<User> users = userRepository.findByNameAndStatus(username, UserStatus.ACTIVE);
+    return users == null || users.isEmpty() ? null : users.get(0);
+  }
+
+  @Nullable
+  public User findUserByEmail(@NotNull String email) {
     List<User> users = userRepository.findByEmail(email);
+    return users == null || users.isEmpty() ? null : users.get(0);
+  }
+
+  @Nullable
+  public User findActiveUserByEmail(@NotNull String email) {
+    List<User> users = userRepository.findByEmailAndStatus(email, UserStatus.ACTIVE);
     return users == null || users.isEmpty() ? null : users.get(0);
   }
 
@@ -411,7 +452,7 @@ public class UserService {
 
   @Scheduled(cron = "0 0 0 * * ?") //every day at midnight
   public void removeInactiveUsers() {
-    final List<User> inactiveUsers = userRepository.findByRoleAndLastLoginLessThan("agate-user",
+    List<User> inactiveUsers = userRepository.findByRoleAndLastLoginLessThan("agate-user",
       DateTime.now().minusHours(configurationService.getConfiguration().getInactiveTimeout()));
 
     inactiveUsers.forEach(u -> {
@@ -429,8 +470,8 @@ public class UserService {
 
     String key = configurationService.encrypt(keyData);
 
-    final RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "registration.");
-    final Context ctx = new Context();
+    RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "registration.");
+    Context ctx = new Context();
     ctx.setVariable("user", user);
     ctx.setVariable("organization", configurationService.getConfiguration().getName());
     ctx.setVariable("publicUrl", getPublicUrl());

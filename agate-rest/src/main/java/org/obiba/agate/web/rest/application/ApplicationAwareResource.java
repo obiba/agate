@@ -8,7 +8,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.obiba.agate.web.rest.ticket;
+package org.obiba.agate.web.rest.application;
 
 import javax.inject.Inject;
 import javax.ws.rs.ForbiddenException;
@@ -19,8 +19,13 @@ import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.web.model.Dtos;
 import org.obiba.shiro.authc.HttpAuthorizationToken;
 import org.obiba.shiro.realm.ObibaRealm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class BaseTicketResource {
+public class ApplicationAwareResource {
+
+  private static final Logger log = LoggerFactory.getLogger(ApplicationAwareResource.class);
+
 
   @Inject
   private ApplicationService applicationService;
@@ -33,6 +38,11 @@ public class BaseTicketResource {
 
   private String applicationName;
 
+  /**
+   * Check application credentials.
+   *
+   * @param appAuthHeader
+   */
   protected void validateApplication(String appAuthHeader) {
     if (appAuthHeader == null) throw new ForbiddenException();
 
@@ -40,16 +50,26 @@ public class BaseTicketResource {
     validateApplicationParameters(token.getUsername(), new String(token.getPassword()));
   }
 
-  private void validateApplicationParameters(String name, String key) {
-    if(!applicationService.isValid(name, key)) throw new ForbiddenException();
-    applicationName = name;
-  }
-
-  protected String getApplicationName() {
+   protected String getApplicationName() {
     return applicationName;
   }
 
   protected Configuration getConfiguration() {
     return configurationService.getConfiguration();
+  }
+
+  //
+  // Private methods
+  //
+
+  /**
+   * Check application credentials and set current application name.
+   *
+   * @param name
+   * @param key
+   */
+  private void validateApplicationParameters(String name, String key) {
+    if(!applicationService.isValid(name, key)) throw new ForbiddenException();
+    applicationName = name;
   }
 }

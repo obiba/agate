@@ -43,11 +43,13 @@ import org.obiba.agate.domain.UserStatus;
 import org.obiba.agate.service.TicketService;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.model.Agate;
+import org.obiba.agate.web.rest.application.ApplicationAwareResource;
 import org.obiba.agate.web.rest.config.JerseyConfiguration;
 import org.obiba.shiro.realm.ObibaRealm;
 import org.obiba.web.model.AuthDtos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.ImmutableList;
@@ -57,7 +59,8 @@ import com.google.common.collect.ImmutableList;
  */
 @Component
 @Path("/tickets")
-public class TicketsResource extends BaseTicketResource {
+@Scope("request")
+public class TicketsResource extends ApplicationAwareResource {
 
   private static final Logger log = LoggerFactory.getLogger(TicketsResource.class);
 
@@ -88,9 +91,9 @@ public class TicketsResource extends BaseTicketResource {
 
     Subject subject = null;
     try {
-      User user = userService.findUser(username);
+      User user = userService.findActiveUser(username);
 
-      if(user == null) user = userService.findUserByEmail(username);
+      if(user == null) user = userService.findActiveUserByEmail(username);
 
       validateUser(servletRequest, username, user);
       validateApplication(servletRequest, user);
@@ -131,7 +134,7 @@ public class TicketsResource extends BaseTicketResource {
     @QueryParam("key") String key, @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) {
     validateApplication(authHeader);
 
-    User user = userService.findUser(username);
+    User user = userService.findActiveUser(username);
     AuthDtos.SubjectDto subject;
     if(user != null) {
       subject = dtos.asDto(user, true);
@@ -158,18 +161,33 @@ public class TicketsResource extends BaseTicketResource {
     return ticket;
   }
 
-  private void validateUser(HttpServletRequest servletRequest, String username, User user) {
-    // check user exists and has the right status
-    if(user == null) {
-      log.info("Not a registered user '{}' at ip: '{}'", username, servletRequest.getRemoteAddr());
-      throw new ForbiddenException();
-    } else if (user.getStatus() != UserStatus.ACTIVE) {
-      log.info("Not an active user '{}': status is '{}'", username, user.getStatus());
+  private void validateRealm(HttpServletRequest servletRequest, User user, Subject subject) {
+    // check that authentication realm is the expected one as specified in user profile
+    if(!subject.getPrincipals().getRealmNames().contains(user.getRealm())) {
+      log.info("Authentication failure of user '{}' at ip: '{}': unexpected realm '{}'", user.getName(),
+        servletRequest.getRemoteAddr(), subject.getPrincipals().getRealmNames().iterator().next());
       throw new ForbiddenException();
     }
   }
 
-  private void validateApplication(HttpServletRequest servletRequest, User user) {
+  /**
+   * Check user exists and has the right status.
+   *
+   * @param servletRequest
+   * @param username
+   * @param user
+   */
+  protected void validateUser(HttpServletRequest servletRequest, String username, User user) {
+    if(user == null) {
+      log.warn("Not a registered user '{}' at ip: '{}'", username, servletRequest.getRemoteAddr());
+      throw new ForbiddenException();
+    } else if(user.getStatus() != UserStatus.ACTIVE) {
+      log.warn("Not an active user '{}': status is '{}'", username, user.getStatus());
+      throw new ForbiddenException();
+    }
+  }
+
+  protected void validateApplication(HttpServletRequest servletRequest, User user) {
     String appName = getApplicationName();
 
     // check application
@@ -179,15 +197,6 @@ public class TicketsResource extends BaseTicketResource {
     })) {
       log.info("Application '{}' not allowed for user '{}' at ip: '{}'", appName, user.getName(),
         servletRequest.getRemoteAddr());
-      throw new ForbiddenException();
-    }
-  }
-
-  private void validateRealm(HttpServletRequest servletRequest, User user, Subject subject) {
-    // check that authentication realm is the expected one as specified in user profile
-    if(!subject.getPrincipals().getRealmNames().contains(user.getRealm())) {
-      log.info("Authentication failure of user '{}' at ip: '{}': unexpected realm '{}'", user.getName(),
-        servletRequest.getRemoteAddr(), subject.getPrincipals().getRealmNames().iterator().next());
       throw new ForbiddenException();
     }
   }
