@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+
+<html>
+<head lang="en">
+  <meta charset="UTF-8"/>
+  <title></title>
+</head>
+<body>
+<p>
+  Dear <span th:text="${user.firstName + ' ' + user.lastName}"></span>,
+</p>
+<p>
+  The data access request <strong th:text="${title}"></strong> has been submitted.
+</p>
+<p>
+  Please follow <a href="" th:href="${link}" target="_blank">this link</a> to view or comment the data access request.
+</p>
+</body>
+</html>

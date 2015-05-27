@@ -12,6 +12,7 @@ package org.obiba.agate.web.rest.notification;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -25,6 +26,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 import org.obiba.agate.domain.User;
+import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.MailService;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.rest.application.ApplicationAwareResource;
@@ -33,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.thymeleaf.spring4.SpringTemplateEngine;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
@@ -48,6 +51,12 @@ public class NotificationsResource extends ApplicationAwareResource {
   private MailService mailService;
 
   @Inject
+  private SpringTemplateEngine templateEngine;
+
+  @Inject
+  private ConfigurationService configurationService;
+
+  @Inject
   private UserService userService;
 
   /**
@@ -59,30 +68,32 @@ public class NotificationsResource extends ApplicationAwareResource {
    * @param usernames
    * @param groups
    * @param subject
-   * @param body
+   * @param body body of the message (optional)
+   * @param template template name to be used if message body is not specified
    * @param authHeader
    * @return
    */
   @POST
   public Response notify(@Context HttpServletRequest servletRequest, @FormParam("username") List<String> usernames,
     @FormParam("group") List<String> groups, @FormParam("subject") String subject, @FormParam("body") String body,
-    @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) {
+    @FormParam("template") String template, @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) {
     if(Strings.isNullOrEmpty(subject) && Strings.isNullOrEmpty(body)) return Response.noContent().build();
 
     validateApplication(authHeader);
 
-    Set<String> emails = Sets.newHashSet();
+    Set<User> recipients = Sets.newHashSet();
     if((usernames == null || usernames.isEmpty()) && (groups == null || groups.isEmpty())) {
       // all users having access to the application
-      userService.findActiveUsersByApplication(getApplicationName()).forEach(user -> emails.add(user.getEmail()));
+      userService.findActiveUsersByApplication(getApplicationName()).forEach(recipients::add);
     } else {
       // all the specified users having access to the application
-      appendEmailsFromUsernames(usernames, emails);
+      appendRecipientsFromUsernames(usernames, recipients);
       // all the users belonging to one of the groups and having access to the application
-      appendEmailsFromGroup(groups, emails);
+      appendRecipientsFromGroup(groups, recipients);
     }
 
-    emails.forEach(email -> mailService.sendEmail(email, subject, body));
+    if(Strings.isNullOrEmpty(template)) sendPlainEmail(subject, body, recipients);
+    else sendTemplateEmail(subject, template, servletRequest.getParameterMap(), recipients);
 
     return Response.noContent().build();
   }
@@ -92,13 +103,51 @@ public class NotificationsResource extends ApplicationAwareResource {
   //
 
   /**
+   * Send an email by processing a template with request form parameters and the recipient
+   * {@link org.obiba.agate.domain.User} as a context. The Template is expected to be located in a folder having
+   * the application name.
+   *
+   * @param subject
+   * @param templateName
+   * @param context
+   * @param recipients
+   */
+  private void sendTemplateEmail(String subject, String templateName, Map<String, String[]> context,
+    Set<User> recipients) {
+    org.thymeleaf.context.Context ctx = new org.thymeleaf.context.Context();
+    ctx.setVariable("organization", configurationService.getConfiguration().getName());
+    context.forEach((k, v) -> {
+      if(v != null && v.length == 1) {
+        ctx.setVariable(k, v[0]);
+      }
+    });
+    String templateLocation = getApplicationName() + "/" + templateName;
+
+    recipients.forEach(rec -> {
+      ctx.setVariable("user", rec);
+      mailService
+        .sendEmail(rec.getEmail(), subject, templateEngine.process(templateLocation, ctx));
+    });
+  }
+
+  /**
+   * Send an email build with
+   * @param subject
+   * @param body
+   * @param recipients
+   */
+  private void sendPlainEmail(String subject, String body, Set<User> recipients) {
+    recipients.forEach(rec -> mailService.sendEmail(rec.getEmail(), subject, body));
+  }
+
+  /**
    * Lookup active users and verify its access to the application requesting the notification.
    *
    * @param servletRequest
    * @param usernames
    * @param emails
    */
-  private void appendEmailsFromUsernames(Collection<String> usernames, Collection<String> emails) {
+  private void appendRecipientsFromUsernames(Collection<String> usernames, Collection<User> recipients) {
     if(usernames == null || usernames.isEmpty()) return;
 
     List<String> applicationUsernames = userService.findActiveUsersByApplication(getApplicationName()).stream()
@@ -108,7 +157,7 @@ public class NotificationsResource extends ApplicationAwareResource {
       User user = userService.findActiveUser(username);
       if(user == null) user = userService.findActiveUserByEmail(username);
 
-      if(user != null && applicationUsernames.contains(user.getName())) emails.add(user.getEmail());
+      if(user != null && applicationUsernames.contains(user.getName())) recipients.add(user);
     });
   }
 
@@ -118,14 +167,11 @@ public class NotificationsResource extends ApplicationAwareResource {
    * @param groups
    * @param emails
    */
-  private void appendEmailsFromGroup(Collection<String> groups, Collection<String> emails) {
-    if(groups == null || groups.isEmpty()) {
-      // find all users from any group and having access to the application
-      userService.findActiveUsersByApplication(getApplicationName()).forEach(user -> emails.add(user.getEmail()));
-    } else {
-      // find all users in each group and having access to the application
-      groups.forEach(group -> userService.findActiveUsersByApplicationAndGroup(getApplicationName(), group)
-        .forEach(user -> emails.add(user.getEmail())));
-    }
+  private void appendRecipientsFromGroup(Collection<String> groups, Collection<User> recipients) {
+    if(groups == null || groups.isEmpty()) return;
+
+    // find all users in each group and having access to the application
+    groups.forEach(
+      group -> userService.findActiveUsersByApplicationAndGroup(getApplicationName(), group).forEach(recipients::add));
   }
 }

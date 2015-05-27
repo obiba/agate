@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+
+<html>
+<head lang="en">
+  <meta charset="UTF-8"/>
+  <title></title>
+</head>
+<body>
+<p>
+  Dear <span th:text="${user.firstName + ' ' + user.lastName}"></span>,
+</p>
+<p>
+  Your data access request <strong th:text="${title}"></strong> has been rejected by the Data Access Office.
+</p>
+<p>
+  For more details, please follow <a href="" th:href="${link}" target="_blank">this link</a>.
+</p>
+</body>
+</html>
