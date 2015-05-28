@@ -18,6 +18,7 @@ import org.obiba.agate.repository.AgateConfigRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
@@ -31,6 +32,9 @@ public class ConfigurationService {
 
   @Inject
   private EventBus eventBus;
+
+  @Inject
+  private Environment env;
 
   private final AesCipherService cipherService = new AesCipherService();
 
@@ -47,6 +51,23 @@ public class ConfigurationService {
         "lastModifiedDate", "secretKey");
     agateConfigRepository.save(savedConfiguration);
     eventBus.post(new AgateConfigUpdatedEvent(getConfiguration()));
+  }
+
+  /**
+   * Get the public url, statically defined if not specified in the {@link org.obiba.agate.domain.Configuration}.
+   *
+   * @return
+   */
+  public String getPublicUrl() {
+    Configuration config = getConfiguration();
+
+    if(config.hasPublicUrl()) {
+      return config.getPublicUrl();
+    } else {
+      String host = env.getProperty("server.address");
+      String port = env.getProperty("https.port");
+      return "https://" + host + ":" + port;
+    }
   }
 
   /**
@@ -101,7 +122,7 @@ public class ConfigurationService {
     properties.put("firstname", newProperty("string", "First Name"));
     properties.put("lastname", newProperty("string", "Last Name"));
 
-    JSONArray required = new JSONArray(Lists.newArrayList("username","email"));
+    JSONArray required = new JSONArray(Lists.newArrayList("username", "email"));
 
     if(config.hasUserAttributes()) {
       config.getUserAttributes().forEach(a -> {

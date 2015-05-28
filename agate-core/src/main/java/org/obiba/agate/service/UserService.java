@@ -15,7 +15,6 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.DateTime;
-import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.Group;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.domain.UserCredentials;
@@ -39,7 +38,6 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -77,6 +75,10 @@ public class UserService {
 
   @Inject
   private ConfigurationService configurationService;
+
+  //
+  // Finders
+  //
 
   /**
    * Find all {@link org.obiba.agate.domain.User}.
@@ -156,6 +158,10 @@ public class UserService {
     List<UserCredentials> users = userCredentialsRepository.findByName(username);
     return users == null || users.isEmpty() ? null : users.get(0);
   }
+
+  //
+  // User methods
+  //
 
   public void updateCurrentUser(String firstName, String lastName, String email) {
     User currentUser = getCurrentUser();
@@ -253,6 +259,63 @@ public class UserService {
       eventBus.post(new UserApprovedEvent(user));
   }
 
+  public void confirmUser(@NotNull User user, String password) {
+    UserCredentials userCredentials = findUserCredentials(user.getName());
+
+    if(userCredentials == null) {
+      userCredentials = UserCredentials.newBuilder().name(user.getName()).build();
+    }
+
+    userCredentials.setPassword(hashPassword(password));
+
+    userCredentialsRepository.save(userCredentials);
+
+    user.setStatus(UserStatus.ACTIVE);
+    save(user);
+  }
+
+  public void updateUserLastLogin(@NotNull String username) {
+    User user = findUser(username);
+
+    if(user != null) {
+      user.setLastLogin(DateTime.now());
+      save(user);
+    }
+  }
+
+  @Scheduled(cron = "0 0 0 * * ?") //every day at midnight
+  public void removeInactiveUsers() {
+    List<User> inactiveUsers = userRepository.findByRoleAndLastLoginLessThan("agate-user",
+      DateTime.now().minusHours(configurationService.getConfiguration().getInactiveTimeout()));
+
+    inactiveUsers.forEach(u -> {
+      u.setStatus(UserStatus.INACTIVE);
+      userRepository.save(u);
+    });
+  }
+
+  public void resetPassword(User user) throws IOException {
+    ObjectMapper mapper = new ObjectMapper();
+    String keyData = mapper.writeValueAsString(new HashMap<String, String>() {{
+      put("username", user.getName());
+      put("expire", DateTime.now().plusHours(1).toString());
+    }});
+
+    String key = configurationService.encrypt(keyData);
+
+    RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "registration.");
+    Context ctx = new Context();
+    String organization = configurationService.getConfiguration().getName();
+    ctx.setVariable("user", user);
+    ctx.setVariable("organization", organization);
+    ctx.setVariable("publicUrl", configurationService.getPublicUrl());
+    ctx.setVariable("key", key);
+
+    mailService
+      .sendEmail(user.getEmail(), "[" + organization + "] " + propertyResolver.getProperty("resetPasswordSubject"),
+        templateEngine.process("resetPasswordEmail", ctx));
+  }
+
   @Subscribe
   public void sendPendingEmail(UserJoinedEvent userJoinedEvent) throws SignatureException {
     log.info("Sending pending review email: {}", userJoinedEvent.getPersistable());
@@ -260,16 +323,18 @@ public class UserService {
     List<User> administrators = userRepository.findByRole("agate-administrator");
     Context ctx = new Context();
     User user = userJoinedEvent.getPersistable();
+    String organization = configurationService.getConfiguration().getName();
     ctx.setVariable("user", user);
-    ctx.setVariable("organization", configurationService.getConfiguration().getName());
-    ctx.setVariable("publicUrl", getPublicUrl());
+    ctx.setVariable("organization", organization);
+    ctx.setVariable("publicUrl", configurationService.getPublicUrl());
 
     administrators.stream().forEach(u -> mailService
-      .sendEmail(u.getEmail(), propertyResolver.getProperty("pendingForReviewSubject"),
+      .sendEmail(u.getEmail(), "[" + organization + "] " + propertyResolver.getProperty("pendingForReviewSubject"),
         templateEngine.process("pendingForReviewEmail", ctx)));
 
-    mailService.sendEmail(user.getEmail(), propertyResolver.getProperty("pendingForApprovalSubject"),
-      templateEngine.process("pendingForApprovalEmail", ctx));
+    mailService
+      .sendEmail(user.getEmail(), "[" + organization + "] " + propertyResolver.getProperty("pendingForApprovalSubject"),
+        templateEngine.process("pendingForApprovalEmail", ctx));
   }
 
   @Subscribe
@@ -278,13 +343,15 @@ public class UserService {
     PropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "registration.");
     Context ctx = new Context();
     User user = userApprovedEvent.getPersistable();
+    String organization = configurationService.getConfiguration().getName();
     ctx.setVariable("user", user);
-    ctx.setVariable("organization", configurationService.getConfiguration().getName());
-    ctx.setVariable("publicUrl", getPublicUrl());
+    ctx.setVariable("organization", organization);
+    ctx.setVariable("publicUrl", configurationService.getPublicUrl());
     ctx.setVariable("key", configurationService.encrypt(user.getName()));
 
-    mailService.sendEmail(user.getEmail(), propertyResolver.getProperty("confirmationSubject"),
-      templateEngine.process("confirmationEmail", ctx));
+    mailService
+      .sendEmail(user.getEmail(), "[" + organization + "] " + propertyResolver.getProperty("confirmationSubject"),
+        templateEngine.process("confirmationEmail", ctx));
   }
 
   /**
@@ -424,73 +491,6 @@ public class UserService {
     }
 
     groupRepository.delete(group);
-  }
-
-  public void confirmUser(@NotNull User user, String password) {
-    UserCredentials userCredentials = findUserCredentials(user.getName());
-
-    if(userCredentials == null) {
-      userCredentials = UserCredentials.newBuilder().name(user.getName()).build();
-    }
-
-    userCredentials.setPassword(hashPassword(password));
-
-    userCredentialsRepository.save(userCredentials);
-
-    user.setStatus(UserStatus.ACTIVE);
-    save(user);
-  }
-
-  public void updateUserLastLogin(@NotNull String username) {
-    User user = findUser(username);
-
-    if(user != null) {
-      user.setLastLogin(DateTime.now());
-      save(user);
-    }
-  }
-
-  @Scheduled(cron = "0 0 0 * * ?") //every day at midnight
-  public void removeInactiveUsers() {
-    List<User> inactiveUsers = userRepository.findByRoleAndLastLoginLessThan("agate-user",
-      DateTime.now().minusHours(configurationService.getConfiguration().getInactiveTimeout()));
-
-    inactiveUsers.forEach(u -> {
-      u.setStatus(UserStatus.INACTIVE);
-      userRepository.save(u);
-    });
-  }
-
-  public void resetPassword(User user) throws IOException {
-    ObjectMapper mapper = new ObjectMapper();
-    String keyData = mapper.writeValueAsString(new HashMap<String, String>() {{
-      put("username", user.getName());
-      put("expire", DateTime.now().plusHours(1).toString());
-    }});
-
-    String key = configurationService.encrypt(keyData);
-
-    RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "registration.");
-    Context ctx = new Context();
-    ctx.setVariable("user", user);
-    ctx.setVariable("organization", configurationService.getConfiguration().getName());
-    ctx.setVariable("publicUrl", getPublicUrl());
-    ctx.setVariable("key", key);
-
-    mailService.sendEmail(user.getEmail(), propertyResolver.getProperty("resetPasswordSubject"),
-      templateEngine.process("resetPasswordEmail", ctx));
-  }
-
-  public String getPublicUrl() {
-    Configuration config = configurationService.getConfiguration();
-
-    if(config.hasPublicUrl()) {
-      return config.getPublicUrl();
-    } else {
-      String host = env.getProperty("server.address");
-      String port = env.getProperty("https.port");
-      return "https://" + host + ":" + port;
-    }
   }
 
 }
