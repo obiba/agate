@@ -115,10 +115,11 @@ public class NotificationsResource extends ApplicationAwareResource {
   private void sendTemplateEmail(String subject, String templateName, Map<String, String[]> context,
     Set<User> recipients) {
     org.thymeleaf.context.Context ctx = new org.thymeleaf.context.Context();
-    ctx.setVariable("organization", configurationService.getConfiguration().getName());
     context.forEach((k, v) -> {
       if(v != null && v.length == 1) {
         ctx.setVariable(k, v[0]);
+      } else {
+        ctx.setVariable(k, v);
       }
     });
     String templateLocation = getApplicationName() + "/" + templateName;
