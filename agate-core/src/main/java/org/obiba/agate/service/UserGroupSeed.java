@@ -115,7 +115,8 @@ public class UserGroupSeed implements ApplicationListener<ContextRefreshedEvent>
     builder = User.newBuilder() //
       .name("dao") //
       .firstName("Roger") //
-      .email("dao@example.org") //
+      .lastName("Federer") //
+      .email("yannick.marcon@obiba.org") //
       .groups("mica-data-access-officer");
 
     save(builder.build());
@@ -124,9 +125,8 @@ public class UserGroupSeed implements ApplicationListener<ContextRefreshedEvent>
       .name("user1") //
       .firstName("Johnny B.") //
       .lastName("Good") //
-      .email("user1@example.org") //
-      .groups("group1", "group2") //
-      .applications("mica", "drupal");
+      .email("yannick.marcon@gmail.com") //
+      .groups("mica-user");
 
     save(builder.build());
 
