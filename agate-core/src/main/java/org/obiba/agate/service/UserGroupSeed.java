@@ -116,7 +116,7 @@ public class UserGroupSeed implements ApplicationListener<ContextRefreshedEvent>
       .name("dao") //
       .firstName("Roger") //
       .lastName("Federer") //
-      .email("yannick.marcon@obiba.org") //
+      .email("roger.federer@example.org") //
       .role(Roles.AGATE_ADMIN) //
       .groups("mica-data-access-officer");
 
@@ -126,7 +126,7 @@ public class UserGroupSeed implements ApplicationListener<ContextRefreshedEvent>
       .name("user1") //
       .firstName("Johnny B.") //
       .lastName("Good") //
-      .email("yannick.marcon@gmail.com") //
+      .email("johny.good@example.com") //
       .groups("mica-user");
 
     save(builder.build());
