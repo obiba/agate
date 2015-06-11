@@ -85,6 +85,16 @@ public class TicketService {
   }
 
   /**
+   * Delete all {@link org.obiba.agate.domain.Ticket}s of a {@link org.obiba.agate.domain.User}.
+   *
+   * @param username
+   */
+  public void deleteAllUserTickets(String username) {
+    deleteAll(findByUsername(username));
+  }
+
+
+  /**
    * Insert or update the {@link org.obiba.agate.domain.Ticket}. Set the {@link org.obiba.agate.domain.Ticket}'s token if none.
    *
    * @param ticket
