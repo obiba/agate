@@ -107,7 +107,7 @@ public class TicketResource extends ApplicationAwareResource {
 
     return Response.noContent().header(HttpHeaders.SET_COOKIE,
       new NewCookie(TicketsResource.TICKET_COOKIE_NAME, null, "/", getConfiguration().getDomain(),
-        "Obiba session deleted", 0, false)).build();
+        "Obiba session deleted", 0, true)).build();
   }
 }
 
