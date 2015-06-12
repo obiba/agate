@@ -122,7 +122,7 @@ public class ConfigurationService {
     properties.put("firstname", newProperty("string", "First Name"));
     properties.put("lastname", newProperty("string", "Last Name"));
 
-    JSONArray required = new JSONArray(Lists.newArrayList("username", "email"));
+    JSONArray required = new JSONArray(Lists.newArrayList("username", "email", "firstname", "lastname"));
 
     if(config.hasUserAttributes()) {
       config.getUserAttributes().forEach(a -> {
