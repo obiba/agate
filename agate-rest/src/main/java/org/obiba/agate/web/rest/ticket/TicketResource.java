@@ -22,6 +22,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.service.TicketService;
@@ -90,7 +91,7 @@ public class TicketResource extends ApplicationAwareResource {
     ticket.addEvent(getApplicationName(), "validate");
     ticketService.save(ticket);
 
-    return Response.ok().entity(ticket.getUsername()).build();
+    return Response.ok().header(HttpHeaders.SET_COOKIE, getCookie(ticket)).entity(ticket.getUsername()).build();
   }
 
   @DELETE
@@ -107,7 +108,19 @@ public class TicketResource extends ApplicationAwareResource {
 
     return Response.noContent().header(HttpHeaders.SET_COOKIE,
       new NewCookie(TicketsResource.TICKET_COOKIE_NAME, null, "/", getConfiguration().getDomain(),
-        "Obiba session deleted", 0, true)).build();
+        "Obiba session deleted", 0, false)).build();
   }
+
+  //
+  // Private methods
+  //
+
+  private NewCookie getCookie(Ticket ticket) {
+    Configuration configuration = getConfiguration();
+    int timeout = ticket.isRemembered() ? configuration.getLongTimeout() : configuration.getShortTimeout();
+    return new NewCookie(TicketsResource.TICKET_COOKIE_NAME, ticket.getToken(), "/", configuration.getDomain(), null,
+      timeout * 3600, true);
+  }
+
 }
 
