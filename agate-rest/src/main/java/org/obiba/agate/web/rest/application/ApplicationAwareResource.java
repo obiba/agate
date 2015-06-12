@@ -11,30 +11,22 @@
 package org.obiba.agate.web.rest.application;
 
 import javax.inject.Inject;
-import javax.ws.rs.ForbiddenException;
 
 import org.obiba.agate.domain.Configuration;
-import org.obiba.agate.service.ApplicationService;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.web.model.Dtos;
-import org.obiba.shiro.authc.HttpAuthorizationToken;
-import org.obiba.shiro.realm.ObibaRealm;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.obiba.agate.web.rest.security.AuthorizationValidator;
 
 public class ApplicationAwareResource {
-
-  private static final Logger log = LoggerFactory.getLogger(ApplicationAwareResource.class);
-
-
-  @Inject
-  private ApplicationService applicationService;
 
   @Inject
   private ConfigurationService configurationService;
 
   @Inject
   protected Dtos dtos;
+
+  @Inject
+  protected AuthorizationValidator authorizationValidator;
 
   private String applicationName;
 
@@ -44,13 +36,10 @@ public class ApplicationAwareResource {
    * @param appAuthHeader
    */
   protected void validateApplication(String appAuthHeader) {
-    if (appAuthHeader == null) throw new ForbiddenException();
-
-    HttpAuthorizationToken token = new HttpAuthorizationToken(ObibaRealm.APPLICATION_AUTH_SCHEMA, appAuthHeader);
-    validateApplicationParameters(token.getUsername(), new String(token.getPassword()));
+    applicationName = authorizationValidator.validateApplication(appAuthHeader);
   }
 
-   protected String getApplicationName() {
+  protected String getApplicationName() {
     return applicationName;
   }
 
@@ -58,18 +47,4 @@ public class ApplicationAwareResource {
     return configurationService.getConfiguration();
   }
 
-  //
-  // Private methods
-  //
-
-  /**
-   * Check application credentials and set current application name.
-   *
-   * @param name
-   * @param key
-   */
-  private void validateApplicationParameters(String name, String key) {
-    if(!applicationService.isValid(name, key)) throw new ForbiddenException();
-    applicationName = name;
-  }
 }

@@ -36,10 +36,8 @@ import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
 import org.joda.time.DateTime;
 import org.obiba.agate.domain.Configuration;
-import org.obiba.agate.domain.Group;
 import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
-import org.obiba.agate.domain.UserStatus;
 import org.obiba.agate.service.TicketService;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.model.Agate;
@@ -95,14 +93,14 @@ public class TicketsResource extends ApplicationAwareResource {
 
       if(user == null) user = userService.findActiveUserByEmail(username);
 
-      validateUser(servletRequest, username, user);
-      validateApplication(servletRequest, user);
+      authorizationValidator.validateUser(servletRequest, username, user);
+      authorizationValidator.validateApplication(servletRequest, user, getApplicationName());
 
       // check authentication
       subject = SecurityUtils.getSubject();
       assert user != null;
       subject.login(new UsernamePasswordToken(user.getName(), password));
-      validateRealm(servletRequest, user, subject);
+      authorizationValidator.validateRealm(servletRequest, user, subject);
 
       Ticket ticket = createTicket(user.getName(), renew, rememberMe, getApplicationName());
       Configuration configuration = getConfiguration();
@@ -161,43 +159,4 @@ public class TicketsResource extends ApplicationAwareResource {
     return ticket;
   }
 
-  private void validateRealm(HttpServletRequest servletRequest, User user, Subject subject) {
-    // check that authentication realm is the expected one as specified in user profile
-    if(!subject.getPrincipals().getRealmNames().contains(user.getRealm())) {
-      log.info("Authentication failure of user '{}' at ip: '{}': unexpected realm '{}'", user.getName(),
-        servletRequest.getRemoteAddr(), subject.getPrincipals().getRealmNames().iterator().next());
-      throw new ForbiddenException();
-    }
-  }
-
-  /**
-   * Check user exists and has the right status.
-   *
-   * @param servletRequest
-   * @param username
-   * @param user
-   */
-  protected void validateUser(HttpServletRequest servletRequest, String username, User user) {
-    if(user == null) {
-      log.warn("Not a registered user '{}' at ip: '{}'", username, servletRequest.getRemoteAddr());
-      throw new ForbiddenException();
-    } else if(user.getStatus() != UserStatus.ACTIVE) {
-      log.warn("Not an active user '{}': status is '{}'", username, user.getStatus());
-      throw new ForbiddenException();
-    }
-  }
-
-  protected void validateApplication(HttpServletRequest servletRequest, User user) {
-    String appName = getApplicationName();
-
-    // check application
-    if(!user.hasApplication(appName) && user.getGroups().stream().noneMatch(g -> {
-      Group group = userService.findGroup(g);
-      return group != null && group.hasApplication(appName);
-    })) {
-      log.info("Application '{}' not allowed for user '{}' at ip: '{}'", appName, user.getName(),
-        servletRequest.getRemoteAddr());
-      throw new ForbiddenException();
-    }
-  }
 }

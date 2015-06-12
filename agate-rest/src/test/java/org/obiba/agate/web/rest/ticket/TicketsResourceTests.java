@@ -20,6 +20,7 @@ import org.obiba.agate.service.ApplicationService;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.TicketService;
 import org.obiba.agate.service.UserService;
+import org.obiba.agate.web.rest.security.AuthorizationValidator;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -36,6 +37,9 @@ public class TicketsResourceTests {
 
   @Mock
   private UserService userService;
+
+  @Mock
+  private AuthorizationValidator authorizationValidator;
 
   @Mock
   private TicketService ticketService;

@@ -11,11 +11,13 @@
 package org.obiba.agate.web.rest.ticket;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
@@ -82,13 +84,18 @@ public class TicketResource extends ApplicationAwareResource {
 
   @GET
   @Path("/username")
-  public Response getUsername(@PathParam("token") String token,
+  public Response getUsername(@Context HttpServletRequest servletRequest, @PathParam("token") String token,
     @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) {
     validateApplication(authHeader);
 
     Ticket ticket = ticketService.getTicket(token);
     ticket.addEvent(getApplicationName(), "validate");
     ticketService.save(ticket);
+
+    String username = ticket.getUsername();
+    User user = userService.findActiveUser(username);
+    if(user == null) user = userService.findActiveUserByEmail(username);
+    authorizationValidator.validateApplication(servletRequest, user, getApplicationName());
 
     return Response.ok().entity(ticket.getUsername()).build();
   }
