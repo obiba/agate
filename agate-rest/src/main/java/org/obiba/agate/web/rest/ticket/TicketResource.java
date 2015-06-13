@@ -126,7 +126,7 @@ public class TicketResource extends ApplicationAwareResource {
     Configuration configuration = getConfiguration();
     int timeout = ticket.isRemembered() ? configuration.getLongTimeout() : configuration.getShortTimeout();
     return new NewCookie(TicketsResource.TICKET_COOKIE_NAME, ticket.getToken(), "/", configuration.getDomain(), null,
-      timeout * 3600, true);
+      timeout * 3600, false);
   }
 
 }
