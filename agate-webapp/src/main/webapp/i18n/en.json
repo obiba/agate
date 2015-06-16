@@ -172,6 +172,8 @@
     "longTimeout-help": "Ticket expiration timeout in hours when \"remember me\" option is selected",
     "inactiveTimeout": "Inactive timeout (days)",
     "inactiveTimeout-help": "User account expiration timeout in days",
+    "joinWithUsername": "Sign up form offers to choose the username",
+    "joinWithUsername-help": "",
     "encryptionKeys": "Encryption Keys",
     "addKeyPair": "Add Keys",
     "downloadCertificate": "Download Certificate",

@@ -38,6 +38,8 @@ public class Configuration extends AbstractAuditableDocument {
 
   private String secretKey;
 
+  private boolean joinWithUsername = true;
+
   private List<AttributeConfiguration> userAttributes;
 
   public String getName() {
@@ -94,6 +96,14 @@ public class Configuration extends AbstractAuditableDocument {
 
   public void setSecretKey(String secretKey) {
     this.secretKey = secretKey;
+  }
+
+  public boolean isJoinWithUsername() {
+    return joinWithUsername;
+  }
+
+  public void setJoinWithUsername(boolean joinWithUsername) {
+    this.joinWithUsername = joinWithUsername;
   }
 
   public boolean hasUserAttributes() {

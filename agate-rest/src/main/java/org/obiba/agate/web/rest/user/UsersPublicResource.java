@@ -28,6 +28,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
+import org.bson.types.ObjectId;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.hibernate.validator.internal.constraintvalidators.EmailValidator;
@@ -92,12 +93,12 @@ public class UsersPublicResource {
 
   @POST
   @Path("/_forgot_password")
-  public Response forgotPassword(@FormParam("username")String username) throws IOException {
+  public Response forgotPassword(@FormParam("username") String username) throws IOException {
     User user = userService.findUser(username);
     if(user == null) user = userService.findUserByEmail(username);
     UserCredentials userCredentials = user != null ? userService.findUserCredentials(user.getName()) : null;
 
-    if (user != null && userCredentials != null) userService.resetPassword(user);
+    if(user != null && userCredentials != null) userService.resetPassword(user);
 
     return Response.ok().build();
   }
@@ -134,26 +135,44 @@ public class UsersPublicResource {
   public Response create(@FormParam("username") String username, @FormParam("firstname") String firstName,
     @FormParam("lastname") String lastName, @FormParam("email") String email,
     @FormParam("application") List<String> applications, @FormParam("group") List<String> groups,
-    @FormParam("password") String password, @FormParam("reCaptchaResponse") String reCaptchaResponse, @Context HttpServletRequest request) {
+    @FormParam("password") String password, @FormParam("reCaptchaResponse") String reCaptchaResponse,
+    @Context HttpServletRequest request) {
     if(Strings.isNullOrEmpty(email)) throw new BadRequestException("Email cannot be empty");
 
-    if(Strings.isNullOrEmpty(username)) throw new BadRequestException("User name cannot be empty");
-
-    if(new EmailValidator().isValid(username, null)) throw new BadRequestException("User name cannot be an email address");
-
-    if (!reCaptchaService.verify(reCaptchaResponse)) throw new BadRequestException("Invalid reCaptcha response");
+    if(!new EmailValidator().isValid(email, null)) throw new BadRequestException("Not a valid email address");
 
     String name = username;
 
+    if(Strings.isNullOrEmpty(username)) {
+      if(configurationService.getConfiguration().isJoinWithUsername())
+        throw new BadRequestException("User name cannot be empty");
+
+      try {
+        name = email.split("@")[0];
+      } catch(Exception e) {
+        name = new ObjectId().toString();
+      }
+    }
+
+    if(new EmailValidator().isValid(name, null)) throw new BadRequestException("User name cannot be an email address");
+
+    if(!reCaptchaService.verify(reCaptchaResponse)) throw new BadRequestException("Invalid reCaptcha response");
+
     if(CURRENT_USER_NAME.equals(name)) throw new BadRequestException("Reserved user name: " + CURRENT_USER_NAME);
 
-    User user = userService.findUser(name);
-
-    if(user != null) throw new BadRequestException("User already exists: " + name);
-
-    user = userService.findUserByEmail(email);
+    User user = userService.findUserByEmail(email);
 
     if(user != null) throw new BadRequestException("Email already in use: " + user.getEmail());
+
+    user = userService.findUser(name);
+
+    int i = 1;
+    String originalName = name;
+    while(user != null) {
+      name = originalName + i;
+      user = userService.findUser(name);
+      i++;
+    }
 
     user = User.newBuilder().name(name).realm(AgateUserRealm.AGATE_REALM).role(Roles.AGATE_USER).pending()
       .firstName(firstName).lastName(lastName).email(email).build();

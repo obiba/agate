@@ -29,6 +29,13 @@
           <td translate>config.inactiveTimeout</td>
           <td>{{agateConfig.inactiveTimeout / 24}}</td>
         </tr>
+        <tr>
+          <td translate>config.joinWithUsername</td>
+          <td>
+            <i class="fa fa-check-square-o" ng-hide="!agateConfig.joinWithUsername"></i>
+            <i class="fa fa-square-o" ng-hide="agateConfig.joinWithUsername"></i>
+          </td>
+        </tr>
         </tbody>
       </table>
     </div>
