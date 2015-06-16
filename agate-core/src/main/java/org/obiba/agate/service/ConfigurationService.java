@@ -21,6 +21,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 
@@ -114,13 +115,13 @@ public class ConfigurationService {
     JSONObject schema = new JSONObject();
     schema.putOnce("type", "object");
     JSONObject properties = new JSONObject();
-    properties.put("email", newProperty("string", "Email") //
+    properties.put("email", newSchemaProperty("string", "Email") //
       .put("pattern", "^\\S+@\\S+$") //
       .put("validationMessage", "Not a valid email.") //
     );
-    properties.put("username", newProperty("string", "User Name").put("minLength", 3));
-    properties.put("firstname", newProperty("string", "First Name"));
-    properties.put("lastname", newProperty("string", "Last Name"));
+    properties.put("username", newSchemaProperty("string", "User Name").put("minLength", 3));
+    properties.put("firstname", newSchemaProperty("string", "First Name"));
+    properties.put("lastname", newSchemaProperty("string", "Last Name"));
 
     JSONArray required = new JSONArray(Lists.newArrayList("username", "email", "firstname", "lastname"));
 
@@ -128,7 +129,7 @@ public class ConfigurationService {
       config.getUserAttributes().forEach(a -> {
         try {
           String type = a.getType().name().toLowerCase();
-          JSONObject property = newProperty(type, a.getName());
+          JSONObject property = newSchemaProperty(type, a.getName());
           if(a.hasValues()) {
             //noinspection ConstantConditions
             a.getValues().forEach(e -> {
@@ -159,15 +160,30 @@ public class ConfigurationService {
     definition.put("firstname");
     definition.put("lastname");
     if(config.hasUserAttributes()) {
-      config.getUserAttributes().forEach(a -> definition.put(a.getName()));
+      config.getUserAttributes().forEach(a -> {
+        try {
+          definition.put(newDefinitionProperty(a.getName(), a.getDescription()));
+        } catch(JSONException e) {
+          // ignore
+        }
+      });
     }
     return definition;
   }
 
-  private JSONObject newProperty(String type, String title) throws JSONException {
+  private JSONObject newSchemaProperty(String type, String title) throws JSONException {
     JSONObject property = new JSONObject();
     property.put("type", type);
     property.put("title", title);
+    return property;
+  }
+
+  private JSONObject newDefinitionProperty(String key, String description) throws JSONException {
+    JSONObject property = new JSONObject();
+    property.put("key", key);
+    if (!Strings.isNullOrEmpty(description)) {
+      property.put("description", description);
+    }
     return property;
   }
 

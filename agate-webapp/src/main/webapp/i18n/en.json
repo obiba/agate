@@ -199,6 +199,7 @@
       "editTitle": "Edit attributes",
       "type": "Type",
       "name": "Name",
+      "description": "Description",
       "values": "Values",
       "valuesHelp": "Comma separated values",
       "required": "Required"
@@ -302,6 +303,7 @@
     "edit-label": "Edit Attribute",
     "action": "Action",
     "name": "Name",
+    "description": "Description",
     "value": "Value",
     "delete-dialog": {
       "title": "Delete Attribute",

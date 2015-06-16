@@ -40,8 +40,15 @@ class ConfigurationDtos {
 
   @NotNull
   private Agate.AttributeConfigurationDto.Builder asDto(AttributeConfiguration config) {
-    return Agate.AttributeConfigurationDto.newBuilder().setName(config.getName()).setRequired(config.isRequired())
-      .setType(config.getType().toString()).addAllValues(config.getValues());
+    Agate.AttributeConfigurationDto.Builder builder = Agate.AttributeConfigurationDto.newBuilder()
+      .setName(config.getName()).setRequired(config.isRequired()).setType(config.getType().toString())
+      .addAllValues(config.getValues());
+
+    if(config.hasDescription()) {
+      builder.setDescription(config.getDescription());
+    }
+
+    return builder;
   }
 
   @NotNull
@@ -51,6 +58,7 @@ class ConfigurationDtos {
     attributeConfiguration.setType(config.getType());
     attributeConfiguration.setRequired(config.getRequired());
     attributeConfiguration.setValues(config.getValuesList());
+    attributeConfiguration.setDescription(config.hasDescription() ? config.getDescription() : null);
     return attributeConfiguration;
   }
 

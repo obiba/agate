@@ -17,6 +17,7 @@ import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 /**
@@ -39,6 +40,8 @@ public class AttributeConfiguration implements Serializable {
   @NotNull
   private String name;
 
+  private String description;
+
   private boolean required = false;
 
   private Type type = Type.STRING;
@@ -55,6 +58,18 @@ public class AttributeConfiguration implements Serializable {
 
   public void setName(@NotNull String name) {
     this.name = name;
+  }
+
+  public boolean hasDescription() {
+    return !Strings.isNullOrEmpty(description);
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
   }
 
   public boolean isRequired() {
@@ -92,17 +107,18 @@ public class AttributeConfiguration implements Serializable {
 
   public void addValue(String value) {
     if(values == null) values = Lists.newArrayList();
-    if (!values.contains(value)) values.add(value);
+    if(!values.contains(value)) values.add(value);
   }
 
   public void deleteValue(String value) {
-    if (values == null) return;
+    if(values == null) return;
     values.remove(value);
   }
 
   @Override
   public final String toString() {
     return Objects.toStringHelper(this).omitNullValues().add("name", name) //
+      .add("description", description) //
       .add("required", required) //
       .add("type", type) //
       .add("values", values).toString();
