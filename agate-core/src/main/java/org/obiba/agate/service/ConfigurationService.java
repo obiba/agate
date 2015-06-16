@@ -119,7 +119,9 @@ public class ConfigurationService {
       .put("pattern", "^\\S+@\\S+$") //
       .put("validationMessage", "Not a valid email.") //
     );
-    properties.put("username", newSchemaProperty("string", "User Name").put("minLength", 3));
+    if (config.isJoinWithUsername()) {
+      properties.put("username", newSchemaProperty("string", "User Name").put("minLength", 3));
+    }
     properties.put("firstname", newSchemaProperty("string", "First Name"));
     properties.put("lastname", newSchemaProperty("string", "Last Name"));
 
@@ -155,7 +157,9 @@ public class ConfigurationService {
 
   private JSONArray getJoinDefinition(Configuration config) throws JSONException {
     JSONArray definition = new JSONArray();
-    definition.put("username");
+    if (config.isJoinWithUsername()) {
+      definition.put("username");
+    }
     definition.put("email");
     definition.put("firstname");
     definition.put("lastname");
