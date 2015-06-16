@@ -33,6 +33,7 @@ message AttributeConfigurationDto {
   required bool required = 2;
   required string type = 3;
   repeated string values = 4;
+  optional string description = 5;
 }
 
 message ConfigurationDto {
