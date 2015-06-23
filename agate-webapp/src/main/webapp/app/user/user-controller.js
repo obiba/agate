@@ -28,8 +28,7 @@ agate.user
        * Deletes a user
        * @param index
        */
-      $scope.delete = function (index) {
-        var user = $scope.users[index];
+      $scope.delete = function (user) {
         $scope.userToDelete = user.id;
         if (user) {
           $rootScope.$broadcast(NOTIFICATION_EVENTS.showConfirmDialog,
