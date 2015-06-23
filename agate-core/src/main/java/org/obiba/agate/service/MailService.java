@@ -60,7 +60,7 @@ public class MailService {
     MimeMessage message = javaMailSender.createMimeMessage();
     try {
       // use the true flag to indicate you need a multipart message
-      MimeMessageHelper helper = new MimeMessageHelper(message, true);
+      MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
       helper.setTo(to);
       message.setFrom(new InternetAddress(from));
       message.setSubject(subject);
