@@ -1,0 +1,18 @@
+[
+  {
+    key: "username",
+    title: "User Name"
+  },
+  {
+    key: "email",
+    title: "Email"
+  },
+  {
+    key: "firstname",
+    title: "First Name"
+  },
+  {
+    key: "lastname",
+    title: "Last Name"
+  }
+]
