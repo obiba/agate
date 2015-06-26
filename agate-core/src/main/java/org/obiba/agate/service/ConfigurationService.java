@@ -1,10 +1,12 @@
 package org.obiba.agate.service;
 
+import java.io.IOException;
 import java.security.Key;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.shiro.codec.CodecSupport;
 import org.apache.shiro.codec.Hex;
 import org.apache.shiro.crypto.AesCipherService;
@@ -18,7 +20,9 @@ import org.obiba.agate.repository.AgateConfigRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
@@ -36,6 +40,9 @@ public class ConfigurationService {
 
   @Inject
   private Environment env;
+
+  @Inject
+  private ApplicationContext applicationContext;
 
   private final AesCipherService cipherService = new AesCipherService();
 
@@ -99,7 +106,7 @@ public class ConfigurationService {
    * @return
    * @throws JSONException
    */
-  public JSONObject getJoinConfiguration() throws JSONException {
+  public JSONObject getJoinConfiguration() throws JSONException, IOException {
     Configuration config = getConfiguration();
     JSONObject rval = new JSONObject();
     rval.put("schema", getJoinSchema(config));
@@ -155,14 +162,22 @@ public class ConfigurationService {
     return schema;
   }
 
-  private JSONArray getJoinDefinition(Configuration config) throws JSONException {
+  private JSONArray getJoinDefinition(Configuration config) throws JSONException, IOException {
+    Resource joinFormDefinitionResource = applicationContext.getResource("classpath:join/formDefinition.json");
+
+    if(joinFormDefinitionResource != null && joinFormDefinitionResource.exists())
+      return new JSONArray(IOUtils.toString(joinFormDefinitionResource.getInputStream()));
+
     JSONArray definition = new JSONArray();
-    if (config.isJoinWithUsername()) {
+
+    if(config.isJoinWithUsername()) {
       definition.put("username");
     }
+
     definition.put("email");
     definition.put("firstname");
     definition.put("lastname");
+
     if(config.hasUserAttributes()) {
       config.getUserAttributes().forEach(a -> {
         try {
@@ -172,6 +187,7 @@ public class ConfigurationService {
         }
       });
     }
+
     return definition;
   }
 

@@ -58,7 +58,7 @@ public class ConfigurationResource {
   @Path("/join")
   @Produces(APPLICATION_JSON)
   @Timed
-  public Response getJoinConfiguration() throws JSONException {
+  public Response getJoinConfiguration() throws JSONException, IOException {
     return Response.ok(configurationService.getJoinConfiguration().toString()).build();
   }
 
