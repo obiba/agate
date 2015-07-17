@@ -126,13 +126,15 @@ public class ConfigurationService {
       .put("pattern", "^\\S+@\\S+$") //
       .put("validationMessage", "Not a valid email.") //
     );
-    if (config.isJoinWithUsername()) {
+    JSONArray required = new JSONArray();
+    if(config.isJoinWithUsername()) {
       properties.put("username", newSchemaProperty("string", "User Name").put("minLength", 3));
+      required.put("username");
     }
     properties.put("firstname", newSchemaProperty("string", "First Name"));
     properties.put("lastname", newSchemaProperty("string", "Last Name"));
 
-    JSONArray required = new JSONArray(Lists.newArrayList("username", "email", "firstname", "lastname"));
+    Lists.newArrayList("email", "firstname", "lastname").forEach(required::put);
 
     if(config.hasUserAttributes()) {
       config.getUserAttributes().forEach(a -> {
@@ -165,8 +167,24 @@ public class ConfigurationService {
   private JSONArray getJoinDefinition(Configuration config) throws JSONException, IOException {
     Resource joinFormDefinitionResource = applicationContext.getResource("classpath:join/formDefinition.json");
 
-    if(joinFormDefinitionResource != null && joinFormDefinitionResource.exists())
-      return new JSONArray(IOUtils.toString(joinFormDefinitionResource.getInputStream()));
+    if(joinFormDefinitionResource != null && joinFormDefinitionResource.exists()) {
+      JSONArray def = new JSONArray(IOUtils.toString(joinFormDefinitionResource.getInputStream()));
+
+      if(!config.isJoinWithUsername()) {
+        // look for username and remove it
+        // note that only works with a simple schema form definition
+        JSONArray ndef = new JSONArray();
+        for(int i = 0; i < def.length(); i++) {
+          Object obj = def.get(i);
+          if(!(obj instanceof JSONObject) || !((JSONObject) obj).has("key") || !"username".equals(((JSONObject) obj).get("key"))) {
+            ndef.put(obj);
+          }
+        }
+        def = ndef;
+      }
+
+      return def;
+    }
 
     JSONArray definition = new JSONArray();
 
@@ -201,7 +219,7 @@ public class ConfigurationService {
   private JSONObject newDefinitionProperty(String key, String description) throws JSONException {
     JSONObject property = new JSONObject();
     property.put("key", key);
-    if (!Strings.isNullOrEmpty(description)) {
+    if(!Strings.isNullOrEmpty(description)) {
       property.put("description", description);
     }
     return property;

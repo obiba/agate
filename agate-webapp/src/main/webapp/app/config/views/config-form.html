@@ -11,8 +11,8 @@
         <div form-input name="publicUrl" model="agateConfig.publicUrl" label="config.publicUrl"
           help="config.publicUrl-help"></div>
 
-        <div form-input name="domain" model="agateConfig.domain" label="config.domain"
-            help="config.domain-help"></div>
+        <!--<div form-input name="domain" model="agateConfig.domain" label="config.domain"-->
+            <!--help="config.domain-help"></div>-->
 
         <div form-input type="number" min="0" name="shortTimeout" model="agateConfig.shortTimeout" label="config.shortTimeout"
             help="config.shortTimeout-help"></div>
@@ -26,13 +26,15 @@
         <div form-checkbox min="0" name="joinWithUsername" model="agateConfig.joinWithUsername" label="config.joinWithUsername"
           help="config.joinWithUsername-help"></div>
 
-        <a href="#/config" class="btn btn-default">
-          <span translate>cancel</span>
-        </a>
+        <div class="voffset4">
+          <a href="#/config" class="btn btn-default">
+            <span translate>cancel</span>
+          </a>
 
-        <button type="submit" class="btn btn-info">
-          <span translate>save</span>
-        </button>
+          <button type="submit" class="btn btn-info">
+            <span translate>save</span>
+          </button>
+        </div>
 
       </form>
     </div>
