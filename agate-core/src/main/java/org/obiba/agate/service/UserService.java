@@ -15,6 +15,8 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.DateTime;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.obiba.agate.domain.Group;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.domain.UserCredentials;
@@ -384,6 +386,32 @@ public class UserService {
     User user = userRepository.findOne(id);
     if(user == null) throw NoSuchUserException.withId(id);
     return user;
+  }
+
+  /**
+   * Get JSON representation of user profile.
+   *
+   * @param user
+   * @return
+   * @throws JSONException
+   */
+  public JSONObject getUserProfile(User user) throws JSONException {
+    JSONObject profile = new JSONObject();
+    profile.put("email", user.getEmail());
+    profile.put("firstname", user.getFirstName());
+    profile.put("lastname", user.getLastName());
+
+    if (user.hasAttributes()) {
+      user.getAttributes().forEach((k,v) -> {
+        try {
+          profile.put(k, v);
+        } catch (JSONException e) {
+          //ignore
+        }
+      });
+    }
+
+    return profile;
   }
 
   /**

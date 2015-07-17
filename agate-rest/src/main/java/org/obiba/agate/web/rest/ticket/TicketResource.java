@@ -17,6 +17,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.NewCookie;
@@ -24,9 +25,11 @@ import javax.ws.rs.core.Response;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.json.JSONException;
 import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
+import org.obiba.agate.service.NoSuchUserException;
 import org.obiba.agate.service.TicketService;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.model.Agate;
@@ -37,6 +40,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 /**
  *
@@ -58,6 +63,33 @@ public class TicketResource extends ApplicationAwareResource {
   @RequiresRoles("agate-administrator")
   public Agate.TicketDto getToken(@PathParam("token") String token) {
     return dtos.asDto(ticketService.getTicket(token));
+  }
+
+  /**
+   * A profile is a angular schema form model. See also {@link org.obiba.agate.web.rest.config.ConfigurationResource#getProfileConfiguration()}.
+   * The user profile profile is only accessible to authenticated applications to which the user has access.
+   *
+   * @return
+   * @throws JSONException
+   */
+  @GET
+  @Path("/profile")
+  @Produces(APPLICATION_JSON)
+  public Response getProfile(@Context HttpServletRequest servletRequest, @PathParam("token") String token,
+    @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) throws JSONException {
+    validateApplication(authHeader);
+
+    Ticket ticket = ticketService.getTicket(token);
+    ticket.addEvent(getApplicationName(), "profile");
+    ticketService.save(ticket);
+
+    User user = userService.findActiveUser(ticket.getUsername());
+    if(user == null) user = userService.findActiveUserByEmail(ticket.getUsername());
+    if (user == null) throw NoSuchUserException.withName(ticket.getUsername());
+
+    authorizationValidator.validateApplication(servletRequest, user, getApplicationName());
+
+    return Response.ok(userService.getUserProfile(user).toString()).build();
   }
 
   @GET
