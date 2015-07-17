@@ -20,9 +20,6 @@ import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.KeyStoreService;
 import org.obiba.agate.web.model.Agate;
 import org.obiba.agate.web.model.Dtos;
-import org.springframework.boot.bind.RelaxedPropertyResolver;
-import org.springframework.core.env.Environment;
-import org.springframework.core.env.PropertyResolver;
 
 import com.codahale.metrics.annotation.Timed;
 
@@ -60,6 +57,19 @@ public class ConfigurationResource {
   @Timed
   public Response getJoinConfiguration() throws JSONException, IOException {
     return Response.ok(configurationService.getJoinConfiguration().toString()).build();
+  }
+
+  /**
+   * Get the Json representation of the form to be filled for updating a user profile.
+   *
+   * @return
+   */
+  @GET
+  @Path("/profile")
+  @Produces(APPLICATION_JSON)
+  @Timed
+  public Response getProfileConfiguration() throws JSONException, IOException {
+    return Response.ok(configurationService.getProfileConfiguration().toString()).build();
   }
 
   @GET

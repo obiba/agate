@@ -114,11 +114,42 @@ public class ConfigurationService {
     return rval;
   }
 
+  /**
+   * Get the schema and the definition of the profile form.
+   *
+   * @return
+   * @throws JSONException
+   */
+  public JSONObject getProfileConfiguration() throws JSONException, IOException {
+    Configuration config = getConfiguration();
+    JSONObject rval = new JSONObject();
+    rval.put("schema", getProfileSchema(config));
+    rval.put("definition", getProfileDefinition(config));
+    return rval;
+  }
+
   //
   // Private methods
   //
 
   private JSONObject getJoinSchema(Configuration config) throws JSONException {
+    return getUserFormSchema(config, config.isJoinWithUsername());
+  }
+
+  private JSONArray getJoinDefinition(Configuration config) throws JSONException, IOException {
+    return getUserFormDefinition(config, applicationContext.getResource("classpath:join/formDefinition.json"),
+      config.isJoinWithUsername());
+  }
+
+  private JSONObject getProfileSchema(Configuration config) throws JSONException {
+    return getUserFormSchema(config, false);
+  }
+
+  private JSONArray getProfileDefinition(Configuration config) throws JSONException, IOException {
+    return getUserFormDefinition(config, applicationContext.getResource("classpath:profile/formDefinition.json"), false);
+  }
+
+  private JSONObject getUserFormSchema(Configuration config, boolean withUsername) throws JSONException {
     JSONObject schema = new JSONObject();
     schema.putOnce("type", "object");
     JSONObject properties = new JSONObject();
@@ -127,7 +158,7 @@ public class ConfigurationService {
       .put("validationMessage", "Not a valid email.") //
     );
     JSONArray required = new JSONArray();
-    if(config.isJoinWithUsername()) {
+    if(withUsername) {
       properties.put("username", newSchemaProperty("string", "User Name").put("minLength", 3));
       required.put("username");
     }
@@ -164,19 +195,19 @@ public class ConfigurationService {
     return schema;
   }
 
-  private JSONArray getJoinDefinition(Configuration config) throws JSONException, IOException {
-    Resource joinFormDefinitionResource = applicationContext.getResource("classpath:join/formDefinition.json");
+  private JSONArray getUserFormDefinition(Configuration config, Resource formDefinitionResource, boolean withUsername)
+    throws JSONException, IOException {
+    if(formDefinitionResource != null && formDefinitionResource.exists()) {
+      JSONArray def = new JSONArray(IOUtils.toString(formDefinitionResource.getInputStream()));
 
-    if(joinFormDefinitionResource != null && joinFormDefinitionResource.exists()) {
-      JSONArray def = new JSONArray(IOUtils.toString(joinFormDefinitionResource.getInputStream()));
-
-      if(!config.isJoinWithUsername()) {
+      if(!withUsername) {
         // look for username and remove it
         // note that only works with a simple schema form definition
         JSONArray ndef = new JSONArray();
         for(int i = 0; i < def.length(); i++) {
           Object obj = def.get(i);
-          if(!(obj instanceof JSONObject) || !((JSONObject) obj).has("key") || !"username".equals(((JSONObject) obj).get("key"))) {
+          if(!(obj instanceof JSONObject) || !((JSONObject) obj).has("key") ||
+            !"username".equals(((JSONObject) obj).get("key"))) {
             ndef.put(obj);
           }
         }
@@ -188,18 +219,18 @@ public class ConfigurationService {
 
     JSONArray definition = new JSONArray();
 
-    if(config.isJoinWithUsername()) {
-      definition.put("username");
+    if(withUsername) {
+      definition.put(newDefinitionProperty("username","User Name", ""));
     }
 
-    definition.put("email");
-    definition.put("firstname");
-    definition.put("lastname");
+    definition.put(newDefinitionProperty("email","Email", ""));
+    definition.put(newDefinitionProperty("firstname","First Name", ""));
+    definition.put(newDefinitionProperty("lastname","Last Name", ""));
 
     if(config.hasUserAttributes()) {
       config.getUserAttributes().forEach(a -> {
         try {
-          definition.put(newDefinitionProperty(a.getName(), a.getDescription()));
+          definition.put(newDefinitionProperty(a.getName(), a.getName(), a.getDescription()));
         } catch(JSONException e) {
           // ignore
         }
@@ -216,9 +247,12 @@ public class ConfigurationService {
     return property;
   }
 
-  private JSONObject newDefinitionProperty(String key, String description) throws JSONException {
+  private JSONObject newDefinitionProperty(String key, String title, String description) throws JSONException {
     JSONObject property = new JSONObject();
     property.put("key", key);
+    if(!Strings.isNullOrEmpty(title)) {
+      property.put("title", title);
+    }
     if(!Strings.isNullOrEmpty(description)) {
       property.put("description", description);
     }
