@@ -12,9 +12,11 @@ package org.obiba.agate.web.rest.ticket;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -26,6 +28,7 @@ import javax.ws.rs.core.Response;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
@@ -66,8 +69,9 @@ public class TicketResource extends ApplicationAwareResource {
   }
 
   /**
-   * A profile is a angular schema form model. See also {@link org.obiba.agate.web.rest.config.ConfigurationResource#getProfileConfiguration()}.
-   * The user profile profile is only accessible to authenticated applications to which the user has access.
+   * Get the user profile as a angular schema form model. See also
+   * {@link org.obiba.agate.web.rest.config.ConfigurationResource#getProfileConfiguration()}. The user profile is
+   * only accessible to authenticated applications to which the user has access.
    *
    * @return
    * @throws JSONException
@@ -90,6 +94,36 @@ public class TicketResource extends ApplicationAwareResource {
     authorizationValidator.validateApplication(servletRequest, user, getApplicationName());
 
     return Response.ok(userService.getUserProfile(user).toString()).build();
+  }
+
+  /**
+   * Update the user profile from a angular schema form model. See also
+   * {@link org.obiba.agate.web.rest.config.ConfigurationResource#getProfileConfiguration()}.The user profile is
+   * only accessible to authenticated applications to which the user has access.
+   *
+   * @return
+   * @throws JSONException
+   */
+  @PUT
+  @Path("/profile")
+  @Consumes(APPLICATION_JSON)
+  public Response updateProfile(@Context HttpServletRequest servletRequest, @PathParam("token") String token,
+    @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader, String model) throws JSONException {
+    validateApplication(authHeader);
+
+    Ticket ticket = ticketService.getTicket(token);
+    ticket.addEvent(getApplicationName(), "profile");
+    ticketService.save(ticket);
+
+    User user = userService.findActiveUser(ticket.getUsername());
+    if(user == null) user = userService.findActiveUserByEmail(ticket.getUsername());
+    if (user == null) throw NoSuchUserException.withName(ticket.getUsername());
+
+    authorizationValidator.validateApplication(servletRequest, user, getApplicationName());
+
+    userService.updateUserProfile(user, new JSONObject(model));
+
+    return Response.ok().build();
   }
 
   @GET

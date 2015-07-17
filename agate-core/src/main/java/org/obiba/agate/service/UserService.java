@@ -5,6 +5,7 @@ import java.security.SignatureException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -40,6 +41,7 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Iterators;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -412,6 +414,37 @@ public class UserService {
     }
 
     return profile;
+  }
+
+  /**
+   * Update user profile from a JSON representation.
+   *
+   * @param user
+   * @param profile
+   * @throws JSONException
+   */
+  public void updateUserProfile(User user, JSONObject profile) throws JSONException {
+    Iterable<String> iterable = () -> profile.keys();
+    StreamSupport.stream(iterable.spliterator(), false).forEach(k -> {
+      String value = null;
+      try {
+        value = profile.getString(k);
+        if ("firstname".equals(k)) {
+          user.setFirstName(value);
+        } else if ("lastname".equals(k)) {
+          user.setLastName(value);
+        } else if ("email".equals(k)) {
+          user.setEmail(value);
+        } else {
+          user.getAttributes().put(k, value);
+        }
+      } catch(JSONException e) {
+        log.warn("Unable to read profile value '{}'", k, e);
+      }
+    });
+    profile.keys();
+
+    save(user);
   }
 
   /**
