@@ -11,7 +11,6 @@
 package org.obiba.agate.web.rest.user;
 
 import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
@@ -49,13 +48,7 @@ public abstract class AbstractUserResource {
    * Updates user properties
    */
   protected Response updateUser(Agate.UserDto userDto) {
-    User user = userService.findUserByEmail(userDto.getEmail());
-
-    if(user != null && !user.getName().equals(userDto.getName())) throw new BadRequestException("Email already in user: " + user.getEmail());
-
-    user = dtos.fromDto(userDto);
-    userService.save(user);
-
+    userService.save(dtos.fromDto(userDto));
     return Response.noContent().build();
   }
 

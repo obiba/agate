@@ -338,7 +338,7 @@
   "notification": "Notification",
   "required": "Required fields cannot be empty.",
   "suppl-info": "Supplementary information",
-  "fix-error": "Please fix errors bellow",
+  "fix-error": "The form has some errors. Please fix them before submitting.",
   "missing-reCaptcha-error": "Missing reCaptcha response",
   "dnd-reorder": "Drag and drop to reorder",
   "loading": "Loading...",
@@ -349,8 +349,10 @@
       "password": {
         "too-short": "Password is shorter than the required {{arg0}} characters",
         "not-changed": "New password is identical to the current password"
-      }
+      },
+      "email-already-assigned": "Email '{{arg0}}' is already assigned to another user."
     }
-  }
+  },
+  "form-server-error": "Error"
 
 }

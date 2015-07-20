@@ -232,6 +232,12 @@ public class UserService {
       }
     }
 
+    // verify user email is unique
+    User userWithEmail = findActiveUserByEmail(user.getEmail());
+    if (userWithEmail != null && !userWithEmail.getId().equals(user.getId())) {
+      throw new EmailAlreadyAssignedException(user.getEmail());
+    }
+
     userRepository.save(saved);
 
     if(saved.getGroups() != null) {
@@ -403,11 +409,11 @@ public class UserService {
     profile.put("firstname", user.getFirstName());
     profile.put("lastname", user.getLastName());
 
-    if (user.hasAttributes()) {
-      user.getAttributes().forEach((k,v) -> {
+    if(user.hasAttributes()) {
+      user.getAttributes().forEach((k, v) -> {
         try {
           profile.put(k, v);
-        } catch (JSONException e) {
+        } catch(JSONException e) {
           //ignore
         }
       });
@@ -429,11 +435,11 @@ public class UserService {
       String value = null;
       try {
         value = profile.getString(k);
-        if ("firstname".equals(k)) {
+        if("firstname".equals(k)) {
           user.setFirstName(value);
-        } else if ("lastname".equals(k)) {
+        } else if("lastname".equals(k)) {
           user.setLastName(value);
-        } else if ("email".equals(k)) {
+        } else if("email".equals(k)) {
           user.setEmail(value);
         } else {
           user.getAttributes().put(k, value);
