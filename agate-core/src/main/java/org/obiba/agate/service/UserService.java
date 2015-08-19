@@ -41,7 +41,6 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Iterators;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -112,6 +111,22 @@ public class UserService {
     return (Strings.isNullOrEmpty(group)
       ? userRepository.findByStatus(UserStatus.ACTIVE)
       : userRepository.findByStatusAndGroups(UserStatus.ACTIVE, group)).stream() //
+      .filter(user -> (user.hasApplication(application) || user.hasOneOfGroup(groupNames)) && user.hasGroup(group)) //
+      .collect(Collectors.toList());
+  }
+
+  public List<User> findActiveUserByApplication(@NotNull String  username, @NotNull String application) {
+    return findActiveUserByApplicationAndGroup(username, application, null);
+  }
+
+  public List<User> findActiveUserByApplicationAndGroup(@NotNull String  username, @NotNull String application, @Nullable String group) {
+    List<String> groupNames = groupRepository.findByApplications(application).stream() //
+      .map(Group::getName) //
+      .collect(Collectors.toList());
+
+    return (Strings.isNullOrEmpty(group)
+      ? userRepository.findByNameAndStatus(username, UserStatus.ACTIVE)
+      : userRepository.findByNameAndStatusAndGroups(username, UserStatus.ACTIVE, group)).stream() //
       .filter(user -> (user.hasApplication(application) || user.hasOneOfGroup(groupNames)) && user.hasGroup(group)) //
       .collect(Collectors.toList());
   }

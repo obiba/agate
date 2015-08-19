@@ -31,5 +31,5 @@ public interface UserRepository extends MongoRepository<User, String> {
 
   List<User> findByStatusAndGroups(UserStatus status, String group);
 
-
+  List<User> findByNameAndStatusAndGroups(String username, UserStatus status, String group);
 }
