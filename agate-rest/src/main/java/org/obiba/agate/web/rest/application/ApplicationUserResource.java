@@ -14,6 +14,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
@@ -24,6 +25,7 @@ import org.obiba.agate.service.ApplicationService;
 import org.obiba.agate.service.NoSuchUserException;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.model.Dtos;
+import org.obiba.shiro.realm.ObibaRealm;
 import org.obiba.web.model.AuthDtos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +35,7 @@ import com.google.common.base.Strings;
 
 @Component
 @Path("/application/{id}/user/{username}")
-public class ApplicationUserResource {
+public class ApplicationUserResource extends ApplicationAwareResource {
   private static final Logger log = LoggerFactory.getLogger(ApplicationUserResource.class);
 
   @Inject
@@ -47,7 +49,9 @@ public class ApplicationUserResource {
 
   @GET
   public AuthDtos.SubjectDto get(@PathParam("id") String id, @PathParam("username") String username,
-    @QueryParam("group") String group) {
+    @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader, @QueryParam("group") String group) {
+
+    validateApplication(authHeader);
     Application application = applicationService.getApplication(id);
 
     List<User> users = Strings.isNullOrEmpty(group)
