@@ -159,9 +159,7 @@ agate
         $rootScope.subject = Session;
 
         if (!$rootScope.authenticated) {
-          if (next.access && next.access.authorizedRoles.indexOf(USER_ROLES.all)<0) {
-            $rootScope.$broadcast('event:auth-loginRequired');
-          }
+          $rootScope.$broadcast('event:auth-loginRequired');
         } else if (!AuthenticationSharedService.isAuthorized(next.access ? next.access.authorizedRoles : '*')) {
           $rootScope.$broadcast('event:auth-notAuthorized');
         }
