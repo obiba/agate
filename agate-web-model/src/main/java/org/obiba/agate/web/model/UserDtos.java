@@ -15,6 +15,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
+import org.joda.time.DateTime;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.service.UserService;
 import org.obiba.web.model.AuthDtos;
@@ -71,6 +72,9 @@ class UserDtos {
       addAttribute(builder, "firstName", user.getFirstName());
       addAttribute(builder, "lastName", user.getLastName());
       addAttribute(builder, "email", user.getEmail());
+      addAttribute(builder, "createdDate", user.getCreatedDate().toString());
+      DateTime lastLogin = user.getLastLogin();
+      if (lastLogin != null) addAttribute(builder, "lastLogin", lastLogin.toString());
       user.getAttributes().forEach((n, v) -> addAttribute(builder, n, v));
     }
 
