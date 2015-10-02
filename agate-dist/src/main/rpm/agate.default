@@ -1,0 +1,32 @@
+# Defaults for agate server initscript
+# sourced by /etc/init.d/agate
+# installed at /etc/default/agate by the maintainer scripts
+
+# pulled in from the init script; makes things easier.
+NAME=agate
+
+# location of java
+JAVA=/usr/bin/java
+
+# ulimit
+# Increase maximum open files for the agate server process
+# Comment this out to use the system default
+MAXOPENFILES=16384
+
+# user id (or id:gid) to be run as
+AGATE_USER=agate
+
+# location of the agate server distribution file
+AGATE_DIST=/usr/share/agate
+
+# Agate Server home location
+AGATE_HOME=/var/lib/agate
+
+# Agate Server log directory or syslog facility
+AGATE_LOG=/var/log/agate
+
+# arguments to pass to agate server.
+AGATE_ARGS=""
+
+# arguments to pass to java
+JAVA_ARGS="-Xms1G -Xmx2G -XX:MaxPermSize=256M -XX:+UseG1GC"

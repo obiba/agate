@@ -12,7 +12,7 @@
   <artifactId>agate-dist</artifactId>
 
   <dependencies>
-  	
+
     <dependency>
       <groupId>org.obiba.agate</groupId>
       <artifactId>agate-webapp</artifactId>
@@ -65,6 +65,181 @@
       <id>ci-build</id>
       <build>
         <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>rpm-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>make-rpm</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>attached-rpm</goal>
+                </goals>
+                <configuration>
+                  <name>agate</name>
+                  <needarch>noarch</needarch>
+                  <version>${project.version}</version>
+                  <license>see /usr/share/doc/agate/copyright</license>
+                  <group>Applications/Engineering</group>
+                  <packager>OBiBa</packager>
+                  <prefix>/usr/share</prefix>
+                  <changelogFile>/usr/share/changelog</changelogFile>
+                  <targetOS>Linux</targetOS>
+                  <mappings>
+                    <!-- Add init.d files  -->
+                    <mapping>
+                      <directory>/etc/init.d</directory>
+                      <directoryIncluded>false</directoryIncluded>
+                      <filemode>755</filemode>
+                      <configuration>true</configuration>
+                      <sources>
+                        <source>
+                          <location>src/main/rpm/init.d</location>
+                          <includes>
+                            <include>agate</include>
+                          </includes>
+                        </source>
+                      </sources>
+                    </mapping>
+                    <mapping>
+                      <directory>${agate.dir}/bin</directory>
+                      <filemode>755</filemode>
+                      <sources>
+                        <source>
+                          <location>src/main/rpm/agate.sh</location>
+                        </source>
+                        <source>
+                          <location>src/main/rpm/update.sh</location>
+                        </source>
+                      </sources>
+                    </mapping>
+                    <mapping>
+                      <directory>${agate.dir}/tools</directory>
+                      <filemode>755</filemode>
+                      <sources>
+                        <source>
+                          <location>${dist.location}/tools</location>
+                          <excludes>
+                            <exclude>*.bat</exclude>
+                          </excludes>
+                        </source>
+                      </sources>
+                    </mapping>
+                    <mapping>
+                      <directory>/etc/agate</directory>
+                      <filemode>640</filemode>
+                      <username>agate</username>
+                      <groupname>adm</groupname>
+                      <configuration>true</configuration>
+                      <sources>
+                        <source>
+                          <location>${dist.location}/conf</location>
+                        </source>
+                      </sources>
+                    </mapping>
+                    <mapping>
+                      <directory>/etc/init</directory>
+                      <filemode>644</filemode>
+                      <directoryIncluded>false</directoryIncluded>
+                      <sources>
+                        <source>
+                          <location>src/main/rpm/upstart.conf</location>
+                          <destination>agate.conf</destination>
+                        </source>
+                      </sources>
+                    </mapping>
+                    <mapping>
+                      <directory>/etc/default</directory>
+                      <filemode>644</filemode>
+                      <directoryIncluded>false</directoryIncluded>
+                      <sources>
+                        <source>
+                          <location>src/main/rpm/agate.default</location>
+                          <destination>agate</destination>
+                          <filter>true</filter>
+                        </source>
+                      </sources>
+                    </mapping>
+                    <mapping>
+                      <directory>${agate.dir}/webapp</directory>
+                      <filemode>755</filemode>
+                      <sources>
+                        <source>
+                          <location>${dist.location}/webapp</location>
+                        </source>
+                      </sources>
+                    </mapping>
+                    <mapping>
+                      <directory>${agate.dir}/tools/lib</directory>
+                      <filemode>755</filemode>
+                      <sources>
+                        <source>
+                          <location>${dist.location}/tools/lib</location>
+                        </source>
+                      </sources>
+                    </mapping>
+                    <mapping>
+                      <directory>${agate.dir}/webapp</directory>
+                      <sources>
+                        <source>
+                          <location>${dist.location}/webapp</location>
+                        </source>
+                      </sources>
+                    </mapping>
+                    <mapping>
+                      <directory>/usr/share/doc/agate</directory>
+                      <filemode>755</filemode>
+                      <username>agate</username>
+                      <groupname>adm</groupname>
+                      <documentation>true</documentation>
+                      <sources>
+                        <source>
+                          <location>src/main/deb/debian/changelog</location>
+                        </source>
+                        <source>
+                          <location>src/main/rpm/copyright</location>
+                        </source>
+                      </sources>
+                    </mapping>
+                    <mapping>
+                      <directory>/var/lib/agate</directory>
+                      <filemode>740</filemode>
+                      <username>agate</username>
+                      <groupname>adm</groupname>
+                    </mapping>
+                    <mapping>
+                      <directory>/var/log/agate</directory>
+                      <filemode>740</filemode>
+                      <username>agate</username>
+                      <groupname>adm</groupname>
+                    </mapping>
+                    <mapping>
+                      <directory>/tmp/agate</directory>
+                      <filemode>740</filemode>
+                      <username>agate</username>
+                      <groupname>adm</groupname>
+                    </mapping>
+                  </mappings>
+                  <preinstallScriptlet>
+                    <scriptFile>src/main/rpm/scripts/preinstall.sh</scriptFile>
+                    <fileEncoding>utf-8</fileEncoding>
+                  </preinstallScriptlet>
+                  <postinstallScriptlet>
+                    <scriptFile>src/main/rpm/scripts/postinstall.sh</scriptFile>
+                    <fileEncoding>utf-8</fileEncoding>
+                  </postinstallScriptlet>
+                  <preremoveScriptlet>
+                    <scriptFile>src/main/rpm/scripts/prerm.sh</scriptFile>
+                    <fileEncoding>utf-8</fileEncoding>
+                  </preremoveScriptlet>
+                  <postremoveScriptlet>
+                    <scriptFile>src/main/rpm/scripts/postrm.sh</scriptFile>
+                    <fileEncoding>utf-8</fileEncoding>
+                  </postremoveScriptlet>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
           <plugin>
             <artifactId>maven-antrun-plugin</artifactId>
             <executions>
@@ -138,6 +313,21 @@
                   </target>
                 </configuration>
               </execution>
+              <execution>
+                <id>deploy-rpm</id>
+                <phase>deploy</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <target>
+                    <!-- Deploy rpm file in rpm repo -->
+                    <copy todir="${obiba.rpm.dir}/${agate.deploy.dir}">
+                      <fileset dir="target/rpm/agate/RPMS/noarch" />
+                    </copy>
+                  </target>
+                </configuration>
+              </execution>
             </executions>
           </plugin>
         </plugins>
@@ -145,5 +335,12 @@
 
     </profile>
   </profiles>
+
+  <properties>
+    <install.dir>/usr/share</install.dir>
+    <agate.dir>${install.dir}/agate-${project.version}</agate.dir>
+    <package.name>agate-dist-${project.version}</package.name>
+    <dist.location>${basedir}/target/${package.name}-dist/${package.name}</dist.location>
+  </properties>
 
 </project>
