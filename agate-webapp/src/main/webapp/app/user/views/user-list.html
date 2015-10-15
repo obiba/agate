@@ -63,10 +63,10 @@
         <td class="action-column">
           <ul class="list-inline pull-right">
             <li>
-              <a ng-href="#/user/{{user.id}}/edit"><i class="fa fa-pencil"></i></a>
+              <a ng-href="#/user/{{user.id}}/edit" title="{{'edit' | translate}}"><i class="fa fa-pencil"></i></a>
             </li>
             <li>
-              <a ng-click="delete(user)"><i class="fa fa-trash-o"></i></a>
+              <a ng-click="delete(user)" title="{{'delete' | translate}}"><i class="fa fa-trash-o"></i></a>
             </li>
             <li>
               <a href="" ng-click="resetPassword(user)" translate title="{{'user.resetPassword' | translate}}"><i class="fa fa-bolt"></i></a>
