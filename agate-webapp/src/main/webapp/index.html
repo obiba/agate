@@ -47,27 +47,30 @@
             <span translate>global.menu.tickets</span>
           </a>
         </li>
+        <li>
+          <a href="#/users">
+            <span translate>global.menu.users</span>
+          </a>
+        </li>
+        <li>
+          <a href="#/groups">
+            <span translate>global.menu.groups</span>
+          </a>
+        </li>
+        <li>
+          <a href="#/applications">
+            <span translate>global.menu.applications</span>
+          </a>
+        </li>
+
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right" ng-if="authenticated">
         <li class="dropdown" ng-if="hasRole('agate-administrator')">
           <a href="" class="dropdown-toggle" data-toggle="dropdown">
             <span translate>global.menu.admin</span>
             <i class="fa fa-caret-down"></i></a>
           <ul class="dropdown-menu pull-right">
-            <li>
-              <a href="#/users">
-                <span translate>global.menu.users</span>
-              </a>
-            </li>
-            <li>
-              <a href="#/groups">
-                <span translate>global.menu.groups</span>
-              </a>
-            </li>
-            <li>
-              <a href="#/applications">
-                <span translate>global.menu.applications</span>
-              </a>
-            </li>
-            <li class="divider"></li>
             <li>
               <a href="#/users/requests">
                 <span translate>global.menu.requests</span>
@@ -81,10 +84,6 @@
             </li>
           </ul>
         </li>
-
-      </ul>
-
-      <ul class="nav navbar-nav navbar-right" ng-if="authenticated">
         <li class="dropdown">
           <a href="" class="dropdown-toggle" data-toggle="dropdown">
             <i class="fa fa-user"></i>
