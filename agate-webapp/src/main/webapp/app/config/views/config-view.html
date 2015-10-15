@@ -1,10 +1,9 @@
 <div>
-
   <h2 translate>global.menu.admin</h2>
 
-  <h2 translate>config.title</h2>
   <div class="row">
     <div class="col-md-6">
+      <h3 translate>config.title</h3>
       <table class="table table-bordered table-striped">
         <tbody>
         <tr>
@@ -41,67 +40,72 @@
         </tbody>
       </table>
     </div>
+    <div class="col-md-6">
+      <h3 translate>config.userAttributes</h3>
+
+      <button type="button" class="btn btn-info" ng-click="editAttribute()">
+        <i class="fa fa-plus"></i> <span translate>config.attributes.addAttribute</span>
+      </button>
+
+      <div ng-if="agateConfig.userAttributes && agateConfig.userAttributes.length > 0">
+        <div class="voffset2">
+          <table class="table table-bordered table-striped attributes-column">
+            <thead>
+            <tr>
+              <th translate>config.attributes.name</th>
+              <th translate>config.attributes.type</th>
+              <th translate>config.attributes.values</th>
+              <th translate>config.attributes.required</th>
+              <th translate>config.attributes.actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="attribute in agateConfig.userAttributes">
+              <td>
+                {{attribute.name}}
+              </td>
+              <td>
+                {{attribute.type}}
+              </td>
+              <td>
+                [{{attribute.values.join(', ') }}]
+              </td>
+              <td>
+                <span ng-show="attribute.required"><i class="fa fa-check"></i></span>
+              </td>
+              <td>
+                <a href="" ng-click="editAttribute(attribute)" class="action"><i class="fa fa-pencil"></i></a>
+                <a href="" ng-click="deleteAttribute(attribute)" class="action"><i class="fa fa-trash-o"></i></a>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <h3 translate>config.encryptionKeys</h3>
+
+      <div class="btn-group dropdown" is-open="status.isopen">
+        <button type="button" class="btn btn-info dropdown-toggle" ng-disabled="disabled" data-toggle="dropdown">
+          <i class="fa fa-plus"></i> <span translate>config.addKeyPair</span> <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu" >
+          <li><a role="menuitem" href="" ng-click="createKeyPair()" translate>config.create</a></li>
+          <li><a role="menuitem" href="" ng-click="importKeyPair()" translate>config.import</a></li>
+        </ul>
+      </div>
+
+      <a href="" class="btn btn-default" ng-click="downloadCertificate()">
+        <i class="fa fa-download"></i> <span translate>config.downloadCertificate</span>
+      </a>
+    </div>
   </div>
 
   <a href="#/config/edit" class="btn btn-primary">
     <i class="fa fa-pencil-square-o"></i> <span translate>edit</span>
   </a>
 
-  <h2 translate>config.encryptionKeys</h2>
 
-  <div class="btn-group dropdown" is-open="status.isopen">
-    <button type="button" class="btn btn-info dropdown-toggle" ng-disabled="disabled" data-toggle="dropdown">
-      <i class="fa fa-plus"></i> <span translate>config.addKeyPair</span> <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu" role="menu" >
-      <li><a role="menuitem" href="" ng-click="createKeyPair()" translate>config.create</a></li>
-      <li><a role="menuitem" href="" ng-click="importKeyPair()" translate>config.import</a></li>
-    </ul>
-  </div>
 
-  <a href="" class="btn btn-default" ng-click="downloadCertificate()">
-    <i class="fa fa-download"></i> <span translate>config.downloadCertificate</span>
-  </a>
 
-  <h2 translate>config.userAttributes</h2>
-
-  <button type="button" class="btn btn-info" ng-click="editAttribute()">
-    <i class="fa fa-plus"></i> <span translate>config.attributes.addAttribute</span>
-  </button>
-
-  <div ng-show="agateConfig.userAttributes || agateConfig.userAttributes.length > 0">
-    <div class="voffset3">
-      <table class="table table-bordered table-striped attributes-column">
-        <thead>
-        <tr>
-          <th translate>config.attributes.name</th>
-          <th translate>config.attributes.type</th>
-          <th translate>config.attributes.values</th>
-          <th translate>config.attributes.required</th>
-          <th translate>config.attributes.actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr ng-repeat="attribute in agateConfig.userAttributes">
-          <td>
-            {{attribute.name}}
-          </td>
-          <td>
-            {{attribute.type}}
-          </td>
-          <td>
-            [{{attribute.values.join(', ') }}]
-          </td>
-          <td>
-            <span ng-show="attribute.required"><i class="fa fa-check"></i></span>
-          </td>
-          <td>
-            <a href="" ng-click="editAttribute(attribute)" class="action"><i class="fa fa-pencil"></i></a>
-            <a href="" ng-click="deleteAttribute(attribute)" class="action"><i class="fa fa-trash-o"></i></a>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
 </div>

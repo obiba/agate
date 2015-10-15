@@ -70,6 +70,14 @@ agate.group
           });
         }
       };
+
+      $scope.cancel = function () {
+        if ($scope.group.id) {
+          $location.path('/group' + ($scope.group.id ? '/' + $scope.group.id : '')).replace();
+        } else {
+          $location.path('/groups');
+        }
+      };
     }])
   .controller('GroupViewController', ['$scope', '$routeParams', 'GroupResource',
 

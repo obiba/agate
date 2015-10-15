@@ -88,4 +88,12 @@ agate.application
           ApplicationsResource.save($scope.application, onSuccess, onError);
         }
       };
+
+      $scope.cancel = function () {
+        if ($scope.application.id) {
+          $location.path('/application' + ($scope.application.id ? '/' + $scope.application.id : '')).replace();
+        } else {
+          $location.path('/applications');
+        }
+      };
     }]);

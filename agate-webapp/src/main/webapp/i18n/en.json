@@ -222,7 +222,8 @@
     "delete-dialog": {
       "title": "Delete Application",
       "message": "Are you sure you want to delete application '{{arg0}}'?"
-    }
+    },
+    "none": "No applications."
   },
   "groups": "Groups",
   "group": {
@@ -238,7 +239,8 @@
     "delete-dialog": {
       "title": "Delete Group",
       "message": "Are you sure you want to delete group '{{arg0}}'?"
-    }
+    },
+    "none": "No groups."
   },
   "tickets": "Tickets",
   "ticket": {
@@ -258,7 +260,7 @@
   },
   "users": "Users",
   "user": {
-    "none": "No users created.",
+    "none": "No users.",
     "details": "User Details",
     "required-info": "Required Information",
     "general-info": "General Information",
@@ -304,7 +306,6 @@
     "actions": "Actions",
     "add-label": "Add Attribute",
     "edit-label": "Edit Attribute",
-    "action": "Action",
     "name": "Name",
     "description": "Description",
     "value": "Value",
@@ -314,7 +315,8 @@
     },
     "error": {
       "duplicated": "The '{{arg0}}' attribute already exists or it is a configuration attribute."
-    }
+    },
+    "none": "No attributes."
   },
   "profile": {
     "identification": "Identification",
@@ -324,6 +326,7 @@
       "updated": "Profile settings updated successfully."
     }
   },
+  "properties": "Properties",
   "name": "Name",
   "edit": "Edit",
   "view": "View",

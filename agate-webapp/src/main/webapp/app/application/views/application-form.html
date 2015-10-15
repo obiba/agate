@@ -7,6 +7,7 @@
   </h2>
   <div class="row">
     <div class="col-md-6">
+      <h3 translate>properties</h3>
       <form name="form" role="form" novalidate ng-submit="save(form)" autocomplete="off">
         <p class="alert alert-danger" ng-show="status && status !== status_codes.SUCCESS" translate="">fix-error</p>
         <div class="alert alert-danger" ng-show="status === status_codes.NO_MATCH" translate="password.messages.error.dontmatch">
@@ -22,15 +23,13 @@
           <div form-input type="password" name="confirmKey" model="confirmKey" label="application.confirmKey"></div>
         </div>
 
-        <div class="voffset4">
-          <a href="#/applications" class="btn btn-default">
+          <button type="button" class="btn btn-default" ng-click="cancel()">
             <span translate>cancel</span>
-          </a>
+          </button>
 
           <button type="submit" class="btn btn-info">
             <span translate>save</span>
           </button>
-        </div>
       </form>
     </div>
   </div>

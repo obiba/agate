@@ -1,17 +1,12 @@
 <div>
 
-  <h2>
-    <ol class="agate-breadcrumb">
-      <li><a href="#/users" translate>users</a></li>
-      <li class="active"translate>user.pending-requests</li>
-    </ol>
-  </h2>
+  <h2 translate>user.pending-requests</h2>
 
-  <p class="voffset3" ng-hide="users.length > 0">
+  <p class="voffset2" ng-if="users.length == 0">
     <span translate>user.none-requests</span>
   </p>
 
-  <div class="row voffset4" ng-hide="users.length == 0">
+  <div class="row voffset2" ng-if="users.length > 0">
     <div class="col-xs-4">
       <span class="input-group input-group-sm no-padding-top">
         <span class="input-group-addon" id="study-search"><i class="glyphicon glyphicon-search"></i></span>
@@ -23,7 +18,7 @@
     </div>
   </div>
 
-  <div class="table-responsive" ng-hide="users.length == 0">
+  <div class="table-responsive" ng-if="users.length > 0">
     <table class="table table-striped table-hover table-bordered">
       <thead>
       <tr>

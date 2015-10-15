@@ -12,11 +12,11 @@
 
   <h2 translate>tickets</h2>
 
-  <p class="voffset3" ng-hide="tickets.length > 0">
+  <p class="voffset2" ng-if="tickets.length == 0">
     <span translate>ticket.none</span>
   </p>
 
-  <div class="row voffset4" ng-hide="tickets.length == 0">
+  <div class="row voffset2" ng-if="tickets.length > 0">
     <div class="col-xs-4">
       <span class="input-group input-group-sm no-padding-top">
         <span class="input-group-addon" id="ticket-search"><i class="glyphicon glyphicon-search"></i></span>
@@ -28,7 +28,7 @@
     </div>
   </div>
 
-  <div class="table-responsive voffset3" ng-hide="tickets.length == 0">
+  <div class="table-responsive" ng-if="tickets.length > 0">
     <table class="table table-striped table-hover table-bordered" ng-show="tickets && tickets.length > 0">
       <thead>
       <tr>

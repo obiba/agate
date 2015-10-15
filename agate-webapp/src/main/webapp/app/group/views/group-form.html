@@ -8,6 +8,7 @@
 
   <div class="row">
     <div class="col-md-6">
+      <h3 translate>properties</h3>
       <form name="form" role="form" novalidate ng-submit="save(form)">
         <p class="alert alert-danger" ng-show="form.saveAttempted && form.$invalid" translate="">fix-error</p>
 
@@ -27,9 +28,9 @@
           </ui-select>
         </div>
 
-        <a href="#/groups" class="btn btn-default">
+        <button type="button" class="btn btn-default" ng-click="cancel()">
           <span translate>cancel</span>
-        </a>
+        </button>
 
         <button type="submit" class="btn btn-info">
           <span translate>save</span>

@@ -41,8 +41,8 @@
       <a href="#" class="navbar-brand">Agate</a>
     </div>
     <div class="navbar-collapse collapse" id="navbar-main" ng-switch="authenticated">
-      <ul class="nav navbar-nav">
-        <li ng-if="hasRole('agate-administrator')">
+      <ul class="nav navbar-nav"  ng-if="hasRole('agate-administrator')">
+        <li>
           <a href="#/tickets">
             <span translate>global.menu.tickets</span>
           </a>
@@ -62,27 +62,18 @@
             <span translate>global.menu.applications</span>
           </a>
         </li>
-
+        <li>
+          <a href="#/users/requests">
+            <span translate>global.menu.requests</span>
+          </a>
+        </li>
       </ul>
 
       <ul class="nav navbar-nav navbar-right" ng-if="authenticated">
-        <li class="dropdown" ng-if="hasRole('agate-administrator')">
-          <a href="" class="dropdown-toggle" data-toggle="dropdown">
+        <li ng-if="hasRole('agate-administrator')">
+          <a href="#/config">
             <span translate>global.menu.admin</span>
-            <i class="fa fa-caret-down"></i></a>
-          <ul class="dropdown-menu pull-right">
-            <li>
-              <a href="#/users/requests">
-                <span translate>global.menu.requests</span>
-              </a>
-            </li>
-            <li class="divider"></li>
-            <li>
-              <a href="#/config">
-                <span translate>global.menu.configuration</span>
-              </a>
-            </li>
-          </ul>
+          </a>
         </li>
         <li class="dropdown">
           <a href="" class="dropdown-toggle" data-toggle="dropdown">

@@ -13,7 +13,8 @@
   <h2>
     <ol class="agate-breadcrumb">
       <li><a href="#/users" translate>users</a></li>
-      <li class="active"><span ng-if="user.name">{{user.name}}</span><span ng-if="!user.name" translate>user.new</span></li>
+      <li class="active"><span ng-if="user.name">{{user.name}}</span><span ng-if="!user.name" translate>user.new</span>
+      </li>
     </ol>
   </h2>
 
@@ -22,21 +23,18 @@
 
     <obiba-alert id="UserEditController"></obiba-alert>
 
-    <tabset>
-      <tab select="tabInfo=true" heading="{{'user.general-info' | translate}}">
-        <div class="row" ng-if="tabInfo">
-          <div class="col-md-6">
-            <div  ng-include="'app/user/views/user-required-info-form.html'"></div>
-          </div>
-          <div class="col-md-6">
-            <div  ng-include="'app/user/views/user-general-info-form.html'"></div>
-          </div>
-        </div>
-      </tab>
-      <tab heading="{{'attributes' | translate}}">
-        <attributes-form attributes="user.attributes" attributes-config="attributesConfig" used-attribute-names="usedAttributeNames"></attributes-form>
-      </tab>
-    </tabset>
+    <div class="row">
+      <div class="col-md-6">
+        <h3 translate>user.general-info</h3>
+        <div ng-include="'app/user/views/user-required-info-form.html'"></div>
+        <div ng-include="'app/user/views/user-general-info-form.html'"></div>
+      </div>
+      <div class="col-md-6">
+        <h3 translate>attributes</h3>
+        <attributes-form attributes="user.attributes" attributes-config="attributesConfig"
+          used-attribute-names="usedAttributeNames"></attributes-form>
+      </div>
+    </div>
 
     <button type="button" class="btn btn-default" ng-click="cancel()">
       <span translate>cancel</span>

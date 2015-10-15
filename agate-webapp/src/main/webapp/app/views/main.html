@@ -1,10 +1,9 @@
 <div ng-cloak>
+  <h1><span translate>main.title</span></h1>
+  <p><span translate>main.subtitle</span></p>
+
   <div class="row">
     <div class="col-md-8">
-      <h1><span translate>main.title</span></h1>
-
-      <p><span translate>main.subtitle</span></p>
-
       <div class="alert alert-success" ng-if="authenticated && hasRole('agate-user')"
           translate translate-values="{username: '{{subject.login}}'}">
       main.logged.userMessage
@@ -22,8 +21,6 @@
       <a href="#/profile" class="btn btn-info" ng-if="authenticated && hasProfile">
         <span translate>global.menu.myProfile</span>
       </a>
-
-
     </div>
   </div>
 </div>
