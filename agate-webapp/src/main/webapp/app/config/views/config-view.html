@@ -3,34 +3,34 @@
   <h2 translate>config.title</h2>
   <div class="row">
     <div class="col-md-6">
-      <table class="table table-striped">
+      <table class="table table-bordered table-striped">
         <tbody>
         <tr>
-          <td translate>config.name</td>
+          <th translate>config.name</th>
           <td>{{agateConfig.name}}</td>
         </tr>
         <tr>
-          <td translate>config.publicUrl</td>
+          <th translate>config.publicUrl</th>
           <td>{{agateConfig.publicUrl}}</td>
         </tr>
         <!--<tr>-->
-          <!--<td translate>config.domain</td>-->
+          <!--<th translate>config.domain</td>-->
           <!--<td>{{agateConfig.domain}}</td>-->
         <!--</tr>-->
         <tr>
-          <td translate>config.shortTimeout</td>
+          <th translate>config.shortTimeout</th>
           <td>{{agateConfig.shortTimeout}}</td>
         </tr>
         <tr>
-          <td translate>config.longTimeout</td>
+          <th translate>config.longTimeout</th>
           <td>{{agateConfig.longTimeout}}</td>
         </tr>
         <tr>
-          <td translate>config.inactiveTimeout</td>
+          <th translate>config.inactiveTimeout</th>
           <td>{{agateConfig.inactiveTimeout / 24}}</td>
         </tr>
         <tr>
-          <td translate>config.joinWithUsername</td>
+          <th translate>config.joinWithUsername</th>
           <td>
             <i class="fa fa-check-square-o" ng-hide="!agateConfig.joinWithUsername"></i>
             <i class="fa fa-square-o" ng-hide="agateConfig.joinWithUsername"></i>
@@ -69,7 +69,7 @@
 
   <div ng-show="agateConfig.userAttributes || agateConfig.userAttributes.length > 0">
     <div class="voffset3">
-      <table class="table table-striped attributes-column">
+      <table class="table table-bordered table-striped attributes-column">
         <thead>
         <tr>
           <th translate>config.attributes.name</th>

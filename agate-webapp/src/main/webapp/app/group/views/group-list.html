@@ -40,7 +40,7 @@
       <tbody>
       <tr dir-paginate="group in groups | filter:searchText | itemsPerPage: 20">
         <td>
-          {{group.name}}
+          <a ng-href="#/group/{{group.id}}" translate>{{group.name}}</a>
         </td>
         <td>
           {{group.description}}
@@ -50,9 +50,6 @@
         </td>
         <td>
           <ul class="list-inline">
-            <li>
-              <a ng-href="#/group/{{group.id}}" translate><i class="fa fa-eye"></i></a>
-            </li>
             <li>
               <a ng-href="#/group/{{group.id}}/edit" translate><i class="fa fa-pencil"></i></a>
             </li>

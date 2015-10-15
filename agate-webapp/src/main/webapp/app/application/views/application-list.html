@@ -40,7 +40,7 @@
       <tbody>
       <tr dir-paginate="application in applications | filter:searchText | itemsPerPage: 20">
         <td>
-          {{application.name}}
+          <a ng-href="#/application/{{application.id}}" class="action">{{application.name}}</a>
         </td>
         <td>
           {{application.description}}
@@ -48,13 +48,10 @@
         <td>
           <ul class="list-inline">
             <li>
-              <a ng-href="#/application/{{application.id}}" class="action"><i class="fa fa-eye"></i></a>
+              <a ng-href="#/application/{{application.id}}/edit"><i class="fa fa-pencil"></i></a>
             </li>
             <li>
-              <a ng-href="#/application/{{application.id}}/edit" class="action"><i class="fa fa-pencil"></i></a>
-            </li>
-            <li>
-              <a href="" ng-click="deleteApplication(application)" class="action"><i class="fa fa-trash-o"></i></a>
+              <a href="" ng-click="deleteApplication(application)"><i class="fa fa-trash-o"></i></a>
             </li>
           </ul>
         </td>

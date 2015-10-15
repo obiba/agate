@@ -44,7 +44,9 @@
       <tbody>
       <tr dir-paginate="ticket in tickets| filter:searchText | itemsPerPage: 20">
         <td>
-          <div class="ellipsis" title="{{ticket.token}}">{{ticket.token}}</div>
+          <div class="ellipsis" title="{{ticket.token}}">
+            <a ng-href="#/ticket/{{ticket.token}}" translate>{{ticket.token}}</a>
+          </div>
         </td>
         <td>
           {{ticket.username}}
@@ -66,9 +68,6 @@
         </td>
         <td>
           <ul class="list-inline">
-            <li>
-              <a ng-href="#/ticket/{{ticket.token}}" translate><i class="fa fa-eye"></i></a>
-            </li>
             <li>
               <a href="" ng-click="deleteTicket(ticket.token)" translate><i class="fa fa-trash-o"></i></a>
             </li>

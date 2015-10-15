@@ -38,7 +38,7 @@
       <tbody>
       <tr dir-paginate="user in users | filter:searchText | itemsPerPage: 20">
         <td>
-          {{user.name}}
+          <a ng-href="#/user/{{user.id}}" translate>{{user.name}}</a>
         </td>
         <td>
           {{user.firstName}} {{user.lastName}}
@@ -57,9 +57,6 @@
         </td>
         <td>
           <ul class="list-inline">
-            <li>
-              <a ng-href="#/user/{{user.id}}" translate><i class="fa fa-eye"></i></a>
-            </li>
             <li>
               <a href="" ng-click="approve(user)" translate><i class="fa fa-check"></i></a>
             </li>

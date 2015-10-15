@@ -248,6 +248,7 @@
     "events": "Events",
     "expires": "Expires",
     "none": "No open tickets.",
+    "properties": "Properties",
     "remembered": "Remember-me",
     "token": "Token",
     "username": "User Name",

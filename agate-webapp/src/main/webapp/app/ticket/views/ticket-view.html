@@ -1,33 +1,41 @@
 <div>
-  <h2 translate>ticket.titleView</h2>
+  <h2>
+    <ol class="agate-breadcrumb">
+      <li><a href="#/tickets" translate>tickets</a></li>
+      <li class="active">{{ticket.token}}</li>
+    </ol>
+  </h2>
   <div class="row">
     <div class="col-md-6">
-      <table class="table table-striped">
+      <h4 translate>ticket.properties</h4>
+      <table class="table table-bordered table-striped">
         <tbody>
         <tr>
-          <td translate>ticket.token</td>
+          <th translate>ticket.token</th>
           <td>{{ticket.token}}</td>
         </tr>
         <tr>
-          <td translate>ticket.username</td>
+          <th translate>ticket.username</th>
           <td>{{ticket.username}}</td>
         </tr>
         <tr>
-          <td translate>ticket.created</td>
+          <th translate>ticket.created</th>
           <td>{{ticket.timestamps.created | amDateFormat:'YYYY-MM-DD HH:mm:ss'}}</td>
         </tr>
         <tr>
-          <td translate>ticket.expires</td>
+          <th translate>ticket.expires</th>
           <td>{{ticket.expires | amDateFormat:'YYYY-MM-DD HH:mm:ss'}}</td>
         </tr>
         <tr>
-          <td translate>ticket.remembered</td>
+          <th translate>ticket.remembered</th>
           <td><i class="fa fa-check-square-o" ng-hide="!ticket.remembered"></i><i class="fa fa-square-o" ng-hide="ticket.remembered"></i></td>
         </tr>
         </tbody>
       </table>
-      <h3 translate>ticket.events</h3>
-      <table class="table table-striped voffset3">
+    </div>
+    <div class="col-md-6">
+      <h4 translate>ticket.events</h4>
+      <table class="table table-bordered table-striped">
         <thead>
         <tr>
           <th translate>ticket.eventApplication</th>

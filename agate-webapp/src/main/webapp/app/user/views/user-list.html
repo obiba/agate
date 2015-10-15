@@ -23,7 +23,7 @@
   </div>
 
   <div class="table-responsive" ng-hide="users.length == 0">
-    <table class="table table-striped">
+    <table class="table table-bordered table-striped">
       <thead>
       <tr>
         <th translate>user.name</th>
@@ -39,7 +39,7 @@
       <tbody>
       <tr dir-paginate="user in users | filter:searchText | itemsPerPage: 20">
         <td>
-          {{user.name}}
+          <a ng-href="#/user/{{user.id}}">{{user.name}}</a>
         </td>
         <td>
           {{user.firstName}} {{user.lastName}}
@@ -62,9 +62,6 @@
         </td>
         <td class="action-column">
           <ul class="list-inline pull-right">
-            <li>
-              <a ng-href="#/user/{{user.id}}"><i class="fa fa-eye"></i></a>
-            </li>
             <li>
               <a ng-href="#/user/{{user.id}}/edit"><i class="fa fa-pencil"></i></a>
             </li>

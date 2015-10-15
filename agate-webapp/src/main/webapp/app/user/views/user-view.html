@@ -16,63 +16,65 @@
     </ol>
   </h2>
 
+  <obiba-alert id="UserViewController"></obiba-alert>
+
   <div class="row">
     <div class="col-md-6">
-      <obiba-alert id="UserViewController"></obiba-alert>
+      <h4 translate>user.general-info</h4>
 
-      <table class="table table-striped">
+      <table class="table table-bordered table-striped">
         <tbody>
         <tr>
-          <td translate>user.name</td>
+          <th translate>user.name</th>
           <td>{{user.name}}</td>
         </tr>
         <tr>
-          <td translate>user.firstName</td>
+          <th translate>user.firstName</th>
           <td>{{user.firstName}}</td>
         </tr>
         <tr>
-          <td translate>user.lastName</td>
+          <th translate>user.lastName</th>
           <td>{{user.lastName}}</td>
         </tr>
         <tr>
-          <td translate>user.email</td>
+          <th translate>user.email</th>
           <td>{{user.email}}</td>
         </tr>
         <tr>
-          <td translate>user.groups</td>
+          <th translate>user.groups</th>
           <td><span class="label label-default hoffset-right" ng-repeat="group in user.groups">{{group}}</span></td>
         </tr>
         <tr>
-          <td translate>user.applications</td>
+          <th translate>user.applications</th>
           <td><span class="label label-default hoffset-right" ng-repeat="app in user.applications">{{app}}</span></td>
         </tr>
         <tr>
-          <td translate>user.realm</td>
+          <th translate>user.realm</th>
           <td>{{user.realm}}</td>
         </tr>
         <tr>
-          <td translate>user.role</td>
+          <th translate>user.role</th>
           <td>{{user.role}}</td>
         </tr>
         <tr>
-          <td translate>user.status</td>
+          <th translate>user.status</th>
           <td translate="user.{{user.status}}">
           </td>
         </tr>
         <tr>
-          <td translate>user.createdDate</td>
+          <th translate>user.createdDate</th>
           <td>
             {{user.timestamps.created | amDateFormat:'YYYY-MM-DD HH:mm:ss'}}
           </td>
         </tr>
         <tr>
-          <td translate>user.lastLogin</td>
+          <th translate>user.lastLogin</th>
           <td>
             <span am-time-ago="user.lastLogin"></span>
           </td>
         </tr>
         <tr ng-repeat="userConfigAttribute in userConfigAttributes">
-          <td>{{userConfigAttribute.name}}</td>
+          <th>{{userConfigAttribute.name}}</th>
           <td>
             <span ng-show="userConfigAttribute.type !== 'BOOLEAN'">{{userConfigAttribute.value}}</span>
             <span ng-show="userConfigAttribute.type === 'BOOLEAN' && userConfigAttribute.value === 'true'"><i class="fa fa-check"></i></span>
@@ -80,7 +82,8 @@
         </tr>
         </tbody>
       </table>
-
+    </div>
+    <div class="col-md-6">
       <attributes-view attributes='userNonConfigAttributes'></attributes-view>
     </div>
   </div>
