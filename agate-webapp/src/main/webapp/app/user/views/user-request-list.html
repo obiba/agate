@@ -1,12 +1,5 @@
 <div>
-  <h2 translate>users</h2>
-
-  <div class="tabs-menu tabs-left">
-    <ul class="nav nav-tabs">
-      <li><a href="#/users" title="{{'user.list' | translate}}"><i class="fa fa-group"></i></a></li>
-      <li class="active"><a href="#/users/requests" title="{{'user.pending-requests' | translate}}"><i class="fa fa-sign-in"></i></a></li>
-    </ul>
-  </div>
+  <div ng-include="'app/user/views/user-list-header.html'" ng-init="tabName='requests'"></div>
 
   <p class="help-block" ng-if="users.length == 0">
     <span translate>user.none-requests</span>

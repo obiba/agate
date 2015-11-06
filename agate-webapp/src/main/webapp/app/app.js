@@ -23,7 +23,8 @@ var agate = angular.module('agate', [
   'angularUtils.directives.dirPagination',
   'schemaForm',
   'obiba.utils',
-  'vcRecaptcha'
+  'vcRecaptcha',
+  'matchMedia'
 ]);
 
 agate

@@ -2,7 +2,28 @@
 
 /* Controllers */
 
-agate.controller('MainController', [function () {}]);
+agate.controller('MainController', ['$rootScope', '$scope', '$log', 'screenSize',
+  function ($rootScope, $scope, $log, screenSize) {
+    $rootScope.screen = $scope.screen = {size: null, device: null};
+
+    function getScreenSize() {
+      var size = ['lg', 'md', 'sm', 'xs'].filter(function (size) {
+        return screenSize.is(size);
+      });
+
+      $scope.screen.size = size ? size[0] : 'lg';
+      $scope.screen.device = screenSize.is('md, lg') ? 'desktop' : 'mobile';
+      $scope.screen.is = screenSize.is;
+
+      $log.debug('Screen', $scope.screen);
+    }
+
+    getScreenSize();
+
+    screenSize.on('lg, md, sm, xs', function () {
+      getScreenSize();
+    });
+  }]);
 
 agate.controller('AdminController', [function () {}]);
 
