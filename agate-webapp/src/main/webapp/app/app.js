@@ -162,13 +162,13 @@ agate
         if (!$rootScope.authenticated) {
           Session.destroy();
           var path = $location.path();
-          if ('/login' !== path) {
+          if ('/login' !== path && '/join' !== path && '/forgotten' !== path && '/confirm' !== path && '/error' !== path) {
             // save path to navigate to after login
             var search = $location.search();
             search.redirect = path;
             $location.search(search);
+            $rootScope.$broadcast('event:auth-loginRequired');
           }
-          $rootScope.$broadcast('event:auth-loginRequired');
         } else if (!AuthenticationSharedService.isAuthorized(next.access ? next.access.authorizedRoles : '*')) {
           $rootScope.$broadcast('event:auth-notAuthorized');
         }
