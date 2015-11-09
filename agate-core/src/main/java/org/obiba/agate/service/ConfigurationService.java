@@ -56,7 +56,8 @@ public class ConfigurationService {
     Configuration savedConfiguration = getOrCreateConfiguration();
     BeanUtils
       .copyProperties(configuration, savedConfiguration, "id", "version", "createdBy", "createdDate", "lastModifiedBy",
-        "lastModifiedDate", "secretKey");
+        "lastModifiedDate", "secretKey", "agateVersion");
+    if(configuration.getAgateVersion() != null) savedConfiguration.setAgateVersion(configuration.getAgateVersion());
     agateConfigRepository.save(savedConfiguration);
     eventBus.post(new AgateConfigUpdatedEvent(getConfiguration()));
   }

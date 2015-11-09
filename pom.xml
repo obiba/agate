@@ -411,6 +411,11 @@
 
       <dependency>
         <groupId>org.obiba.commons</groupId>
+        <artifactId>obiba-core</artifactId>
+        <version>${obiba-commons.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.obiba.commons</groupId>
         <artifactId>obiba-security</artifactId>
         <version>${obiba-commons.version}</version>
       </dependency>

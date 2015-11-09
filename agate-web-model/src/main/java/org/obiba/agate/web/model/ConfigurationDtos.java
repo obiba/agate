@@ -21,7 +21,9 @@ class ConfigurationDtos {
     if(configuration.hasPublicUrl()) builder.setPublicUrl(configuration.getPublicUrl());
     if(configuration.hasUserAttributes())
       configuration.getUserAttributes().forEach(c -> builder.addUserAttributes(asDto(c)));
-
+    if(configuration.getAgateVersion() != null) {
+      builder.setVersion(configuration.getAgateVersion().toString());
+    }
     return builder.build();
   }
 

@@ -45,6 +45,7 @@ message ConfigurationDto {
   required int32 inactiveTimeout = 6; // hours
   optional string publicUrl = 7;
   required bool joinWithUsername = 8;
+  optional string version = 9;
 }
 
 message AttributeDto {

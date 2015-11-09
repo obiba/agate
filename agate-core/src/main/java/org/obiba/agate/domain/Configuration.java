@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.obiba.mongodb.domain.AbstractAuditableDocument;
+import org.obiba.runtime.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.google.common.base.Objects;
@@ -37,6 +38,8 @@ public class Configuration extends AbstractAuditableDocument {
   private int inactiveTimeout = DEFAULT_INACTIVE_TIMEOUT;
 
   private String secretKey;
+
+  private Version agateVersion;
 
   private boolean joinWithUsername = true;
 
@@ -137,5 +140,13 @@ public class Configuration extends AbstractAuditableDocument {
 
   public void setInactiveTimeout(int inactiveTimeout) {
     this.inactiveTimeout = inactiveTimeout;
+  }
+
+  public void setAgateVersion(Version agateVersion) {
+    this.agateVersion = agateVersion;
+  }
+
+  public Version getAgateVersion() {
+    return agateVersion;
   }
 }
