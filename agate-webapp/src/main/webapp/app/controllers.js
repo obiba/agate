@@ -2,9 +2,15 @@
 
 /* Controllers */
 
-agate.controller('MainController', ['$rootScope', '$scope', '$log', 'screenSize',
-  function ($rootScope, $scope, $log, screenSize) {
+agate.controller('MainController', ['$rootScope', '$scope', '$log', 'ConfigurationResource', 'screenSize', 'AuthenticationSharedService',
+  function ($rootScope, $scope, $log, ConfigurationResource, screenSize, AuthenticationSharedService) {
     $rootScope.screen = $scope.screen = {size: null, device: null};
+    if (AuthenticationSharedService.isAuthenticated()) {
+      $scope.agateConfig = ConfigurationResource.get();
+    }
+    $rootScope.$on('event:auth-loginConfirmed', function () {
+      $scope.agateConfig = ConfigurationResource.get();
+    });
 
     function getScreenSize() {
       var size = ['lg', 'md', 'sm', 'xs'].filter(function (size) {
