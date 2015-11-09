@@ -53,7 +53,7 @@
       }
     }
   },
-  "join":{
+  "join": {
     "title": "Request an Account",
     "form": {
       "button": "Sign Up",
@@ -174,13 +174,15 @@
     "inactiveTimeout-help": "User account expiration timeout in days.",
     "joinWithUsername": "Sign up form offers to choose the username",
     "joinWithUsername-help": "User name will be extracted from user email.",
-    "encryptionKeys": "Encryption Keys",
+    "encryption-keys": "Encryption Keys",
+    "encryption-keys-help": "HTTPS connection requires to have a private key and a public key (certificate) defined. A self-signed key-pair is available by default. You can provide your own.",
     "addKeyPair": "Add Keys",
     "downloadCertificate": "Download Certificate",
     "actions": "Actions",
-    "create" : "Create",
-    "import" : "Import",
-    "userAttributes": "User Attributes",
+    "create": "Create",
+    "import": "Import",
+    "user-attributes": "User Attributes",
+    "user-attributes-help": "User description fields can be extended with some declare attributes. Also apply to join requests.",
     "keys": {
       "titleCreate": "Create Certificate",
       "titleImport": "Import Certificate",
@@ -198,8 +200,14 @@
     "attributes": {
       "actions": "Actions",
       "addAttribute": "Add attribute",
-      "editTitle": "Edit attributes",
+      "editTitle": "Edit attribute",
       "type": "Type",
+      "types":{
+        "STRING":"String",
+        "INTEGER":"Integer",
+        "NUMBER":"Number",
+        "BOOLEAN":"Boolean"
+      },
       "name": "Name",
       "description": "Description",
       "values": "Values",
@@ -227,7 +235,7 @@
   },
   "groups": "Groups",
   "group": {
-    "titleEdit" : "Edit Group",
+    "titleEdit": "Edit Group",
     "titleView": "Group Details",
     "new": "New Group",
     "add": "Add Group",
@@ -360,5 +368,4 @@
     }
   },
   "form-server-error": "Error"
-
 }

@@ -86,17 +86,14 @@ agate.config
       };
     }])
 
-  .controller('AttributeModalController', ['$scope', '$modalInstance', 'attribute', function($scope, $modalInstance, attribute) {
-    var types = ['STRING', 'INTEGER', 'NUMBER', 'BOOLEAN'];
-    $scope.availableTypes = types.map(function(e) {
-      return {id: e, label: e};
-    });
+  .controller('AttributeModalController', ['$scope', '$translate', '$modalInstance', 'attribute', function($scope, $translate, $modalInstance, attribute) {
+    $scope.TYPES = ['STRING', 'INTEGER', 'NUMBER', 'BOOLEAN'];
 
+    $scope.editMode = attribute && attribute.name;
     $scope.attribute = attribute || {type: 'STRING'};
     $scope.attribute.values = !$scope.attribute.values ? '' : $scope.attribute.values.join(', ');
     $scope.attribute.required = attribute && attribute.required === true ? attribute.required : false;
 
-    $scope.data = {selectedType: $scope.availableTypes[types.indexOf($scope.attribute.type)]};
 
     $scope.save = function (form) {
       if (!form.$valid) {
@@ -104,11 +101,10 @@ agate.config
         return;
       }
 
-      $scope.attribute.values = $scope.data.selectedType.id !== 'BOOLEAN' &&  $scope.attribute.values.length > 0 ? $scope.attribute.values.split(',').map(function(s) {
+      $scope.attribute.values = $scope.attribute.type !== 'BOOLEAN' &&  $scope.attribute.values.length > 0 ? $scope.attribute.values.split(',').map(function(s) {
         return s.trim();
       }) : null;
 
-      $scope.attribute.type = $scope.data.selectedType.id;
       $modalInstance.close($scope.attribute);
     };
 

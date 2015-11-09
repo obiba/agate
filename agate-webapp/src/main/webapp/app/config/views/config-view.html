@@ -15,8 +15,8 @@
           <td>{{agateConfig.publicUrl}}</td>
         </tr>
         <!--<tr>-->
-          <!--<th translate>config.domain</td>-->
-          <!--<td>{{agateConfig.domain}}</td>-->
+        <!--<th translate>config.domain</td>-->
+        <!--<td>{{agateConfig.domain}}</td>-->
         <!--</tr>-->
         <tr>
           <th translate>config.shortTimeout</th>
@@ -39,9 +39,35 @@
         </tr>
         </tbody>
       </table>
+
+      <a href="#/config/edit" class="btn btn-primary">
+        <i class="fa fa-pencil-square-o"></i> <span translate>edit</span>
+      </a>
     </div>
     <div class="col-md-6">
-      <h3 translate>config.userAttributes</h3>
+      <h3 translate>config.encryption-keys</h3>
+      <p class="help-block" translate>
+        config.encryption-keys-help
+      </p>
+
+      <div class="btn-group dropdown" is-open="status.isopen">
+        <button type="button" class="btn btn-info dropdown-toggle" ng-disabled="disabled" data-toggle="dropdown">
+          <i class="fa fa-plus"></i> <span translate>config.addKeyPair</span> <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+          <li><a role="menuitem" href="" ng-click="createKeyPair()" translate>config.create</a></li>
+          <li><a role="menuitem" href="" ng-click="importKeyPair()" translate>config.import</a></li>
+        </ul>
+      </div>
+
+      <a href="" class="btn btn-default" ng-click="downloadCertificate()">
+        <i class="fa fa-download"></i> <span translate>config.downloadCertificate</span>
+      </a>
+
+      <h3 translate>config.user-attributes</h3>
+      <p class="help-block" translate>
+        config.user-attributes-help
+      </p>
 
       <button type="button" class="btn btn-info" ng-click="editAttribute()">
         <i class="fa fa-plus"></i> <span translate>config.attributes.addAttribute</span>
@@ -65,47 +91,31 @@
                 {{attribute.name}}
               </td>
               <td>
-                {{attribute.type}}
+                {{'config.attributes.types.' + attribute.type | translate}}
               </td>
               <td>
-                [{{attribute.values.join(', ') }}]
+                {{attribute.values.join(', ') }}
               </td>
               <td>
                 <span ng-show="attribute.required"><i class="fa fa-check"></i></span>
               </td>
               <td>
-                <a href="" ng-click="editAttribute(attribute)" class="action"><i class="fa fa-pencil"></i></a>
-                <a href="" ng-click="deleteAttribute(attribute)" class="action"><i class="fa fa-trash-o"></i></a>
+                <ul class="list-inline">
+                  <li>
+                    <a href="" ng-click="editAttribute(attribute)" class="action"><i class="fa fa-pencil"></i></a>
+                  </li>
+                  <li>
+                    <a href="" ng-click="deleteAttribute(attribute)" class="action"><i class="fa fa-trash-o"></i></a>
+                  </li>
+                </ul>
               </td>
             </tr>
             </tbody>
           </table>
         </div>
       </div>
-
-      <h3 translate>config.encryptionKeys</h3>
-
-      <div class="btn-group dropdown" is-open="status.isopen">
-        <button type="button" class="btn btn-info dropdown-toggle" ng-disabled="disabled" data-toggle="dropdown">
-          <i class="fa fa-plus"></i> <span translate>config.addKeyPair</span> <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu" role="menu" >
-          <li><a role="menuitem" href="" ng-click="createKeyPair()" translate>config.create</a></li>
-          <li><a role="menuitem" href="" ng-click="importKeyPair()" translate>config.import</a></li>
-        </ul>
-      </div>
-
-      <a href="" class="btn btn-default" ng-click="downloadCertificate()">
-        <i class="fa fa-download"></i> <span translate>config.downloadCertificate</span>
-      </a>
     </div>
   </div>
-
-  <a href="#/config/edit" class="btn btn-primary">
-    <i class="fa fa-pencil-square-o"></i> <span translate>edit</span>
-  </a>
-
-
 
 
 </div>

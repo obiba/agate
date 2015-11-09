@@ -4,7 +4,8 @@
     <div class="modal-header">
       <button type="button" class="close" aria-hidden="true" ng-click="cancel()">&times;</button>
       <h4 class="modal-title" id="myAttributeModal">
-        <span translate>config.attributes.editTitle</span>
+        <span ng-if="!editMode" translate>config.attributes.addAttribute</span>
+        <span ng-if="editMode" translate>config.attributes.editTitle</span>
       </h4>
     </div>
 
@@ -12,16 +13,18 @@
 
       <p class="alert alert-danger" ng-show="form.saveAttempted && form.$invalid" translate="">fix-error</p>
 
-      <div form-input name="name" model="attribute.name" label="config.attributes.name" required="true"></div>
+      <div form-input name="name" model="attribute.name" label="config.attributes.name" required="true" disabled="editMode"></div>
 
       <div form-input name="description" model="attribute.description" label="config.attributes.description"></div>
 
       <div class="form-group">
-        <label translate>config.attributes.type</label>
-        <select name="type" class="form-control" ng-model="data.selectedType" ng-options="t.label for t in availableTypes"></select>
+        <label for="type"><span translate>config.attributes.type</span> <span>*</span></label>
+        <select id="type" name="type" class="form-control" ng-model="attribute.type">
+          <option ng-repeat="type in TYPES" value="{{type}}">{{ 'config.attributes.types.' + type | translate}}</option>
+        </select>
       </div>
 
-      <div form-input name="values" model="attribute.values" label="config.attributes.values" disabled="data.selectedType.id === 'BOOLEAN'" help="config.attributes.valuesHelp"></div>
+      <div form-input name="values" model="attribute.values" label="config.attributes.values" disabled="attribute.type === 'BOOLEAN'" help="config.attributes.valuesHelp"></div>
 
       <div form-checkbox name="isRequired" model="attribute.required" label="config.attributes.required"></div>
 
