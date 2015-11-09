@@ -182,7 +182,7 @@
     "create": "Create",
     "import": "Import",
     "user-attributes": "User Attributes",
-    "user-attributes-help": "User description fields can be extended with some declare attributes. Also apply to join requests.",
+    "user-attributes-help": "User description fields can be extended with some declared attributes. Apply also to join requests.",
     "keys": {
       "titleCreate": "Create Certificate",
       "titleImport": "Import Certificate",
