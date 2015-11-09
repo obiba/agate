@@ -7,11 +7,17 @@
       <table class="table table-bordered table-striped">
         <tbody>
         <tr>
-          <th translate>config.name</th>
+          <td>
+            <span translate>config.name</span>
+            <span class="help-block" translate>config.name-help</span>
+          </td>
           <td>{{agateConfig.name}}</td>
         </tr>
         <tr>
-          <th translate>config.publicUrl</th>
+          <td>
+            <span translate>config.publicUrl</span>
+            <span class="help-block" translate>config.publicUrl-help</span>
+          </td>
           <td>{{agateConfig.publicUrl}}</td>
         </tr>
         <!--<tr>-->
@@ -19,19 +25,31 @@
         <!--<td>{{agateConfig.domain}}</td>-->
         <!--</tr>-->
         <tr>
-          <th translate>config.shortTimeout</th>
+          <td>
+            <span translate>config.shortTimeout</span>
+            <span class="help-block" translate>config.shortTimeout-help</span>
+          </td>
           <td>{{agateConfig.shortTimeout}}</td>
         </tr>
         <tr>
-          <th translate>config.longTimeout</th>
+          <td>
+            <span translate>config.longTimeout</span>
+            <span class="help-block" translate>config.longTimeout-help</span>
+          </td>
           <td>{{agateConfig.longTimeout}}</td>
         </tr>
         <tr>
-          <th translate>config.inactiveTimeout</th>
+          <td>
+            <span translate>config.inactiveTimeout</span>
+            <span class="help-block" translate>config.inactiveTimeout-help</span>
+          </td>
           <td>{{agateConfig.inactiveTimeout / 24}}</td>
         </tr>
         <tr>
-          <th translate>config.joinWithUsername</th>
+          <td>
+            <span translate>config.joinWithUsername</span>
+            <span class="help-block" translate>config.joinWithUsername-help</span>
+          </td>
           <td>
             <i class="fa fa-check-square-o" ng-hide="!agateConfig.joinWithUsername"></i>
             <i class="fa fa-square-o" ng-hide="agateConfig.joinWithUsername"></i>
