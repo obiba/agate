@@ -16,8 +16,17 @@ agate.ticket
     'TicketResource', 'NOTIFICATION_EVENTS',
 
     function ($rootScope, $scope, TicketsResource, TicketResource, NOTIFICATION_EVENTS) {
+      var onSuccess = function(response) {
+        $scope.tickets = response;
+        $scope.loading = false;
+      };
 
-      $scope.tickets = TicketsResource.query();
+      var onError = function() {
+        $scope.loading = false;
+      };
+
+      $scope.loading = true;
+      TicketsResource.query({}, onSuccess, onError);
 
       $scope.deleteTicket = function (id) {
         $scope.groupToDelete = id;
@@ -30,7 +39,8 @@ agate.ticket
 
           TicketResource.delete({id: id},
             function () {
-              $scope.tickets = TicketsResource.query();
+              $scope.loading = true;
+              TicketsResource.query({}, onSuccess, onError);
             });
         }
       });

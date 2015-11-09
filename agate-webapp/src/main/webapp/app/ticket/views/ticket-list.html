@@ -12,8 +12,11 @@
 
   <h2 translate>tickets</h2>
 
-  <p class="help-block" ng-if="tickets.length == 0">
+  <p class="help-block" ng-if="tickets.length == 0 && !loading">
     <span translate>ticket.none</span>
+  </p>
+
+  <p ng-if="loading" class="voffset2 loading">
   </p>
 
   <div class="row voffset2" ng-if="tickets.length > 0">

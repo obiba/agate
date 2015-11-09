@@ -1,8 +1,11 @@
 <div>
   <div ng-include="'app/user/views/user-list-header.html'" ng-init="tabName='requests'"></div>
 
-  <p class="help-block" ng-if="users.length == 0">
+  <p class="help-block" ng-if="users.length == 0 && !loading">
     <span translate>user.none-requests</span>
+  </p>
+
+  <p ng-if="loading" class="voffset2 loading">
   </p>
 
   <p class="help-block" ng-if="users.length > 0" translate>user.pending-requests-help</p>

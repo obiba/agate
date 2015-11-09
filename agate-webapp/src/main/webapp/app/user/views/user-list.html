@@ -6,8 +6,11 @@
     <i class="fa fa-plus"></i> <span translate>user.add</span>
   </a>
 
-  <p class="help-block" ng-if="users.length == 0">
+  <p class="help-block" ng-if="users.length == 0 && !loading">
     <span translate>user.none</span>
+  </p>
+
+  <p ng-if="loading" class="voffset2 loading">
   </p>
 
   <div class="row voffset2" ng-if="users.length > 0">

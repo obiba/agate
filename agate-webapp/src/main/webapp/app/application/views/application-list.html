@@ -16,8 +16,11 @@
     <i class="fa fa-plus"></i> <span translate>application.add</span>
   </a>
 
-  <p class="help-block" ng-if="applications.length == 0">
+  <p class="help-block" ng-if="applications.length == 0 && !loading">
     <span translate>application.none</span>
+  </p>
+
+  <p ng-if="loading" class="voffset2 loading">
   </p>
 
   <div class="row voffset2" ng-if="applications.length > 0">

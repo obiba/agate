@@ -8,9 +8,9 @@ agate.user
 
   .controller('UserListController', ['$rootScope', '$scope', '$translate', 'UsersResource', 'UserResource', 'UserResetPasswordResource', 'NOTIFICATION_EVENTS', 'LocaleStringUtils',
     function ($rootScope, $scope, $translate, UsersResource, UserResource, UserResetPasswordResource, NOTIFICATION_EVENTS, LocaleStringUtils) {
-      $scope.users = UsersResource.query(function(res){
-
-        res.forEach(function(u) {
+      var onSuccess = function(response) {
+        $scope.users = response;
+        response.forEach(function(u) {
           u.applicationsGroups = {};
 
           if (u.groupApplications) {
@@ -22,7 +22,15 @@ agate.user
             });
           }
         });
-      });
+        $scope.loading = false;
+      };
+
+      var onError = function() {
+        $scope.loading = false;
+      };
+
+      $scope.loading = true;
+      $scope.users = UsersResource.query({}, onSuccess, onError);
 
       /**
        * Deletes a user
@@ -48,7 +56,7 @@ agate.user
         if ($scope.userToDelete === id) {
           UserResource.delete({id: id},
             function () {
-              $scope.users = UsersResource.query();
+              UsersResource.query({}, onSuccess, onError);
             });
 
           delete $scope.userToDelete;
@@ -217,9 +225,9 @@ agate.user
   .controller('UserRequestListController', ['$rootScope', '$scope', '$route', '$http', 'UsersResource', 'UserResource', 'NOTIFICATION_EVENTS',
 
     function ($rootScope, $scope, $route, $http, UsersResource, UserResource, NOTIFICATION_EVENTS) {
-      $scope.users = UsersResource.query({status: 'pending'}, function(res){
-
-        res.forEach(function(u) {
+      var onSuccess = function(response) {
+        $scope.users = response;
+        response.forEach(function(u) {
           u.applicationsGroups = {};
 
           if (u.groupApplications) {
@@ -231,7 +239,15 @@ agate.user
             });
           }
         });
-      });
+        $scope.loading = false;
+      };
+
+      var onError = function() {
+        $scope.loading = false;
+      };
+
+      $scope.loading = true;
+      UsersResource.query({status: 'pending'}, onSuccess, onError);
 
       $scope.reject = function (user) {
         $scope.requestToDelete = user.id;

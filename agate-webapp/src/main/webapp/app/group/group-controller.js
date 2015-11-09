@@ -15,8 +15,17 @@ agate.group
   .controller('GroupListController', ['$rootScope', '$scope', '$route', 'GroupsResource', 'GroupResource', 'NOTIFICATION_EVENTS',
 
     function ($rootScope, $scope, $route, GroupsResource, GroupResource, NOTIFICATION_EVENTS) {
+      var onSuccess = function(response) {
+        $scope.groups = response;
+        $scope.loading = false;
+      };
 
-      $scope.groups = GroupsResource.query();
+      var onError = function() {
+        $scope.loading = false;
+      };
+
+      $scope.loading = true;
+      $scope.groups = GroupsResource.query({}, onSuccess, onError);
 
       $scope.deleteGroup = function (group) {
         $scope.groupToDelete = group.id;

@@ -15,8 +15,17 @@ agate.application
   .controller('ApplicationListController', ['$rootScope', '$scope', 'ApplicationsResource', 'ApplicationResource', 'NOTIFICATION_EVENTS',
 
     function ($rootScope, $scope, ApplicationsResource, ApplicationResource, NOTIFICATION_EVENTS) {
+      var onSuccess = function(response) {
+        $scope.applications = response;
+        $scope.loading = false;
+      };
 
-      $scope.applications = ApplicationsResource.query();
+      var onError = function() {
+        $scope.loading = false;
+      };
+
+      $scope.loading = true;
+      ApplicationsResource.query({}, onSuccess, onError);
 
       $scope.deleteApplication = function (application) {
         $scope.applicationToDelete = application.id;
@@ -35,7 +44,8 @@ agate.application
 
           ApplicationResource.delete({id: id},
             function () {
-              $scope.applications = ApplicationsResource.query();
+              $scope.loading = true;
+              ApplicationsResource.query({}, onSuccess, onError);
             });
         }
       });

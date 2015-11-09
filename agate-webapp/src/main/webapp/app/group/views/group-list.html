@@ -15,8 +15,11 @@
     <i class="fa fa-plus"></i> <span translate>group.add</span>
   </a>
 
-  <p class="help-block" ng-if="groups.length == 0">
+  <p class="help-block" ng-if="groups.length == 0 && !loading">
     <span translate>group.none</span>
+  </p>
+
+  <p ng-if="loading" class="voffset2 loading">
   </p>
 
   <div class="row voffset2" ng-if="groups.length > 0">
