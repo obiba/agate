@@ -51,6 +51,12 @@
       <artifactId>jetty-servlets</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>net.logstash.logback</groupId>
+      <artifactId>logstash-logback-encoder</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
