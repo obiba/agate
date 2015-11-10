@@ -86,32 +86,45 @@ agate.config
       };
     }])
 
-  .controller('AttributeModalController', ['$scope', '$translate', '$modalInstance', 'attribute', function($scope, $translate, $modalInstance, attribute) {
-    $scope.TYPES = ['STRING', 'INTEGER', 'NUMBER', 'BOOLEAN'];
+  .controller('AttributeModalController', ['$scope', '$filter', '$modalInstance', 'attribute',
+    function($scope, $filter, $modalInstance, attribute) {
+      $scope.TYPES = [
+        {name: 'STRING', label: $filter('translate')('config.attributes.types.STRING')},
+        {name: 'INTEGER', label: $filter('translate')('config.attributes.types.INTEGER')},
+        {name: 'NUMBER', label: $filter('translate')('config.attributes.types.NUMBER')},
+        {name: 'BOOLEAN', label: $filter('translate')('config.attributes.types.BOOLEAN')}
+      ];
 
-    $scope.editMode = attribute && attribute.name;
-    $scope.attribute = attribute || {type: 'STRING'};
-    $scope.attribute.values = !$scope.attribute.values ? '' : $scope.attribute.values.join(', ');
-    $scope.attribute.required = attribute && attribute.required === true ? attribute.required : false;
-
-
-    $scope.save = function (form) {
-      if (!form.$valid) {
-        form.saveAttempted = true;
-        return;
+      var index = -1;
+      if (attribute) {
+        index = $scope.TYPES.findIndex(function(type){
+          return type.name === attribute.type;
+        });
       }
 
-      $scope.attribute.values = $scope.attribute.type !== 'BOOLEAN' &&  $scope.attribute.values.length > 0 ? $scope.attribute.values.split(',').map(function(s) {
-        return s.trim();
-      }) : null;
+      $scope.selectedType = index === -1 ? $scope.TYPES[0] : $scope.TYPES[index];
+      $scope.editMode = attribute && attribute.name;
+      $scope.attribute = attribute || {type: 'STRING'};
+      $scope.attribute.values = attribute && attribute.values ? attribute.values.join(', ') : '';
+      $scope.attribute.required = attribute && attribute.required === true ? attribute.required : false;
 
-      $modalInstance.close($scope.attribute);
-    };
+      $scope.save = function (form) {
+        if (!form.$valid) {
+          form.saveAttempted = true;
+          return;
+        }
+        $scope.attribute.type = $scope.selectedType.name;
+        $scope.attribute.values = $scope.attribute.type !== 'BOOLEAN' &&  $scope.attribute.values.length > 0 ? $scope.attribute.values.split(',').map(function(s) {
+          return s.trim();
+        }) : null;
 
-    $scope.cancel = function () {
-      $modalInstance.dismiss('cancel');
-    };
-  }])
+        $modalInstance.close($scope.attribute);
+      };
+
+      $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+      };
+    }])
 
   .controller('ImportKeyPairModalController', ['$scope', '$location', '$modalInstance',
     function($scope, $location, $modalInstance) {
