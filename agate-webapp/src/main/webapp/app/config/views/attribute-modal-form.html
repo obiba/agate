@@ -17,11 +17,10 @@
 
       <div form-input name="description" model="attribute.description" label="config.attributes.description"></div>
 
+      {{selected}}
       <div class="form-group">
         <label for="type"><span translate>config.attributes.type</span> <span>*</span></label>
-        <select id="type" name="type" class="form-control" ng-model="attribute.type">
-          <option ng-repeat="type in TYPES" value="{{type}}">{{ 'config.attributes.types.' + type | translate}}</option>
-        </select>
+        <select id="type" name="type" class="form-control" ng-model="selectedType" ng-options="type.label for type in TYPES"></select>
       </div>
 
       <div form-input name="values" model="attribute.values" label="config.attributes.values" disabled="attribute.type === 'BOOLEAN'" help="config.attributes.valuesHelp"></div>
