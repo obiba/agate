@@ -182,7 +182,7 @@
     <connection>scm:git:git://github.com/obiba/agate.git</connection>
     <developerConnection>scm:git:https://github.com/obiba/agate.git</developerConnection>
     <url>https://github.com/obiba/agate</url>
-    <tag>HEAD</tag>
+    <tag>agate-1.0.x</tag>
   </scm>
 
   <issueManagement>
