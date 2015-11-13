@@ -15,7 +15,7 @@
   <label class="control-label">
     <span translate>groups</span>
   </label>
-  <ui-select multiple theme="bootstrap" ng-model="user.groups" reset-search-input="false">
+  <ui-select multiple theme="bootstrap" ng-model="user.groups" reset-search-input="true">
     <ui-select-match><span ng-bind-html="$select.selected[$index]"></span></ui-select-match>
     <ui-select-choices repeat="group in groupList">
       {{group}}
@@ -27,7 +27,7 @@
   <label class="control-label">
     <span translate>applications</span>
   </label>
-  <ui-select multiple theme="bootstrap" ng-model="user.applications" reset-search-input="false">
+  <ui-select multiple theme="bootstrap" ng-model="user.applications" reset-search-input="true">
     <ui-select-match><span ng-bind-html="$select.selected[$index]"></span></ui-select-match>
     <ui-select-choices repeat="application in applicationList">
       {{application}}
