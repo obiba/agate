@@ -162,7 +162,7 @@ agate
         if (!$rootScope.authenticated) {
           Session.destroy();
           var path = $location.path();
-          var invalidRedirectPaths = ['', '/error', '/logout', '/login', '/confirm', '/forgotten'];
+          var invalidRedirectPaths = ['', '/error', '/logout', '/login', '/confirm', '/forgotten', '/join', '/reset_password'];
           if (invalidRedirectPaths.indexOf(path) === -1) {
             // save path to navigate to after login
             var search = $location.search();
