@@ -79,4 +79,36 @@ public class Application extends AbstractAuditableDocument {
     return super.toStringHelper().add("name", name) //
         .add("key", key);
   }
+
+  public static Builder newBuilder() {
+    return new Builder();
+  }
+
+  public static class Builder {
+
+    private Application application;
+
+    private Builder() {
+      application = new Application();
+    }
+
+    public Builder name(String name) {
+      application.setName(name);
+      return this;
+    }
+
+    public Builder key(String key) {
+      application.setKey(key);
+      return this;
+    }
+
+    public Builder description(String description) {
+      application.setDescription(description);
+      return this;
+    }
+
+    public Application build() {
+      return application;
+    }
+  }
 }

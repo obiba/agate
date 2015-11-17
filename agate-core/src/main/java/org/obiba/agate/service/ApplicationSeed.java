@@ -25,9 +25,12 @@ public class ApplicationSeed implements ApplicationListener<ContextRefreshedEven
 
   @Override
   public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-    save(new Application("opal", applicationService.hashKey("changeit")));
-    save(new Application("mica", applicationService.hashKey("changeit")));
-    save(new Application("drupal", applicationService.hashKey("changeit")));
+    save(Application.newBuilder().name("opal").description("Data storage application")
+      .key(applicationService.hashKey("changeit")).build());
+    save(Application.newBuilder().name("mica").description("Study catalogue application")
+      .key(applicationService.hashKey("changeit")).build());
+    save(Application.newBuilder().name("drupal").description("Data portal application")
+      .key(applicationService.hashKey("changeit")).build());
   }
 
   private void save(Application application) {
