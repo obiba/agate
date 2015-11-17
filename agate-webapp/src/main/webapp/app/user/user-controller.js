@@ -125,7 +125,7 @@ agate.user
           $scope.usedAttributeNames = AttributesService.getUsedAttributeNames($scope.user.attributes, $scope.attributesConfig);
           $scope.profile = null;
           return user;
-        }) : {};
+        }) : { role: 'agate-user'};
 
       /**
        * Updated an existing user properties and attributes
