@@ -33,9 +33,17 @@
         <p style="margin: 0 0 10px;">
           Dear <span th:text="${user.firstName}">(first name)</span> <span th:text="${user.lastName}">(last name)</span>,
         </p>
-        <p style="margin: 0 0 10px;">
-          A file/folder status changed to "<strong th:text="${status}">(status)</strong>".
-        </p>
+        <div th:switch="${status}" style="margin: 0 0 10px;">
+          <p th:case="'DELETED'">
+            A file was marked as being deleted. You can now delete it permanently.
+          </p>
+          <p th:case="UNDER_REVIEW">
+            A file is ready to be reviewed. You can now approve or reject its publication.
+          </p>
+          <p th:case="*">
+            A file status was changed to "<strong th:text="${status}">(status)</strong>".
+          </p>
+        </div>
         <p style="margin: 0 0 10px;">
         </p><p style="margin: auto;text-align: center;">
         <a href="" th:href="@{${publicUrl} + '/#' + ${document} + '/files?p=' + ${path}}" target="_blank"
