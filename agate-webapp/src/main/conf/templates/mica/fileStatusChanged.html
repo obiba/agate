@@ -34,25 +34,32 @@
           Dear <span th:text="${user.firstName}">(first name)</span> <span th:text="${user.lastName}">(last name)</span>,
         </p>
         <div th:switch="${status}" style="margin: 0 0 10px;">
-          <p th:case="'DELETED'">
-            A file was marked as being deleted. You can now delete it permanently.
+          <p th:case="DRAFT">
+            A file is ready to be edited.
           </p>
           <p th:case="UNDER_REVIEW">
             A file is ready to be reviewed. You can now approve or reject its publication.
+          </p>
+          <p th:case="'DELETED'">
+            A file was marked as being deleted. You can now delete it permanently.
           </p>
           <p th:case="*">
             A file status was changed to <strong th:text="${status}">(status)</strong>.
           </p>
         </div>
+        <p style="margin: 0 0 10px;display: block;color: #597ea2;">
+          <span th:text="${path}">(path)</span>
+        </p>
         <p style="margin: 0 0 10px;">
-        </p><p style="margin: auto;text-align: center;">
-        <a href="" th:href="@{${publicUrl} + '/#' + ${document} + '/files?p=' + ${path}}" target="_blank"
+        </p>
+        <p style="margin: auto;text-align: center;">
+          <a href="" th:href="@{${publicUrl} + '/#' + ${document} + '/files?p=' + ${path}}" target="_blank"
           style="color: #ffffff;text-decoration: none;display: inline-block;margin-bottom: 0;font-weight: normal;text-align: center;vertical-align: middle;-ms-touch-action: manipulation;touch-action: manipulation;cursor: pointer;background: #2c3e50 none;white-space: nowrap;padding: 10px 15px;font-size: 15px;line-height: 1.5;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;border: 1px solid #2c3e50;">View
           File</a>
-      </p>
+        </p>
       </div>
     </div>
-    <p class="help-block" style="display: block;margin: 5px 0 10px;color: #597ea2;">
+    <p style="display: block;margin: 5px 0 10px;color: #597ea2;">
       This is a generated email. Please do not reply.
     </p>
   </div>
