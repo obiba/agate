@@ -33,15 +33,21 @@
         <p style="margin: 0 0 10px;">
           Dear <span th:text="${user.firstName}">(first name)</span> <span th:text="${user.lastName}">(last name)</span>,
         </p>
-        <div style="margin: 0 0 10px;">
-          <p>
-            A new comment was added in <span th:text="${documentType}">(documentType)</span> <strong><span th:text="${documentId}">(documentId)</span></strong>.
+        <div th:switch="${status}" style="margin: 0 0 10px;">
+          <p th:case="'CREATED'">
+            A comment was added in <span th:text="${documentType}">(documentType)</span> <strong><span th:text="${documentId}">(documentId)</span></strong>.
+          </p>
+          <p th:case="UPDATED">
+            A comment was updated in <span th:text="${documentType}">(documentType)</span> <strong><span th:text="${documentId}">(documentId)</span></strong>.
+          </p>
+          <p th:case="*">
+            The <span th:text="${documentType}">(documentType)</span> <strong><span th:text="${documentId}">(documentId)</span></strong> was commented.
           </p>
         </div>
         <p style="margin: 0 0 10px;">
         </p><p style="margin: auto;text-align: center;">
         <a href="" th:href="@{${publicUrl} + '/#/' + ${documentType} + '/' + ${documentId} + '/comments'}" target="_blank"
-          style="color: #ffffff;text-decoration: none;display: inline-block;margin-bottom: 0;font-weight: normal;text-align: center;vertical-align: middle;-ms-touch-action: manipulation;touch-action: manipulation;cursor: pointer;background: #2c3e50 none;white-space: nowrap;padding: 10px 15px;font-size: 15px;line-height: 1.5;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;border: 1px solid #2c3e50;">View Comment</a>
+          style="color: #ffffff;text-decoration: none;display: inline-block;margin-bottom: 0;font-weight: normal;text-align: center;vertical-align: middle;-ms-touch-action: manipulation;touch-action: manipulation;cursor: pointer;background: #2c3e50 none;white-space: nowrap;padding: 10px 15px;font-size: 15px;line-height: 1.5;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;border: 1px solid #2c3e50;">View Comments</a>
       </p>
       </div>
     </div>
