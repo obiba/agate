@@ -34,11 +34,14 @@
           Dear <span th:text="${user.firstName}">(first name)</span> <span th:text="${user.lastName}">(last name)</span>,
         </p>
         <div th:switch="${status}" style="margin: 0 0 10px;">
-          <p th:case="'DELETED'">
-            The harmonization dataset <strong th:text="${documentId}">(document id)</strong> was marked as being deleted. You can now delete it permanently.
+          <p th:case="DRAFT">
+            The harmonization dataset <strong th:text="${documentId}">(document id)</strong> is ready to be edited.
           </p>
           <p th:case="UNDER_REVIEW">
             The harmonization dataset <strong th:text="${documentId}">(document id)</strong> is ready to be reviewed. You can now approve or reject its publication.
+          </p>
+          <p th:case="'DELETED'">
+            The harmonization dataset <strong th:text="${documentId}">(document id)</strong> was marked as being deleted. You can now delete it permanently.
           </p>
           <p th:case="*">
             The harmonization dataset <strong th:text="${documentId}">(document id)</strong> status was changed to <strong th:text="${status}">(status)</strong>.
