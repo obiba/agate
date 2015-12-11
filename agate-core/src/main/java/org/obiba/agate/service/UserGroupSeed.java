@@ -40,13 +40,13 @@ public class UserGroupSeed implements ApplicationListener<ContextRefreshedEvent>
 
   private void seedGroups() {
     save(Group.newBuilder().name("mica-administrator").description("Administrate Mica").applications("mica").build());
-    save(Group.newBuilder().name("mica-reviewer").description("Edit and publish Mica content")
+    save(Group.newBuilder().name("mica-reviewer").description("Edit and publish any Mica content")
       .applications("opal", "mica", "drupal").build());
-    save(Group.newBuilder().name("mica-editor").description("Edit Mica content").applications("opal", "mica", "drupal")
+    save(Group.newBuilder().name("mica-editor").description("Edit any Mica content").applications("opal", "mica", "drupal")
       .build());
     save(Group.newBuilder().name("mica-data-access-officer").description("Manage data access requests in Mica")
       .applications("mica", "drupal").build());
-    save(Group.newBuilder().name("mica-user").description("View Mica content").applications("mica", "drupal").build());
+    save(Group.newBuilder().name("mica-user").description("Can submit data access requests in Mica").applications("mica", "drupal").build());
     save(Group.newBuilder().name("opal-administrator").description("Administrate Opal").applications("opal").build());
   }
 
