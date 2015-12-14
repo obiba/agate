@@ -22,52 +22,53 @@
   <p ng-if="loading" class="voffset2 loading">
   </p>
 
-  <div class="row voffset2" ng-if="groups.length > 0">
-    <div class="col-xs-4">
+  <div ng-if="groups.length > 0">
+    <div class="row voffset2">
+      <div class="col-xs-4">
       <span class="input-group input-group-sm no-padding-top">
         <span class="input-group-addon" id="group-search"><i class="glyphicon glyphicon-search"></i></span>
         <input ng-model="searchText" type="text" class="form-control width25" aria-describedby="group-search">
       </span>
+      </div>
+      <div class="col-xs-8">
+        <dir-pagination-controls class="pull-right"></dir-pagination-controls>
+      </div>
     </div>
-    <div class="col-xs-8">
-      <dir-pagination-controls class="pull-right"></dir-pagination-controls>
+
+    <div class="table-responsive">
+      <table class="table table-striped table-hover table-bordered">
+        <thead>
+        <tr>
+          <th translate>group.name</th>
+          <th translate>group.description</th>
+          <th translate>group.applications</th>
+          <th translate>group.actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr dir-paginate="group in groups | filter: searchText | itemsPerPage: 20">
+          <td>
+            <a ng-href="#/group/{{group.id}}" translate>{{group.name}}</a>
+          </td>
+          <td>
+            {{group.description}}
+          </td>
+          <td>
+            <span class="label label-default hoffset-right" ng-repeat="app in group.applications">{{app}}</span>
+          </td>
+          <td>
+            <ul class="list-inline">
+              <li>
+                <a ng-href="#/group/{{group.id}}/edit" title="{{'edit' | translate}}"><i class="fa fa-pencil"></i></a>
+              </li>
+              <li>
+                <a href="" ng-click="deleteGroup(group)" title="{{'delete' | translate}}"><i class="fa fa-trash-o"></i></a>
+              </li>
+            </ul>
+          </td>
+        </tr>
+        </tbody>
+      </table>
     </div>
   </div>
-
-  <div class="table-responsive" ng-if="groups.length > 0">
-    <table class="table table-striped table-hover table-bordered" ng-show="groups && groups.length > 0">
-      <thead>
-      <tr>
-        <th translate>group.name</th>
-        <th translate>group.description</th>
-        <th translate>group.applications</th>
-        <th translate>group.actions</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr dir-paginate="group in groups | filter:searchText | itemsPerPage: 20">
-        <td>
-          <a ng-href="#/group/{{group.id}}" translate>{{group.name}}</a>
-        </td>
-        <td>
-          {{group.description}}
-        </td>
-        <td>
-          <span class="label label-default hoffset-right" ng-repeat="app in group.applications">{{app}}</span>
-        </td>
-        <td>
-          <ul class="list-inline">
-            <li>
-              <a ng-href="#/group/{{group.id}}/edit" title="{{'edit' | translate}}"><i class="fa fa-pencil"></i></a>
-            </li>
-            <li>
-              <a href="" ng-click="deleteGroup(group)" title="{{'delete' | translate}}"><i class="fa fa-trash-o"></i></a>
-            </li>
-          </ul>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
-
 </div>
