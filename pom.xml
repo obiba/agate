@@ -373,18 +373,6 @@
       </dependency>
 
       <dependency>
-        <groupId>org.mongeez</groupId>
-        <artifactId>mongeez</artifactId>
-        <version>${mongeez.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-
-      <dependency>
         <groupId>com.google.protobuf</groupId>
         <artifactId>protobuf-java</artifactId>
         <version>${protobuf.version}</version>

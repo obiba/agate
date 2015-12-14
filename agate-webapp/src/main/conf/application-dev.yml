@@ -21,7 +21,7 @@ spring:
         protocol: smtp
         tls: false
         auth: false
-        from: agate@example.org
+        from: no-reply@obiba.org
 
     messageSource:
         cacheSeconds: 1
