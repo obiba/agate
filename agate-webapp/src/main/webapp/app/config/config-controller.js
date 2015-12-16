@@ -173,7 +173,7 @@ agate.config
 
       ConfigurationResource.get(function(config) {
         $scope.agateConfig = config;
-        $scope.inactiveTimeout = $scope.agateConfig.inactiveTimeout / 24;
+        $scope.inactiveTimeoutDays = $scope.agateConfig.inactiveTimeout / 24;
       });
 
       $scope.save = function () {
@@ -183,7 +183,7 @@ agate.config
           return;
         }
 
-        $scope.agateConfig.inactiveTimeout = $scope.inactiveTimeout * 24;
+        $scope.agateConfig.inactiveTimeout = $scope.inactiveTimeoutDays * 24;
         $scope.agateConfig.$save(
           function () {
             $location.path('/config').replace();
