@@ -148,6 +148,7 @@ agate.user
         if ($scope.profile.password !== $scope.profile.confirmPassword) {
           $scope.form.saveAttempted = true;
           $scope.form.$invalid = true;
+          AlertService.alert({id: 'UserEditController', type: 'danger', msgKey: 'password.messages.error.dontmatch'});
           return;
         }
 
