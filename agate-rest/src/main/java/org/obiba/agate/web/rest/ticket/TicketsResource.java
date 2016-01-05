@@ -102,7 +102,7 @@ public class TicketsResource extends ApplicationAwareResource {
       subject.login(new UsernamePasswordToken(user.getName(), password));
       authorizationValidator.validateRealm(servletRequest, user, subject);
 
-      Ticket ticket = createTicket(user.getName(), renew, rememberMe, getApplicationName());
+      Ticket ticket = ticketService.createTicket(user.getName(), renew, rememberMe, getApplicationName());
       Configuration configuration = getConfiguration();
       int timeout = rememberMe ? configuration.getLongTimeout() : configuration.getShortTimeout();
       NewCookie cookie = new NewCookie(TICKET_COOKIE_NAME, ticket.getToken(), "/", configuration.getDomain(), null,
@@ -142,21 +142,6 @@ public class TicketsResource extends ApplicationAwareResource {
     return subject;
   }
 
-  private Ticket createTicket(String username, boolean renew, boolean rememberMe, String application) {
-    Ticket ticket;
-    List<Ticket> tickets = ticketService.findByUsername(username);
-    if(renew) ticketService.deleteAll(tickets);
-    if(renew || tickets == null || tickets.isEmpty()) {
-      ticket = new Ticket();
-      ticket.setUsername(username);
-    } else {
-      ticket = tickets.get(0);
-    }
-    ticket.setRemembered(rememberMe);
-    ticket.addEvent(application, "login");
-    ticketService.save(ticket);
 
-    return ticket;
-  }
 
 }
