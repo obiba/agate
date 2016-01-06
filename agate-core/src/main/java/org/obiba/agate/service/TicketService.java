@@ -1,21 +1,33 @@
 package org.obiba.agate.service;
 
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.ForbiddenException;
 
+import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.obiba.agate.domain.Ticket;
+import org.obiba.agate.domain.User;
 import org.obiba.agate.repository.TicketRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.mysql.jdbc.StringUtils;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
 
 @Service
 public class TicketService {
@@ -28,8 +40,37 @@ public class TicketService {
   @Inject
   private ConfigurationService configurationService;
 
+  @Inject
+  private UserService userService;
+
   /**
-   * Find all {@link org.obiba.agate.domain.Ticket}.
+   * Create or reuse a ticket for the given username.
+   *
+   * @param username
+   * @param renew delete any existing tickets for the username before creating a new one
+   * @param rememberMe
+   * @param application application name issuing the login event
+   * @return
+   */
+  public Ticket createTicket(String username, boolean renew, boolean rememberMe, String application) {
+    Ticket ticket;
+    List<Ticket> tickets = findByUsername(username);
+    if(renew) deleteAll(tickets);
+    if(renew || tickets == null || tickets.isEmpty()) {
+      ticket = new Ticket();
+      ticket.setUsername(username);
+    } else {
+      ticket = tickets.get(0);
+    }
+    ticket.setRemembered(rememberMe);
+    ticket.addEvent(application, "login");
+    save(ticket);
+
+    return ticket;
+  }
+
+  /**
+   * Find all {@link Ticket}.
    *
    * @return
    */
@@ -38,7 +79,7 @@ public class TicketService {
   }
 
   /**
-   * Find {@link org.obiba.agate.domain.Ticket} by its token.
+   * Find {@link Ticket} by its token.
    *
    * @param token
    * @return
@@ -52,7 +93,7 @@ public class TicketService {
   }
 
   /**
-   * Get the {@link org.obiba.agate.domain.Ticket} corresponding to the given token.
+   * Get the {@link Ticket} corresponding to the given token.
    *
    * @param token
    * @return null if not found
@@ -63,7 +104,7 @@ public class TicketService {
   }
 
   /**
-   * Get all {@link org.obiba.agate.domain.Ticket}s for the user name.
+   * Get all {@link Ticket}s for the user name.
    *
    * @param username
    * @return
@@ -73,7 +114,7 @@ public class TicketService {
   }
 
   /**
-   * Delete the list of {@link org.obiba.agate.domain.Ticket}s.
+   * Delete the list of {@link Ticket}s.
    *
    * @param tickets
    */
@@ -85,7 +126,7 @@ public class TicketService {
   }
 
   /**
-   * Delete all {@link org.obiba.agate.domain.Ticket}s of a {@link org.obiba.agate.domain.User}.
+   * Delete all {@link Ticket}s of a {@link User}.
    *
    * @param username
    */
@@ -93,27 +134,21 @@ public class TicketService {
     deleteAll(findByUsername(username));
   }
 
-
   /**
-   * Insert or update the {@link org.obiba.agate.domain.Ticket}. Set the {@link org.obiba.agate.domain.Ticket}'s token if none.
+   * Insert or update the {@link Ticket}. Set the {@link Ticket}'s token if none.
    *
    * @param ticket
    */
   public void save(@NotNull @Valid Ticket ticket) {
     if(!ticket.hasToken()) {
-      UUID token = UUID.randomUUID();
-      Ticket found = findByToken(token.toString());
-      while(found != null) {
-        token = UUID.randomUUID();
-        found = findByToken(token.toString());
-      }
-      ticket.setToken(token.toString());
+      if(ticket.isNew()) ticket.setId(new ObjectId().toString());
+      ticket.setToken(makeToken(ticket));
     }
     ticketRepository.save(ticket);
   }
 
   /**
-   * Delete a {@link org.obiba.agate.domain.Ticket} if any is matching the given token.
+   * Delete a {@link Ticket} if any is matching the given token.
    *
    * @param token
    */
@@ -122,9 +157,37 @@ public class TicketService {
     if(ticket != null) deleteById(ticket.getId());
   }
 
-  private void deleteById(@NotNull String id) {
-    if(!StringUtils.isNullOrEmpty(id)) ticketRepository.delete(id);
+  /**
+   * Compute expiration date using configured timeouts.
+   *
+   * @param ticket
+   * @return
+   */
+  public DateTime getExpirationDate(Ticket ticket) {
+    return getExpirationDate(ticket.getCreatedDate(), ticket.isRemembered());
   }
+
+  /**
+   * Validate Json web token: issuer, jwt ID and signature verification.
+   *
+   * @param token
+   */
+  public void validateToken(String token) {
+    try {
+      Claims claims = Jwts.parser().setSigningKey(configurationService.getConfiguration().getSecretKey().getBytes())
+        .parseClaimsJws(token).getBody();
+      if(!("agate:" + configurationService.getConfiguration().getId()).equals(claims.getIssuer()))
+        throw new ForbiddenException();
+      if (!ticketRepository.exists(claims.getId()))
+        throw new ForbiddenException();
+    } catch(SignatureException e) {
+      throw new ForbiddenException();
+    }
+  }
+
+  //
+  // Event handling
+  //
 
   /**
    * Remembered tickets have to be removed once expired.
@@ -133,7 +196,7 @@ public class TicketService {
   @Scheduled(cron = "0 0 0 * * ?")
   public void removeExpiredRemembered() {
     removeExpired(ticketRepository.findByCreatedDateBeforeAndRemembered(
-        DateTime.now().minusHours(configurationService.getConfiguration().getLongTimeout()), true));
+      DateTime.now().minusHours(configurationService.getConfiguration().getLongTimeout()), true));
   }
 
   /**
@@ -143,7 +206,59 @@ public class TicketService {
   @Scheduled(cron = "0 * 0 * * ?")
   public void removeExpiredNotRemembered() {
     removeExpired(ticketRepository.findByCreatedDateBeforeAndRemembered(
-        DateTime.now().minusHours(configurationService.getConfiguration().getShortTimeout()), false));
+      DateTime.now().minusHours(configurationService.getConfiguration().getShortTimeout()), false));
+  }
+
+  //
+  // Private methods
+  //
+
+  /**
+   * Make a json web token.
+   *
+   * @param ticket
+   * @return
+   */
+  private String makeToken(@NotNull Ticket ticket) {
+    User user = userService.findUser(ticket.getUsername());
+    Set<String> applications = Sets.newTreeSet();
+    if(user != null) {
+      if(user.hasApplications()) applications.addAll(user.getApplications());
+      if(user.hasGroups()) user.getGroups().forEach(g -> Optional.ofNullable(userService.findGroup(g)).flatMap(r -> {
+        r.getApplications().forEach(applications::add);
+        return Optional.of(r);
+      }));
+    }
+
+    DateTime expires = getExpirationDate(ticket);
+
+    Claims claims = Jwts.claims().setSubject(ticket.getUsername()) //
+      .setIssuer("agate:" + configurationService.getConfiguration().getId()) //
+      .setIssuedAt(ticket.getCreatedDate().toDate()) //
+      .setExpiration(expires.toDate()) //
+      .setId(ticket.getId());
+
+    claims.put(Claims.AUDIENCE, applications);
+
+    if(user != null) {
+      Map<String, String> userMap = Maps.newHashMap();
+      userMap.put("firstName", user.getFirstName());
+      userMap.put("lastName", user.getLastName());
+      claims.put("user", userMap);
+    }
+
+    return Jwts.builder().setClaims(claims)
+      .signWith(SignatureAlgorithm.HS256, configurationService.getConfiguration().getSecretKey().getBytes()).compact();
+  }
+
+  private DateTime getExpirationDate(DateTime created, boolean remembered) {
+    return remembered
+      ? created.plusHours(configurationService.getConfiguration().getLongTimeout())
+      : created.plusHours(configurationService.getConfiguration().getShortTimeout());
+  }
+
+  private void deleteById(@NotNull String id) {
+    if(!StringUtils.isNullOrEmpty(id)) ticketRepository.delete(id);
   }
 
   private void removeExpired(List<Ticket> tickets) {

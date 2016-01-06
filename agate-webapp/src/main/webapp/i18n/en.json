@@ -266,7 +266,11 @@
     "username": "User Name",
     "eventAction": "Action",
     "eventTime": "Time",
-    "eventApplication": "Application"
+    "eventApplication": "Application",
+    "raw": "Raw",
+    "decoded": "Decoded",
+    "header": "Header",
+    "claims": "Claims"
   },
   "users": "Users",
   "user": {

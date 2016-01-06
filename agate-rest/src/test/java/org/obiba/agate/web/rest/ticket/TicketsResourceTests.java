@@ -28,7 +28,7 @@ import com.google.common.collect.Sets;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 public class TicketsResourceTests {
@@ -72,6 +72,7 @@ public class TicketsResourceTests {
     configuration.setShortTimeout(30000);
     configuration.setDomain("localhost");
     when(configurationService.getConfiguration()).thenReturn(configuration);
+    when(authorizationValidator.validateApplication(anyString())).thenReturn("mica");
   }
 
   @Test
@@ -81,12 +82,9 @@ public class TicketsResourceTests {
     when(securityManager.createSubject(any())).thenReturn(subject);
     SecurityUtils.setSecurityManager(securityManager);
 
-    doAnswer(invocation -> {
-      Object[] args = invocation.getArguments();
-      ((Ticket) args[0]).setToken("token123");
-
-      return null;
-    }).when(ticketService).save(any(Ticket.class));
+    Ticket ticket = new Ticket();
+    ticket.setToken("token123");
+    doReturn(ticket).when(ticketService).createTicket("toto", false, false, "mica");
 
     User user = new User("toto", "realm1");
     user.setStatus(UserStatus.ACTIVE);
