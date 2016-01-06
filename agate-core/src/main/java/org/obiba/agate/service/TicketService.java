@@ -8,6 +8,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.ForbiddenException;
 
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
@@ -26,6 +27,7 @@ import com.mysql.jdbc.StringUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
 
 @Service
 public class TicketService {
@@ -139,7 +141,7 @@ public class TicketService {
    */
   public void save(@NotNull @Valid Ticket ticket) {
     if(!ticket.hasToken()) {
-      if (ticket.isNew()) ticket.setId(new ObjectId().toString());
+      if(ticket.isNew()) ticket.setId(new ObjectId().toString());
       ticket.setToken(makeToken(ticket));
     }
     ticketRepository.save(ticket);
@@ -155,14 +157,32 @@ public class TicketService {
     if(ticket != null) deleteById(ticket.getId());
   }
 
+  /**
+   * Compute expiration date using configured timeouts.
+   *
+   * @param ticket
+   * @return
+   */
   public DateTime getExpirationDate(Ticket ticket) {
     return getExpirationDate(ticket.getCreatedDate(), ticket.isRemembered());
   }
 
-  public DateTime getExpirationDate(DateTime created, boolean remembered) {
-    return remembered
-      ? created.plusHours(configurationService.getConfiguration().getLongTimeout())
-      : created.plusHours(configurationService.getConfiguration().getShortTimeout());
+  /**
+   * Validate Json web token: issuer, jwt ID and signature verification.
+   *
+   * @param token
+   */
+  public void validateToken(String token) {
+    try {
+      Claims claims = Jwts.parser().setSigningKey(configurationService.getConfiguration().getSecretKey().getBytes())
+        .parseClaimsJws(token).getBody();
+      if(!("agate:" + configurationService.getConfiguration().getId()).equals(claims.getIssuer()))
+        throw new ForbiddenException();
+      if (!ticketRepository.exists(claims.getId()))
+        throw new ForbiddenException();
+    } catch(SignatureException e) {
+      throw new ForbiddenException();
+    }
   }
 
   //
@@ -202,9 +222,9 @@ public class TicketService {
   private String makeToken(@NotNull Ticket ticket) {
     User user = userService.findUser(ticket.getUsername());
     Set<String> applications = Sets.newTreeSet();
-    if (user != null) {
-      if (user.hasApplications()) applications.addAll(user.getApplications());
-      if (user.hasGroups())  user.getGroups().forEach(g -> Optional.ofNullable(userService.findGroup(g)).flatMap(r -> {
+    if(user != null) {
+      if(user.hasApplications()) applications.addAll(user.getApplications());
+      if(user.hasGroups()) user.getGroups().forEach(g -> Optional.ofNullable(userService.findGroup(g)).flatMap(r -> {
         r.getApplications().forEach(applications::add);
         return Optional.of(r);
       }));
@@ -220,7 +240,7 @@ public class TicketService {
 
     claims.put(Claims.AUDIENCE, applications);
 
-    if (user != null) {
+    if(user != null) {
       Map<String, String> userMap = Maps.newHashMap();
       userMap.put("firstName", user.getFirstName());
       userMap.put("lastName", user.getLastName());
@@ -229,6 +249,12 @@ public class TicketService {
 
     return Jwts.builder().setClaims(claims)
       .signWith(SignatureAlgorithm.HS256, configurationService.getConfiguration().getSecretKey().getBytes()).compact();
+  }
+
+  private DateTime getExpirationDate(DateTime created, boolean remembered) {
+    return remembered
+      ? created.plusHours(configurationService.getConfiguration().getLongTimeout())
+      : created.plusHours(configurationService.getConfiguration().getShortTimeout());
   }
 
   private void deleteById(@NotNull String id) {
