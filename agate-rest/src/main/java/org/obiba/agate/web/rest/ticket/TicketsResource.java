@@ -111,7 +111,8 @@ public class TicketsResource extends ApplicationAwareResource {
       user.setLastLogin(DateTime.now());
       userService.save(user);
 
-      log.info("Successful Granting Ticket creation for user '{}' with ticket ID: {}", username, ticket.getToken());
+      log.info("Successful login for user '{}' from application '{}' with token: {}", username, getApplicationName(),
+        ticket.getToken());
       return Response
         .created(UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(TicketResource.class).build(ticket.getToken()))
         .header(HttpHeaders.SET_COOKIE, cookie).build();
@@ -141,7 +142,5 @@ public class TicketsResource extends ApplicationAwareResource {
     }
     return subject;
   }
-
-
 
 }
