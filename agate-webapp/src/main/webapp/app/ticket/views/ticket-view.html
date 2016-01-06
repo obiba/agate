@@ -5,6 +5,9 @@
       <li class="active ellipsis">{{ticket.token}}</li>
     </ol>
   </h2>
+
+
+
   <div class="row">
     <div class="col-md-6">
       <h4 translate>ticket.properties</h4>
@@ -12,7 +15,25 @@
         <tbody>
         <tr>
           <th translate>ticket.token</th>
-          <td>{{ticket.token}}</td>
+          <td>
+            <div style="word-break:break-all" ng-if="!jwt">
+              {{ticket.token}}
+            </div>
+            <tabset type="pills" ng-if="jwt">
+              <tab heading="{{'ticket.raw' | translate}}">
+                <div style="word-break:break-all">
+                  {{ticket.token}}
+                </div>
+              </tab>
+              <tab heading="{{'ticket.decoded' | translate}}">
+                <pre>{{jwt.header}}
+.
+{{jwt.claims}}
+.
+[signature]</pre>
+              </tab>
+            </tabset>
+          </td>
         </tr>
         <tr>
           <th translate>ticket.username</th>

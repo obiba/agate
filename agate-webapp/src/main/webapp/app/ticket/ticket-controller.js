@@ -48,5 +48,20 @@ agate.ticket
   .controller('TicketViewController', ['$scope', '$routeParams', 'TicketResource',
 
     function ($scope, $routeParams, TicketResource) {
-      $scope.ticket = TicketResource.get({id: $routeParams.id});
+      // Extract header and claims from Base64 encoded token string
+      var decodeJwt = function(token) {
+        try {
+          var jwt = token.split('.');
+          var header = JSON.stringify(JSON.parse(window.atob(jwt[0])), null, 4);
+          var claims = JSON.stringify(JSON.parse(window.atob(jwt[1])), null, 4);
+          return { header: header, claims: claims };
+        } catch(err) {
+          return null;
+        }
+      };
+
+      TicketResource.get({id: $routeParams.id}, function(ticket) {
+        $scope.ticket = ticket;
+        $scope.jwt = decodeJwt(ticket.token);
+      });
     }]);

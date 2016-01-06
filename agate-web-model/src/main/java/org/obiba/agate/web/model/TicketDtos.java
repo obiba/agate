@@ -3,10 +3,8 @@ package org.obiba.agate.web.model;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
-import org.joda.time.DateTime;
-import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.Ticket;
-import org.obiba.agate.service.ConfigurationService;
+import org.obiba.agate.service.TicketService;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
@@ -16,7 +14,7 @@ import com.google.common.base.Strings;
 class TicketDtos {
 
   @Inject
-  private ConfigurationService configurationService;
+  private TicketService ticketService;
 
   @NotNull
   Agate.TicketDto asDto(@NotNull Ticket ticket) {
@@ -36,12 +34,7 @@ class TicketDtos {
       builder.addEvents(eBuilder);
     }
 
-    Configuration configuration = configurationService.getConfiguration();
-    DateTime created = ticket.getCreatedDate();
-    DateTime expires = ticket.isRemembered()
-      ? created.plusHours(configuration.getLongTimeout())
-      : created.plusHours(configuration.getShortTimeout());
-    builder.setExpires(expires.toString());
+    builder.setExpires(ticketService.getExpirationDate(ticket).toString());
 
     return builder.build();
   }

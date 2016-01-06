@@ -1,21 +1,29 @@
 package org.obiba.agate.service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.obiba.agate.domain.Ticket;
+import org.obiba.agate.domain.User;
 import org.obiba.agate.repository.TicketRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.mysql.jdbc.StringUtils;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -29,6 +37,9 @@ public class TicketService {
 
   @Inject
   private ConfigurationService configurationService;
+
+  @Inject
+  private UserService userService;
 
   /**
    * Create or reuse a ticket for the given username.
@@ -128,13 +139,8 @@ public class TicketService {
    */
   public void save(@NotNull @Valid Ticket ticket) {
     if(!ticket.hasToken()) {
-      String token = newToken(ticket.getUsername());
-      Ticket found = findByToken(token);
-      while(found != null) {
-        token = newToken(ticket.getUsername());
-        found = findByToken(token);
-      }
-      ticket.setToken(token);
+      if (ticket.isNew()) ticket.setId(new ObjectId().toString());
+      ticket.setToken(makeToken(ticket));
     }
     ticketRepository.save(ticket);
   }
@@ -147,6 +153,16 @@ public class TicketService {
   public void delete(@NotNull String token) {
     Ticket ticket = findByToken(token);
     if(ticket != null) deleteById(ticket.getId());
+  }
+
+  public DateTime getExpirationDate(Ticket ticket) {
+    return getExpirationDate(ticket.getCreatedDate(), ticket.isRemembered());
+  }
+
+  public DateTime getExpirationDate(DateTime created, boolean remembered) {
+    return remembered
+      ? created.plusHours(configurationService.getConfiguration().getLongTimeout())
+      : created.plusHours(configurationService.getConfiguration().getShortTimeout());
   }
 
   //
@@ -180,12 +196,39 @@ public class TicketService {
   /**
    * Make a json web token.
    *
-   * @param username
+   * @param ticket
    * @return
    */
-  private String newToken(@NotNull String username) {
-    return Jwts.builder().setSubject(username)
-      .signWith(SignatureAlgorithm.HS512, configurationService.getConfiguration().getSecretKey().getBytes()).compact();
+  private String makeToken(@NotNull Ticket ticket) {
+    User user = userService.findUser(ticket.getUsername());
+    Set<String> applications = Sets.newTreeSet();
+    if (user != null) {
+      if (user.hasApplications()) applications.addAll(user.getApplications());
+      if (user.hasGroups())  user.getGroups().forEach(g -> Optional.ofNullable(userService.findGroup(g)).flatMap(r -> {
+        r.getApplications().forEach(applications::add);
+        return Optional.of(r);
+      }));
+    }
+
+    DateTime expires = getExpirationDate(ticket);
+
+    Claims claims = Jwts.claims().setSubject(ticket.getUsername()) //
+      .setIssuer("agate:" + configurationService.getConfiguration().getId()) //
+      .setIssuedAt(ticket.getCreatedDate().toDate()) //
+      .setExpiration(expires.toDate()) //
+      .setId(ticket.getId());
+
+    claims.put(Claims.AUDIENCE, applications);
+
+    if (user != null) {
+      Map<String, String> userMap = Maps.newHashMap();
+      userMap.put("firstName", user.getFirstName());
+      userMap.put("lastName", user.getLastName());
+      claims.put("user", userMap);
+    }
+
+    return Jwts.builder().setClaims(claims)
+      .signWith(SignatureAlgorithm.HS256, configurationService.getConfiguration().getSecretKey().getBytes()).compact();
   }
 
   private void deleteById(@NotNull String id) {
