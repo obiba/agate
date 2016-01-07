@@ -2,9 +2,9 @@
 
 agate.config
   .controller('ConfigurationController', ['$rootScope', '$scope', '$resource', '$route', '$log', '$window', 'ConfigurationResource',
-    'NOTIFICATION_EVENTS', '$modal', 'KeyStoreResource',
+    'NOTIFICATION_EVENTS', '$uibModal', 'KeyStoreResource',
 
-    function ($rootScope, $scope, $resource, $route, $log, $window, ConfigurationResource, NOTIFICATION_EVENTS, $modal, KeyStoreResource) {
+    function ($rootScope, $scope, $resource, $route, $log, $window, ConfigurationResource, NOTIFICATION_EVENTS, $uibModal, KeyStoreResource) {
       $scope.agateConfig = {userAttributes: []};
 
       ConfigurationResource.get(function(config) {
@@ -13,7 +13,7 @@ agate.config
       });
 
       $scope.createKeyPair = function () {
-        $modal.open({
+        $uibModal.open({
           templateUrl: 'app/config/views/config-modal-create-keypair.html',
           controller: 'CreateKeyPairModalController'
         }).result.then(function (data) {
@@ -24,7 +24,7 @@ agate.config
       };
 
       $scope.importKeyPair = function () {
-        $modal.open({
+        $uibModal.open({
           templateUrl: 'app/config/views/config-modal-import-keypair.html',
           controller: 'ImportKeyPairModalController'
         }).result.then(function(data) {
@@ -39,7 +39,7 @@ agate.config
       };
 
       $scope.editAttribute = function (att) {
-        $modal.open({
+        $uibModal.open({
           templateUrl: 'app/config/views/attribute-modal-form.html',
           controller: 'AttributeModalController',
           resolve: {
@@ -86,8 +86,8 @@ agate.config
       };
     }])
 
-  .controller('AttributeModalController', ['$scope', '$filter', '$modalInstance', 'attribute',
-    function($scope, $filter, $modalInstance, attribute) {
+  .controller('AttributeModalController', ['$scope', '$filter', '$uibModalInstance', 'attribute',
+    function($scope, $filter, $uibModalInstance, attribute) {
       $scope.TYPES = [
         {name: 'STRING', label: $filter('translate')('config.attributes.types.STRING')},
         {name: 'INTEGER', label: $filter('translate')('config.attributes.types.INTEGER')},
@@ -118,16 +118,16 @@ agate.config
           return s.trim();
         }) : null;
 
-        $modalInstance.close($scope.attribute);
+        $uibModalInstance.close($scope.attribute);
       };
 
       $scope.cancel = function () {
-        $modalInstance.dismiss('cancel');
+        $uibModalInstance.dismiss('cancel');
       };
     }])
 
-  .controller('ImportKeyPairModalController', ['$scope', '$location', '$modalInstance',
-    function($scope, $location, $modalInstance) {
+  .controller('ImportKeyPairModalController', ['$scope', '$location', '$uibModalInstance',
+    function($scope, $location, $uibModalInstance) {
       $scope.keyForm = {
         privateImport: '',
         publicImport: '',
@@ -135,16 +135,16 @@ agate.config
       };
 
       $scope.save = function () {
-        $modalInstance.close($scope.keyForm);
+        $uibModalInstance.close($scope.keyForm);
       };
 
       $scope.cancel = function () {
-        $modalInstance.dismiss('cancel');
+        $uibModalInstance.dismiss('cancel');
       };
     }])
 
-  .controller('CreateKeyPairModalController', ['$scope', '$location', '$modalInstance',
-    function($scope, $location, $modalInstance) {
+  .controller('CreateKeyPairModalController', ['$scope', '$location', '$uibModalInstance',
+    function($scope, $location, $uibModalInstance) {
       $scope.showAdvanced = false;
 
       $scope.keyForm = {
@@ -157,11 +157,11 @@ agate.config
       };
 
       $scope.save = function () {
-        $modalInstance.close($scope.keyForm);
+        $uibModalInstance.close($scope.keyForm);
       };
 
       $scope.cancel = function () {
-        $modalInstance.dismiss('cancel');
+        $uibModalInstance.dismiss('cancel');
       };
     }])
 

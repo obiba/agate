@@ -109,8 +109,8 @@ agate.controller('LogoutController', ['$location', 'AuthenticationSharedService'
     });
   }]);
 
-agate.controller('ProfileController', ['$scope', '$location', '$modal', 'Account', 'ConfigurationResource', 'AttributesService', 'AlertService',
-  function ($scope, $location, $modal, Account, ConfigurationResource, AttributesService, AlertService) {
+agate.controller('ProfileController', ['$scope', '$location', '$uibModal', 'Account', 'ConfigurationResource', 'AttributesService', 'AlertService',
+  function ($scope, $location, $uibModal, Account, ConfigurationResource, AttributesService, AlertService) {
     var getConfigAttributes = function () {
       ConfigurationResource.get(function (config) {
         $scope.attributesConfig = config.userAttributes || [];
@@ -148,7 +148,7 @@ agate.controller('ProfileController', ['$scope', '$location', '$modal', 'Account
         AttributesService.getAttributeConfigPairs(settingsAccountClone.attributes, $scope.attributesConfig);
 
 
-      $modal
+      $uibModal
         .open({
           templateUrl: 'app/views/profile/profile-form-modal.html',
           controller: 'ProfileModalController',
@@ -182,8 +182,8 @@ agate.controller('ProfileController', ['$scope', '$location', '$modal', 'Account
 
   }]);
 
-agate.controller('ProfileModalController', ['$scope', '$modalInstance', '$filter', 'Account', 'settingsAccount', 'attributeConfigPairs', 'attributesConfig', 'usedAttributeNames', 'AttributesService', 'AlertService',
-  function ($scope, $modalInstance, $filter, Account, settingsAccount, attributeConfigPairs, attributesConfig, usedAttributeNames, AttributesService, AlertService) {
+agate.controller('ProfileModalController', ['$scope', '$uibModalInstance', '$filter', 'Account', 'settingsAccount', 'attributeConfigPairs', 'attributesConfig', 'usedAttributeNames', 'AttributesService', 'AlertService',
+  function ($scope, $uibModalInstance, $filter, Account, settingsAccount, attributeConfigPairs, attributesConfig, usedAttributeNames, AttributesService, AlertService) {
     $scope.settingsAccount = settingsAccount;
     $scope.attributeConfigPairs = attributeConfigPairs;
     $scope.attributesConfig = attributesConfig;
@@ -192,7 +192,7 @@ agate.controller('ProfileModalController', ['$scope', '$modalInstance', '$filter
     $scope.requiredField = $filter('translate')('user.email');
 
     $scope.cancel = function () {
-      $modalInstance.dismiss('cancel');
+      $uibModalInstance.dismiss('cancel');
     };
 
     $scope.save = function (form) {
@@ -208,7 +208,7 @@ agate.controller('ProfileModalController', ['$scope', '$modalInstance', '$filter
 
       Account.save($scope.settingsAccount,
         function () {
-          $modalInstance.close($scope.attributeConfigPairs);
+          $uibModalInstance.close($scope.attributeConfigPairs);
         },
         function () {
           AlertService.alert({id: 'ProfileModalController', type: 'danger', msgKey: 'fix-error'});

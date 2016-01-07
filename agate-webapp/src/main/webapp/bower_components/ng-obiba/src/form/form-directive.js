@@ -26,12 +26,15 @@ angular.module('obiba.form')
         model: '=',
         disabled: '=',
         type: '@',
+        pattern: '=',
         label: '@',
         required: '=',
         min: '@',
         max: '@',
         step: '@',
-        help: '@'
+        help: '@',
+        placeholder: '@',
+        readonly: '@'
       },
       templateUrl: 'form/form-input-template.tpl.html',
       compile: function(elem, attrs) {

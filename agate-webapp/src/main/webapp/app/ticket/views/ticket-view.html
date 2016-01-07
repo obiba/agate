@@ -19,20 +19,20 @@
             <div style="word-break:break-all" ng-if="!jwt">
               {{ticket.token}}
             </div>
-            <tabset type="pills" ng-if="jwt">
-              <tab heading="{{'ticket.raw' | translate}}">
+            <uib-tabset type="pills" ng-if="jwt">
+              <uib-tab heading="{{'ticket.raw' | translate}}">
                 <div style="word-break:break-all">
                   {{ticket.token}}
                 </div>
-              </tab>
-              <tab heading="{{'ticket.decoded' | translate}}">
+              </uib-tab>
+              <uib-tab heading="{{'ticket.decoded' | translate}}">
                 <pre>{{jwt.header}}
 .
 {{jwt.claims}}
 .
 [signature]</pre>
-              </tab>
-            </tabset>
+              </uib-tab>
+            </uib-tabset>
           </td>
         </tr>
         <tr>

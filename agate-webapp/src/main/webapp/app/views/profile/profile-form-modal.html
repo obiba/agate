@@ -10,8 +10,8 @@
     </div>
 
     <div class="modal-body">
-      <tabset>
-        <tab select="tabGeneral=true" heading="{{'user.general-info' | translate}}">
+      <uib-tabset>
+        <uib-tab select="tabGeneral=true" heading="{{'user.general-info' | translate}}">
           <obiba-alert id="ProfileModalController"></obiba-alert>
 
           <div>
@@ -24,11 +24,11 @@
             </div>
 
           </div>
-        </tab>
-        <tab select="tabAttributes=true" heading="{{'attributes' | translate}}">
+        </uib-tab>
+        <uib-tab select="tabAttributes=true" heading="{{'attributes' | translate}}">
           <attributes-form attributes="settingsAccount.attributes" attributes-config="attributesConfig" used-attribute-names="usedAttributeNames"></attributes-form>
-        </tab>
-      </tabset>
+        </uib-tab>
+      </uib-tabset>
     </div>
 
     <div class="modal-footer">
