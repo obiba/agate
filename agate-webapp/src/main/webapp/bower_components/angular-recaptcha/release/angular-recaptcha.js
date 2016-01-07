@@ -1,5 +1,5 @@
 /**
- * angular-recaptcha build:2015-04-28 
+ * angular-recaptcha build:2015-08-26 
  * https://github.com/vividcortex/angular-recaptcha 
  * Copyright (c) 2015 VividCortex 
 **/
@@ -120,6 +120,7 @@
                 response: '=?ngModel',
                 key: '=',
                 theme: '=?',
+                size: '=?',
                 tabindex: '=?',
                 onCreate: '&',
                 onSuccess: '&',
@@ -132,6 +133,7 @@
 
                 scope.widgetId = null;
 
+                var sessionTimeout;
                 var removeCreationListener = scope.$watch('key', function (key) {
                     if (!key) {
                         return;
@@ -153,7 +155,7 @@
                         });
 
                         // captcha session lasts 2 mins after set.
-                        $timeout(function (){
+                        sessionTimeout = $timeout(function (){
                             if(ctrl){
                                 ctrl.$setValidity('recaptcha',false);
                             }
@@ -166,7 +168,8 @@
                     vcRecaptcha.create(elm[0], key, callback, {
 
                         theme: scope.theme || attrs.theme || null,
-                        tabindex: scope.tabindex || attrs.tabindex || null
+                        tabindex: scope.tabindex || attrs.tabindex || null,
+                        size: scope.size || attrs.size || null
 
                     }).then(function (widgetId) {
                         // The widget has been created
@@ -176,13 +179,26 @@
                         scope.widgetId = widgetId;
                         scope.onCreate({widgetId: widgetId});
 
-                        scope.$on('$destroy', cleanup);
+                        scope.$on('$destroy', destroy);
 
                     });
 
                     // Remove this listener to avoid creating the widget more than once.
                     removeCreationListener();
                 });
+
+                function destroy() {
+                  if (ctrl) {
+                    // reset the validity of the form if we were removed
+                    ctrl.$setValidity('recaptcha', null);
+                  }
+                  if (sessionTimeout) {
+                    // don't trigger the session timeout if we are no longer active
+                    $timeout.cancel(sessionTimeout);
+                    sessionTimeout = null;
+                  }
+                  cleanup();
+                }
 
                 function cleanup(){
                   // removes elements reCaptcha added.

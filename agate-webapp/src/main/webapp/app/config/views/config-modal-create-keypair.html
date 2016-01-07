@@ -23,7 +23,7 @@
         <a href="" ng-click="showAdvanced = !showAdvanced">
           <span ng-class="{'glyphicon-plus': !showAdvanced, 'glyphicon-minus': showAdvanced}" class="glyphicon"></span> <span translate>Advanced options</span></a>
 
-        <div collapse="!showAdvanced" class="voffset4">
+        <div uib-collapse="!showAdvanced" class="voffset4">
           <div form-input model="keyForm.privateForm.algo" label="config.keys.algo" required="true"></div>
 
           <div form-input model="keyForm.privateForm.size" label="config.keys.size" required="true"></div>

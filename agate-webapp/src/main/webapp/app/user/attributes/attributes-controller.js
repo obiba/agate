@@ -2,8 +2,8 @@
 
 agate.user
 
-  .controller('AttributesFormController', ['$rootScope', '$scope', '$translate', '$log', '$modal', 'AttributesService', 'NOTIFICATION_EVENTS',
-    function ($rootScope, $scope, $translate, $log, $modal, AttributesService, NOTIFICATION_EVENTS) {
+  .controller('AttributesFormController', ['$rootScope', '$scope', '$translate', '$log', '$uibModal', 'AttributesService', 'NOTIFICATION_EVENTS',
+    function ($rootScope, $scope, $translate, $log, $uibModal, AttributesService, NOTIFICATION_EVENTS) {
 
       $scope.$watch('attributes', function() {
         $scope.nonConfigAttributes = AttributesService.findNonConfigAttributes($scope.attributes, $scope.attributesConfig);
@@ -14,7 +14,7 @@ agate.user
        * Pops modal for adding new attribute
        */
       $scope.addAttribute = function() {
-        $modal
+        $uibModal
           .open({
             templateUrl: 'app/user/attributes/views/attribute-creation-form-modal.html',
             controller: 'AttributeCreateFormModalController',
@@ -45,7 +45,7 @@ agate.user
        * @param attribute
        */
       $scope.edit = function(attribute) {
-        $modal
+        $uibModal
           .open({
             templateUrl: 'app/user/attributes/views/attribute-form-modal.html',
             controller: 'AttributeFormModalController',
@@ -98,8 +98,8 @@ agate.user
     }])
 
 
-  .controller('AttributeCreateFormModalController', ['$scope', '$modalInstance', '$log', 'attribute', 'usedNames', 'AlertService',
-    function ($scope, $modalInstance, $log, attribute, usedNames, AlertService) {
+  .controller('AttributeCreateFormModalController', ['$scope', '$uibModalInstance', '$log', 'attribute', 'usedNames', 'AlertService',
+    function ($scope, $uibModalInstance, $log, attribute, usedNames, AlertService) {
 
       $scope.attribute = attribute;
       $scope.usedNames = usedNames;
@@ -114,7 +114,7 @@ agate.user
         var duplicatedName = duplicated ? $scope.attribute.name : ''; // For validation message only
 
         if (form.$valid && !duplicated) {
-          $modalInstance.close($scope.attribute);
+          $uibModalInstance.close($scope.attribute);
         }
         else {
           if (duplicated) {
@@ -134,13 +134,13 @@ agate.user
        * Closes modal
        */
       $scope.cancel = function () {
-        $modalInstance.dismiss('cancel');
+        $uibModalInstance.dismiss('cancel');
       };
 
     }])
 
-  .controller('AttributeFormModalController', ['$scope', '$modalInstance', '$log', 'attribute',
-    function ($scope, $modalInstance, $log, attribute) {
+  .controller('AttributeFormModalController', ['$scope', '$uibModalInstance', '$log', 'attribute',
+    function ($scope, $uibModalInstance, $log, attribute) {
       $scope.attribute = $.extend(true, {}, attribute);
 
       /**
@@ -149,7 +149,7 @@ agate.user
        */
       $scope.save = function (form) {
         if (form.$valid) {
-          $modalInstance.close($scope.attribute);
+          $uibModalInstance.close($scope.attribute);
         }
         else {
           $scope.form = form;
@@ -161,7 +161,7 @@ agate.user
        * Closes modal
        */
       $scope.cancel = function () {
-        $modalInstance.dismiss('cancel');
+        $uibModalInstance.dismiss('cancel');
       };
 
     }]);

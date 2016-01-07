@@ -2,8 +2,8 @@
 
 agate.passwordModal
 
-  .controller('PasswordModalController', ['$scope', '$modalInstance', '$modal', 'Password', 'FormServerValidation', 'userId', 'AlertService',
-    function ($scope, $modalInstance, $modal, Password, FormServerValidation, userId, AlertService) {
+  .controller('PasswordModalController', ['$scope', '$uibModalInstance', '$uibModal', 'Password', 'FormServerValidation', 'userId', 'AlertService',
+    function ($scope, $uibModalInstance, $uibModal, Password, FormServerValidation, userId, AlertService) {
       $scope.userId = userId;
       $scope.profile = {
         password: null,
@@ -11,7 +11,7 @@ agate.passwordModal
       };
 
       $scope.cancel = function() {
-        $modalInstance.dismiss('cancel');
+        $uibModalInstance.dismiss('cancel');
       };
 
       $scope.save = function() {
@@ -20,7 +20,7 @@ agate.passwordModal
         } else {
           Password.put($scope.userId, {password: $scope.profile.password})
             .success(function() {
-              $modalInstance.close();
+              $uibModalInstance.close();
             })
             .error(function(response) {
               AlertService.alert({id: 'PasswordModalController', type: 'danger', msgKey: 'password.error.global'});
@@ -31,10 +31,10 @@ agate.passwordModal
 
     }])
 
-  .controller('UpdatePasswordButtonController', ['$scope', '$modal',
-    function ($scope, $modal) {
+  .controller('UpdatePasswordButtonController', ['$scope', '$uibModal',
+    function ($scope, $uibModal) {
       $scope.updatePassword = function() {
-        $modal
+        $uibModal
           .open({
             templateUrl: 'app/commons/password-modal/password-modal-template.html',
             controller: 'PasswordModalController',
