@@ -7,7 +7,6 @@
   </h2>
 
 
-
   <div class="row">
     <div class="col-md-6">
       <h4 translate>ticket.properties</h4>
@@ -49,29 +48,48 @@
         </tr>
         <tr>
           <th translate>ticket.remembered</th>
-          <td><i class="fa fa-check-square-o" ng-hide="!ticket.remembered"></i><i class="fa fa-square-o" ng-hide="ticket.remembered"></i></td>
+          <td><i class="fa fa-check-square-o" ng-hide="!ticket.remembered"></i><i class="fa fa-square-o"
+            ng-hide="ticket.remembered"></i></td>
         </tr>
         </tbody>
       </table>
     </div>
     <div class="col-md-6">
       <h4 translate>ticket.events</h4>
-      <table class="table table-bordered table-striped">
-        <thead>
-        <tr>
-          <th translate>ticket.eventApplication</th>
-          <th translate>ticket.eventAction</th>
-          <th translate>ticket.eventTime</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr ng-repeat="event in ticket.events">
-          <td>{{event.application}}</td>
-          <td>{{event.action}}</td>
-          <td>{{event.time | amDateFormat:'YYYY-MM-DD HH:mm:ss'}}</td>
-        </tr>
-        </tbody>
-      </table>
+
+      <div ng-if="ticket.events.length > 0">
+        <div class="row voffset2">
+          <div class="col-xs-4">
+      <span class="input-group input-group-sm no-padding-top">
+        <span class="input-group-addon" id="ticket-search"><i class="glyphicon glyphicon-search"></i></span>
+        <input ng-model="searchText" type="text" class="form-control width25" aria-describedby="ticket-search">
+      </span>
+          </div>
+          <div class="col-xs-8">
+            <dir-pagination-controls class="pull-right"></dir-pagination-controls>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-striped table-hover table-bordered"
+            ng-show="ticket.events && ticket.events.length > 0">
+            <thead>
+            <tr>
+              <th translate>ticket.eventApplication</th>
+              <th translate>ticket.eventAction</th>
+              <th translate>ticket.eventTime</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr dir-paginate="event in ticket.events| filter:searchText | itemsPerPage: 20">
+              <td>{{event.application}}</td>
+              <td>{{event.action}}</td>
+              <td>{{event.time | amDateFormat:'YYYY-MM-DD HH:mm:ss'}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </div>
