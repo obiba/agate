@@ -193,7 +193,7 @@ public class TicketService {
    * Remembered tickets have to be removed once expired.
    * This is scheduled to get fired everyday, at midnight.
    */
-  @Scheduled(cron = "0 0 0 * * ?")
+  @Scheduled(cron = "0 0 0 * * *")
   public void removeExpiredRemembered() {
     removeExpired(ticketRepository.findByCreatedDateBeforeAndRemembered(
       DateTime.now().minusHours(configurationService.getConfiguration().getLongTimeout()), true));
@@ -201,9 +201,9 @@ public class TicketService {
 
   /**
    * Not remembered tickets have to be removed once expired.
-   * This is scheduled to get fired every hour.
+   * This is scheduled to get fired every 15 minutes.
    */
-  @Scheduled(cron = "0 * 0 * * ?")
+  @Scheduled(cron = "0 0/15 * * * *")
   public void removeExpiredNotRemembered() {
     removeExpired(ticketRepository.findByCreatedDateBeforeAndRemembered(
       DateTime.now().minusHours(configurationService.getConfiguration().getShortTimeout()), false));
