@@ -16,7 +16,6 @@ message TicketDto {
   }
   required string id = 1;
   optional TimestampsDto timestamps = 2;
-  required string token = 3;
   required string username = 4;
   required bool remembered = 5;
   repeated Event events = 6;

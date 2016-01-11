@@ -2,7 +2,7 @@
   <h2>
     <ol class="agate-breadcrumb">
       <li><a href="#/tickets" translate>tickets</a></li>
-      <li class="active ellipsis">{{ticket.token}}</li>
+      <li class="active ellipsis">{{ticket.id}}</li>
     </ol>
   </h2>
 
@@ -12,28 +12,6 @@
       <h4 translate>ticket.properties</h4>
       <table class="table table-bordered table-striped">
         <tbody>
-        <tr>
-          <th translate>ticket.token</th>
-          <td>
-            <div style="word-break:break-all" ng-if="!jwt">
-              {{ticket.token}}
-            </div>
-            <uib-tabset type="pills" ng-if="jwt">
-              <uib-tab heading="{{'ticket.raw' | translate}}">
-                <div style="word-break:break-all">
-                  {{ticket.token}}
-                </div>
-              </uib-tab>
-              <uib-tab heading="{{'ticket.decoded' | translate}}">
-                <pre>{{jwt.header}}
-.
-{{jwt.claims}}
-.
-[signature]</pre>
-              </uib-tab>
-            </uib-tabset>
-          </td>
-        </tr>
         <tr>
           <th translate>ticket.username</th>
           <td>{{ticket.username}}</td>

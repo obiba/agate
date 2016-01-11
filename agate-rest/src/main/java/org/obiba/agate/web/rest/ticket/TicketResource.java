@@ -50,7 +50,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
  *
  */
 @Component
-@Path("/ticket/{token}")
+@Path("/ticket")
 @Scope("request")
 public class TicketResource extends ApplicationAwareResource {
 
@@ -63,9 +63,10 @@ public class TicketResource extends ApplicationAwareResource {
   private UserService userService;
 
   @GET
+  @Path("/{idOrToken}")
   @RequiresRoles("agate-administrator")
-  public Agate.TicketDto getToken(@PathParam("token") String token) {
-    return dtos.asDto(ticketService.getTicket(token));
+  public Agate.TicketDto getToken(@PathParam("idOrToken") String idOrToken) {
+    return dtos.asDto(ticketService.getTicket(idOrToken));
   }
 
   /**
@@ -77,7 +78,7 @@ public class TicketResource extends ApplicationAwareResource {
    * @throws JSONException
    */
   @GET
-  @Path("/profile")
+  @Path("/{token}/profile")
   @Produces(APPLICATION_JSON)
   public Response getProfile(@Context HttpServletRequest servletRequest, @PathParam("token") String token,
     @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) throws JSONException {
@@ -106,7 +107,7 @@ public class TicketResource extends ApplicationAwareResource {
    * @throws JSONException
    */
   @PUT
-  @Path("/profile")
+  @Path("/{token}/profile")
   @Consumes(APPLICATION_JSON)
   public Response updateProfile(@Context HttpServletRequest servletRequest, @PathParam("token") String token,
     @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader, String model) throws JSONException {
@@ -129,7 +130,7 @@ public class TicketResource extends ApplicationAwareResource {
   }
 
   @GET
-  @Path("/subject")
+  @Path("/{token}/subject")
   public AuthDtos.SubjectDto get(@PathParam("token") String token,
     @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) {
     validateApplication(authHeader);
@@ -153,7 +154,7 @@ public class TicketResource extends ApplicationAwareResource {
   }
 
   @GET
-  @Path("/username")
+  @Path("/{token}/username")
   public Response getUsername(@Context HttpServletRequest servletRequest, @PathParam("token") String token,
     @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) {
     validateApplication(authHeader);
@@ -172,20 +173,21 @@ public class TicketResource extends ApplicationAwareResource {
   }
 
   @DELETE
-  public Response logout(@PathParam("token") String token,
+  @Path("/{idOrToken}")
+  public Response logout(@PathParam("idOrToken") String idOrToken,
     @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) {
     if(SecurityUtils.getSubject().hasRole("agate-administrator")) {
-      ticketService.delete(token);
+      ticketService.delete(idOrToken);
 
       return Response.ok().build();
     }
 
     validateApplication(authHeader);
-    ticketService.delete(token);
+    ticketService.delete(idOrToken);
 
     return Response.noContent().header(HttpHeaders.SET_COOKIE,
       new NewCookie(TicketsResource.TICKET_COOKIE_NAME, null, "/", getConfiguration().getDomain(),
-        "Obiba session deleted", 0, true)).build();
+        "Obiba session deleted", 0, false)).build();
   }
 
   //
@@ -193,10 +195,11 @@ public class TicketResource extends ApplicationAwareResource {
   //
 
   private NewCookie getCookie(Ticket ticket) {
+    String token = ticketService.makeToken(ticket);
     Configuration configuration = getConfiguration();
     int timeout = ticket.isRemembered() ? configuration.getLongTimeout() : configuration.getShortTimeout();
-    return new NewCookie(TicketsResource.TICKET_COOKIE_NAME, ticket.getToken(), "/", configuration.getDomain(), null,
-      timeout * 3600, true);
+    return new NewCookie(TicketsResource.TICKET_COOKIE_NAME, token, "/", configuration.getDomain(), null,
+      timeout * 3600, false);
   }
 
 }
