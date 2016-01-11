@@ -103,18 +103,19 @@ public class TicketsResource extends ApplicationAwareResource {
       authorizationValidator.validateRealm(servletRequest, user, subject);
 
       Ticket ticket = ticketService.createTicket(user.getName(), renew, rememberMe, getApplicationName());
+      String token = ticketService.makeToken(ticket);
       Configuration configuration = getConfiguration();
       int timeout = rememberMe ? configuration.getLongTimeout() : configuration.getShortTimeout();
-      NewCookie cookie = new NewCookie(TICKET_COOKIE_NAME, ticket.getToken(), "/", configuration.getDomain(), null,
-        timeout * 3600, true);
+      NewCookie cookie = new NewCookie(TICKET_COOKIE_NAME, token, "/", configuration.getDomain(), null,
+        timeout * 3600, false);
 
       user.setLastLogin(DateTime.now());
       userService.save(user);
 
       log.info("Successful login for user '{}' from application '{}' with token: {}", username, getApplicationName(),
-        ticket.getToken());
+        token);
       return Response
-        .created(UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(TicketResource.class).build(ticket.getToken()))
+        .created(UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(TicketResource.class).build(token))
         .header(HttpHeaders.SET_COOKIE, cookie).build();
 
     } catch(AuthenticationException e) {

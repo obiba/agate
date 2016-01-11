@@ -44,24 +44,32 @@ agate.ticket
             });
         }
       });
+
+      // Extract header and claims from Base64 encoded token string
+      $scope.decodeToken = function() {
+        if (!$scope.token) {
+          $scope.jwt = null;
+        } else {
+          try {
+            var jwt = $scope.token.split('.');
+            var header = JSON.stringify(JSON.parse(window.atob(jwt[0])), null, 4);
+            var claims = JSON.stringify(JSON.parse(window.atob(jwt[1])), null, 4);
+            $scope.jwt = { header: header, claims: claims };
+          } catch(err) {
+            $scope.jwt = null;
+          }
+        }
+      };
+
+      $scope.token = null;
+      $scope.jwt = null;
     }])
   .controller('TicketViewController', ['$scope', '$routeParams', 'TicketResource',
 
     function ($scope, $routeParams, TicketResource) {
-      // Extract header and claims from Base64 encoded token string
-      var decodeJwt = function(token) {
-        try {
-          var jwt = token.split('.');
-          var header = JSON.stringify(JSON.parse(window.atob(jwt[0])), null, 4);
-          var claims = JSON.stringify(JSON.parse(window.atob(jwt[1])), null, 4);
-          return { header: header, claims: claims };
-        } catch(err) {
-          return null;
-        }
-      };
+
 
       TicketResource.get({id: $routeParams.id}, function(ticket) {
         $scope.ticket = ticket;
-        $scope.jwt = decodeJwt(ticket.token);
       });
     }]);

@@ -36,7 +36,7 @@
       <table class="table table-striped table-hover table-bordered" ng-show="tickets && tickets.length > 0">
         <thead>
         <tr>
-          <th translate>ticket.token</th>
+          <th>ID</th>
           <th translate>ticket.username</th>
           <th translate>ticket.remembered</th>
           <th translate>ticket.created</th>
@@ -48,8 +48,8 @@
         <tbody>
         <tr dir-paginate="ticket in tickets| filter:searchText | itemsPerPage: 20">
           <td>
-            <div class="ellipsis" title="{{ticket.token}}">
-              <a ng-href="#/ticket/{{ticket.token}}" translate>{{ticket.token}}</a>
+            <div class="ellipsis" title="{{ticket.id}}">
+              <a ng-href="#/ticket/{{ticket.id}}" translate>{{ticket.id}}</a>
             </div>
           </td>
           <td>
@@ -73,7 +73,7 @@
           <td>
             <ul class="list-inline">
               <li>
-                <a href="" ng-click="deleteTicket(ticket.token)" title="{{'delete' | translate}}"><i
+                <a href="" ng-click="deleteTicket(ticket.id)" title="{{'delete' | translate}}"><i
                   class="fa fa-trash-o"></i></a>
               </li>
             </ul>
@@ -81,6 +81,30 @@
         </tr>
         </tbody>
       </table>
+    </div>
+  </div>
+
+  <h3 translate>ticket.token-decoder</h3>
+
+  <p class="help-block" translate>ticket.token-decoder-help</p>
+
+  <div class="row">
+    <div class="col-md-6">
+      <h4 translate>ticket.encoded</h4>
+
+
+      <textarea ng-model="token" ng-change="decodeToken()" style="width:100%" rows="10" placeholder="{{'ticket.paste-token' | translate}}"></textarea>
+    </div>
+    <div class="col-md-6">
+      <h4 translate>ticket.decoded</h4>
+      <p class="help-block" ng-if="!jwt">
+        <span translate>ticket.token-none</span>
+      </p>
+      <pre ng-if="jwt">{{jwt.header}}
+.
+{{jwt.claims}}
+.
+[signature]</pre>
     </div>
   </div>
 </div>

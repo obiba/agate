@@ -267,10 +267,12 @@
     "eventAction": "Action",
     "eventTime": "Time",
     "eventApplication": "Application",
-    "raw": "Raw",
+    "token-decoder": "Token Decoder",
+    "token-decoder-help": "When a ticket is issued a token is sent to the client. This token is signed and contains information to track back the associated ticket.",
+    "paste-token": "Paste obibaid token here.",
+    "encoded": "Encoded",
     "decoded": "Decoded",
-    "header": "Header",
-    "claims": "Claims"
+    "token-none": "No or invalid token."
   },
   "users": "Users",
   "user": {

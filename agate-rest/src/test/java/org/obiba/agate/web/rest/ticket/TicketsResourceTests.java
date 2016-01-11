@@ -27,6 +27,7 @@ import com.google.common.collect.Sets;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
@@ -66,6 +67,7 @@ public class TicketsResourceTests {
   public void init() {
     MockitoAnnotations.initMocks(this);
     when(ticketService.findByUsername(anyString())).thenReturn(Lists.newArrayList());
+    when(ticketService.makeToken(anyObject())).thenReturn("token123");
     when(applicationService.isValid(anyString(), anyString())).thenReturn(true);
     Configuration configuration = new Configuration();
     configuration.setLongTimeout(30000);
@@ -83,7 +85,6 @@ public class TicketsResourceTests {
     SecurityUtils.setSecurityManager(securityManager);
 
     Ticket ticket = new Ticket();
-    ticket.setToken("token123");
     doReturn(ticket).when(ticketService).createTicket("toto", false, false, "mica");
 
     User user = new User("toto", "realm1");

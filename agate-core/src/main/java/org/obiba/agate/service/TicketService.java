@@ -10,7 +10,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.ForbiddenException;
 
-import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
@@ -79,16 +78,18 @@ public class TicketService {
   }
 
   /**
-   * Find {@link Ticket} by its token.
+   * Find {@link Ticket} by its ID or token.
    *
-   * @param token
+   * @param idOrToken
    * @return
    * @throws NoSuchTicketException
    */
   @NotNull
-  public Ticket getTicket(@NotNull String token) throws NoSuchTicketException {
-    Ticket ticket = findByToken(token);
-    if(ticket == null) throw NoSuchTicketException.withToken(token);
+  public Ticket getTicket(@NotNull String idOrToken) throws NoSuchTicketException {
+    if (isToken(idOrToken)) return getTicketByToken(idOrToken);
+
+    Ticket ticket = ticketRepository.findOne(idOrToken);
+    if(ticket == null) throw NoSuchTicketException.withId(idOrToken);
     return ticket;
   }
 
@@ -99,8 +100,13 @@ public class TicketService {
    * @return null if not found
    */
   public Ticket findByToken(@NotNull String token) {
-    List<Ticket> tickets = ticketRepository.findByToken(token);
-    return tickets != null && !tickets.isEmpty() ? tickets.iterator().next() : null;
+    try {
+      Claims claims = Jwts.parser().setSigningKey(configurationService.getConfiguration().getSecretKey().getBytes())
+        .parseClaimsJws(token).getBody();
+      return ticketRepository.findOne(claims.getId());
+    } catch(SignatureException e) {
+      throw new ForbiddenException();
+    }
   }
 
   /**
@@ -140,21 +146,21 @@ public class TicketService {
    * @param ticket
    */
   public void save(@NotNull @Valid Ticket ticket) {
-    if(!ticket.hasToken()) {
-      if(ticket.isNew()) ticket.setId(new ObjectId().toString());
-      ticket.setToken(makeToken(ticket));
-    }
     ticketRepository.save(ticket);
   }
 
   /**
-   * Delete a {@link Ticket} if any is matching the given token.
+   * Delete a {@link Ticket} if any is matching the given ID or token.
    *
-   * @param token
+   * @param idOrToken
    */
-  public void delete(@NotNull String token) {
-    Ticket ticket = findByToken(token);
-    if(ticket != null) deleteById(ticket.getId());
+  public void delete(@NotNull String idOrToken) {
+    if (isToken(idOrToken)) {
+      Ticket ticket = findByToken(idOrToken);
+      if(ticket != null) deleteById(ticket.getId());
+    } else {
+      deleteById(idOrToken);
+    }
   }
 
   /**
@@ -214,12 +220,29 @@ public class TicketService {
   //
 
   /**
+   * Find {@link Ticket} by its token.
+   *
+   * @param token
+   * @return
+   * @throws NoSuchTicketException
+   */
+  private Ticket getTicketByToken(@NotNull String token) {
+    Ticket ticket = findByToken(token);
+    if(ticket == null) throw NoSuchTicketException.withToken(token);
+    return ticket;
+  }
+
+  private boolean isToken(String idOrToken) {
+    return idOrToken != null && idOrToken.contains(".");
+  }
+
+  /**
    * Make a json web token.
    *
    * @param ticket
    * @return
    */
-  private String makeToken(@NotNull Ticket ticket) {
+  public String makeToken(@NotNull Ticket ticket) {
     User user = userService.findUser(ticket.getUsername());
     Set<String> applications = Sets.newTreeSet();
     if(user != null) {
