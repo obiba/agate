@@ -107,7 +107,7 @@ public class TicketsResource extends ApplicationAwareResource {
       Configuration configuration = getConfiguration();
       int timeout = rememberMe ? configuration.getLongTimeout() : configuration.getShortTimeout();
       NewCookie cookie = new NewCookie(TICKET_COOKIE_NAME, token, "/", configuration.getDomain(), null,
-        timeout * 3600, false);
+        timeout * 3600, configuration.hasDomain());
 
       user.setLastLogin(DateTime.now());
       userService.save(user);
