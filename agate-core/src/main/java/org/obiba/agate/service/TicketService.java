@@ -183,11 +183,11 @@ public class TicketService {
       Claims claims = Jwts.parser().setSigningKey(configurationService.getConfiguration().getSecretKey().getBytes())
         .parseClaimsJws(token).getBody();
       if(!("agate:" + configurationService.getConfiguration().getId()).equals(claims.getIssuer()))
-        throw new ForbiddenException();
+        throw new InvalidTokenException("Token issuer is not valid");
       if (!ticketRepository.exists(claims.getId()))
-        throw new ForbiddenException();
+        throw new InvalidTokenException("Token identifier is not valid");
     } catch(SignatureException e) {
-      throw new ForbiddenException();
+      throw new InvalidTokenException("Token signature is not valid");
     }
   }
 

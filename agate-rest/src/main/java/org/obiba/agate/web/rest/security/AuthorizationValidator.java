@@ -11,7 +11,7 @@
 package org.obiba.agate.web.rest.security;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.ServletRequest;
 import javax.ws.rs.ForbiddenException;
 
 import org.apache.shiro.subject.Subject;
@@ -48,7 +48,7 @@ public class AuthorizationValidator {
     return appName;
   }
 
-  public void validateRealm(HttpServletRequest servletRequest, User user, Subject subject) {
+  public void validateRealm(ServletRequest servletRequest, User user, Subject subject) {
     // check that authentication realm is the expected one as specified in user profile
     if(!subject.getPrincipals().getRealmNames().contains(user.getRealm())) {
       log.info("Authentication failure of user '{}' at ip: '{}': unexpected realm '{}'", user.getName(),
@@ -65,7 +65,7 @@ public class AuthorizationValidator {
      * @param user
      */
 
-  public void validateUser(HttpServletRequest servletRequest, String username, User user) {
+  public void validateUser(ServletRequest servletRequest, String username, User user) {
     if(user == null) {
       log.warn("Not a registered user '{}' at ip: '{}'", username, servletRequest.getRemoteAddr());
       throw new ForbiddenException();
@@ -75,7 +75,7 @@ public class AuthorizationValidator {
     }
   }
 
-  public void validateApplication(HttpServletRequest servletRequest, User user, String appName) {
+  public void validateApplication(ServletRequest servletRequest, User user, String appName) {
     // check application
     if(!user.hasApplication(appName) && user.getGroups().stream().noneMatch(g -> {
       Group group = userService.findGroup(g);

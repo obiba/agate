@@ -1,12 +1,22 @@
+/*
+ * Copyright (c) 2016 OBiBa. All rights reserved.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v3.0.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.obiba.agate.web.rest.ticket;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -14,56 +24,78 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import org.apache.oltu.oauth2.as.issuer.MD5Generator;
-import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
-import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
 import org.apache.oltu.oauth2.as.request.OAuthAuthzRequest;
 import org.apache.oltu.oauth2.as.request.OAuthTokenRequest;
 import org.apache.oltu.oauth2.as.response.OAuthASResponse;
 import org.apache.oltu.oauth2.common.OAuth;
-import org.apache.oltu.oauth2.common.error.OAuthError;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.OAuthResponse;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
-import org.apache.oltu.oauth2.common.message.types.ParameterStyle;
-import org.apache.oltu.oauth2.common.message.types.ResponseType;
-import org.apache.oltu.oauth2.rs.request.OAuthAccessResourceRequest;
-import org.apache.oltu.oauth2.rs.response.OAuthRSResponse;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.subject.Subject;
+import org.joda.time.DateTime;
+import org.obiba.agate.domain.Application;
+import org.obiba.agate.domain.Ticket;
+import org.obiba.agate.domain.User;
+import org.obiba.agate.service.ApplicationService;
+import org.obiba.agate.service.TicketService;
+import org.obiba.agate.service.UserService;
+import org.obiba.agate.web.rest.security.AuthorizationValidator;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Strings;
+
 @Component
-@Path("/oauth2")
+@Path("/oauth")
 @Scope("request")
 public class OAuthResource {
 
+  @Inject
+  private ApplicationService applicationService;
+
+  @Inject
+  private UserService userService;
+
+  @Inject
+  private TicketService ticketService;
+
+  @Inject
+  protected AuthorizationValidator authorizationValidator;
+
   @GET
   @Path("/authz")
-  public Response authorize(@Context HttpServletRequest request) throws URISyntaxException, OAuthSystemException {
+  @RequiresAuthentication
+  public Response authorize(@Context HttpServletRequest servletRequest)
+    throws URISyntaxException, OAuthSystemException {
+    OAuthAuthzRequest oAuthRequest = null;
     try {
-      OAuthAuthzRequest oauthRequest = new OAuthAuthzRequest(request);
-      OAuthIssuer oAuthIssuer = new OAuthIssuerImpl(new MD5Generator());
+      oAuthRequest = new OAuthAuthzRequest(servletRequest);
 
-      //build response according to response_type
-      String responseType = oauthRequest.getParam(OAuth.OAUTH_RESPONSE_TYPE);
+      String clientId = oAuthRequest.getParam(OAuth.OAUTH_CLIENT_ID);
+      String redirectURI = normalizeRedirectURI(clientId, oAuthRequest.getParam(OAuth.OAUTH_REDIRECT_URI));
+
+      User user = userService.getCurrentUser();
+      Ticket ticket = ticketService.createTicket(user.getName(), false, false, clientId);
 
       OAuthASResponse.OAuthAuthorizationResponseBuilder builder = OAuthASResponse
-        .authorizationResponse(request, HttpServletResponse.SC_FOUND);
+        .authorizationResponse(servletRequest, HttpServletResponse.SC_FOUND) //
+        .setCode(ticket.getId()) //
+        .location(redirectURI);
 
-      // 1
-      if(responseType.equals(ResponseType.CODE.toString())) {
-        String authorizationCode = oAuthIssuer.authorizationCode();
-        //database.addAuthCode(authorizationCode);
-        builder.setCode(authorizationCode);
-      }
+      setState(builder, oAuthRequest);
 
-      String redirectURI = oauthRequest.getParam(OAuth.OAUTH_REDIRECT_URI);
-      OAuthResponse response = builder.location(redirectURI).buildQueryMessage();
-      URI url = new URI(response.getLocationUri());
-      return Response.status(response.getResponseStatus()).location(url).build();
+      OAuthResponse response = builder.buildQueryMessage();
+      return Response.status(response.getResponseStatus()).location(new URI(response.getLocationUri())).build();
     } catch(OAuthProblemException e) {
-      throw new ForbiddenException();
+      OAuthASResponse.OAuthErrorResponseBuilder builder = OAuthASResponse
+        .errorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).error(e);
+      setState(builder, oAuthRequest);
+      OAuthResponse response = builder.buildQueryMessage();
+      return Response.status(response.getResponseStatus()).build();
     }
   }
 
@@ -71,66 +103,107 @@ public class OAuthResource {
   @Consumes("application/x-www-form-urlencoded")
   @Produces("application/json")
   @Path("/token")
-  public Response access(@Context HttpServletRequest request) throws OAuthSystemException {
+  public Response access(@Context HttpServletRequest servletRequest) throws OAuthSystemException {
     try {
-      OAuthTokenRequest oauthRequest = new OAuthTokenRequest(request);
-      OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
+      OAuthTokenRequest oAuthRequest = new OAuthTokenRequest(servletRequest);
+      GrantType type = GrantType.valueOf(oAuthRequest.getParam(OAuth.OAUTH_GRANT_TYPE).toUpperCase());
 
-      // check if client id and secret are valid
-      validateClient(oauthRequest.getClientId(), oauthRequest.getClientSecret());
-
-      // do checking for different grant types
-      if(oauthRequest.getParam(OAuth.OAUTH_GRANT_TYPE).equals(GrantType.AUTHORIZATION_CODE.toString())) {
-        validateAuthCode(oauthRequest.getParam(OAuth.OAUTH_CODE));
-      } else if(oauthRequest.getParam(OAuth.OAUTH_GRANT_TYPE).equals(GrantType.PASSWORD.toString())) {
-        validateUsernamePassword(oauthRequest.getUsername(), oauthRequest.getPassword());
-      } else if(oauthRequest.getParam(OAuth.OAUTH_GRANT_TYPE).equals(GrantType.REFRESH_TOKEN.toString())) {
-        // refresh token is not supported in this implementation
-        throw new UnsupportedOperationException("Refresh token is not supported");
+      switch(type) {
+        case AUTHORIZATION_CODE:
+          return accessAuthorizationCodeGrant(servletRequest, oAuthRequest);
+        case PASSWORD:
+          return accessPasswordGrant(servletRequest, oAuthRequest);
+        default:
+          OAuthResponse res = OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST).buildJSONMessage();
+          return Response.status(res.getResponseStatus()).entity(res.getBody()).build();
       }
-
-      String accessToken = oauthIssuerImpl.accessToken();
-      //database.addToken(accessToken);
-
-      OAuthResponse response = OAuthASResponse.tokenResponse(HttpServletResponse.SC_OK).setAccessToken(accessToken)
-        .setExpiresIn("3600").buildJSONMessage();
-      return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
-
     } catch(OAuthProblemException e) {
       OAuthResponse res = OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST).error(e).buildJSONMessage();
       return Response.status(res.getResponseStatus()).entity(res.getBody()).build();
     }
   }
 
-  @GET
-  @Produces("application/json")
-  @Path("/resource")
-  public Response get(@Context HttpServletRequest request) throws OAuthSystemException {
-    try {
-      // Make the OAuth Request out of this request
-      OAuthAccessResourceRequest oauthRequest = new OAuthAccessResourceRequest(request, ParameterStyle.HEADER);
-      // Get the access token
-      String accessToken = oauthRequest.getAccessToken();
+  //
+  // Private methods
+  //
 
-      // Validate the access token
-      if(!validateAccessToken(accessToken)) {
-        // Return the OAuth error message
-        OAuthResponse oauthResponse = OAuthRSResponse.errorResponse(HttpServletResponse.SC_UNAUTHORIZED)
-          //.setRealm(Common.RESOURCE_SERVER_NAME)
-          .setError(OAuthError.ResourceResponse.INVALID_TOKEN).buildHeaderMessage();
+  private Response accessAuthorizationCodeGrant(HttpServletRequest servletRequest, OAuthTokenRequest oAuthRequest)
+    throws OAuthSystemException, OAuthProblemException {
+    validateClient(oAuthRequest);
 
-        return Response.status(Response.Status.UNAUTHORIZED)
-          .header(OAuth.HeaderType.WWW_AUTHENTICATE, oauthResponse.getHeader(OAuth.HeaderType.WWW_AUTHENTICATE))
-          .build();
+    String clientId = oAuthRequest.getClientId();
+    Ticket ticket = ticketService.getTicket(oAuthRequest.getParam(OAuth.OAUTH_CODE));
+    User user = userService.getUser(ticket.getUsername());
 
-      }
-      
-      return Response.status(Response.Status.OK).entity(accessToken).build();
-    } catch(OAuthProblemException e) {
-      // Check if the error code has been set
-      // Build error response....
-      return Response.status(Response.Status.UNAUTHORIZED).build();
+    authorizationValidator.validateApplication(servletRequest, user, clientId);
+    ticket.addEvent(clientId, "oauth_validate");
+    ticketService.save(ticket);
+    return getAccessResponse(ticket);
+  }
+
+  private Response accessPasswordGrant(HttpServletRequest servletRequest, OAuthTokenRequest oAuthRequest)
+    throws OAuthSystemException, OAuthProblemException {
+    validateClient(oAuthRequest);
+
+    String clientId = oAuthRequest.getClientId();
+    String username = oAuthRequest.getUsername();
+    String password = oAuthRequest.getPassword();
+    User user = userService.findActiveUser(username);
+
+    if(user == null) user = userService.findActiveUserByEmail(username);
+
+    authorizationValidator.validateUser(servletRequest, username, user);
+    authorizationValidator.validateApplication(servletRequest, user, clientId);
+
+    // check authentication
+    Subject subject = SecurityUtils.getSubject();
+    assert user != null;
+    subject.login(new UsernamePasswordToken(user.getName(), password));
+    //authorizationValidator.validateRealm(servletRequest, user, subject);
+    subject.logout();
+
+    Ticket ticket = ticketService.createTicket(user.getName(), false, false, clientId);
+    return getAccessResponse(ticket);
+  }
+
+  private Response getAccessResponse(Ticket ticket) throws OAuthSystemException {
+    String token = ticketService.makeToken(ticket);
+    long expiresIn = ticketService.getExpirationDate(ticket).getMillis() - DateTime.now().getMillis();
+    OAuthResponse response = OAuthASResponse.tokenResponse(HttpServletResponse.SC_OK) //
+      .setAccessToken(token) //
+      .setTokenType(OAuth.OAUTH_HEADER_NAME.toLowerCase()) // bug: OAUTH_BEARER_TOKEN has a wrong value
+      .setExpiresIn(expiresIn / 1000 + "").buildJSONMessage();
+    return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
+  }
+
+  /**
+   * Set the state parameter if any was defined in the request into the response.
+   *
+   * @param builder
+   * @param oAuthRequest
+   */
+  private void setState(OAuthResponse.OAuthResponseBuilder builder, OAuthAuthzRequest oAuthRequest) {
+    if(oAuthRequest == null) return;
+    String state = oAuthRequest.getState();
+    if(!Strings.isNullOrEmpty(state)) {
+      builder.setParam(OAuth.OAUTH_STATE, state);
     }
+  }
+
+  /**
+   * Client ID is the {@link Application} ID.
+   *
+   * @param clientId
+   * @param redirectURI Optional: if null or empty default Application's redirect URI is used else it must be a valid redirect URI.
+   * @return
+   */
+  private String normalizeRedirectURI(String clientId, String redirectURI) {
+    Application application = applicationService.findByName(clientId);
+    // TODO: check application exists and has a default redirect URI
+    // TODO? check user has access to this application
+    // TODO: get default redirect URI and verify the validity of the given one, i.e. same host (and port, if any), same path or sub-path
+    //String defaultURI = application.getRedirectURI();
+    return redirectURI;
   }
 
   private void validateUsernamePassword(String username, String password) {
@@ -141,11 +214,15 @@ public class OAuthResource {
 
   }
 
-  private void validateClient(String clientId, String clientSecret) {
-
+  private void validateClient(OAuthTokenRequest oAuthRequest) {
+    validateClient(oAuthRequest.getClientId(), oAuthRequest.getClientSecret());
   }
 
-  private boolean validateAccessToken(String accessToken) {
-    return true;
+  private void validateClient(String clientId, String clientSecret) {
+    authorizationValidator.validateApplicationParameters(clientId, clientSecret);
+  }
+
+  private void validateAccessToken(String accessToken) {
+    ticketService.validateToken(accessToken);
   }
 }
