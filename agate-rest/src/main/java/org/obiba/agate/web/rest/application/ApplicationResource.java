@@ -45,6 +45,7 @@ public class ApplicationResource {
   public Response updateApplication(@PathParam("id")String id, Agate.ApplicationDto dto) {
     Application application = applicationService.getApplication(id);
     application.setDescription(dto.getDescription());
+    application.setRedirectURI(dto.getRedirectURI());
 
     if (dto.hasKey()) {
       application.setKey(applicationService.hashKey(dto.getKey()));

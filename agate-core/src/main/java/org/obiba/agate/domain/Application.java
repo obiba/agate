@@ -10,6 +10,8 @@
 
 package org.obiba.agate.domain;
 
+import java.util.Set;
+
 import javax.validation.constraints.NotNull;
 
 import org.obiba.mongodb.domain.AbstractAuditableDocument;
@@ -29,6 +31,10 @@ public class Application extends AbstractAuditableDocument {
   private String description;
 
   private String key;
+
+  private String redirectURI;
+
+  private Set<String> scopes;
 
   public Application() {
   }
@@ -74,10 +80,22 @@ public class Application extends AbstractAuditableDocument {
     this.key = key;
   }
 
+  public boolean hasRedirectURI() {
+    return !Strings.isNullOrEmpty(redirectURI);
+  }
+
+  public String getRedirectURI() {
+    return redirectURI;
+  }
+
+  public void setRedirectURI(String redirectURI) {
+    this.redirectURI = redirectURI;
+  }
+
   @Override
   protected Objects.ToStringHelper toStringHelper() {
     return super.toStringHelper().add("name", name) //
-        .add("key", key);
+        .add("key", key).add("redirectURI", redirectURI);
   }
 
   public static Builder newBuilder() {
@@ -104,6 +122,11 @@ public class Application extends AbstractAuditableDocument {
 
     public Builder description(String description) {
       application.setDescription(description);
+      return this;
+    }
+
+    public Builder redirectURI(String redirectURI) {
+      application.setRedirectURI(redirectURI);
       return this;
     }
 

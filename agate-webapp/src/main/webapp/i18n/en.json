@@ -226,6 +226,8 @@
     "name-help": "Name must be unique.",
     "description": "Description",
     "key": "Key",
+    "redirectURI": "Redirect URI",
+    "redirectURI-help": "Callback URL to the application's server, required in the OAuth context.",
     "confirmKey": "Confirm key",
     "changeKey": "Change Key",
     "delete-dialog": {
@@ -272,7 +274,17 @@
     "paste-token": "Paste obibaid token here.",
     "encoded": "Encoded",
     "decoded": "Decoded",
-    "token-none": "No or invalid token."
+    "token-none": "No or invalid token.",
+    "authorization-help": "Authorization constraint that applies to this ticket. If none is specified, all the applications that are accessible by the user can validate the ticket's token.",
+    "authorization-none": "No authorization."
+  },
+  "authorization": {
+    "title": "Authorization",
+    "username": "User Name",
+    "application": "Application",
+    "redirectURI": "Redirect URI",
+    "scopes": "Scopes",
+    "created": "Created"
   },
   "users": "Users",
   "user": {

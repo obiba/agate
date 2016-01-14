@@ -28,6 +28,9 @@
           <div form-input type="password" name="confirmKey" model="confirmKey" label="application.confirmKey" required="!application.id"></div>
         </div>
 
+        <div form-input name="redirectURI" model="application.redirectURI" label="application.redirectURI"
+          help="application.redirectURI-help" required="false"></div>
+
         <button type="button" class="btn btn-default" ng-click="cancel()">
           <span translate>cancel</span>
         </button>

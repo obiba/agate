@@ -23,10 +23,11 @@ class ApplicationDtos {
   Agate.ApplicationDto asDto(@NotNull Application application) {
     Agate.ApplicationDto.Builder builder = Agate.ApplicationDto.newBuilder();
     builder.setId(application.getId()) //
-        .setName(application.getName()) //
-        .setTimestamps(TimestampsDtos.asDto(application));
+      .setName(application.getName()) //
+      .setTimestamps(TimestampsDtos.asDto(application));
 
     if(application.hasDescription()) builder.setDescription(application.getDescription());
+    if(application.hasRedirectURI()) builder.setRedirectURI(application.getRedirectURI());
 
     return builder.build();
   }
@@ -35,9 +36,9 @@ class ApplicationDtos {
   Application fromDto(@NotNull Agate.ApplicationDto dto) {
     Application application = new Application(dto.getName());
 
-    if (dto.hasDescription()) application.setDescription(dto.getDescription());
-
-    if (dto.hasKey()) application.setKey(dto.getKey());
+    application.setDescription(dto.getDescription());
+    if(dto.hasKey()) application.setKey(dto.getKey());
+    application.setRedirectURI(dto.getRedirectURI());
 
     return application;
   }

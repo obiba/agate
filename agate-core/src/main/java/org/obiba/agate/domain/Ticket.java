@@ -18,6 +18,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 /**
@@ -37,6 +38,8 @@ public class Ticket extends AbstractAuditableDocument {
   private boolean remembered = false;
 
   private List<Event> events;
+
+  private String authorization;
 
   public String getUsername() {
     return username;
@@ -64,6 +67,18 @@ public class Ticket extends AbstractAuditableDocument {
 
   public void addEvent(String application, String action) {
     getEvents().add(new Event(application, action));
+  }
+
+  public boolean hasAuthorization() {
+    return !Strings.isNullOrEmpty(authorization);
+  }
+
+  public String getAuthorization() {
+    return authorization;
+  }
+
+  public void setAuthorization(String authorization) {
+    this.authorization = authorization;
   }
 
   @Override

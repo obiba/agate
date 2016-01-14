@@ -85,7 +85,7 @@ public class TicketsResourceTests {
     SecurityUtils.setSecurityManager(securityManager);
 
     Ticket ticket = new Ticket();
-    doReturn(ticket).when(ticketService).createTicket("toto", false, false, "mica");
+    doReturn(ticket).when(ticketService).create("toto", false, false, "mica");
 
     User user = new User("toto", "realm1");
     user.setStatus(UserStatus.ACTIVE);

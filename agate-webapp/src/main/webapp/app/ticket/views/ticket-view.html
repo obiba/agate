@@ -14,7 +14,9 @@
         <tbody>
         <tr>
           <th translate>ticket.username</th>
-          <td>{{ticket.username}}</td>
+          <td>
+            <a ng-href="#/user/{{ticket.username}}">{{ticket.username}}</a>
+          </td>
         </tr>
         <tr>
           <th translate>ticket.created</th>
@@ -28,6 +30,47 @@
           <th translate>ticket.remembered</th>
           <td><i class="fa fa-check-square-o" ng-hide="!ticket.remembered"></i><i class="fa fa-square-o"
             ng-hide="ticket.remembered"></i></td>
+        </tr>
+        </tbody>
+      </table>
+
+      <h4 translate>authorization.title</h4>
+
+      <p class="help-block" translate>ticket.authorization-help</p>
+
+      <p class="help-block" ng-if="!ticket.authorization">
+        <span translate>ticket.authorization-none</span>
+      </p>
+
+      <table class="table table-bordered table-striped" ng-if="ticket.authorization">
+        <tbody>
+        <tr>
+          <th>ID</th>
+          <td>{{ticket.authorization.id}}</td>
+        </tr>
+        <tr>
+          <th translate>authorization.username</th>
+          <td>
+            <a ng-href="#/user/{{ticket.authorization.username}}">{{ticket.authorization.username}}</a>
+          </td>
+        </tr>
+        <tr>
+          <th translate>authorization.application</th>
+          <td>
+            <a ng-href="#/application/{{ticket.authorization.application}}">{{ticket.authorization.application}}</a>
+          </td>
+        </tr>
+        <tr>
+          <th translate>authorization.redirectURI</th>
+          <td>{{ticket.authorization.redirectURI}}</td>
+        </tr>
+        <tr>
+          <th translate>authorization.scopes</th>
+          <td>{{ticket.authorization.scopes}}</td>
+        </tr>
+        <tr>
+          <th translate>authorization.created</th>
+          <td>{{ticket.authorization.timestamps.created | amDateFormat:'YYYY-MM-DD HH:mm:ss'}}</td>
         </tr>
         </tbody>
       </table>
@@ -60,7 +103,9 @@
             </thead>
             <tbody>
             <tr dir-paginate="event in ticket.events| filter:searchText | itemsPerPage: 20">
-              <td>{{event.application}}</td>
+              <td>
+                <a ng-href="#/application/{{event.application}}">{{event.application}}</a>
+              </td>
               <td>{{event.action}}</td>
               <td>{{event.time | amDateFormat:'YYYY-MM-DD HH:mm:ss'}}</td>
             </tr>

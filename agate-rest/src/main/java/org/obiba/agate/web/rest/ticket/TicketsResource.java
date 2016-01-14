@@ -102,7 +102,7 @@ public class TicketsResource extends ApplicationAwareResource {
       subject.login(new UsernamePasswordToken(user.getName(), password));
       authorizationValidator.validateRealm(servletRequest, user, subject);
 
-      Ticket ticket = ticketService.createTicket(user.getName(), renew, rememberMe, getApplicationName());
+      Ticket ticket = ticketService.create(user.getName(), renew, rememberMe, getApplicationName());
       String token = ticketService.makeToken(ticket);
       Configuration configuration = getConfiguration();
       int timeout = rememberMe ? configuration.getLongTimeout() : configuration.getShortTimeout();
