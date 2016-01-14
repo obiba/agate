@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
  */
 public interface TicketRepository extends MongoRepository<Ticket, String> {
 
-  List<Ticket> findByToken(String token);
+  List<Ticket> findByAuthorization(String authorization);
 
   List<Ticket> findByUsername(String username);
 

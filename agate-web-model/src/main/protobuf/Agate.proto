@@ -8,6 +8,15 @@ message SessionDto {
   required string realm = 3;
 }
 
+message AuthorizationDto {
+  required string id = 1;
+  required string username = 2;
+  required string application = 3;
+  optional string redirectURI = 4;
+  repeated string scopes = 5;
+  optional TimestampsDto timestamps = 6;
+}
+
 message TicketDto {
   message Event {
     optional string application = 1;
@@ -20,6 +29,7 @@ message TicketDto {
   required bool remembered = 5;
   repeated Event events = 6;
   optional string expires = 7;
+  optional AuthorizationDto authorization = 8;
 }
 
 message TimestampsDto {
@@ -94,6 +104,8 @@ message ApplicationDto {
   optional string key = 3;
   optional string description = 4;
   optional TimestampsDto timestamps = 5;
+  optional string redirectURI = 6;
+  repeated string scopes = 7;
 }
 
 message ConfirmForm {

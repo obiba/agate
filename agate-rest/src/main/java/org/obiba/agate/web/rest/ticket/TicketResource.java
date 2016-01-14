@@ -83,7 +83,7 @@ public class TicketResource extends ApplicationAwareResource {
   public Response getProfile(@Context HttpServletRequest servletRequest, @PathParam("token") String token,
     @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) throws JSONException {
     validateApplication(authHeader);
-    ticketService.validateToken(token);
+    ticketService.validateToken(token, getApplicationName());
 
     Ticket ticket = ticketService.getTicket(token);
     ticket.addEvent(getApplicationName(), "profile");
@@ -112,7 +112,7 @@ public class TicketResource extends ApplicationAwareResource {
   public Response updateProfile(@Context HttpServletRequest servletRequest, @PathParam("token") String token,
     @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader, String model) throws JSONException {
     validateApplication(authHeader);
-    ticketService.validateToken(token);
+    ticketService.validateToken(token, getApplicationName());
 
     Ticket ticket = ticketService.getTicket(token);
     ticket.addEvent(getApplicationName(), "profile");
@@ -134,7 +134,7 @@ public class TicketResource extends ApplicationAwareResource {
   public AuthDtos.SubjectDto get(@PathParam("token") String token,
     @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) {
     validateApplication(authHeader);
-    ticketService.validateToken(token);
+    ticketService.validateToken(token, getApplicationName());
 
     Ticket ticket = ticketService.getTicket(token);
     ticket.addEvent(getApplicationName(), "subject");
@@ -158,7 +158,7 @@ public class TicketResource extends ApplicationAwareResource {
   public Response getUsername(@Context HttpServletRequest servletRequest, @PathParam("token") String token,
     @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) {
     validateApplication(authHeader);
-    ticketService.validateToken(token);
+    ticketService.validateToken(token, getApplicationName());
 
     Ticket ticket = ticketService.getTicket(token);
     ticket.addEvent(getApplicationName(), "validate");

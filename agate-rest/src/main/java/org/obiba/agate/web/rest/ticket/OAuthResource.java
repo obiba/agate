@@ -38,9 +38,11 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.subject.Subject;
 import org.joda.time.DateTime;
 import org.obiba.agate.domain.Application;
+import org.obiba.agate.domain.Authorization;
 import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.service.ApplicationService;
+import org.obiba.agate.service.AuthorizationService;
 import org.obiba.agate.service.TicketService;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.rest.security.AuthorizationValidator;
@@ -53,6 +55,9 @@ import com.google.common.base.Strings;
 @Path("/oauth")
 @Scope("request")
 public class OAuthResource {
+
+  @Inject
+  private AuthorizationService authorizationService;
 
   @Inject
   private ApplicationService applicationService;
@@ -79,11 +84,17 @@ public class OAuthResource {
       String redirectURI = normalizeRedirectURI(clientId, oAuthRequest.getParam(OAuth.OAUTH_REDIRECT_URI));
 
       User user = userService.getCurrentUser();
-      Ticket ticket = ticketService.createTicket(user.getName(), false, false, clientId);
+      Authorization authorization = authorizationService.find(user.getName(), clientId);
+      if(authorization == null) {
+        authorization = new Authorization(user.getName(), clientId);
+      }
+      authorization.setScopes(oAuthRequest.getScopes());
+      authorization.setRedirectURI(redirectURI);
+      authorizationService.save(authorization);
 
       OAuthASResponse.OAuthAuthorizationResponseBuilder builder = OAuthASResponse
         .authorizationResponse(servletRequest, HttpServletResponse.SC_FOUND) //
-        .setCode(ticket.getId()) //
+        .setCode(authorization.getId()) //
         .location(redirectURI);
 
       setState(builder, oAuthRequest);
@@ -120,6 +131,12 @@ public class OAuthResource {
     } catch(OAuthProblemException e) {
       OAuthResponse res = OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST).error(e).buildJSONMessage();
       return Response.status(res.getResponseStatus()).entity(res.getBody()).build();
+    } catch(Exception e) {
+      OAuthResponse res = OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST) //
+        .setError(e.getClass().getSimpleName()) //
+        .setErrorDescription(e.getMessage()) //
+        .buildJSONMessage();
+      return Response.status(res.getResponseStatus()).entity(res.getBody()).build();
     }
   }
 
@@ -132,12 +149,25 @@ public class OAuthResource {
     validateClient(oAuthRequest);
 
     String clientId = oAuthRequest.getClientId();
-    Ticket ticket = ticketService.getTicket(oAuthRequest.getParam(OAuth.OAUTH_CODE));
-    User user = userService.getUser(ticket.getUsername());
+    String redirectURI = oAuthRequest.getParam(OAuth.OAUTH_REDIRECT_URI);
+    Authorization authorization = authorizationService.get(oAuthRequest.getParam(OAuth.OAUTH_CODE));
+    // verify authorization
+    if(!authorization.getApplication().equals(clientId)) {
+      throw OAuthProblemException
+        .error("invalid_client_id", "The client ID does not match the one of the authorization");
+    }
+    if(!authorization.getRedirectURI().equals(redirectURI)) {
+      throw OAuthProblemException
+        .error("invalid_redirect_uri", "The redirect URI does not match the one of the authorization");
+    }
+    User user = userService.findActiveUser(authorization.getUsername());
+    if (user == null) {
+      throw OAuthProblemException
+        .error("inactive_user", "The user of the authorization is not active");
+    }
 
     authorizationValidator.validateApplication(servletRequest, user, clientId);
-    ticket.addEvent(clientId, "oauth_validate");
-    ticketService.save(ticket);
+    Ticket ticket = ticketService.create(authorization);
     return getAccessResponse(ticket);
   }
 
@@ -149,7 +179,6 @@ public class OAuthResource {
     String username = oAuthRequest.getUsername();
     String password = oAuthRequest.getPassword();
     User user = userService.findActiveUser(username);
-
     if(user == null) user = userService.findActiveUserByEmail(username);
 
     authorizationValidator.validateUser(servletRequest, username, user);
@@ -159,10 +188,10 @@ public class OAuthResource {
     Subject subject = SecurityUtils.getSubject();
     assert user != null;
     subject.login(new UsernamePasswordToken(user.getName(), password));
-    //authorizationValidator.validateRealm(servletRequest, user, subject);
+    authorizationValidator.validateRealm(servletRequest, user, subject);
     subject.logout();
 
-    Ticket ticket = ticketService.createTicket(user.getName(), false, false, clientId);
+    Ticket ticket = ticketService.create(user.getName(), false, false, clientId);
     return getAccessResponse(ticket);
   }
 
@@ -206,14 +235,6 @@ public class OAuthResource {
     return redirectURI;
   }
 
-  private void validateUsernamePassword(String username, String password) {
-
-  }
-
-  private void validateAuthCode(String code) {
-
-  }
-
   private void validateClient(OAuthTokenRequest oAuthRequest) {
     validateClient(oAuthRequest.getClientId(), oAuthRequest.getClientSecret());
   }
@@ -222,7 +243,4 @@ public class OAuthResource {
     authorizationValidator.validateApplicationParameters(clientId, clientSecret);
   }
 
-  private void validateAccessToken(String accessToken) {
-    ticketService.validateToken(accessToken);
-  }
 }
