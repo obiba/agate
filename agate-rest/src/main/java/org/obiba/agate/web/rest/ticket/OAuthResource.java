@@ -81,7 +81,7 @@ public class OAuthResource {
       oAuthRequest = new OAuthAuthzRequest(servletRequest);
 
       String clientId = oAuthRequest.getParam(OAuth.OAUTH_CLIENT_ID);
-      String redirectURI = normalizeRedirectURI(clientId, oAuthRequest.getParam(OAuth.OAUTH_REDIRECT_URI));
+      String redirectURI = validateApplication(clientId, oAuthRequest.getParam(OAuth.OAUTH_REDIRECT_URI));
 
       User user = userService.getCurrentUser();
       Authorization authorization = authorizationService.find(user.getName(), clientId);
@@ -103,10 +103,17 @@ public class OAuthResource {
       return Response.status(response.getResponseStatus()).location(new URI(response.getLocationUri())).build();
     } catch(OAuthProblemException e) {
       OAuthASResponse.OAuthErrorResponseBuilder builder = OAuthASResponse
-        .errorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).error(e);
+        .errorResponse(HttpServletResponse.SC_BAD_REQUEST).error(e);
       setState(builder, oAuthRequest);
-      OAuthResponse response = builder.buildQueryMessage();
-      return Response.status(response.getResponseStatus()).build();
+      OAuthResponse response = builder.buildJSONMessage();
+      return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
+    } catch(Exception e) {
+      OAuthASResponse.OAuthErrorResponseBuilder builder = OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST) //
+        .setError(e.getClass().getSimpleName()) //
+        .setErrorDescription(e.getMessage());
+      setState(builder, oAuthRequest);
+      OAuthResponse response = builder.buildJSONMessage();
+      return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
     }
   }
 
@@ -161,9 +168,8 @@ public class OAuthResource {
         .error("invalid_redirect_uri", "The redirect URI does not match the one of the authorization");
     }
     User user = userService.findActiveUser(authorization.getUsername());
-    if (user == null) {
-      throw OAuthProblemException
-        .error("inactive_user", "The user of the authorization is not active");
+    if(user == null) {
+      throw OAuthProblemException.error("inactive_user", "The user of the authorization is not active");
     }
 
     authorizationValidator.validateApplication(servletRequest, user, clientId);
@@ -220,27 +226,40 @@ public class OAuthResource {
   }
 
   /**
-   * Client ID is the {@link Application} ID.
+   * Check that the application exists and is available for OAuth process (default redirect URI); check also that the
+   * provided redirect URI includes the default URI same host: (and port, if any), same path or is sub-path.
    *
-   * @param clientId
+   * @param clientId Client ID is the {@link Application} name
    * @param redirectURI Optional: if null or empty default Application's redirect URI is used else it must be a valid redirect URI.
-   * @return
+   * @return the redirectURI
    */
-  private String normalizeRedirectURI(String clientId, String redirectURI) {
-    Application application = applicationService.findByName(clientId);
-    // TODO: check application exists and has a default redirect URI
+  private String validateApplication(String clientId, String redirectURI) throws OAuthProblemException {
+    Application application = applicationService.getApplication(clientId);
+    if(!application.hasRedirectURI()) {
+      throw OAuthProblemException
+        .error("missing_application_redirect_uri", "Application does not have a default redirect URI");
+    }
+    String defaultURI = application.getRedirectURI();
     // TODO? check user has access to this application
-    // TODO: get default redirect URI and verify the validity of the given one, i.e. same host (and port, if any), same path or sub-path
-    //String defaultURI = application.getRedirectURI();
-    return redirectURI;
+    // Verify the validity of the given URI
+    String normalizedURI = redirectURI;
+    if(Strings.isNullOrEmpty(redirectURI)) {
+      normalizedURI = defaultURI;
+    }
+    if(!normalizedURI.startsWith(defaultURI)) {
+      throw OAuthProblemException
+        .error("invalid_redirect_uri", "The redirect URI does not match the application's redirect URI");
+    }
+    return normalizedURI;
   }
 
+  /**
+   * Verify {@link Application}'s secret key.
+   *
+   * @param oAuthRequest
+   */
   private void validateClient(OAuthTokenRequest oAuthRequest) {
-    validateClient(oAuthRequest.getClientId(), oAuthRequest.getClientSecret());
-  }
-
-  private void validateClient(String clientId, String clientSecret) {
-    authorizationValidator.validateApplicationParameters(clientId, clientSecret);
+    authorizationValidator.validateApplicationParameters(oAuthRequest.getClientId(), oAuthRequest.getClientSecret());
   }
 
 }
