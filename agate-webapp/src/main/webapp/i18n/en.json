@@ -271,7 +271,7 @@
     "eventApplication": "Application",
     "token-decoder": "Token Decoder",
     "token-decoder-help": "When a ticket is issued a token is sent to the client. This token is signed and contains information to track back the associated ticket.",
-    "paste-token": "Paste obibaid token here.",
+    "paste-token": "Paste json web token here.",
     "encoded": "Encoded",
     "decoded": "Decoded",
     "token-none": "No or invalid token.",
@@ -280,6 +280,7 @@
   },
   "authorization": {
     "title": "Authorization",
+    "code": "Code",
     "username": "User Name",
     "application": "Application",
     "redirectURI": "Redirect URI",

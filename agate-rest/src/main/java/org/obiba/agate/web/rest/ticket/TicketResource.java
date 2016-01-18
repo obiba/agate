@@ -34,6 +34,7 @@ import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.service.NoSuchUserException;
 import org.obiba.agate.service.TicketService;
+import org.obiba.agate.service.TokenUtils;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.model.Agate;
 import org.obiba.agate.web.rest.application.ApplicationAwareResource;
@@ -62,6 +63,9 @@ public class TicketResource extends ApplicationAwareResource {
   @Inject
   private UserService userService;
 
+  @Inject
+  private TokenUtils tokenUtils;
+
   @GET
   @Path("/{idOrToken}")
   @RequiresRoles("agate-administrator")
@@ -83,7 +87,7 @@ public class TicketResource extends ApplicationAwareResource {
   public Response getProfile(@Context HttpServletRequest servletRequest, @PathParam("token") String token,
     @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) throws JSONException {
     validateApplication(authHeader);
-    ticketService.validateToken(token, getApplicationName());
+    tokenUtils.validateAccessToken(token, getApplicationName());
 
     Ticket ticket = ticketService.getTicket(token);
     ticket.addEvent(getApplicationName(), "profile");
@@ -112,7 +116,7 @@ public class TicketResource extends ApplicationAwareResource {
   public Response updateProfile(@Context HttpServletRequest servletRequest, @PathParam("token") String token,
     @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader, String model) throws JSONException {
     validateApplication(authHeader);
-    ticketService.validateToken(token, getApplicationName());
+    tokenUtils.validateAccessToken(token, getApplicationName());
 
     Ticket ticket = ticketService.getTicket(token);
     ticket.addEvent(getApplicationName(), "profile");
@@ -134,7 +138,7 @@ public class TicketResource extends ApplicationAwareResource {
   public AuthDtos.SubjectDto get(@PathParam("token") String token,
     @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) {
     validateApplication(authHeader);
-    ticketService.validateToken(token, getApplicationName());
+    tokenUtils.validateAccessToken(token, getApplicationName());
 
     Ticket ticket = ticketService.getTicket(token);
     ticket.addEvent(getApplicationName(), "subject");
@@ -158,7 +162,7 @@ public class TicketResource extends ApplicationAwareResource {
   public Response getUsername(@Context HttpServletRequest servletRequest, @PathParam("token") String token,
     @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) {
     validateApplication(authHeader);
-    ticketService.validateToken(token, getApplicationName());
+    tokenUtils.validateAccessToken(token, getApplicationName());
 
     Ticket ticket = ticketService.getTicket(token);
     ticket.addEvent(getApplicationName(), "validate");
@@ -196,7 +200,7 @@ public class TicketResource extends ApplicationAwareResource {
   //
 
   private NewCookie getCookie(Ticket ticket) {
-    String token = ticketService.makeToken(ticket);
+    String token = tokenUtils.makeAccessToken(ticket);
     Configuration configuration = getConfiguration();
     int timeout = ticket.isRemembered() ? configuration.getLongTimeout() : configuration.getShortTimeout();
     return new NewCookie(TicketsResource.TICKET_COOKIE_NAME, token, "/", configuration.getDomain(), null,

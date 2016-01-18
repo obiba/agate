@@ -54,6 +54,7 @@ class TicketDtos {
     builder.setId(authorization.getId()) //
       .setUsername(authorization.getUsername()) //
       .setApplication(authorization.getApplication()) //
+      .setCode(authorization.getCode()) //
       .setRedirectURI(authorization.getRedirectURI()) //
       .setTimestamps(TimestampsDtos.asDto(authorization));
 

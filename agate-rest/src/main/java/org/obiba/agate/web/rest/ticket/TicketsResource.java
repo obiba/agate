@@ -39,6 +39,7 @@ import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.service.TicketService;
+import org.obiba.agate.service.TokenUtils;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.model.Agate;
 import org.obiba.agate.web.rest.application.ApplicationAwareResource;
@@ -69,6 +70,9 @@ public class TicketsResource extends ApplicationAwareResource {
 
   @Inject
   private UserService userService;
+
+  @Inject
+  private TokenUtils tokenUtils;
 
   @GET
   @RequiresRoles("agate-administrator")
@@ -103,7 +107,7 @@ public class TicketsResource extends ApplicationAwareResource {
       authorizationValidator.validateRealm(servletRequest, user, subject);
 
       Ticket ticket = ticketService.create(user.getName(), renew, rememberMe, getApplicationName());
-      String token = ticketService.makeToken(ticket);
+      String token = tokenUtils.makeAccessToken(ticket);
       Configuration configuration = getConfiguration();
       int timeout = rememberMe ? configuration.getLongTimeout() : configuration.getShortTimeout();
       NewCookie cookie = new NewCookie(TICKET_COOKIE_NAME, token, "/", configuration.getDomain(), null,

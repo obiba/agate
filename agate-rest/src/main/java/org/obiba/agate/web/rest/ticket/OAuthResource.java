@@ -13,9 +13,11 @@ package org.obiba.agate.web.rest.ticket;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -24,6 +26,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import org.apache.oltu.oauth2.as.issuer.MD5Generator;
+import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
+import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
 import org.apache.oltu.oauth2.as.request.OAuthAuthzRequest;
 import org.apache.oltu.oauth2.as.request.OAuthTokenRequest;
 import org.apache.oltu.oauth2.as.response.OAuthASResponse;
@@ -44,6 +49,7 @@ import org.obiba.agate.domain.User;
 import org.obiba.agate.service.ApplicationService;
 import org.obiba.agate.service.AuthorizationService;
 import org.obiba.agate.service.TicketService;
+import org.obiba.agate.service.TokenUtils;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.rest.security.AuthorizationValidator;
 import org.springframework.context.annotation.Scope;
@@ -55,6 +61,10 @@ import com.google.common.base.Strings;
 @Path("/oauth")
 @Scope("request")
 public class OAuthResource {
+
+  private static final String OPENID_SCOPE = "openid";
+
+  private static final String OPENID_TOKEN = "id_token";
 
   @Inject
   private AuthorizationService authorizationService;
@@ -69,7 +79,10 @@ public class OAuthResource {
   private TicketService ticketService;
 
   @Inject
-  protected AuthorizationValidator authorizationValidator;
+  private AuthorizationValidator authorizationValidator;
+
+  @Inject
+  private TokenUtils tokenUtils;
 
   @GET
   @Path("/authz")
@@ -79,6 +92,7 @@ public class OAuthResource {
     OAuthAuthzRequest oAuthRequest = null;
     try {
       oAuthRequest = new OAuthAuthzRequest(servletRequest);
+      OAuthIssuer oAuthIssuer = new OAuthIssuerImpl(new MD5Generator());
 
       String clientId = oAuthRequest.getParam(OAuth.OAUTH_CLIENT_ID);
       String redirectURI = validateApplication(clientId, oAuthRequest.getParam(OAuth.OAUTH_REDIRECT_URI));
@@ -88,13 +102,16 @@ public class OAuthResource {
       if(authorization == null) {
         authorization = new Authorization(user.getName(), clientId);
       }
+      authorization.setCode(oAuthIssuer.authorizationCode());
       authorization.setScopes(oAuthRequest.getScopes());
       authorization.setRedirectURI(redirectURI);
       authorizationService.save(authorization);
 
+      long expiresIn = authorizationService.getExpirationDate(authorization).getMillis() - DateTime.now().getMillis();
       OAuthASResponse.OAuthAuthorizationResponseBuilder builder = OAuthASResponse
         .authorizationResponse(servletRequest, HttpServletResponse.SC_FOUND) //
-        .setCode(authorization.getId()) //
+        .setCode(authorization.getCode()) //
+        .setExpiresIn(expiresIn / 1000) //
         .location(redirectURI);
 
       setState(builder, oAuthRequest);
@@ -157,7 +174,7 @@ public class OAuthResource {
 
     String clientId = oAuthRequest.getClientId();
     String redirectURI = oAuthRequest.getParam(OAuth.OAUTH_REDIRECT_URI);
-    Authorization authorization = authorizationService.get(oAuthRequest.getParam(OAuth.OAUTH_CODE));
+    Authorization authorization = authorizationService.getByCode(oAuthRequest.getParam(OAuth.OAUTH_CODE));
     // verify authorization
     if(!authorization.getApplication().equals(clientId)) {
       throw OAuthProblemException
@@ -173,8 +190,9 @@ public class OAuthResource {
     }
 
     authorizationValidator.validateApplication(servletRequest, user, clientId);
+
     Ticket ticket = ticketService.create(authorization);
-    return getAccessResponse(ticket);
+    return getAccessResponse(ticket, authorization);
   }
 
   private Response accessPasswordGrant(HttpServletRequest servletRequest, OAuthTokenRequest oAuthRequest)
@@ -198,16 +216,23 @@ public class OAuthResource {
     subject.logout();
 
     Ticket ticket = ticketService.create(user.getName(), false, false, clientId);
-    return getAccessResponse(ticket);
+    return getAccessResponse(ticket, null);
   }
 
-  private Response getAccessResponse(Ticket ticket) throws OAuthSystemException {
-    String token = ticketService.makeToken(ticket);
+  private Response getAccessResponse(@NotNull Ticket ticket, @Nullable Authorization authorization) throws OAuthSystemException {
+    String token = tokenUtils.makeAccessToken(ticket);
     long expiresIn = ticketService.getExpirationDate(ticket).getMillis() - DateTime.now().getMillis();
-    OAuthResponse response = OAuthASResponse.tokenResponse(HttpServletResponse.SC_OK) //
+
+    OAuthASResponse.OAuthTokenResponseBuilder responseBuilder = OAuthASResponse.tokenResponse(HttpServletResponse.SC_OK) //
       .setAccessToken(token) //
       .setTokenType(OAuth.OAUTH_HEADER_NAME.toLowerCase()) // bug: OAUTH_BEARER_TOKEN has a wrong value
-      .setExpiresIn(expiresIn / 1000 + "").buildJSONMessage();
+      .setExpiresIn(expiresIn / 1000 + "");
+
+    if (authorization != null && authorization.hasScope(OPENID_SCOPE)) {
+      responseBuilder.setParam(OPENID_TOKEN, tokenUtils.makeIDToken(authorization));
+    }
+
+    OAuthResponse response = responseBuilder.buildJSONMessage();
     return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
   }
 

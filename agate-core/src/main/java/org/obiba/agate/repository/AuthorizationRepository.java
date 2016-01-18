@@ -21,6 +21,8 @@ import org.springframework.data.mongodb.repository.MongoRepository;
  */
 public interface AuthorizationRepository extends MongoRepository<Authorization, String> {
 
+  List<Authorization> findByCode(String code);
+
   List<Authorization> findByUsername(String username);
 
   List<Authorization> findByUsernameAndApplication(String username, String application);

@@ -12,6 +12,8 @@ package org.obiba.agate.domain;
 
 import java.util.Set;
 
+import javax.validation.constraints.NotNull;
+
 import org.obiba.mongodb.domain.AbstractAuditableDocument;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -27,6 +29,10 @@ public class Authorization extends AbstractAuditableDocument {
 
   @Indexed
   private String application;
+
+  @NotNull
+  @Indexed(unique = true)
+  private String code;
 
   private Set<String> scopes;
 
@@ -55,8 +61,20 @@ public class Authorization extends AbstractAuditableDocument {
     this.application = application;
   }
 
+  public String getCode() {
+    return code;
+  }
+
+  public void setCode(String code) {
+    this.code = code;
+  }
+
   public boolean hasScopes() {
     return scopes != null && !scopes.isEmpty();
+  }
+
+  public boolean hasScope(String scope) {
+    return hasScopes() && scopes.contains(scope);
   }
 
   public Set<String> getScopes() {

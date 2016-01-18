@@ -24,6 +24,11 @@ public class NoSuchAuthorizationException extends NoSuchElementException {
     return new NoSuchAuthorizationException("Authorization with ID '" + id + "' does not exist");
   }
 
+  public static NoSuchAuthorizationException withCode(String code) {
+    return new NoSuchAuthorizationException("Authorization with code '" + code + "' does not exist");
+  }
+
+
   public static NoSuchAuthorizationException withUsernameAndApplication(String username, String application) {
     return new NoSuchAuthorizationException(
       "Authorization with username '" + username + "' and application '" + application + "' does not exist");
