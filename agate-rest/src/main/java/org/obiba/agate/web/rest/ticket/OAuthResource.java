@@ -62,9 +62,6 @@ import com.google.common.base.Strings;
 @Scope("request")
 public class OAuthResource {
 
-  private static final String OPENID_SCOPE = "openid";
-
-  private static final String OPENID_TOKEN = "id_token";
 
   @Inject
   private AuthorizationService authorizationService;
@@ -228,8 +225,8 @@ public class OAuthResource {
       .setTokenType(OAuth.OAUTH_HEADER_NAME.toLowerCase()) // bug: OAUTH_BEARER_TOKEN has a wrong value
       .setExpiresIn(expiresIn / 1000 + "");
 
-    if (authorization != null && authorization.hasScope(OPENID_SCOPE)) {
-      responseBuilder.setParam(OPENID_TOKEN, tokenUtils.makeIDToken(authorization));
+    if (authorization != null && authorization.hasScope(TokenUtils.OPENID_SCOPE)) {
+      responseBuilder.setParam(TokenUtils.OPENID_TOKEN, tokenUtils.makeIDToken(authorization));
     }
 
     OAuthResponse response = responseBuilder.buildJSONMessage();

@@ -11,7 +11,6 @@
 package org.obiba.agate.service;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -38,6 +37,10 @@ import io.jsonwebtoken.SignatureException;
  */
 @Component
 public class TokenUtils {
+
+  public static final String OPENID_SCOPE = "openid";
+
+  public static final String OPENID_TOKEN = "id_token";
 
   @Inject
   private UserService userService;
@@ -73,8 +76,8 @@ public class TokenUtils {
       authorization = authorizationService.get(ticket.getAuthorization());
     }
 
-    putTokenAudience(claims, user, authorization);
-    putTokenContext(claims, user, authorization);
+    putAudienceClaim(claims, user, authorization);
+    putContextClaim(claims, user, authorization);
 
     return Jwts.builder().setClaims(claims)
       .signWith(SignatureAlgorithm.HS256, configurationService.getConfiguration().getSecretKey().getBytes()).compact();
@@ -91,7 +94,7 @@ public class TokenUtils {
       Claims claims = Jwts.parser().setSigningKey(configurationService.getConfiguration().getSecretKey().getBytes())
         .parseClaimsJws(token).getBody();
       if(!getIssuerID().equals(claims.getIssuer())) throw new InvalidTokenException("Token issuer is not valid");
-      if (!claims.getAudience().contains(application)) {
+      if(!claims.getAudience().contains(application)) {
         throw new InvalidTokenException("Token is not for '" + application + "'");
       }
     } catch(SignatureException e) {
@@ -106,6 +109,8 @@ public class TokenUtils {
    * @return
    */
   public String makeIDToken(@NotNull Authorization authorization) {
+    if(!authorization.hasScope(OPENID_SCOPE)) return "";
+
     User user = userService.findUser(authorization.getUsername());
 
     DateTime expires = authorizationService.getExpirationDate(authorization);
@@ -115,8 +120,8 @@ public class TokenUtils {
       .setIssuedAt(authorization.getCreatedDate().toDate()) //
       .setExpiration(expires.toDate());
 
-    putTokenAudience(claims, user, authorization);
-    putTokenUser(claims, user);
+    claims.put(Claims.AUDIENCE, authorization.getApplication());
+    putUserClaims(claims, user);
 
     return Jwts.builder().setClaims(claims)
       .signWith(SignatureAlgorithm.HS256, configurationService.getConfiguration().getSecretKey().getBytes()).compact();
@@ -139,7 +144,7 @@ public class TokenUtils {
    * @param authorization
    * @param ticket
    */
-  private void putTokenContext(Claims claims, User user, Authorization authorization) {
+  private void putContextClaim(Claims claims, User user, Authorization authorization) {
     if(user == null) return;
 
     Map<String, Object> userMap = Maps.newHashMap();
@@ -169,7 +174,7 @@ public class TokenUtils {
    * @param claims
    * @param user
    */
-  private void putTokenUser(Claims claims, User user) {
+  private void putUserClaims(Claims claims, User user) {
     String name = "";
     if(user.hasFirstName()) {
       name = user.getFirstName();
@@ -184,7 +189,7 @@ public class TokenUtils {
 
     claims.put("email", user.getEmail());
     // TODO
-    //claims.put("email_verified", user.isEmailVerified());
+    claims.put("email_verified", false);//user.isEmailVerified());
     //claims.put("locale", user.getLocale());
   }
 
@@ -196,19 +201,19 @@ public class TokenUtils {
    * @param user
    * @param authorization
    */
-  private void putTokenAudience(Claims claims, User user, Authorization authorization) {
+  private void putAudienceClaim(Claims claims, User user, Authorization authorization) {
     if(user == null) return;
 
+    Set<String> applications = userService.getUserApplications(user);
     if(authorization == null) {
-      Set<String> applications = Sets.newTreeSet();
-      if(user.hasApplications()) applications.addAll(user.getApplications());
-      if(user.hasGroups()) user.getGroups().forEach(g -> Optional.ofNullable(userService.findGroup(g)).flatMap(r -> {
-        r.getApplications().forEach(applications::add);
-        return Optional.of(r);
-      }));
       claims.put(Claims.AUDIENCE, applications);
     } else {
-      claims.put(Claims.AUDIENCE, authorization.getApplication());
+
+      Set<String> audience = Sets.newTreeSet();
+      if(authorization.hasScopes()) {
+        authorization.getScopes().stream().filter(applications::contains).forEach(audience::add);
+      }
+      claims.put(Claims.AUDIENCE, audience.isEmpty() ? authorization.getApplication() : audience);
     }
   }
 
