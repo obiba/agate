@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.security.SignatureException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -41,6 +43,7 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -115,11 +118,12 @@ public class UserService {
       .collect(Collectors.toList());
   }
 
-  public List<User> findActiveUserByApplication(@NotNull String  username, @NotNull String application) {
+  public List<User> findActiveUserByApplication(@NotNull String username, @NotNull String application) {
     return findActiveUserByApplicationAndGroup(username, application, null);
   }
 
-  public List<User> findActiveUserByApplicationAndGroup(@NotNull String  username, @NotNull String application, @Nullable String group) {
+  public List<User> findActiveUserByApplicationAndGroup(@NotNull String username, @NotNull String application,
+    @Nullable String group) {
     List<String> groupNames = groupRepository.findByApplications(application).stream() //
       .map(Group::getName) //
       .collect(Collectors.toList());
@@ -249,7 +253,7 @@ public class UserService {
 
     // verify user email is unique
     User userWithEmail = findActiveUserByEmail(user.getEmail());
-    if (userWithEmail != null && !userWithEmail.getId().equals(user.getId())) {
+    if(userWithEmail != null && !userWithEmail.getId().equals(user.getId())) {
       throw new EmailAlreadyAssignedException(user.getEmail());
     }
 
@@ -506,6 +510,22 @@ public class UserService {
     RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "shiro.password.");
     return new Sha512Hash(password, propertyResolver.getProperty("salt"),
       propertyResolver.getProperty("nbHashIterations", Integer.class)).toString();
+  }
+
+  /**
+   * Get all the applications the user has access to: explicitly defined and inherited from the groups.
+   *
+   * @param user
+   * @return
+   */
+  public Set<String> getUserApplications(User user) {
+    Set<String> applications = Sets.newTreeSet();
+    if(user.hasApplications()) applications.addAll(user.getApplications());
+    if(user.hasGroups()) user.getGroups().forEach(g -> Optional.ofNullable(findGroup(g)).flatMap(r -> {
+      r.getApplications().forEach(applications::add);
+      return Optional.of(r);
+    }));
+    return applications;
   }
 
   //
