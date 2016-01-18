@@ -82,12 +82,20 @@ public class User extends AbstractAuditableDocument {
     this.realm = realm;
   }
 
+  public boolean hasFirstName() {
+    return !Strings.isNullOrEmpty(firstName);
+  }
+
   public String getFirstName() {
     return firstName;
   }
 
   public void setFirstName(String firstName) {
     this.firstName = firstName;
+  }
+
+  public boolean hasLastName() {
+    return !Strings.isNullOrEmpty(lastName);
   }
 
   public String getLastName() {

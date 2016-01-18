@@ -35,6 +35,9 @@ public class AuthorizationService {
   @Inject
   private ConfigurationService configurationService;
 
+  @Inject
+  private UserService userService;
+
   /**
    * Persist the {@link Authorization}.
    *
@@ -46,7 +49,7 @@ public class AuthorizationService {
   }
 
   /**
-   * Get the {@link Authorization} by its ID (the authorization_code in the OAuth context).
+   * Get the {@link Authorization} by its ID.
    *
    * @param id
    * @return
@@ -56,6 +59,19 @@ public class AuthorizationService {
     Authorization authorization = authorizationRepository.findOne(id);
     if(authorization == null) throw NoSuchAuthorizationException.withId(id);
     return authorization;
+  }
+
+  /**
+   * Get the {@link Authorization} by its code (the authorization_code in the OAuth context).
+   *
+   * @param code
+   * @return
+   * @throws NoSuchAuthorizationException
+   */
+  public Authorization getByCode(@NotNull String code) {
+    Optional<Authorization> authorization = authorizationRepository.findByCode(code).stream().findFirst();
+    if(!authorization.isPresent()) throw NoSuchAuthorizationException.withCode(code);
+    return authorization.get();
   }
 
   /**
@@ -126,6 +142,18 @@ public class AuthorizationService {
     authorizationRepository.delete(id);
   }
 
+  /**
+   * Compute expiration date using configured timeouts.
+   *
+   * @param ticket
+   * @return
+   */
+  public DateTime getExpirationDate(Authorization authorization) {
+    return getExpirationDate(authorization.getCreatedDate());
+  }
+
+
+
   //
   // Event handling
   //
@@ -139,4 +167,11 @@ public class AuthorizationService {
       DateTime.now().minusHours(configurationService.getConfiguration().getLongTimeout())));
   }
 
+  //
+  // Private methods
+  //
+
+  private DateTime getExpirationDate(DateTime created) {
+    return created.plusHours(configurationService.getConfiguration().getLongTimeout());
+  }
 }

@@ -1,9 +1,7 @@
 package org.obiba.agate.service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -20,13 +18,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.mysql.jdbc.StringUtils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 
 @Service
@@ -195,57 +190,6 @@ public class TicketService {
     return getExpirationDate(ticket.getCreatedDate(), ticket.isRemembered());
   }
 
-  /**
-   * Validate Json web token: issuer, jwt ID and signature verification.
-   *
-   * @param token
-   * @param application Application name requesting validation
-   */
-  public void validateToken(@NotNull String token, @NotNull String application) {
-    try {
-      Claims claims = Jwts.parser().setSigningKey(configurationService.getConfiguration().getSecretKey().getBytes())
-        .parseClaimsJws(token).getBody();
-      if(!("agate:" + configurationService.getConfiguration().getId()).equals(claims.getIssuer()))
-        throw new InvalidTokenException("Token issuer is not valid");
-      if(!ticketRepository.exists(claims.getId())) throw new InvalidTokenException("Token identifier is not valid");
-      String aud = claims.getAudience();
-      if (!claims.getAudience().contains(application)) {
-        throw new InvalidTokenException("Token is not for '" + application + "'");
-      }
-    } catch(SignatureException e) {
-      throw new InvalidTokenException("Token signature is not valid");
-    }
-  }
-
-  /**
-   * Make a json web token for the ticket.
-   *
-   * @param ticket
-   * @return
-   */
-  public String makeToken(@NotNull Ticket ticket) {
-    User user = userService.findUser(ticket.getUsername());
-
-    DateTime expires = getExpirationDate(ticket);
-
-    Claims claims = Jwts.claims().setSubject(ticket.getUsername()) //
-      .setIssuer("agate:" + configurationService.getConfiguration().getId()) //
-      .setIssuedAt(ticket.getCreatedDate().toDate()) //
-      .setExpiration(expires.toDate()) //
-      .setId(ticket.getId());
-
-    Authorization authorization = null;
-    if(ticket.hasAuthorization()) {
-      authorization = authorizationService.get(ticket.getAuthorization());
-    }
-
-    putTokenAudience(claims, user, authorization);
-    putTokenContext(claims, user, authorization, ticket);
-
-    return Jwts.builder().setClaims(claims)
-      .signWith(SignatureAlgorithm.HS256, configurationService.getConfiguration().getSecretKey().getBytes()).compact();
-  }
-
   //
   // Event handling
   //
@@ -292,52 +236,7 @@ public class TicketService {
   }
 
 
-  /**
-   * The context of the token contains some custom entries about the user and the scope of the authorization (if any).
-   *
-   * @param claims
-   * @param user
-   * @param authorization
-   * @param ticket
-   */
-  private void putTokenContext(Claims claims, User user, Authorization authorization, Ticket ticket) {
-    if(user == null) return;
 
-    Map<String, Object> userMap = Maps.newHashMap();
-    userMap.put("firstName", user.getFirstName());
-    userMap.put("lastName", user.getLastName());
-    userMap.put("groups", user.getGroups());
-    Map<String, Object> contextMap = Maps.newHashMap();
-    contextMap.put("user", userMap);
-    if(authorization != null && authorization.hasScopes()) {
-      contextMap.put("scopes", authorization.getScopes());
-    }
-    claims.put("context", contextMap);
-  }
-
-  /**
-   * If not bound to an authorization, all applications that can be accessed by the user are the audience of the token,
-   * otherwise it is restricted to the one of authorization.
-   *
-   * @param claims
-   * @param user
-   * @param authorization
-   */
-  private void putTokenAudience(Claims claims, User user, Authorization authorization) {
-    if(user == null) return;
-
-    if(authorization == null) {
-      Set<String> applications = Sets.newTreeSet();
-      if(user.hasApplications()) applications.addAll(user.getApplications());
-      if(user.hasGroups()) user.getGroups().forEach(g -> Optional.ofNullable(userService.findGroup(g)).flatMap(r -> {
-        r.getApplications().forEach(applications::add);
-        return Optional.of(r);
-      }));
-      claims.put(Claims.AUDIENCE, applications);
-    } else {
-      claims.put(Claims.AUDIENCE, authorization.getApplication());
-    }
-  }
 
   private DateTime getExpirationDate(DateTime created, boolean remembered) {
     return remembered

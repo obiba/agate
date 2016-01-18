@@ -12,9 +12,10 @@ message AuthorizationDto {
   required string id = 1;
   required string username = 2;
   required string application = 3;
-  optional string redirectURI = 4;
-  repeated string scopes = 5;
-  optional TimestampsDto timestamps = 6;
+  required string code = 4;
+  optional string redirectURI = 5;
+  repeated string scopes = 6;
+  optional TimestampsDto timestamps = 7;
 }
 
 message TicketDto {

@@ -19,6 +19,7 @@ import org.obiba.agate.domain.UserStatus;
 import org.obiba.agate.service.ApplicationService;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.TicketService;
+import org.obiba.agate.service.TokenUtils;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.rest.security.AuthorizationValidator;
 
@@ -46,6 +47,9 @@ public class TicketsResourceTests {
   private TicketService ticketService;
 
   @Mock
+  private TokenUtils tokenUtils;
+
+  @Mock
   private ApplicationService applicationService;
 
   @Mock
@@ -67,7 +71,7 @@ public class TicketsResourceTests {
   public void init() {
     MockitoAnnotations.initMocks(this);
     when(ticketService.findByUsername(anyString())).thenReturn(Lists.newArrayList());
-    when(ticketService.makeToken(anyObject())).thenReturn("token123");
+    when(tokenUtils.makeAccessToken(anyObject())).thenReturn("token123");
     when(applicationService.isValid(anyString(), anyString())).thenReturn(true);
     Configuration configuration = new Configuration();
     configuration.setLongTimeout(30000);
