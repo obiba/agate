@@ -186,8 +186,6 @@ public class OAuthResource {
       throw OAuthProblemException.error("inactive_user", "The user of the authorization is not active");
     }
 
-    authorizationValidator.validateApplication(servletRequest, user, clientId);
-
     Ticket ticket = ticketService.create(authorization);
     return getAccessResponse(ticket, authorization);
   }
