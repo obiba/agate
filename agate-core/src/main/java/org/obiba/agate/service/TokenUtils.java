@@ -42,6 +42,11 @@ public class TokenUtils {
 
   public static final String OPENID_TOKEN = "id_token";
 
+  /**
+   * Scope naming convention is application[:action].
+   */
+  public static final String SCOPE_DELIMITER = ":";
+
   @Inject
   private UserService userService;
 
@@ -208,13 +213,26 @@ public class TokenUtils {
     if(authorization == null) {
       claims.put(Claims.AUDIENCE, applications);
     } else {
-
       Set<String> audience = Sets.newTreeSet();
+      // authorized application can always validated the access token
+      audience.add(authorization.getApplication());
       if(authorization.hasScopes()) {
-        authorization.getScopes().stream().filter(applications::contains).forEach(audience::add);
+        authorization.getScopes().stream().map(this::scopeToApplication).filter(applications::contains)
+          .forEach(audience::add);
       }
-      claims.put(Claims.AUDIENCE, audience.isEmpty() ? authorization.getApplication() : audience);
+      claims.put(Claims.AUDIENCE, audience);
     }
+  }
+
+  /**
+   * Extract the application name from the scope name (syntax is: application[:action]).
+   *
+   * @param scope
+   * @return
+   */
+  private String scopeToApplication(String scope) {
+    if(Strings.isNullOrEmpty(scope)) return scope;
+    return scope.split(SCOPE_DELIMITER)[0];
   }
 
 }
