@@ -26,7 +26,8 @@ public  class CurrentUserResource extends AbstractUserResource {
 
   @PUT
   public Response updateUser(Agate.UserDto userDto) {
-    getUser();
+    User current = getUser();
+    if (!current.getId().equals(userDto.getId())) return Response.status(Response.Status.FORBIDDEN).build();
     return super.updateUser(userDto);
   }
 
