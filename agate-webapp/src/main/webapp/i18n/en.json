@@ -240,7 +240,8 @@
     "scope": {
       "help": "Scopes allow to qualify the authorization access to the application that is granted in the OAuth context. Scopes are optional.",
       "none": "No scopes.",
-      "add": "Add Scope"
+      "add": "Add Scope",
+      "edit": "Edit Scope"
     }
   },
   "groups": "Groups",

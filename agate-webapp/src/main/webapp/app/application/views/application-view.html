@@ -38,7 +38,7 @@
       <p class="help-block">
         <span translate>application.scope.help</span>
       </p>
-      <a ng-href="#/application/{{application.id}}/scope/new" class="btn btn-info">
+      <a href="" ng-click="editScope()" class="btn btn-info">
         <i class="fa fa-plus"></i> <span translate>application.scope.add</span>
       </a>
       <p class="help-block" ng-if="!application.scopes || application.scopes.length == 0">
@@ -78,11 +78,11 @@
               <td>
                 <ul class="list-inline">
                   <li>
-                    <a ng-href="#/application/{{application.id}}/scope/{{scope.name}}/edit" title="{{'edit' | translate}}"><i
+                    <a href="" ng-click="editScope(scope)" title="{{'edit' | translate}}"><i
                       class="fa fa-pencil"></i></a>
                   </li>
                   <li>
-                    <a title="{{'delete' | translate}}"><i
+                    <a href="" ng-click="deleteScope(scope)" title="{{'delete' | translate}}"><i
                       class="fa fa-trash-o"></i></a>
                   </li>
                 </ul>

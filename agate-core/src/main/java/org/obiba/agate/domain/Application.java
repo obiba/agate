@@ -126,7 +126,7 @@ public class Application extends AbstractAuditableDocument {
    * @param name
    * @param description
    */
-  public void addAction(@NotNull String name, String description) {
+  public void addScope(@NotNull String name, String description) {
     Scope scope = getScope(name);
     if(scope == null) {
       if(scopes == null) scopes = Lists.newArrayList();
