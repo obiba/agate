@@ -10,6 +10,8 @@
 
 package org.obiba.agate.web.model;
 
+import java.util.stream.Collectors;
+
 import javax.validation.constraints.NotNull;
 
 import org.obiba.agate.domain.Application;
@@ -29,7 +31,14 @@ class ApplicationDtos {
     if(application.hasDescription()) builder.setDescription(application.getDescription());
     if(application.hasRedirectURI()) builder.setRedirectURI(application.getRedirectURI());
 
+    if(application.hasScopes()) builder.addAllScopes(application.getScopes().stream().map(this::asDto)
+      .collect(Collectors.toList()));
+
     return builder.build();
+  }
+
+  private Agate.ApplicationDto.ScopeDto asDto(@NotNull Application.Scope scope) {
+    return Agate.ApplicationDto.ScopeDto.newBuilder().setName(scope.getName()).setDescription(scope.getDescription()).build();
   }
 
   @NotNull
@@ -39,7 +48,12 @@ class ApplicationDtos {
     application.setDescription(dto.getDescription());
     if(dto.hasKey()) application.setKey(dto.getKey());
     application.setRedirectURI(dto.getRedirectURI());
+    application.setScopes(dto.getScopesList().stream().map(this::fromDto).collect(Collectors.toList()));
 
     return application;
+  }
+
+  private Application.Scope fromDto(@NotNull Agate.ApplicationDto.ScopeDto dto) {
+    return new Application.Scope(dto.getName(), dto.getDescription());
   }
 }

@@ -52,13 +52,56 @@ agate.application
 
     }])
 
-  .controller('ApplicationViewController', ['$scope', '$location', '$routeParams', 'ApplicationResource',
+  .controller('ApplicationViewController', ['$scope', '$location', '$routeParams', 'ApplicationResource', '$uibModal',
 
-    function ($scope, $location, $routeParams, ApplicationResource) {
+    function ($scope, $location, $routeParams, ApplicationResource, $uibModal) {
       $scope.application = $routeParams.id ? ApplicationResource.get({id: $routeParams.id}) : {};
+
+      $scope.editScope = function (scp) {
+        $uibModal.open({
+          templateUrl: 'app/application/views/application-scope-modal-form.html',
+          controller: 'ApplicationScopeModalController',
+          resolve: {
+            'scope': function () {
+              return angular.copy(scp);
+            }
+          }
+        }).result.then(function (scope) {
+            var onSuccess = function () {
+              $scope.status = $scope.status_codes.SUCCESS;
+              $location.path('/application' + ($scope.application.id ? '/' + $scope.application.id : '')).replace();
+            };
+
+            var onError = function() {
+              $log.debug('DEBUG', $scope, $scope.$parent);
+              $scope.status = $scope.status_codes.ERROR;
+            };
+
+            if(!$scope.application.scopes) {
+              $scope.application.scopes = [];
+            }
+
+            var idx = $scope.application.scopes.indexOf(scp);
+            if(idx > -1) {
+              $scope.application.scopes[idx] = scope;
+            } else {
+              $scope.application.scopes.push(scope);
+            }
+
+            ApplicationResource.update({id: $scope.application.id}, $scope.application, onSuccess, onError);
+          });
+      };
+
+      $scope.deleteScope = function(scope) {
+        var idx = $scope.application.scopes.indexOf(scope);
+        if(idx > -1) {
+          $scope.application.scopes.splice(idx, 1);
+          ApplicationResource.update({id: $scope.application.id}, $scope.application);
+        }
+      };
     }])
 
-  .controller('ApplicationEditController', ['$scope', '$location', '$routeParams', 'ApplicationsResource', 'ApplicationResource','$log',
+  .controller('ApplicationEditController', ['$scope', '$location', '$routeParams', 'ApplicationsResource', 'ApplicationResource', '$log',
 
     function ($scope, $location, $routeParams, ApplicationsResource, ApplicationResource, $log) {
       $scope.status_codes = {
@@ -105,5 +148,24 @@ agate.application
         } else {
           $location.path('/applications');
         }
+      };
+    }])
+
+  .controller('ApplicationScopeModalController', ['$scope', '$filter', '$uibModalInstance', 'scope',
+    function($scope, $filter, $uibModalInstance, scope) {
+      $scope.editMode = scope && scope.name;
+      $scope.scope = scope;
+
+      $scope.save = function (form) {
+        if (!form.$valid) {
+          form.saveAttempted = true;
+          return;
+        }
+
+        $uibModalInstance.close($scope.scope);
+      };
+
+      $scope.cancel = function () {
+        $uibModalInstance.dismiss('cancel');
       };
     }]);

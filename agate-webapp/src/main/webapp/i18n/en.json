@@ -226,6 +226,7 @@
     "name-help": "Name must be unique.",
     "description": "Description",
     "key": "Key",
+    "key-help": "Leave blank to not modify application's secret key.",
     "redirectURI": "Redirect URI",
     "redirectURI-help": "Callback URL to the application's server, required in the OAuth context.",
     "confirmKey": "Confirm key",
@@ -234,7 +235,14 @@
       "title": "Delete Application",
       "message": "Are you sure you want to delete application '{{arg0}}'?"
     },
-    "none": "No applications."
+    "none": "No applications.",
+    "scopes": "Scopes",
+    "scope": {
+      "help": "Scopes allow to qualify the authorization access to the application that is granted in the OAuth context. Scopes are optional.",
+      "none": "No scopes.",
+      "add": "Add Scope",
+      "edit": "Edit Scope"
+    }
   },
   "groups": "Groups",
   "group": {

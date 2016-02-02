@@ -100,13 +100,18 @@ message GroupDto {
 }
 
 message ApplicationDto {
+  message ScopeDto {
+    required string name = 1;
+    optional string description = 2;
+  }
+
   optional string id = 1;
   required string name = 2;
   optional string key = 3;
   optional string description = 4;
   optional TimestampsDto timestamps = 5;
   optional string redirectURI = 6;
-  repeated string scopes = 7;
+  repeated ScopeDto scopes = 7;
 }
 
 message ConfirmForm {

@@ -25,6 +25,8 @@ import org.obiba.agate.web.model.Agate;
 import org.obiba.agate.web.model.Dtos;
 import org.springframework.stereotype.Component;
 
+import com.google.common.collect.Lists;
+
 @Component
 @RequiresRoles("agate-administrator")
 @Path("/application/{id}")
@@ -46,6 +48,8 @@ public class ApplicationResource {
     Application application = applicationService.getApplication(id);
     application.setDescription(dto.getDescription());
     application.setRedirectURI(dto.getRedirectURI());
+    application.setScopes(Lists.newArrayList());
+    dto.getScopesList().forEach(s -> application.addScope(s.getName(), s.getDescription()));
 
     if (dto.hasKey()) {
       application.setKey(applicationService.hashKey(dto.getKey()));
