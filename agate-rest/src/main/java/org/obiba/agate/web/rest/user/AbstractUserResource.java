@@ -10,22 +10,34 @@
 
 package org.obiba.agate.web.rest.user;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import org.obiba.agate.domain.User;
+import org.obiba.agate.service.AuthorizationService;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.model.Agate;
 import org.obiba.agate.web.model.Dtos;
+
+import com.google.common.base.Strings;
 
 public abstract class AbstractUserResource {
 
   @Inject
   protected UserService userService;
+
+  @Inject
+  protected AuthorizationService authorizationService;
 
   @Inject
   private Dtos dtos;
@@ -42,6 +54,27 @@ public abstract class AbstractUserResource {
     userService.updateUserPassword(getUser(), password);
 
     return Response.noContent().build();
+  }
+
+  @GET
+  @Path("/authorizations")
+  public List<Agate.AuthorizationDto> getAutorizations() {
+    return authorizationService.list(getUser().getName()).stream().map(dtos::asDto).collect(Collectors.toList());
+  }
+
+  @GET
+  @Path("/authorization/{auth}")
+  public Agate.AuthorizationDto getAutorization(@PathParam("auth") String auth) {
+    if(Strings.isNullOrEmpty(auth)) throw new BadRequestException("Missing authorization ID");
+    return dtos.asDto(authorizationService.get(auth));
+  }
+
+  @DELETE
+  @Path("/authorization/{auth}")
+  public Response deleteAutorization(@PathParam("auth") String auth) {
+    if(Strings.isNullOrEmpty(auth)) throw new BadRequestException("Missing authorization ID");
+    authorizationService.delete(auth);
+    return Response.ok().build();
   }
 
   /**

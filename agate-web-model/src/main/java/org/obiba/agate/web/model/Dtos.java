@@ -4,6 +4,7 @@ import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
 import org.obiba.agate.domain.Application;
+import org.obiba.agate.domain.Authorization;
 import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.Group;
 import org.obiba.agate.domain.Ticket;
@@ -37,6 +38,11 @@ public class Dtos {
   @NotNull
   public Agate.TicketDto asDto(@NotNull Ticket ticket) {
     return ticketDtos.asDto(ticket);
+  }
+
+  @NotNull
+  public Agate.AuthorizationDto asDto(@NotNull Authorization authorization) {
+    return ticketDtos.asDto(authorization);
   }
 
   @NotNull

@@ -203,9 +203,9 @@ agate.user
 
     }])
 
-  .controller('UserViewController', ['$rootScope', '$scope', '$routeParams', '$log', '$location', 'UserResource', 'ConfigurationResource', 'AttributesService', 'AlertService',
+  .controller('UserViewController', ['$rootScope', '$scope', '$routeParams', '$log', '$location', 'UserResource', 'UserAuthorizationsResource', 'UserAuthorizationResource', 'ConfigurationResource', 'AttributesService', 'AlertService',
 
-    function ($rootScope, $scope, $routeParams, $log, $location, UserResource, ConfigurationResource, AttributesService, AlertService) {
+    function ($rootScope, $scope, $routeParams, $log, $location, UserResource, UserAuthorizationsResource, UserAuthorizationResource, ConfigurationResource, AttributesService, AlertService) {
 
       $scope.user = $routeParams.id ?
         UserResource.get({id: $routeParams.id}, function(user) {
@@ -216,6 +216,15 @@ agate.user
 
           return user;
         }) : {};
+
+      $scope.authorizations = $routeParams.id ?
+        UserAuthorizationsResource.query({id: $routeParams.id}) : [];
+
+      $scope.deleteAuthorization = function(authz) {
+        UserAuthorizationResource.delete({id: $routeParams.id, authz: authz.id}, function() {
+          $scope.authorizations = UserAuthorizationsResource.query({id: $routeParams.id});
+        });
+      };
 
       $scope.onPasswordUpdated = function() {
         AlertService.alert({id: 'UserViewController', type: 'success', msgKey: 'password.success', delay: 5000});

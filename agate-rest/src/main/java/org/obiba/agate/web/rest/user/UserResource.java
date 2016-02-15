@@ -12,7 +12,6 @@ package org.obiba.agate.web.rest.user;
 
 import java.io.IOException;
 
-import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -27,21 +26,13 @@ import org.obiba.agate.domain.User;
 import org.obiba.agate.domain.UserCredentials;
 import org.obiba.agate.domain.UserStatus;
 import org.obiba.agate.service.NoSuchUserException;
-import org.obiba.agate.service.TicketService;
 import org.obiba.agate.web.model.Agate;
-import org.obiba.agate.web.model.Dtos;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiresRoles("agate-administrator")
 @Path("/user/{id}")
 public class UserResource extends AbstractUserResource {
-
-  @Inject
-  private Dtos dtos;
-
-  @Inject
-  private TicketService ticketService;
 
   @PathParam("id")
   private String id;
@@ -92,7 +83,6 @@ public class UserResource extends AbstractUserResource {
     try {
       User user = userService.getUser(id);
       userService.delete(user);
-      ticketService.deleteAllUserTickets(user.getName());
     } catch(NoSuchUserException e) {
       // ignore
     }

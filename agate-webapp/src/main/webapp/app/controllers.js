@@ -109,8 +109,8 @@ agate.controller('LogoutController', ['$location', 'AuthenticationSharedService'
     });
   }]);
 
-agate.controller('ProfileController', ['$scope', '$location', '$uibModal', 'Account', 'ConfigurationResource', 'AttributesService', 'AlertService',
-  function ($scope, $location, $uibModal, Account, ConfigurationResource, AttributesService, AlertService) {
+agate.controller('ProfileController', ['$scope', '$location', '$uibModal', 'Account', 'AccountAuthorizations', 'AccountAuthorization', 'ConfigurationResource', 'AttributesService', 'AlertService',
+  function ($scope, $location, $uibModal, Account, AccountAuthorizations, AccountAuthorization, ConfigurationResource, AttributesService, AlertService) {
     var getConfigAttributes = function () {
       ConfigurationResource.get(function (config) {
         $scope.attributesConfig = config.userAttributes || [];
@@ -121,6 +121,7 @@ agate.controller('ProfileController', ['$scope', '$location', '$uibModal', 'Acco
 
     var getSettingsAccount = function () {
       $scope.settingsAccount = Account.get(function (user) {
+        $scope.authorizations = AccountAuthorizations.query();
         ConfigurationResource.get(function (config) {
           $scope.userConfigAttributes = AttributesService.findConfigAttributes(user.attributes, config.userAttributes);
           $scope.userNonConfigAttributes = config.userAttributes ? AttributesService.findNonConfigAttributes(user.attributes, config.userAttributes) : user.attributes;
@@ -133,6 +134,12 @@ agate.controller('ProfileController', ['$scope', '$location', '$uibModal', 'Acco
 
     getConfigAttributes();
     getSettingsAccount();
+
+    $scope.deleteAuthorization = function (authz) {
+      AccountAuthorization.delete({authz: authz.id}, function () {
+        $scope.authorizations = AccountAuthorizations.query();
+      });
+    };
 
     $scope.onPasswordUpdated = function () {
       AlertService.alert({id: 'ProfileController', type: 'success', msgKey: 'profile.success.updated', delay: 5000});

@@ -82,16 +82,49 @@
         </tr>
         </tbody>
       </table>
+
+      <update-password-button profile="profile" updated="onPasswordUpdated()" user-id="{{user.id}}"></update-password-button>
+
+      <a ng-href="#/user/{{user.id}}/edit" class="btn btn-primary">
+        <i class="fa fa-pencil-square-o"></i> <span translate>edit</span>
+      </a>
     </div>
     <div class="col-md-6">
       <attributes-view attributes='userNonConfigAttributes'></attributes-view>
+
+      <h3 translate>user.authorizations</h3>
+      <p class="help-block" translate>user.authorizations-help</p>
+      <p class="help-block" ng-if="!authorizations || authorizations.length === 0" translate>user.authorizations-none</p>
+      <div class="table-responsive" ng-if="authorizations && authorizations.length>0" >
+        <table class="table table-bordered table-striped">
+          <thead>
+          <tr>
+            <th translate>authorization.application</th>
+            <th translate>authorization.scopes</th>
+            <th translate>actions</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr ng-repeat="authz in authorizations">
+            <td>
+              {{authz.application}}
+            </td>
+            <td>
+              <ul class="no-style-list">
+                <li ng-repeat="scope in authz.scopes">
+                  <span
+                    class="label label-default hoffset-right">{{scope}}</span>
+                </li>
+              </ul>
+            </td>
+            <td>
+              <a ng-click="deleteAuthorization(authz)" title="{{'delete' | translate}}"><i class="fa fa-trash-o"></i></a>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
-
-  <update-password-button profile="profile" updated="onPasswordUpdated()" user-id="{{user.id}}"></update-password-button>
-
-  <a ng-href="#/user/{{user.id}}/edit" class="btn btn-primary">
-    <i class="fa fa-pencil-square-o"></i> <span translate>edit</span>
-  </a>
 
 </div>
