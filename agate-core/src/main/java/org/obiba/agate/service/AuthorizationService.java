@@ -19,6 +19,7 @@ import javax.validation.constraints.NotNull;
 
 import org.joda.time.DateTime;
 import org.obiba.agate.domain.Authorization;
+import org.obiba.agate.event.ApplicationDeletedEvent;
 import org.obiba.agate.event.AuthorizationDeletedEvent;
 import org.obiba.agate.event.UserDeletedEvent;
 import org.obiba.agate.repository.AuthorizationRepository;
@@ -179,6 +180,11 @@ public class AuthorizationService {
   public void onUserDeleted(UserDeletedEvent event) {
     authorizationRepository.findByUsername(event.getPersistable().getName())
       .forEach(a -> authorizationRepository.delete(a));
+  }
+
+  @Subscribe
+  public void onApplicationDeleted(ApplicationDeletedEvent event) {
+    delete(authorizationRepository.findByApplication(event.getPersistable().getName()));
   }
 
   /**
