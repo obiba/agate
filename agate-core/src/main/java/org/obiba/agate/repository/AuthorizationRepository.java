@@ -25,6 +25,8 @@ public interface AuthorizationRepository extends MongoRepository<Authorization, 
 
   List<Authorization> findByUsername(String username);
 
+  List<Authorization> findByApplication(String application);
+
   List<Authorization> findByUsernameAndApplication(String username, String application);
 
   List<Authorization> findByCreatedDateBefore(DateTime localDate);

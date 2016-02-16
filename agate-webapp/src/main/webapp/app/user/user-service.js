@@ -18,6 +18,21 @@ agate.user
       });
     }])
 
+  .factory('UserAuthorizationsResource', ['$resource',
+    function ($resource) {
+      return $resource('ws/user/:id/authorizations', {}, {
+        'get': {method: 'GET', params: {id: '@id'}}
+      });
+    }])
+
+  .factory('UserAuthorizationResource', ['$resource',
+    function ($resource) {
+      return $resource('ws/user/:id/authorization/:authz', {}, {
+        'get': {method: 'GET', params: {id: '@id', authz: '@authz'}},
+        'delete': {method: 'DELETE', params: {id: '@id', authz: '@authz'}, errorHandler: true}
+      });
+    }])
+
   .factory('UserStatusResource', ['$log', '$filter', function ($log, $filter) {
     var nameValueList = [
       {label: $filter('translate')('user.ACTIVE'), value: 'ACTIVE'},

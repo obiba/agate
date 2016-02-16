@@ -207,7 +207,7 @@ agate.user
 
       function inputTemplate(required) {
         var requiredAttr = required ? 'required="true"' : '';
-        return '<div form-input name="attribute.name" model="attribute.value" label="{{attribute.name}}" ' + requiredAttr + '></div>';
+        return '<div form-input name="attribute.name" model="attribute.value" label="{{attribute.name}}" help="{{attribute.description}}" ' + requiredAttr + '></div>';
       }
 
       function singleChosenTemplate(required) {
@@ -218,7 +218,7 @@ agate.user
 
       function booleanTemplate(required) {
         var requiredAttr = required ? 'required="true"' : '';
-        return '<div form-checkbox name="{{attribute.name}}" model="attribute.boolValue" label="{{attribute.name}}" '+ requiredAttr + '></div>';
+        return '<div form-checkbox name="{{attribute.name}}" model="attribute.boolValue" label="{{attribute.name}}" help="{{attribute.description}}" '+ requiredAttr + '></div>';
       }
 
     }]);

@@ -19,9 +19,15 @@ import javax.validation.constraints.NotNull;
 
 import org.joda.time.DateTime;
 import org.obiba.agate.domain.Authorization;
+import org.obiba.agate.event.ApplicationDeletedEvent;
+import org.obiba.agate.event.AuthorizationDeletedEvent;
+import org.obiba.agate.event.UserDeletedEvent;
 import org.obiba.agate.repository.AuthorizationRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 
 /**
  * Manage the {@link org.obiba.agate.domain.Authorization} entities.
@@ -37,6 +43,9 @@ public class AuthorizationService {
 
   @Inject
   private UserService userService;
+
+  @Inject
+  private EventBus eventBus;
 
   /**
    * Persist the {@link Authorization}.
@@ -129,8 +138,8 @@ public class AuthorizationService {
    * @param authorizations
    */
   public void delete(List<Authorization> authorizations) {
-    if(authorizations == null || authorizations.isEmpty()) return;
-    authorizationRepository.delete(authorizations);
+    if(authorizations == null) return;
+    authorizations.forEach(this::delete);
   }
 
   /**
@@ -139,7 +148,18 @@ public class AuthorizationService {
    * @param id
    */
   public void delete(@NotNull String id) {
-    authorizationRepository.delete(id);
+    delete(authorizationRepository.findOne(id));
+  }
+
+  /**
+   * Delete the {@link Authorization}.
+   *
+   * @param authorization
+   */
+  public void delete(Authorization authorization) {
+    if(authorization == null) return;
+    authorizationRepository.delete(authorization.getId());
+    eventBus.post(new AuthorizationDeletedEvent(authorization));
   }
 
   /**
@@ -152,19 +172,28 @@ public class AuthorizationService {
     return getExpirationDate(authorization.getCreatedDate());
   }
 
-
-
   //
   // Event handling
   //
+
+  @Subscribe
+  public void onUserDeleted(UserDeletedEvent event) {
+    authorizationRepository.findByUsername(event.getPersistable().getName())
+      .forEach(a -> authorizationRepository.delete(a));
+  }
+
+  @Subscribe
+  public void onApplicationDeleted(ApplicationDeletedEvent event) {
+    delete(authorizationRepository.findByApplication(event.getPersistable().getName()));
+  }
 
   /**
    * Remove the expired {@link Authorization}s.
    */
   @Scheduled(cron = "0 0/15 * * * *")
   public void removeExpired() {
-    delete(authorizationRepository.findByCreatedDateBefore(
-      DateTime.now().minusHours(configurationService.getConfiguration().getLongTimeout())));
+    delete(authorizationRepository
+      .findByCreatedDateBefore(DateTime.now().minusHours(configurationService.getConfiguration().getLongTimeout())));
   }
 
   //

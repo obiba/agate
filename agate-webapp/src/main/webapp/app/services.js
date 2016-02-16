@@ -20,6 +20,21 @@ agate.factory('Account', ['$resource',
     });
   }]);
 
+agate.factory('AccountAuthorizations', ['$resource',
+  function ($resource) {
+    return $resource('ws/user/_current/authorizations', {}, {
+      'get': {method: 'GET'}
+    });
+  }]);
+
+agate.factory('AccountAuthorization', ['$resource',
+  function ($resource) {
+    return $resource('ws/user/_current/authorization/:authz', {}, {
+      'get': {method: 'GET', params: {authz: '@authz'}},
+      'delete': {method: 'DELETE', params: {authz: '@authz'}, errorHandler: true}
+    });
+  }]);
+
 agate.factory('Password', ['$resource', '$http',
   function ($resource, $http) {
     return {

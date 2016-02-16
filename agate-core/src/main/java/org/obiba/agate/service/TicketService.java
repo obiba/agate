@@ -12,12 +12,15 @@ import org.joda.time.DateTime;
 import org.obiba.agate.domain.Authorization;
 import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
+import org.obiba.agate.event.AuthorizationDeletedEvent;
+import org.obiba.agate.event.UserDeletedEvent;
 import org.obiba.agate.repository.TicketRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.google.common.eventbus.Subscribe;
 import com.mysql.jdbc.StringUtils;
 
 import io.jsonwebtoken.Claims;
@@ -194,6 +197,16 @@ public class TicketService {
   // Event handling
   //
 
+  @Subscribe
+  public void onAuthorizationDeleted(AuthorizationDeletedEvent event) {
+    deleteAll(ticketRepository.findByAuthorization(event.getPersistable().getId()));
+  }
+
+  @Subscribe
+  public void onUserDeleted(UserDeletedEvent event) {
+    deleteAll(ticketRepository.findByUsername(event.getPersistable().getName()));
+  }
+
   /**
    * Remembered tickets have to be removed once expired.
    * This is scheduled to get fired everyday, at midnight.
@@ -234,9 +247,6 @@ public class TicketService {
   private boolean isToken(String idOrToken) {
     return idOrToken != null && idOrToken.contains(".");
   }
-
-
-
 
   private DateTime getExpirationDate(DateTime created, boolean remembered) {
     return remembered

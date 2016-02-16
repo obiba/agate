@@ -344,7 +344,10 @@
     },
     "success": {
       "updated": "User settings updated successfully."
-    }
+    },
+    "authorizations": "Authorizations",
+    "authorizations-help": "Authorizations granted by the user.",
+    "authorizations-none": "No authorizations."
   },
   "attributes": "Attributes",
   "attribute": {
@@ -369,7 +372,8 @@
     "required": "{{name}} is a required field",
     "success": {
       "updated": "Profile settings updated successfully."
-    }
+    },
+    "authorizations-help": "Authorizations that you have granted to applications."
   },
   "properties": "Properties",
   "name": "Name",

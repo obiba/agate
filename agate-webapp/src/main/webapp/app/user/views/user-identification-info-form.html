@@ -22,3 +22,7 @@
 <div ng-repeat="attributeConfigPair in attributeConfigPairs | requiredConfigAttributes">
   <attribute-item attribute="attributeConfigPair.attribute" attribute-config="attributeConfigPair.attributeConfig"></attribute-item>
 </div>
+
+<div ng-repeat="attributeConfigPair in attributeConfigPairs | nonRequiredConfigAttributes">
+  <attribute-item attribute="attributeConfigPair.attribute" attribute-config="attributeConfigPair.attributeConfig"></attribute-item>
+</div>
