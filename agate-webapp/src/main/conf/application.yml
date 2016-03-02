@@ -30,6 +30,8 @@ mongodb:
     databaseName: agate
     username:
     password:
+    authSource:
+    options:
 
 shiro:
   password:
