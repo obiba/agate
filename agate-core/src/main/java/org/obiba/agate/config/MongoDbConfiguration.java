@@ -1,6 +1,10 @@
 package org.obiba.agate.config;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.function.Function;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -23,6 +27,7 @@ import com.google.common.collect.Lists;
 import com.mongodb.DBObject;
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -34,6 +39,8 @@ public class MongoDbConfiguration extends AbstractMongoConfiguration implements 
 
   private RelaxedPropertyResolver propertyResolver;
 
+  private MongoClientURI clientUri;
+
   @Inject
   private Environment env;
 
@@ -43,20 +50,10 @@ public class MongoDbConfiguration extends AbstractMongoConfiguration implements 
   }
 
   @Override
-  protected String getDatabaseName() {
-    return propertyResolver.getProperty("databaseName");
-  }
-
-  @Override
   public Mongo mongo() throws Exception {
     log.debug("Configuring MongoDB");
-    if(isNullOrEmpty(propertyResolver.getProperty("url")) &&
-        isNullOrEmpty(propertyResolver.getProperty("databaseName"))) {
-      log.error("Your MongoDB configuration is incorrect! The application cannot start. " +
-          "Please check your Spring profile, current profiles are: {}", Arrays.toString(env.getActiveProfiles()));
-      throw new ApplicationContextException("MongoDB is not configured correctly");
-    }
-    return new MongoClient(propertyResolver.getProperty("url"));
+    clientUri = buildUri();
+    return new MongoClient(clientUri);
   }
 
   @Override
@@ -66,11 +63,77 @@ public class MongoDbConfiguration extends AbstractMongoConfiguration implements 
   }
 
   @Override
+  protected String getDatabaseName() {
+    return propertyResolver.getProperty("databaseName");
+  }
+
+  @Override
   @Nullable
   protected UserCredentials getUserCredentials() {
     String username = propertyResolver.getProperty("username");
     String password = propertyResolver.getProperty("password");
     return isNullOrEmpty(username) || isNullOrEmpty(password) ? null : new UserCredentials(username, password);
+  }
+
+  @Override
+  @Nullable
+  protected String getAuthenticationDatabaseName() {
+    return propertyResolver.getProperty("authSource");
+  }
+
+  @Nullable
+  protected String getOptions() {
+    return propertyResolver.getProperty("options");
+  }
+
+  private MongoClientURI buildUri() {
+    String utf8 = StandardCharsets.UTF_8.toString();
+    Function<String, String> encode = (String s) -> {
+      try {
+        return URLEncoder.encode(s, utf8);
+      } catch(UnsupportedEncodingException e) {
+        log.error("Failed to encode " + e);
+      }
+
+      return null;
+    };
+
+    String url = propertyResolver.getProperty("url");
+    String databaseName = encode.apply(propertyResolver.getProperty("databaseName"));
+
+    if(isNullOrEmpty(url) || isNullOrEmpty(databaseName)) {
+      log.error("Your MongoDB configuration is incorrect! The application cannot start. " +
+        "Please check your Spring profile, current profiles are: {}", Arrays.toString(env.getActiveProfiles()));
+      throw new ApplicationContextException("MongoDB is not configured correctly");
+    }
+
+    StringBuilder builder = new StringBuilder("mongodb://");
+    StringBuilder optionsBuilder = new StringBuilder();
+
+    UserCredentials userCredentials = getUserCredentials();
+    String authSource = getAuthenticationDatabaseName();
+    String options = getOptions();
+
+    if (userCredentials != null && userCredentials.hasUsername() && userCredentials.hasPassword()) {
+      builder.append(encode.apply(userCredentials.getUsername())).append(':')
+        .append(encode.apply(userCredentials.getPassword())).append('@');
+    }
+
+    builder.append(url).append('/').append(databaseName);
+
+    if (!isNullOrEmpty(authSource)) {
+      optionsBuilder.append("authSource=").append(authSource);
+    }
+
+    if (!isNullOrEmpty(options)) {
+      optionsBuilder.append('&').append(options);
+    }
+
+    if (optionsBuilder.length() > 0) {
+      builder.append('?').append(optionsBuilder.toString());
+    }
+
+    return new MongoClientURI(builder.toString());
   }
 
   public static class VersionReadConverter implements Converter<DBObject, Version> {
