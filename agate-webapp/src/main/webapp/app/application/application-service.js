@@ -25,4 +25,10 @@ agate.application
         'get': {method: 'GET', params: {id: '@id'}},
         'update': { method:'PUT', params: {id: '@id'}}
       });
+    }])
+  .factory('ApplicationSummaryResource', ['$resource',
+    function ($resource) {
+      return $resource('ws/application/:id/summary', {}, {
+        'get': {method: 'GET', params: {id: '@id'}}
+      });
     }]);

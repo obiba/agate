@@ -1,0 +1,43 @@
+<div>
+  <div class="row">
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+      <div class="alert alert-danger" ng-show="authenticationError" translate="login.messages.error.authentication">
+      </div>
+      <div class="well">
+        <p><strong>{{client.name}}</strong> <span translate>oauth.grant-request</span> <strong>{{application.name}}</strong></p>
+        <dl class="dl-horizontal">
+          <dt translate>oauth.scope</dt>
+          <dd>{{scope.name}}</dd>
+          <dt ng-if="scope.description" translate>oauth.scope-description</dt>
+          <dd ng-if="scope.description">{{scope.description}}</dd>
+        </dl>
+        <div class="row">
+          <div class="col-md-12">
+            <form name="decline" role="form" action="ws/oauth/decline" method="post" style="display: inline-block;">
+              <input type="hidden" name="client_id" ng-value="auth.client_id">
+              <input type="hidden" name="redirect_uri" ng-value="auth.redirect_uri">
+              <input type="hidden" name="response_type" ng-value="auth.response_type">
+              <input type="hidden" name="state" ng-value="auth.state">
+              <input type="hidden" name="scope" ng-value="auth.scope">
+              <button type="submit" class="btn btn-default">
+                <span translate>oauth.decline</span>
+              </button>
+            </form>
+            <form name="accept" role="form" action="ws/oauth/authz" method="get" style="display: inline-block;">
+              <input type="hidden" name="client_id" ng-value="auth.client_id">
+              <input type="hidden" name="redirect_uri" ng-value="auth.redirect_uri">
+              <input type="hidden" name="response_type" ng-value="auth.response_type">
+              <input type="hidden" name="state" ng-value="auth.state">
+              <input type="hidden" name="scope" ng-value="auth.scope">
+              <button type="submit" class="btn btn-primary">
+                <span translate>oauth.accept</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4"></div>
+  </div>
+</div>

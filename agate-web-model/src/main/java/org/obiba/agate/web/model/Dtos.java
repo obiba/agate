@@ -62,7 +62,12 @@ public class Dtos {
 
   @NotNull
   public Agate.ApplicationDto asDto(@NotNull Application application) {
-    return applicationDtos.asDto(application);
+    return applicationDtos.asDto(application, false);
+  }
+
+  @NotNull
+  public Agate.ApplicationDto asDto(@NotNull Application application, boolean summary) {
+    return applicationDtos.asDto(application, summary);
   }
 
   @NotNull

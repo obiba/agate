@@ -18,6 +18,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.obiba.agate.domain.Application;
 import org.obiba.agate.service.ApplicationService;
@@ -28,7 +29,6 @@ import org.springframework.stereotype.Component;
 import com.google.common.collect.Lists;
 
 @Component
-@RequiresRoles("agate-administrator")
 @Path("/application/{id}")
 public class ApplicationResource {
 
@@ -39,11 +39,20 @@ public class ApplicationResource {
   private ApplicationService applicationService;
 
   @GET
+  @RequiresRoles("agate-administrator")
   public Agate.ApplicationDto getApplication(@PathParam("id")String id) {
     return dtos.asDto(applicationService.getApplication(id));
   }
 
+  @GET
+  @Path("/summary")
+  @RequiresAuthentication
+  public Agate.ApplicationDto getApplicationSummary(@PathParam("id")String id) {
+    return dtos.asDto(applicationService.getApplication(id), true);
+  }
+
   @PUT
+  @RequiresRoles("agate-administrator")
   public Response updateApplication(@PathParam("id")String id, Agate.ApplicationDto dto) {
     Application application = applicationService.getApplication(id);
     application.setDescription(dto.getDescription());
@@ -61,6 +70,7 @@ public class ApplicationResource {
   }
 
   @DELETE
+  @RequiresRoles("agate-administrator")
   public Response delete(@PathParam("id")String id) {
     applicationService.delete(id);
 

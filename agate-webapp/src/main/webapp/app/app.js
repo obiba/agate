@@ -51,6 +51,13 @@ agate
             authorizedRoles: [USER_ROLES.all]
           }
         })
+        .when('/authorize', {
+          templateUrl: 'app/views/oauth-authorize.html',
+          controller: 'OAuthController',
+          access: {
+            authorizedRoles: [USER_ROLES.all]
+          }
+        })
         .when('/profile', {
           templateUrl: 'app/views/profile/profile-view.html',
           controller: 'ProfileController',

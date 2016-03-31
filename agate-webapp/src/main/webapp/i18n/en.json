@@ -407,5 +407,12 @@
       "email-already-assigned": "Email '{{arg0}}' is already assigned to another user."
     }
   },
-  "form-server-error": "Error"
+  "form-server-error": "Error",
+  "oauth": {
+    "grant-request": "is requesting to access",
+    "scope": "Scope",
+    "scope-description": "Description",
+    "accept": "Accept",
+    "decline": "Decline"
+  }
 }
