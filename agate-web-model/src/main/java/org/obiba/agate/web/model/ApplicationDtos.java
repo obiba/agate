@@ -22,14 +22,14 @@ import org.springframework.stereotype.Component;
 class ApplicationDtos {
 
   @NotNull
-  Agate.ApplicationDto asDto(@NotNull Application application) {
+  Agate.ApplicationDto asDto(@NotNull Application application, boolean summary) {
     Agate.ApplicationDto.Builder builder = Agate.ApplicationDto.newBuilder();
     builder.setId(application.getId()) //
       .setName(application.getName()) //
       .setTimestamps(TimestampsDtos.asDto(application));
 
     if(application.hasDescription()) builder.setDescription(application.getDescription());
-    if(application.hasRedirectURI()) builder.setRedirectURI(application.getRedirectURI());
+    if(application.hasRedirectURI() && !summary) builder.setRedirectURI(application.getRedirectURI());
 
     if(application.hasScopes()) builder.addAllScopes(application.getScopes().stream().map(this::asDto)
       .collect(Collectors.toList()));

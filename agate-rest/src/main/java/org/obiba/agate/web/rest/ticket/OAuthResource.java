@@ -12,6 +12,7 @@ package org.obiba.agate.web.rest.ticket;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.function.Function;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -56,12 +57,12 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
 
 @Component
 @Path("/oauth")
 @Scope("request")
 public class OAuthResource {
-
 
   @Inject
   private AuthorizationService authorizationService;
@@ -81,54 +82,58 @@ public class OAuthResource {
   @Inject
   private TokenUtils tokenUtils;
 
+  @POST
+  @Path("/decline")
+  @RequiresAuthentication
+  public Response decline(@Context HttpServletRequest servletRequest)
+      throws URISyntaxException, OAuthSystemException {
+    return tryBuildResponse(servletRequest, (data) -> {
+      try {
+        OAuthASResponse.OAuthErrorResponseBuilder builder = OAuthASResponse.errorResponse(HttpServletResponse.SC_FOUND) //
+            .setError("access_denied") //
+            .setErrorDescription("Owner denied authorization.") //
+            .location(data.getRedirectUri());
+        setState(builder, data.getRequest());
+        OAuthResponse response = builder.buildQueryMessage();
+        return Response.status(response.getResponseStatus()).location(new URI(response.getLocationUri())).build();
+      } catch(OAuthSystemException | URISyntaxException e) {
+        throw Throwables.propagate(e);
+      }
+    });
+  }
+
   @GET
   @Path("/authz")
   @RequiresAuthentication
   public Response authorize(@Context HttpServletRequest servletRequest)
     throws URISyntaxException, OAuthSystemException {
-    OAuthAuthzRequest oAuthRequest = null;
-    try {
-      oAuthRequest = new OAuthAuthzRequest(servletRequest);
-      OAuthIssuer oAuthIssuer = new OAuthIssuerImpl(new MD5Generator());
+    return tryBuildResponse(servletRequest, (data) -> {
+      try {
+        OAuthIssuer oAuthIssuer = new OAuthIssuerImpl(new MD5Generator());
+        User user = userService.getCurrentUser();
+        Authorization authorization = authorizationService.find(user.getName(), data.getClientId());
+        if(authorization == null) {
+          authorization = new Authorization(user.getName(), data.getClientId());
+        }
+        authorization.setCode(oAuthIssuer.authorizationCode());
+        authorization.setScopes(data.getRequest().getScopes());
+        authorization.setRedirectURI(data.getRedirectUri());
+        authorizationService.save(authorization);
 
-      String clientId = oAuthRequest.getParam(OAuth.OAUTH_CLIENT_ID);
-      String redirectURI = validateApplication(clientId, oAuthRequest.getParam(OAuth.OAUTH_REDIRECT_URI));
+        long expiresIn = authorizationService.getExpirationDate(authorization).getMillis() - DateTime.now().getMillis();
+        OAuthASResponse.OAuthAuthorizationResponseBuilder builder = OAuthASResponse
+            .authorizationResponse(servletRequest, HttpServletResponse.SC_FOUND) //
+            .setCode(authorization.getCode()) //
+            .setExpiresIn(expiresIn / 1000) //
+            .location(data.getRedirectUri());
 
-      User user = userService.getCurrentUser();
-      Authorization authorization = authorizationService.find(user.getName(), clientId);
-      if(authorization == null) {
-        authorization = new Authorization(user.getName(), clientId);
+        setState(builder, data.getRequest());
+        OAuthResponse response = builder.buildQueryMessage();
+        return Response.status(response.getResponseStatus()).location(new URI(response.getLocationUri())).build();
+      } catch(URISyntaxException | OAuthSystemException e) {
+        throw Throwables.propagate(e);
       }
-      authorization.setCode(oAuthIssuer.authorizationCode());
-      authorization.setScopes(oAuthRequest.getScopes());
-      authorization.setRedirectURI(redirectURI);
-      authorizationService.save(authorization);
-
-      long expiresIn = authorizationService.getExpirationDate(authorization).getMillis() - DateTime.now().getMillis();
-      OAuthASResponse.OAuthAuthorizationResponseBuilder builder = OAuthASResponse
-        .authorizationResponse(servletRequest, HttpServletResponse.SC_FOUND) //
-        .setCode(authorization.getCode()) //
-        .setExpiresIn(expiresIn / 1000) //
-        .location(redirectURI);
-
-      setState(builder, oAuthRequest);
-
-      OAuthResponse response = builder.buildQueryMessage();
-      return Response.status(response.getResponseStatus()).location(new URI(response.getLocationUri())).build();
-    } catch(OAuthProblemException e) {
-      OAuthASResponse.OAuthErrorResponseBuilder builder = OAuthASResponse
-        .errorResponse(HttpServletResponse.SC_BAD_REQUEST).error(e);
-      setState(builder, oAuthRequest);
-      OAuthResponse response = builder.buildJSONMessage();
-      return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
-    } catch(Exception e) {
-      OAuthASResponse.OAuthErrorResponseBuilder builder = OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST) //
-        .setError(e.getClass().getSimpleName()) //
-        .setErrorDescription(e.getMessage());
-      setState(builder, oAuthRequest);
-      OAuthResponse response = builder.buildJSONMessage();
-      return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
-    }
+    });
   }
 
   @POST
@@ -164,6 +169,40 @@ public class OAuthResource {
   //
   // Private methods
   //
+
+  private Response tryBuildResponse(HttpServletRequest servletRequest, Function<OAuthRequestData, Response> responseBuilder)
+      throws URISyntaxException, OAuthSystemException  {
+    OAuthAuthzRequest oAuthRequest = null;
+    try {
+      oAuthRequest = new OAuthAuthzRequest(servletRequest);
+      String clientId = oAuthRequest.getParam(OAuth.OAUTH_CLIENT_ID);
+      String redirectURI = validateApplication(clientId, oAuthRequest.getParam(OAuth.OAUTH_REDIRECT_URI));
+      try {
+        return responseBuilder.apply(new OAuthRequestData(clientId, redirectURI, oAuthRequest));
+      } catch(RuntimeException e) {
+        if (e.getCause() != null) {
+          if(e.getCause() instanceof OAuthProblemException) throw (OAuthProblemException) e.getCause();
+          else if(e.getCause() instanceof URISyntaxException) throw (URISyntaxException) e.getCause();
+          throw (Exception) e.getCause();
+        }
+
+        throw e;
+      }
+    } catch(OAuthProblemException e) {
+      OAuthASResponse.OAuthErrorResponseBuilder builder = OAuthASResponse
+          .errorResponse(HttpServletResponse.SC_BAD_REQUEST).error(e);
+      setState(builder, oAuthRequest);
+      OAuthResponse response = builder.buildJSONMessage();
+      return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
+    } catch(Exception e) {
+      OAuthASResponse.OAuthErrorResponseBuilder builder = OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST) //
+          .setError(e.getClass().getSimpleName()) //
+          .setErrorDescription(e.getMessage());
+      setState(builder, oAuthRequest);
+      OAuthResponse response = builder.buildJSONMessage();
+      return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
+    }
+  }
 
   private Response accessAuthorizationCodeGrant(HttpServletRequest servletRequest, OAuthTokenRequest oAuthRequest)
     throws OAuthSystemException, OAuthProblemException {
@@ -282,4 +321,39 @@ public class OAuthResource {
     authorizationValidator.validateApplicationParameters(oAuthRequest.getClientId(), oAuthRequest.getClientSecret());
   }
 
+  private static class OAuthRequestData {
+    private String redirectUri;
+    private String clientId;
+    private OAuthAuthzRequest request;
+
+    public OAuthRequestData(String clientId, String redirectUri, OAuthAuthzRequest request) {
+      this.redirectUri = redirectUri;
+      this.clientId = clientId;
+      this.request = request;
+    }
+
+    public String getRedirectUri() {
+      return redirectUri;
+    }
+
+    public void setRedirectUri(String redirectUri) {
+      this.redirectUri = redirectUri;
+    }
+
+    public String getClientId() {
+      return clientId;
+    }
+
+    public void setClientId(String clientId) {
+      this.clientId = clientId;
+    }
+
+    public OAuthAuthzRequest getRequest() {
+      return request;
+    }
+
+    public void setRequest(OAuthAuthzRequest request) {
+      this.request = request;
+    }
+  }
 }

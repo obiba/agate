@@ -109,6 +109,17 @@ agate.controller('LogoutController', ['$location', 'AuthenticationSharedService'
     });
   }]);
 
+agate.controller('OAuthController', ['$scope', '$location', 'ApplicationSummaryResource', function($scope, $location, ApplicationSummaryResource) {
+  $scope.auth = $location.search();
+  $scope.client = ApplicationSummaryResource.get({ id: $scope.auth.client_id });
+  $scope.application = ApplicationSummaryResource.get({ id: $scope.auth.scope.split(':')[0] });
+  $scope.application.$promise.then(function() {
+    $scope.scope = ($scope.application.scopes || []).filter(function(s) {
+        return s.name === $scope.auth.scope.split(':')[1];
+      })[0] || {name: $scope.auth.scope};
+  });
+}]);
+
 agate.controller('ProfileController', ['$scope', '$location', '$uibModal', 'Account', 'AccountAuthorizations', 'AccountAuthorization', 'ConfigurationResource', 'AttributesService', 'AlertService',
   function ($scope, $location, $uibModal, Account, AccountAuthorizations, AccountAuthorization, ConfigurationResource, AttributesService, AlertService) {
     var getConfigAttributes = function () {
