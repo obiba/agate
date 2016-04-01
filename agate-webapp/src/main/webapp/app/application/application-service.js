@@ -29,6 +29,6 @@ agate.application
   .factory('ApplicationSummaryResource', ['$resource',
     function ($resource) {
       return $resource('ws/application/:id/summary', {}, {
-        'get': {method: 'GET', params: {id: '@id'}}
+        'get': {method: 'GET', params: {id: '@id'}, errorHandler: true}
       });
     }]);
