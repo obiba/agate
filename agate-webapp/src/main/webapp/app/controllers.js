@@ -111,8 +111,17 @@ agate.controller('LogoutController', ['$location', 'AuthenticationSharedService'
 
 agate.controller('OAuthController', ['$scope', '$location', 'ApplicationSummaryResource', function($scope, $location, ApplicationSummaryResource) {
   $scope.auth = $location.search();
-  $scope.client = ApplicationSummaryResource.get({ id: $scope.auth.client_id });
-  $scope.application = ApplicationSummaryResource.get({ id: $scope.auth.scope.split(':')[0] });
+  $scope.client = ApplicationSummaryResource.get({ id: $scope.auth.client_id },function(){
+  }, function(){
+    $scope.error = 'unknown-client-application';
+    $scope.errorArgs = $scope.auth.client_id;
+  });
+  var applicationName = $scope.auth.scope.split(':')[0];
+  $scope.application = ApplicationSummaryResource.get({ id: applicationName },function(){
+  }, function(){
+    $scope.error = 'unknown-resource-application';
+    $scope.errorArgs = applicationName;
+  });
   $scope.application.$promise.then(function() {
     $scope.scope = ($scope.application.scopes || []).filter(function(s) {
         return s.name === $scope.auth.scope.split(':')[1];
