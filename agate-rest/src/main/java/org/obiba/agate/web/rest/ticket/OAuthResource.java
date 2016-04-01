@@ -12,6 +12,7 @@ package org.obiba.agate.web.rest.ticket;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Set;
 import java.util.function.Function;
 
 import javax.annotation.Nullable;
@@ -89,13 +90,7 @@ public class OAuthResource {
       throws URISyntaxException, OAuthSystemException {
     return tryBuildResponse(servletRequest, (data) -> {
       try {
-        OAuthASResponse.OAuthErrorResponseBuilder builder = OAuthASResponse.errorResponse(HttpServletResponse.SC_FOUND) //
-            .setError("access_denied") //
-            .setErrorDescription("Owner denied authorization.") //
-            .location(data.getRedirectUri());
-        setState(builder, data.getRequest());
-        OAuthResponse response = builder.buildQueryMessage();
-        return Response.status(response.getResponseStatus()).location(new URI(response.getLocationUri())).build();
+        return buildErrorResponse(OAuthProblemException.error("access_denied", "Owner denied authorization."), data.getRequest(), data.getRedirectUri());
       } catch(OAuthSystemException | URISyntaxException e) {
         throw Throwables.propagate(e);
       }
@@ -173,34 +168,52 @@ public class OAuthResource {
   private Response tryBuildResponse(HttpServletRequest servletRequest, Function<OAuthRequestData, Response> responseBuilder)
       throws URISyntaxException, OAuthSystemException  {
     OAuthAuthzRequest oAuthRequest = null;
+    String redirectURI = null;
+
     try {
       oAuthRequest = new OAuthAuthzRequest(servletRequest);
       String clientId = oAuthRequest.getParam(OAuth.OAUTH_CLIENT_ID);
-      String redirectURI = validateApplication(clientId, oAuthRequest.getParam(OAuth.OAUTH_REDIRECT_URI));
-      try {
-        return responseBuilder.apply(new OAuthRequestData(clientId, redirectURI, oAuthRequest));
-      } catch(RuntimeException e) {
-        if (e.getCause() != null) {
-          if(e.getCause() instanceof OAuthProblemException) throw (OAuthProblemException) e.getCause();
-          else if(e.getCause() instanceof URISyntaxException) throw (URISyntaxException) e.getCause();
-          throw (Exception) e.getCause();
-        }
-
-        throw e;
-      }
+      redirectURI = validateClientApplication(clientId, oAuthRequest.getParam(OAuth.OAUTH_REDIRECT_URI));
+      validateScope(oAuthRequest.getScopes());
+      return responseBuilder.apply(new OAuthRequestData(clientId, redirectURI, oAuthRequest));
     } catch(OAuthProblemException e) {
-      OAuthASResponse.OAuthErrorResponseBuilder builder = OAuthASResponse
-          .errorResponse(HttpServletResponse.SC_BAD_REQUEST).error(e);
-      setState(builder, oAuthRequest);
-      OAuthResponse response = builder.buildJSONMessage();
-      return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
+      return buildErrorResponse(e, oAuthRequest, redirectURI);
+    } catch(RuntimeException e) {
+      if(e.getCause() instanceof OAuthProblemException) {
+        return buildErrorResponse((OAuthProblemException)e.getCause(), oAuthRequest, redirectURI);
+      } else if(e.getCause() instanceof URISyntaxException) throw (URISyntaxException) e.getCause();
+
+      throw e;
     } catch(Exception e) {
-      OAuthASResponse.OAuthErrorResponseBuilder builder = OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST) //
-          .setError(e.getClass().getSimpleName()) //
-          .setErrorDescription(e.getMessage());
-      setState(builder, oAuthRequest);
-      OAuthResponse response = builder.buildJSONMessage();
+      return buildErrorResponse(OAuthProblemException.error("server_error", e.getMessage()), oAuthRequest, redirectURI);
+    }
+  }
+
+  private Response buildErrorResponse(OAuthProblemException e, OAuthAuthzRequest oAuthRequest, String redirectURI)
+      throws OAuthSystemException, URISyntaxException {
+    boolean canRedirect = !Strings.isNullOrEmpty(redirectURI);
+    OAuthASResponse.OAuthErrorResponseBuilder builder = OAuthASResponse
+        .errorResponse(canRedirect ? HttpServletResponse.SC_FOUND : HttpServletResponse.SC_BAD_REQUEST).error(e);
+    setState(builder, oAuthRequest);
+    OAuthResponse response;
+
+    if(canRedirect) {
+      builder.location(redirectURI);
+      response = builder.buildQueryMessage();
+      return Response.status(response.getResponseStatus()).location(new URI(response.getLocationUri())).build();
+    } else {
+      response = builder.buildJSONMessage();
       return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
+    }
+  }
+
+  private void validateScope(Set<String> scopes) throws OAuthProblemException{
+    for(String s: scopes) {
+      String[] scopeParts = s.split(":");
+      Application application = applicationService.find(scopeParts[0]);
+
+      if(application == null || (scopeParts.length > 1 && !application.hasScope(scopeParts[1])))
+        throw OAuthProblemException.error("invalid_scope", String.format("Invalid scope %s", s));
     }
   }
 
@@ -292,11 +305,11 @@ public class OAuthResource {
    * @param redirectURI Optional: if null or empty default Application's redirect URI is used else it must be a valid redirect URI.
    * @return the redirectURI
    */
-  private String validateApplication(String clientId, String redirectURI) throws OAuthProblemException {
+  private String validateClientApplication(String clientId, String redirectURI) throws OAuthProblemException {
     Application application = applicationService.getApplication(clientId);
     if(!application.hasRedirectURI()) {
       throw OAuthProblemException
-        .error("missing_application_redirect_uri", "Application does not have a default redirect URI");
+          .error("missing_application_redirect_uri", "Application does not have a default redirect URI");
     }
     String defaultURI = application.getRedirectURI();
     // TODO? check user has access to this application
@@ -307,7 +320,7 @@ public class OAuthResource {
     }
     if(!normalizedURI.startsWith(defaultURI)) {
       throw OAuthProblemException
-        .error("invalid_redirect_uri", "The redirect URI does not match the application's redirect URI");
+          .error("invalid_redirect_uri", "The redirect URI does not match the application's redirect URI");
     }
     return normalizedURI;
   }
