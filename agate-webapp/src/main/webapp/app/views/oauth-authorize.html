@@ -1,5 +1,4 @@
 <div>
-
   <div class="row">
     <div class="col-md-3"></div>
     <div class="col-md-6">
@@ -12,7 +11,6 @@
       </div>
 
       <div ng-if="!error">
-
         <p class="alert alert-info">
           <strong>{{client.name}}</strong> <span translate>oauth.grant-request</span> <strong>{{application.name}}</strong>
         </p>
@@ -24,30 +22,31 @@
           </p>
         </div>
 
-        <div ng-if="application.description">
-          <h4>{{application.name}}</h4>
-          <p class="help-block">
-            {{application.description}}
-          </p>
-        </div>
-
-        <div class="panel panel-default voffset4">
-          <div class="panel-heading" translate>oauth.review-permissions</div>
-          <div class="panel-body">
-            <p ng-if="!scope.description" translate>oauth.all-permissions</p>
-            <table class="table table-striped" ng-if="scope.description">
-              <tr>
-                <td>
-                  {{scope.name}}
-                </td>
-                <td>
-                  <span>{{scope.description}}</span>
-                </td>
-              </tr>
-            </table>
+        <div ng-repeat="appScope in applicationScopes">
+          <div ng-if="appScope.application.description">
+            <h4>{{appScope.application.id}}</h4>
+            <p class="help-block">
+              {{appScope.application.description}}
+            </p>
+          </div>
+          <div class="panel panel-default voffset4">
+            <div class="panel-heading" translate>oauth.review-permissions</div>
+            <div class="panel-body">
+              <table class="table table-striped">
+                <tr ng-repeat="scope in appScope.scopes">
+                  <td ng-if="scope.name">
+                    <span>{{scope.name}}</span>
+                  </td>
+                  <td>
+                    <span ng-if="scope.description">{{scope.description}}</span>
+                    <span ng-if="!scope.name && scope.application !== 'openid'" translate>oauth.all-permissions</span>
+                    <span ng-if="scope.application === 'openid'" translate>oauth.openid-request</span>
+                  </td>
+                </tr>
+              </table>
+            </div>
           </div>
         </div>
-
         <div class="row">
           <div class="col-md-12">
             <form name="decline" role="form" action="ws/oauth/decline" method="post" style="display: inline-block;">
