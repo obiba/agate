@@ -418,6 +418,8 @@
     "accept": "Accept",
     "decline": "Decline",
     "unknown-client-application": "Client application requesting authorization could not be identified.",
-    "unknown-resource-application": "Resource application could not be identified."
+    "unknown-resource-application": "Resource application could not be identified.",
+    "unknown-resource-scope": "Resource scope could not be identified.",
+    "openid-request": "View your profile information on Agate."
   }
 }

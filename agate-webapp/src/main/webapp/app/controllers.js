@@ -109,23 +109,63 @@ agate.controller('LogoutController', ['$location', 'AuthenticationSharedService'
     });
   }]);
 
-agate.controller('OAuthController', ['$scope', '$location', 'ApplicationSummaryResource', function($scope, $location, ApplicationSummaryResource) {
+agate.controller('OAuthController', ['$scope', '$q', '$location', 'ApplicationSummaryResource', function($scope, $q, $location, ApplicationSummaryResource) {
   $scope.auth = $location.search();
   $scope.client = ApplicationSummaryResource.get({ id: $scope.auth.client_id },function(){
   }, function(){
     $scope.error = 'unknown-client-application';
     $scope.errorArgs = $scope.auth.client_id;
   });
-  var applicationName = $scope.auth.scope.split(':')[0];
-  $scope.application = ApplicationSummaryResource.get({ id: applicationName },function(){
-  }, function(){
-    $scope.error = 'unknown-resource-application';
-    $scope.errorArgs = applicationName;
+
+  $scope.scopes = $scope.auth.scope.split(' ').map(function (s) {
+    var scopeParts = s.split(':'), appId = scopeParts[0];
+    return {application: appId, name: scopeParts[1] };
   });
-  $scope.application.$promise.then(function() {
-    $scope.scope = ($scope.application.scopes || []).filter(function(s) {
-        return s.name === $scope.auth.scope.split(':')[1];
-      })[0] || {name: $scope.auth.scope};
+
+  var applications = $scope.scopes.reduce(function(applications, scope) {
+    if(applications.indexOf(scope.application) < 0) {
+      applications.push(scope.application);
+    }
+
+    return applications;
+  }, []);
+
+  $q.all(applications.map(function(application) {
+    if (application !== 'openid') {
+      return ApplicationSummaryResource.get({id: application}).$promise;
+    } else {
+      var deferred = $q.defer();
+      deferred.resolve({id: 'openid', scopes: []});
+      return deferred.promise;
+    }
+  })).then(function(applications) {
+    var res = $scope.scopes.map(function(scope) {
+      var application = applications.filter(function(application) { return application.id === scope.application; })[0],
+        found = application.scopes.filter(function(s) {return s.name === scope.name; })[0];
+
+      if (!found && scope.name) {
+          scope.isMissing = true;
+      } else {
+        scope.description = found ? found.description : null;
+      }
+
+      return scope;
+    });
+
+    var missingScopes = res.filter(function(scope) { return scope.isMissing; });
+
+    if(missingScopes.length > 0) {
+      $scope.error = 'unknown-resource-scope';
+      $scope.errorArgs = missingScopes.map(function(s) { return s.application + ':' + s.name; }).join(', ');
+    }
+
+    $scope.applicationScopes = applications.map(function(application) {
+      var scopes = res.filter(function(scope) { return scope.application === application.id; });
+      return {application: application, scopes: scopes};
+    });
+  }).catch(function() {
+    $scope.error = 'unknown-resource-application';
+    $scope.errorArgs = applications.join(', ');
   });
 }]);
 

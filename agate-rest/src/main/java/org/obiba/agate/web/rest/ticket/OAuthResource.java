@@ -209,11 +209,13 @@ public class OAuthResource {
 
   private void validateScope(Set<String> scopes) throws OAuthProblemException{
     for(String s: scopes) {
-      String[] scopeParts = s.split(":");
-      Application application = applicationService.find(scopeParts[0]);
+      if (!TokenUtils.OPENID_SCOPE.equals(s)) {
+        String[] scopeParts = s.split(":");
+        Application application = applicationService.find(scopeParts[0]);
 
-      if(application == null || (scopeParts.length > 1 && !application.hasScope(scopeParts[1])))
-        throw OAuthProblemException.error("invalid_scope", String.format("Invalid scope %s", s));
+        if(application == null || (scopeParts.length > 1 && !application.hasScope(scopeParts[1])))
+          throw OAuthProblemException.error("invalid_scope", String.format("Invalid scope %s", s));
+      }
     }
   }
 
