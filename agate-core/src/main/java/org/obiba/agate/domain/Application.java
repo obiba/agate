@@ -54,7 +54,7 @@ public class Application extends AbstractAuditableDocument {
   }
 
   public void setNameAsId() {
-    setId(getName().replaceAll("\\s+", "+").toLowerCase());
+    setId(getName().replaceAll("\\s+", "-").replaceAll(":", "-").replaceAll("-+", "-").toLowerCase());
   }
 
   public String getName() {
