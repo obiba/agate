@@ -71,8 +71,10 @@ public class ApplicationService {
     return applications == null || applications.isEmpty() ? null : applications.get(0);
   }
 
-  public boolean isValid(String name, String key) {
-    List<Application> applications = applicationRepository.findByNameAndKey(name, hashKey(key));
+  public boolean isValid(String idOrName, String key) {
+    List<Application> applications = applicationRepository.findByIdAndKey(idOrName, hashKey(key));
+    if(applications == null && applications.isEmpty())
+      applications = applicationRepository.findByNameAndKey(idOrName, hashKey(key));
     return applications != null && !applications.isEmpty();
   }
 
