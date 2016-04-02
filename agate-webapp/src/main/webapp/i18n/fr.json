@@ -319,7 +319,7 @@
   "oauth": {
     "title": "Authorize Application",
     "review-permissions": "Review Permissions",
-    "all-permissions": "Permission to get full access on your behalf.",
+    "all-permissions": "Permission to get full access.",
     "grant-request": "would like permission to access your account.",
     "scope": "Scope",
     "scope-description": "Description",
@@ -328,6 +328,6 @@
     "unknown-client-application": "Client application requesting authorization could not be identified.",
     "unknown-resource-application": "Resource application could not be identified.",
     "unknown-resource-scope": "Resource scope could not be identified.",
-    "openid-request": "View your profile information (including email)."
+    "openid-request": "Permission to view your profile information (including email)."
   }
 }

@@ -118,7 +118,8 @@ agate.controller('OAuthController', ['$scope', '$q', '$location', 'ApplicationSu
   });
 
   $scope.scopes = $scope.auth.scope.split(' ').map(function (s) {
-    var scopeParts = s.split(':'), appId = scopeParts[0];
+    var scopeParts = s.split(':');
+    var appId = scopeParts[0];
     return {application: appId, name: scopeParts[1] };
   });
 
@@ -140,8 +141,8 @@ agate.controller('OAuthController', ['$scope', '$q', '$location', 'ApplicationSu
     }
   })).then(function(applications) {
     var res = $scope.scopes.map(function(scope) {
-      var application = applications.filter(function(application) { return application.id === scope.application; })[0],
-        found = application.scopes.filter(function(s) {return s.name === scope.name; })[0];
+      var application = applications.filter(function(application) { return application.id === scope.application; })[0];
+      var found = application.scopes ? application.scopes.filter(function(s) {return s.name === scope.name; })[0] : {};
 
       if (!found && scope.name) {
           scope.isMissing = true;
