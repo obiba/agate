@@ -134,6 +134,20 @@ public class TicketResource extends ApplicationAwareResource {
   }
 
   @GET
+  @Path("/{token}/_validate")
+  public Response validate(@PathParam("token") String token,
+      @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) {
+    validateApplication(authHeader);
+    tokenUtils.validateAccessToken(token, getApplicationName());
+
+    Ticket ticket = ticketService.getTicket(token);
+    ticket.addEvent(getApplicationName(), "validate");
+    ticketService.save(ticket);
+
+    return Response.ok().build();
+  }
+
+  @GET
   @Path("/{token}/subject")
   public AuthDtos.SubjectDto get(@PathParam("token") String token,
     @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) {

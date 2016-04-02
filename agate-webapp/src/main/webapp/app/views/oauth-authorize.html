@@ -12,7 +12,7 @@
 
       <div ng-if="!error">
         <p class="alert alert-info">
-          <strong>{{client.name}}</strong> <span translate>oauth.grant-request</span> <strong>{{application.name}}</strong>
+          <strong>{{client.name}}</strong> <span translate>oauth.grant-request</span>
         </p>
 
         <div ng-if="client.description">
@@ -22,16 +22,16 @@
           </p>
         </div>
 
-        <div ng-repeat="appScope in applicationScopes">
-          <div ng-if="appScope.application.description">
-            <h4>{{appScope.application.id}}</h4>
-            <p class="help-block">
-              {{appScope.application.description}}
-            </p>
-          </div>
-          <div class="panel panel-default voffset4">
-            <div class="panel-heading" translate>oauth.review-permissions</div>
-            <div class="panel-body">
+        <div class="panel panel-default voffset4">
+          <div class="panel-heading" translate>oauth.review-permissions</div>
+          <div class="panel-body">
+            <div ng-repeat="appScope in applicationScopes">
+              <div ng-if="appScope.application.description">
+                <h4>{{appScope.application.id}}</h4>
+                <p class="help-block">
+                  {{appScope.application.description}}
+                </p>
+              </div>
               <table class="table table-striped">
                 <tr ng-repeat="scope in appScope.scopes">
                   <td ng-if="scope.name">
