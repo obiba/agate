@@ -1,15 +1,15 @@
-<div class="checkbox" ng-class="{'has-error': (form[fieldName].$dirty || form.saveAttempted) && form[name].$invalid}">
+<div class="radio" ng-class="{'has-error': (form[fieldName].$dirty || form.saveAttempted) && form[name].$invalid}">
 
   <label for="{{name}}" class="control-label">
     <span ng-show="required">*</span>
-    <input
+    <input ng-click="onSelect(value)"
           ng-model="model"
-          type="checkbox"
+          ng-value="value"
+          type="radio"
           id="{{name}}"
           name="{{name}}{{gid}}"
           form-server-error
-          ng-required="required"
-          ng-disabled="disabled">
+          ng-required="required">
       {{label | translate}}
   </label>
 

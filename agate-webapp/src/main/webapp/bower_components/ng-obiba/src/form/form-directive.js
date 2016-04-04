@@ -91,13 +91,50 @@ angular.module('obiba.form')
     };
   }])
 
+  .directive('formRadio', [function () {
+    return {
+      restrict: 'AE',
+      require: '^form',
+      scope: {
+        name: '@',
+        gid: '@',
+        model: '=',
+        value: '=',
+        label: '@',
+        help: '@',
+        onSelect: '='
+      },
+      templateUrl: 'form/form-radio-template.tpl.html',
+      link: function ($scope, elem, attr, ctrl) {
+        $scope.form = ctrl;
+      }
+    };
+  }])
+
+  .directive('formRadioGroup', [function() {
+    return {
+      restrict: 'A',
+      scope: {
+        options: '=',
+        model: '='
+      },
+      templateUrl: 'form/form-radio-group-template.tpl.html',
+      link: function ($scope) {
+        $scope.gid = $scope.$id;
+      }
+    };
+  }])
+
   .directive('formCheckbox', [function () {
     return {
       restrict: 'AE',
       require: '^form',
       scope: {
         name: '@',
+        gid: '@',
         model: '=',
+        required: '=',
+        disabled: '=',
         label: '@',
         help: '@'
       },
@@ -115,8 +152,9 @@ angular.module('obiba.form')
         options: '=',
         model: '='
       },
-      template: '<div form-checkbox ng-repeat="item in items" name="{{item.name}}" model="item.value" label="{{item.label}}">',
+      template: '<div form-checkbox ng-repeat="item in items" name="{{item.name}}" model="item.value" gid="${{gid}}" label="{{item.label}}">',
       link: function ($scope, elem, attrs) {
+        $scope.gid = $scope.$id;
         $scope.$watch('model', function(selected) {
           $scope.items = $scope.options.map(function(n) {
             var value = angular.isArray(selected) && (selected.indexOf(n) > -1 ||
