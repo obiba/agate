@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -41,7 +42,7 @@ import org.apache.oltu.oauth2.common.message.OAuthResponse;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
 import org.joda.time.DateTime;
 import org.obiba.agate.domain.Application;
@@ -60,8 +61,10 @@ import org.springframework.stereotype.Component;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
+import io.jsonwebtoken.Claims;
+
 @Component
-@Path("/oauth")
+@Path("/oauth2")
 @Scope("request")
 public class OAuthResource {
 
@@ -83,33 +86,41 @@ public class OAuthResource {
   @Inject
   private TokenUtils tokenUtils;
 
-  @POST
-  @Path("/decline")
-  @RequiresAuthentication
-  public Response decline(@Context HttpServletRequest servletRequest)
-      throws URISyntaxException, OAuthSystemException {
-    return tryBuildResponse(servletRequest, (data) -> {
-      try {
-        return buildErrorResponse(OAuthProblemException.error("access_denied", "Owner denied authorization."), data.getRequest(), data.getRedirectUri());
-      } catch(OAuthSystemException | URISyntaxException e) {
-        throw Throwables.propagate(e);
-      }
-    });
+  @GET
+  @Path("/authorize")
+  public Response validateAuthorize(@Context HttpServletRequest servletRequest) {
+    return Response.status(Response.Status.FOUND).location(URI.create(
+        String.format("/#/authorize?%s", servletRequest.getQueryString()))).build();
   }
 
   @GET
+  @Path("/userinfo")
+  @RequiresRoles("openid")
+  @Produces("application/json")
+  public Claims userInfo(@Context HttpServletRequest servletRequest) {
+    String username = SecurityUtils.getSubject().getPrincipal().toString();
+    return tokenUtils.buildClaims(username);
+  }
+
+  @POST
   @Path("/authz")
-  @RequiresAuthentication
-  public Response authorize(@Context HttpServletRequest servletRequest)
+  @RequiresRoles("agate-user")
+  public Response authorize(@Context HttpServletRequest servletRequest, @FormParam("grant") boolean grant)
     throws URISyntaxException, OAuthSystemException {
     return tryBuildResponse(servletRequest, (data) -> {
       try {
+        if(!grant) {
+          return buildErrorResponse(OAuthProblemException.error("access_denied", "Owner denied authorization."), data.getRequest(), data.getRedirectUri());
+        }
+
         OAuthIssuer oAuthIssuer = new OAuthIssuerImpl(new MD5Generator());
         User user = userService.getCurrentUser();
         Authorization authorization = authorizationService.find(user.getName(), data.getClientId());
+
         if(authorization == null) {
           authorization = new Authorization(user.getName(), data.getClientId());
         }
+
         authorization.setCode(oAuthIssuer.authorizationCode());
         authorization.setScopes(data.getRequest().getScopes());
         authorization.setRedirectURI(data.getRedirectUri());
@@ -209,7 +220,7 @@ public class OAuthResource {
 
   private void validateScope(Set<String> scopes) throws OAuthProblemException{
     for(String s: scopes) {
-      if (!TokenUtils.OPENID_SCOPE.equals(s)) {
+      if (!TokenUtils.OPENID_SCOPES.contains(s)) {
         String[] scopeParts = s.split(":");
         Application application = applicationService.find(scopeParts[0]);
 

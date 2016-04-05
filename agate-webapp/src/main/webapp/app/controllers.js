@@ -109,7 +109,9 @@ agate.controller('LogoutController', ['$location', 'AuthenticationSharedService'
     });
   }]);
 
-agate.controller('OAuthController', ['$scope', '$q', '$location', 'ApplicationSummaryResource', function($scope, $q, $location, ApplicationSummaryResource) {
+agate.controller('OAuthController', ['$log', '$scope', '$q', '$location', 'ApplicationSummaryResource',
+  function($log, $scope, $q, $location, ApplicationSummaryResource) {
+  var OPENID_SCOPES = ['openid', 'profile', 'email', 'address', 'phone', 'offline_access'];
   $scope.auth = $location.search();
   $scope.client = ApplicationSummaryResource.get({ id: $scope.auth.client_id },function(){
   }, function(){
@@ -124,15 +126,17 @@ agate.controller('OAuthController', ['$scope', '$q', '$location', 'ApplicationSu
   });
 
   var applications = $scope.scopes.reduce(function(applications, scope) {
-    if(applications.indexOf(scope.application) < 0) {
-      applications.push(scope.application);
+    var application = OPENID_SCOPES.indexOf(scope.application) < 0 ? scope.application : 'openid';
+    
+    if(applications.indexOf(application) < 0) {
+      applications.push(application);
     }
 
     return applications;
   }, []);
 
   $q.all(applications.map(function(application) {
-    if (application !== 'openid') {
+    if (OPENID_SCOPES.indexOf(application) < 0) {
       return ApplicationSummaryResource.get({id: application}).$promise;
     } else {
       var deferred = $q.defer();
@@ -142,10 +146,10 @@ agate.controller('OAuthController', ['$scope', '$q', '$location', 'ApplicationSu
   })).then(function(applications) {
     var res = $scope.scopes.map(function(scope) {
       var application = applications.filter(function(application) { return application.id === scope.application; })[0];
-      var found = application.scopes ? application.scopes.filter(function(s) {return s.name === scope.name; })[0] : {};
+      var found = application && application.scopes ? application.scopes.filter(function(s) {return s.name === scope.name; })[0] : {};
 
       if (!found && scope.name) {
-          scope.isMissing = true;
+        scope.isMissing = true;
       } else {
         scope.description = found ? found.description : null;
       }
@@ -162,9 +166,11 @@ agate.controller('OAuthController', ['$scope', '$q', '$location', 'ApplicationSu
 
     $scope.applicationScopes = applications.map(function(application) {
       var scopes = res.filter(function(scope) { return scope.application === application.id; });
+      
       return {application: application, scopes: scopes};
     });
-  }).catch(function() {
+  }).catch(function(e) {
+    $log.error(e);
     $scope.error = 'unknown-resource-application';
     $scope.errorArgs = applications.join(', ');
   });

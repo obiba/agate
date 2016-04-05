@@ -39,7 +39,8 @@ import io.jsonwebtoken.SignatureException;
 public class TokenUtils {
 
   public static final String OPENID_SCOPE = "openid";
-
+  public static final Set<String> OPENID_SCOPES = Sets.newHashSet(
+      "openid", "profile", "email", "address", "phone", "offline_access"); // http://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims
   public static final String OPENID_TOKEN = "id_token";
 
   /**
@@ -116,20 +117,31 @@ public class TokenUtils {
   public String makeIDToken(@NotNull Authorization authorization) {
     if(!authorization.hasScope(OPENID_SCOPE)) return "";
 
-    User user = userService.findUser(authorization.getUsername());
-
     DateTime expires = authorizationService.getExpirationDate(authorization);
-
-    Claims claims = Jwts.claims().setSubject(authorization.getUsername()) //
-      .setIssuer(getIssuerID()) //
-      .setIssuedAt(authorization.getCreatedDate().toDate()) //
-      .setExpiration(expires.toDate());
-
+    Claims claims = buildClaims(authorization.getUsername());
+    claims.setIssuedAt(authorization.getCreatedDate().toDate()) //
+        .setExpiration(expires.toDate());
     claims.put(Claims.AUDIENCE, authorization.getApplication());
-    putUserClaims(claims, user);
 
     return Jwts.builder().setClaims(claims)
-      .signWith(SignatureAlgorithm.HS256, configurationService.getConfiguration().getSecretKey().getBytes()).compact();
+        .signWith(SignatureAlgorithm.HS256, configurationService.getConfiguration().getSecretKey().getBytes()).compact();
+  }
+
+  public Claims buildClaims(String subject) {
+    User user = userService.findUser(subject);
+    Claims claims = Jwts.claims().setSubject(subject).setIssuer(getIssuerID());
+    putUserClaims(claims, user);
+
+    return claims;
+  }
+
+
+  public Claims parseClaims(String token) {
+    Claims claims = Jwts.parser()
+        .setSigningKey(configurationService.getConfiguration().getSecretKey().getBytes())
+        .parseClaimsJws(token).getBody();
+
+    return claims;
   }
 
   //

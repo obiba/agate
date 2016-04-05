@@ -16,7 +16,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.AuthorizationException;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.subject.Subject;
 import org.obiba.agate.security.Roles;
@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Path("/auth/session/_current")
-@RequiresAuthentication
+@RequiresRoles("agate-user")
 public class CurrentSessionResource {
 
   @DELETE
@@ -52,7 +52,7 @@ public class CurrentSessionResource {
     } catch(AuthorizationException e) {
       builder.setRole(Roles.AGATE_USER.toString());
     }
-    
+
     return builder.build();
   }
 
