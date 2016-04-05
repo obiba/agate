@@ -1,295 +1,188 @@
 {
+  "language": {
+    "en": "English",
+    "fr": "French"
+  },
   "global": {
-    "title": "JHipster",
-    "browsehappy": "Vous utilisez un <strong>ancien</strong> navigateur. Veuillez <a href=\"http://browsehappy.com/\">mettre à jour votre navigateur</a> pour une meilleure expérience.",
+    "browsehappy": "You are using an <strong>outdated</strong> browser. Please <a href=\"http://browsehappy.com/\">upgrade your browser</a> to improve your experience.",
     "menu": {
-      "home": "Accueil",
-      "account": {
-        "main": "Compte",
-        "settings": "Profil",
-        "password": "Mot de passe",
-        "sessions": "Sessions",
-        "tracker": "Suivi des utilisateurs",
-        "metrics": "Métriques",
-        "logs": "Logs",
-        "audits": "Audits",
-        "login": "S'authentifier",
-        "logout": "Déconnexion"
-      },
       "admin": "Administration",
-      "language": "Langue"
+      "applications": "Applications",
+      "configuration": "Configuration",
+      "groups": "Groups",
+      "requests": "Pending Requests",
+      "tickets": "Tickets",
+      "users": "Users",
+      "myProfile": "My Profile",
+      "logout": "Sign Out",
+      "account": {
+        "main": "Account",
+        "settings": "Settings",
+        "password": "Password",
+        "login": "Authenticate"
+      }
     },
     "language": {
-      "en": "Anglais",
-      "fr": "Français",
-      "de": "Allemand"
+      "en": "English",
+      "fr": "French",
+      "de": "German"
     }
   },
-  "index": {
-    "title": "index"
-  },
   "main": {
-    "title": "Bienvenue chez Agate!",
-    "subtitle": "Ceci est votre page d'accueil",
+    "title": "Welcome to Agate!",
+    "subtitle": "Agate allows you to manage your own account and, for those with administrator rights, other users accounts, groups and integrated applications.",
     "logged": {
-      "message": "Vous êtes connecté en tant que \"{{username}}\".",
-      "authenticated": "Si vous voulez vous <a href=\"#/login\">connecter</a>, vous pouvez utiliser les comptes par défaut : <br/> - Administrateur (nom d'utilisateur=\"admin\" et mot de passe =\"admin\") <br/> - Utilisateur (nom d'utilisateur=\"user\" et mot de passe =\"user\")."
-    },
-    "question": "Si vous avez des questions à propos de JHipster:",
-    "link": {
-      "homepage": "Page d'accueil de JHipster",
-      "stackoverflow": "JHipster sur Stack Overflow",
-      "bugtracker": "JHipster bug tracker",
-      "contact": "Contactez-nous sur Twitter @java_hipster"
-    },
-    "like": "Si vous aimez JHipster, donnez nous une étoile sur",
-    "github": "Github"
+      "userMessage": "You are logged in as user \"{{username}}\".",
+      "adminMessage": "You are logged in as user \"{{username}}\" with administrator rights."
+    }
   },
   "login": {
-    "title": "Authentification",
+    "title": "Authentication",
     "form": {
-      "username": "Nom d'utilisateur",
-      "username.placeholder": "Votre nom d'utilisateur",
-      "password": "Mot de passe",
-      "password.placeholder": "Votre mot de passe",
-      "rememberme": "Garder la session ouverte",
-      "button": "Connexion"
+      "username": "User Name or Email",
+      "username.placeholder": "Your login",
+      "password": "Password",
+      "password.placeholder": "Your password",
+      "rememberme": "Automatic Login",
+      "button": "Sign In",
+      "forgot-login": "Can't access your account?"
     },
     "messages": {
       "error": {
-        "authentication": "<strong>Erreur d'authentification!</strong> Veuillez vérifier vos identifiants de connexion."
+        "authentication": "<strong>Authentication failed!</strong> Please check your credentials and try again."
       }
     }
   },
-  "settings": {
-    "title": "Profil de l'utilisateur [{{username}}]",
+  "join": {
+    "title": "Request an Account",
     "form": {
-      "firstname": "Prénom",
-      "firstname.placeholder": "Votre prénom",
-      "lastname": "Nom",
-      "lastname.placeholder": "Votre nom",
-      "email": "Email",
-      "email.placeholder": "Votre email",
-      "button": "Sauvegarder"
+      "button": "Sign Up",
+      "submit": "Join"
+    }
+  },
+  "settings": {
+    "title": "User settings for [<b>{{username}}</b>]",
+    "form": {
+      "username": "User Name",
+      "firstname": "First Name",
+      "firstname.placeholder": "Your first name",
+      "lastname": "Last Name",
+      "lastname.placeholder": "Your last name",
+      "email": "E-mail",
+      "email.placeholder": "Your e-mail",
+      "button": "Save"
     },
     "messages": {
-      "error": "<strong>Une erreur est survenue!</strong> Votre profil ne peut pas être sauvegardé.",
-      "success": "<strong>Votre profil a été sauvegardé!</strong>",
+      "error": "<strong>An error has occured!</strong> Settings could not be saved.",
+      "success": "<strong>Settings saved!</strong>",
       "validate": {
         "firstname": {
-          "required": "Votre prénom est requis.",
-          "minlength": "Votre prénom doit comporter au moins un caractère",
-          "maxlength": "Votre prénom ne doit pas comporter plus de 50 caractères"
+          "required": "Your first name is required.",
+          "minlength": "Your first name is required to be at least 1 character",
+          "maxlength": "Your first name cannot be longer than 50 characters"
         },
         "lastname": {
-          "required": "Votre nom est requis.",
-          "minlength": "Votre nom doit comporter au moins un caractère",
-          "maxlength": "Votre nom ne doit pas comporter plus de 50 caractères"
+          "required": "Your last name is required.",
+          "minlength": "Your last name is required to be at least 1 character",
+          "maxlength": "Your last name cannot be longer than 50 characters"
         },
         "email": {
-          "required": "Votre email est requis.",
-          "minlength": "Votre email doit comporter au moins un caractère",
-          "maxlength": "Votre email ne doit pas comporter plus de 50 caractères",
-          "invalid": "Votre email n'est pas valide."
+          "required": "Your e-mail is required.",
+          "invalid": "Your e-mail is invalid.",
+          "minlength": "Your e-mail is required to be at least 1 character",
+          "maxlength": "Your e-mail cannot be longer than 50 characters"
         }
       }
     }
   },
   "password": {
-    "title": "Changer le mot de passe pour [<b>{{username}}</b>]",
+    "title": "Change Password",
     "form": {
-      "newpassword": "Nouveau mot de passe",
-      "newpassword.placeholder": "Nouveau mot de passe",
-      "confirmpassword": "Confirmation du nouveau mot de passe",
-      "confirmpassword.placeholder": "Confirmation du nouveau mot de passe",
-      "button": "Sauvegarder"
+      "newpassword": "New password",
+      "newpassword.placeholder": "New password",
+      "confirmpassword": "Password confirmation",
+      "confirmpassword.placeholder": "Confirm the new password",
+      "button": "Save"
+    },
+    "success": "<strong>Password changed!</strong>",
+    "error": {
+      "global": "The password could not be changed.",
+      "dontmatch": "The password and its confirmation do not match!"
     },
     "messages": {
       "error": {
-        "global": "<strong>Une erreur est survenue!</strong> Le mot de passe n'a pas pu être modifié.",
-        "dontmatch": "Le nouveau mot de passe et sa confirmation ne sont pas égaux!"
+        "global": "<strong>An error has occured!</strong> The password could not be changed.",
+        "dontmatch": "The password and its confirmation do not match!"
       },
-      "success": "<strong>La mot de passe a été modifié!</strong>",
+      "success": "<strong>Password changed!</strong>",
       "validate": {
         "newpassword": {
-          "required": "Votre mot de passe est requis.",
-          "minlength": "Votre mot de passe doit comporter au moins 5 caractères",
-          "maxlength": "Votre mot de passe ne doit pas comporter plus de 50 caractères",
-          "strength": "Robustesse du mot de passe:"
+          "required": "Your password is required.",
+          "minlength": "Your password is required to be at least 5 characters",
+          "maxlength": "Your password cannot be longer than 50 characters",
+          "strength": "Password strength:"
         },
         "confirmpassword": {
-          "required": "Votre confirmation du mot de passe est requis.",
-          "minlength": "Votre confirmation du mot de passe doit comporter au moins 5 caractères",
-          "maxlength": "Votre confirmation du mot de passe ne doit pas comporter plus de 50 caractères"
+          "required": "Your confirm password is required.",
+          "minlength": "Your confirm password is required to be at least 5 character",
+          "maxlength": "Your confirm password cannot be longer than 50 characters"
         }
       }
     }
+  },
+  "forgot-login": {
+    "title": "Can't access your account?",
+    "success": "Check your email to complete your login recovery.",
+    "username-option": "I forgot my username",
+    "username": "Username or Email",
+    "email": "Email",
+    "password-option": "I forgot my password",
+    "submit": "Submit"
   },
   "sessions": {
-    "title": "Sessions actives de [<b>{{username}}</b>]",
+    "title": "Active sessions for [<b>{{username}}</b>]",
     "table": {
-      "ipaddress": "Adresse IP",
+      "ipaddress": "IP address",
       "useragent": "User Agent",
       "date": "Date",
-      "button": "Invalider"
+      "button": "Invalidate"
     },
     "messages": {
-      "success": "<strong>Session a été invalidée!</strong>",
-      "error": "<strong>Une erreur est survenue!</strong> La session ne peut pas être invalidée."
-    }
-  },
-  "tracker": {
-    "title": "Activité des utilisateurs en temps réél",
-    "table": {
-      "userlogin": "Utilisateur",
-      "ipaddress": "Adresse IP",
-      "userAgent": "User agent",
-      "page": "Page en cours",
-      "time": "Heure"
-    }
-  },
-  "metrics": {
-    "title": "Métriques de l'application",
-    "refresh.button": "Rafraichir",
-    "health": {
-      "title": "Diagnostics",
-      "database": "Base de données: ",
-      "email": "Email: ",
-      "stacktrace": "Stacktrace"
-    },
-    "jvm": {
-      "title": "Métriques de la JVM",
-      "memory": {
-        "title": "Mémoire",
-        "total": "Mémoire totale",
-        "heap": "Mémoire \"Heap\"",
-        "nonheap": "Mémoire \"Non-Heap\""
-      },
-      "threads": {
-        "title": "Threads",
-        "all": "Tous",
-        "runnable": "Executable",
-        "timedwaiting": "Temps d'attente",
-        "waiting": "En attente",
-        "blocked": "Bloqué",
-        "dump": {
-          "title": "Threads dump",
-          "id": "Id :",
-          "blockedtime": "Temps bloqué",
-          "blockedcount": "Nb fois bloqué",
-          "waitedtime": "Temps d'attente",
-          "waitedcount": "Nb fois en attente",
-          "lockname": "Nom du process bloquant",
-          "stacktrace": "Stacktrace",
-          "show": "Afficher",
-          "hide": "Cacher"
-        }
-      },
-      "gc": {
-        "title": "Garbage collections",
-        "marksweepcount": "Total de \"Mark Sweep\"",
-        "marksweeptime": "Temps \"Mark Sweep\"",
-        "scavengecount": "Total \"Scavenge\"",
-        "scavengetime": "Temps \"Scavenge\""
-      },
-      "http": {
-        "title": "Requêtes HTTP requests (évènements par seconde)",
-        "active": "Requêtes actives :",
-        "total": "Requêtes totales :",
-        "table": {
-          "code": "Code",
-          "count": "Total",
-          "mean": "Médian",
-          "average": "Moyenne"
-        },
-        "code": {
-          "ok": "Ok",
-          "notfound": "Not found",
-          "servererror": "Server Error"
-        }
-      }
-    },
-    "servicesstats": {
-      "title": "Statistiques des services (Temps en milliseconde)",
-      "table": {
-        "name": "Nom du server",
-        "count": "Total",
-        "mean": "Médian",
-        "min": "Min",
-        "max": "Max",
-        "p50": "p50",
-        "p75": "p75",
-        "p95": "p95",
-        "p99": "p99"
-      }
-    },
-    "ehcache": {
-      "title": "Statistiques Ehcache",
-      "cachename": "Nom du cache",
-      "objects": "Objets",
-      "hits": "Données existantes",
-      "misses": "Données non existantes",
-      "evictioncount": "Nombre de suppressions",
-      "mean": "Temps de réponse (ms)"
-    }
-  },
-  "logs": {
-    "title": "Logs",
-    "nbloggers": "Total de {{ total }} \"loggers\".",
-    "filter": "Filtrer",
-    "table": {
-      "name": "Nom",
-      "level": "Niveau"
-    }
-  },
-  "audits": {
-    "title": "Audits",
-    "filter": {
-      "title": "Filtrer par date",
-      "from": "De",
-      "to": "à",
-      "button": {
-        "weeks": "Semaines",
-        "today": "Aujourd'hui",
-        "clear": "Effacer",
-        "close": "Fermer"
-      }
-    },
-    "table": {
-      "header": {
-        "principal": "Utilisateur",
-        "date": "Date",
-        "status": "Status",
-        "data": "Autres données"
-      },
-      "data": {
-        "remoteAddress": "Adresse Distante :"
-      }
+      "success": "<strong>Session invalidated!</strong>",
+      "error": "<strong>An error has occured!</strong> The session could not be invalidated."
     }
   },
   "errors": {
-    "title": "Page d'erreur!",
-    "403": "Vous n'avez pas les droits pour accéder à cette page."
+    "title": "Error!",
+    "403": "You are not authorized to access the page."
   },
-  "footer": "Ceci est votre pied de page",
+  "footer": "This is your footer",
   "config": {
-    "title": "Configuration",
+    "title": "Properties",
     "title-edit": "Edit Configuration",
     "name": "Name",
-    "name-help": "Name of your organization",
+    "name-help": "Name of your organization.",
+    "publicUrl": "Public URL",
+    "publicUrl-help": "Public base URL of the server that will be used when sending notification emails.",
     "domain": "Domain",
-    "domain-help": "Single sign-on cookie domain",
+    "domain-help": "Single sign-on cookie domain.",
     "shortTimeout": "Short term timeout (hours)",
-    "shortTimeout-help": "Ticket expiration timeout in hours",
+    "shortTimeout-help": "Ticket expiration timeout in hours.",
     "longTimeout": "Long term timeout (hours)",
-    "longTimeout-help": "Ticket expiration timeout in hours when \"remember me\" option is selected",
-    "encryptionKeys": "Encyption Keys",
+    "longTimeout-help": "Ticket expiration timeout in hours when \"remember me\" option is selected.",
+    "inactiveTimeout": "Inactive timeout (days)",
+    "inactiveTimeout-help": "User account expiration timeout in days.",
+    "joinWithUsername": "Sign up form offers to choose the username",
+    "joinWithUsername-help": "User name will be extracted from user email.",
+    "encryption-keys": "Encryption Keys",
+    "encryption-keys-help": "HTTPS connection requires to have a private key and a public key (certificate) defined. A self-signed key-pair is available by default. You can provide your own.",
     "addKeyPair": "Add Keys",
     "downloadCertificate": "Download Certificate",
     "actions": "Actions",
-    "create" : "Create",
-    "import" : "Import",
-    "userAttributes": "User Attributes",
+    "create": "Create",
+    "import": "Import",
+    "user-attributes": "User Attributes",
+    "user-attributes-help": "User description fields can be extended with some declared attributes. Apply also to join requests.",
     "keys": {
       "titleCreate": "Create Certificate",
       "titleImport": "Import Certificate",
@@ -307,12 +200,212 @@
     "attributes": {
       "actions": "Actions",
       "addAttribute": "Add attribute",
-      "editTitle": "Edit attributes",
+      "editTitle": "Edit attribute",
       "type": "Type",
+      "types":{
+        "STRING":"String",
+        "INTEGER":"Integer",
+        "NUMBER":"Number",
+        "BOOLEAN":"Boolean"
+      },
       "name": "Name",
+      "description": "Description",
       "values": "Values",
       "valuesHelp": "Comma separated values",
       "required": "Required"
+    }
+  },
+  "applications": "Applications",
+  "application": {
+    "titleView": "Application Details",
+    "titleEdit": "Edit Application",
+    "add": "Add Application",
+    "new": "New Application",
+    "actions": "Actions",
+    "name": "Name",
+    "name-help": "Name must be unique.",
+    "description": "Description",
+    "key": "Key",
+    "key-help": "Leave blank to not modify application's secret key.",
+    "redirectURI": "Redirect URI",
+    "redirectURI-help": "Callback URL to the application's server, required in the OAuth context.",
+    "confirmKey": "Confirm key",
+    "changeKey": "Change Key",
+    "delete-dialog": {
+      "title": "Delete Application",
+      "message": "Are you sure you want to delete application '{{arg0}}'?"
+    },
+    "none": "No applications.",
+    "scopes": "Scopes",
+    "scope": {
+      "help": "Scopes allow to qualify the authorization access to the application that is granted in the OAuth context. Scopes are optional.",
+      "none": "No scopes.",
+      "add": "Add Scope",
+      "edit": "Edit Scope"
+    }
+  },
+  "groups": "Groups",
+  "group": {
+    "titleEdit": "Edit Group",
+    "titleView": "Group Details",
+    "new": "New Group",
+    "add": "Add Group",
+    "applications": "Applications",
+    "inherited-applications": "Inherited from: {{groups}}",
+    "actions": "Actions",
+    "name": "Name",
+    "name-help": "Name must be unique.",
+    "description": "Description",
+    "delete-dialog": {
+      "title": "Delete Group",
+      "message": "Are you sure you want to delete group '{{arg0}}'?"
+    },
+    "none": "No groups."
+  },
+  "tickets": "Tickets",
+  "ticket": {
+    "titleView": "Ticket Details",
+    "actions": "Actions",
+    "created": "Created",
+    "events": "Events",
+    "expires": "Expires",
+    "none": "No open tickets.",
+    "properties": "Properties",
+    "remembered": "Remember-me",
+    "token": "Token",
+    "username": "User Name",
+    "eventAction": "Action",
+    "eventTime": "Time",
+    "eventApplication": "Application",
+    "token-decoder": "Token Decoder",
+    "token-decoder-help": "When a ticket is issued a token is sent to the client. This token is signed and contains information to track back the associated ticket.",
+    "paste-token": "Paste json web token here.",
+    "encoded": "Encoded",
+    "decoded": "Decoded",
+    "token-none": "No or invalid token.",
+    "authorization-help": "Authorization constraint that applies to this ticket. If none is specified, all the applications that are accessible by the user can validate the ticket's token.",
+    "authorization-none": "No authorization."
+  },
+  "authorization": {
+    "title": "Authorization",
+    "code": "Code",
+    "username": "User Name",
+    "application": "Application",
+    "redirectURI": "Redirect URI",
+    "scopes": "Scopes",
+    "created": "Created"
+  },
+  "users": "Users",
+  "user": {
+    "none": "No users.",
+    "details": "User Details",
+    "required-info": "Required Information",
+    "general-info": "General Information",
+    "add": "Add User",
+    "new": "New User",
+    "label-edit": "Edit User",
+    "actions": "Actions",
+    "name": "Name",
+    "name-help": "Name must be unique.",
+    "realm": "Realm",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "fullName": "Full Name",
+    "email": "Email",
+    "email-help": "Email must be unique.",
+    "status": "Status",
+    "status-help": "Only active users can sign in.",
+    "role": "Role",
+    "role-help": "A simple user can only access to its own account.",
+    "groups": "Groups",
+    "groups-help": "Members of a group get access to the applications associated to this group.",
+    "applications": "Applications",
+    "applications-help": "Applications in which the user can sign in.",
+    "createdDate": "Created Date",
+    "lastLogin": "Last Logged-in",
+    "agate-administrator": "Administrator",
+    "agate-user": "User",
+    "pending-requests": "Join Requests",
+    "pending-requests-help": "Some people have requested to join the user directory and are awaiting approval. You can approve or reject these requests.",
+    "none-requests": "No pending join requests.",
+    "list": "All Users",
+    "approve": "Approve",
+    "reject": "Reject",
+    "view": "View",
+    "password": "Password",
+    "resetPassword": "Reset password",
+    "ACTIVE": "Active",
+    "INACTIVE": "Inactive",
+    "APPROVED": "Approved",
+    "PENDING": "Pending",
+    "delete-dialog": {
+      "title": "Delete User",
+      "message": "Are you sure you want to delete user '{{arg0}}'?"
+    },
+    "success": {
+      "updated": "User settings updated successfully."
+    },
+    "authorizations": "Authorizations",
+    "authorizations-help": "Authorizations granted by the user.",
+    "authorizations-none": "No authorizations."
+  },
+  "attributes": "Attributes",
+  "attribute": {
+    "actions": "Actions",
+    "add-label": "Add Attribute",
+    "edit-label": "Edit Attribute",
+    "name": "Name",
+    "description": "Description",
+    "value": "Value",
+    "delete-dialog": {
+      "title": "Delete Attribute",
+      "message": "Are you sure you want to delete attribute '{{arg0}}'?"
+    },
+    "error": {
+      "duplicated": "The '{{arg0}}' attribute already exists or it is a configuration attribute."
+    },
+    "none": "No attributes."
+  },
+  "profile": {
+    "identification": "Identification",
+    "update-password": "Update password",
+    "required": "{{name}} is a required field",
+    "success": {
+      "updated": "Profile settings updated successfully."
+    },
+    "authorizations-help": "Authorizations that you have granted to applications."
+  },
+  "properties": "Properties",
+  "name": "Name",
+  "edit": "Edit",
+  "view": "View",
+  "delete": "Delete",
+  "cancel": "Cancel",
+  "ok": "OK",
+  "confirmation": "Confirmation",
+  "close": "Close",
+  "save": "Save",
+  "on": "On",
+  "by": "By",
+  "other": "Other",
+  "access": "Access",
+  "notification": "Notification",
+  "required": "Required fields cannot be empty.",
+  "suppl-info": "Supplementary information",
+  "fix-error": "The form has some errors. Please fix them before submitting.",
+  "missing-reCaptcha-error": "Missing reCaptcha response",
+  "dnd-reorder": "Drag and drop to reorder",
+  "loading": "Loading...",
+  "error": "Error",
+  "server": {
+    "error": {
+      "403": "Server rejected your request, please make sure you are logged in and try again.",
+      "password": {
+        "too-short": "Password is shorter than the required {{arg0}} characters",
+        "not-changed": "New password is identical to the current password"
+      },
+      "email-already-assigned": "Email '{{arg0}}' is already assigned to another user.",
+      "duplicate-key": "Duplicate item ID."
     }
   },
   "form-server-error": "Error",

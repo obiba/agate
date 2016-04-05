@@ -3,7 +3,7 @@
  * https://github.com/obiba/ng-obiba
 
  * License: GNU Public License version 3
- * Date: 2016-01-06
+ * Date: 2016-03-30
  */
 'use strict';
 
@@ -514,9 +514,64 @@ angular.module('obiba.utils', [])
     ]
   })
 
+  .service('CountriesIsoUtils', ['$log','ObibaCountriesIsoCodes',
+    function($log, ObibaCountriesIsoCodes) {
+      this.findByCode = function(code, locale) {
+        var theLocale = locale || 'en';
+
+        if (!(theLocale in ObibaCountriesIsoCodes)) {
+          $log.error('ng-obiba: Invalid locale ', locale);
+          return code;
+        }
+
+        var filtered = ObibaCountriesIsoCodes[theLocale].filter(function (country) {
+          return country.code === code;
+        });
+
+        if (filtered && filtered.length > 0) {
+          return filtered[0].name;
+        }
+
+        $log.error('ng-obiba: Invalid name ', code);
+        return code;
+      };
+
+      this.findByName = function(name, locale) {
+        var theLocale = locale || 'en';
+        if (!(theLocale in ObibaCountriesIsoCodes)) {
+          $log.error('ng-obiba: Invalid locale ', locale);
+          return name;
+        }
+
+        var filtered = ObibaCountriesIsoCodes[theLocale].filter(function (country) {
+          return country.name.toLowerCase() === name.toLowerCase();
+        });
+
+        if (filtered && filtered.length > 0) {
+          return filtered[0].code;
+        }
+        
+        $log.error('ng-obiba: Invalid name ', name);
+        return name;
+      };
+    }])
+
   .service('StringUtils', function () {
     this.capitaliseFirstLetter = function (string) {
       return string ? string.charAt(0).toUpperCase() + string.slice(1) : null;
+    };
+
+    this.replaceAll = function(str, mapObj) {
+      var re = new RegExp(Object.keys(mapObj).join('|'),'gi');
+
+      return str.replace(re, function(matched){
+        return mapObj[matched.toLowerCase()];
+      });
+    };
+
+    this.truncate = function (text, size) {
+      var max = size || 30;
+      return text.length > max ? text.substring(0, max) + '...' : text;
     };
   })
 
@@ -753,7 +808,21 @@ angular.module('obiba.form')
         }
 
       };
-    }]);;'use strict';
+    }])
+
+  .service('RadioGroupOptionBuilder', function() {
+    this.build = function(prefix, items) {
+      return items.map(function(item) {
+        return {
+          name: prefix,
+          label: item.label || item,
+          value: item.name
+        };
+      });
+    };
+
+    return this;
+  });;'use strict';
 
 angular.module('obiba.form')
 
@@ -846,13 +915,50 @@ angular.module('obiba.form')
     };
   }])
 
+  .directive('formRadio', [function () {
+    return {
+      restrict: 'AE',
+      require: '^form',
+      scope: {
+        name: '@',
+        gid: '@',
+        model: '=',
+        value: '=',
+        label: '@',
+        help: '@',
+        onSelect: '='
+      },
+      templateUrl: 'form/form-radio-template.tpl.html',
+      link: function ($scope, elem, attr, ctrl) {
+        $scope.form = ctrl;
+      }
+    };
+  }])
+
+  .directive('formRadioGroup', [function() {
+    return {
+      restrict: 'A',
+      scope: {
+        options: '=',
+        model: '='
+      },
+      templateUrl: 'form/form-radio-group-template.tpl.html',
+      link: function ($scope) {
+        $scope.gid = $scope.$id;
+      }
+    };
+  }])
+
   .directive('formCheckbox', [function () {
     return {
       restrict: 'AE',
       require: '^form',
       scope: {
         name: '@',
+        gid: '@',
         model: '=',
+        required: '=',
+        disabled: '=',
         label: '@',
         help: '@'
       },
@@ -870,8 +976,9 @@ angular.module('obiba.form')
         options: '=',
         model: '='
       },
-      template: '<div form-checkbox ng-repeat="item in items" name="{{item.name}}" model="item.value" label="{{item.label}}">',
+      template: '<div form-checkbox ng-repeat="item in items" name="{{item.name}}" model="item.value" gid="${{gid}}" label="{{item.label}}">',
       link: function ($scope, elem, attrs) {
+        $scope.gid = $scope.$id;
         $scope.$watch('model', function(selected) {
           $scope.items = $scope.options.map(function(n) {
             var value = angular.isArray(selected) && (selected.indexOf(n) > -1 ||
@@ -938,13 +1045,22 @@ angular.module('obiba.alert')
         return value;
       }
 
-      this.alert = function (options) {
+      function broadcast(options, growl) {
         $rootScope.$broadcast(ALERT_EVENTS.showAlert, {
           uid: new Date().getTime(), // useful for delay closing and cleanup
           message: getValidMessage(options),
           type: options.type ? options.type : 'info',
+          growl: growl,
           timeoutDelay: options.delay ? Math.max(0, options.delay) : 0
         }, options.id);
+      }
+
+      this.alert = function (options) {
+        broadcast(options);
+      };
+
+      this.growl = function(options) {
+        broadcast(options, true);
       };
     }]);
 ;'use strict';
@@ -953,69 +1069,45 @@ angular.module('obiba.alert')
 
   .directive('obibaAlert', ['$rootScope', '$timeout', '$log', 'ALERT_EVENTS',
     function ($rootScope, $timeout, $log, ALERT_EVENTS) {
-      var alertsMap = {};
-
-      $rootScope.$on(ALERT_EVENTS.showAlert, function (event, alert, id) {
-        if (alertsMap[id]) {
-          alertsMap[id].push(alert);
-        }
-      });
 
       return {
-        restrict: 'E',
-        template: '<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="close($index)"><span ng-bind-html="alert.message"></span></alert>',
-        compile: function(element) {
-          var id = element.attr('id');
-          if (!id) {
-            $log.error('ObibaAlert directive must have a DOM id attribute.');
-          } else {
-            alertsMap[id] = [];
+        restrict: 'AE',
+        scope: {
+          id: '@'
+        },
+        templateUrl: 'alert/alert-template.tpl.html',
+        link: function(scope) {
+          scope.alerts = [];
+          if (!scope.id) {
+            throw new Error('ObibaAlert directive must have a DOM id attribute.');
           }
 
-          return {
-            post: function (scope) {
-              if (!id) {
-                return;
-              }
+          scope.close = function(index) {
+            scope.alerts.splice(index, 1);
+          };
 
-              scope.alerts = alertsMap[id];
+          /**
+           * Called when timeout has expired
+           * @param uid
+           */
+          scope.closeByUid = function(uid) {
+            var index = scope.alerts.map(function(alert) {
+              return alert.uid === uid;
+            }).indexOf(true);
 
-              /**
-               * Called when user manually closes or the timeout has expired
-               * @param index
-               */
-              scope.close = function(index) {
-                scope.alerts.splice(index, 1);
-              };
-
-              /**
-               * Called when timeout has expired
-               * @param uid
-               */
-              scope.closeByUid = function(uid) {
-                var index = scope.alerts.map(function(alert) {
-                  return alert.uid === uid;
-                }).indexOf(true);
-
-                if (index !== -1) {
-                  scope.close(index);
-                }
-              };
-
-              /**
-               * when all alerts have been added, proceed with setting the timeout for those that have timeoutDelay > 0
-               */
-              scope.$watch('alerts', function(newAlerts, oldAlerts) {
-                if (newAlerts.length - oldAlerts.length > 0) {
-                  newAlerts.filter(function(alert) {
-                    return alert.timeoutDelay > 0;
-                  }).forEach(function(alert) {
-                    $timeout(scope.closeByUid.bind(null, alert.uid), alert.timeoutDelay);
-                  });
-                }
-              }, true);
+            if (index !== -1) {
+              scope.close(index);
             }
           };
+
+          scope.$on(ALERT_EVENTS.showAlert, function (event, alert, id) {
+            if (scope.id === id) {
+              scope.alerts.push(alert);
+              if (alert.timeoutDelay > 0) {
+                $timeout(scope.closeByUid.bind(null, alert.uid), alert.timeoutDelay);
+              }
+            }
+          });
         }
     };
   }]);
@@ -1143,7 +1235,17 @@ angular.module('ngObiba', [
   'obiba.alert',
   'obiba.comments'
 ]);
-;angular.module('templates-main', ['comments/comment-editor-template.tpl.html', 'comments/comments-template.tpl.html', 'form/form-checkbox-template.tpl.html', 'form/form-input-template.tpl.html', 'form/form-localized-input-template.tpl.html', 'form/form-textarea-template.tpl.html', 'notification/notification-confirm-modal.tpl.html', 'notification/notification-modal.tpl.html']);
+;angular.module('templates-main', ['alert/alert-template.tpl.html', 'comments/comment-editor-template.tpl.html', 'comments/comments-template.tpl.html', 'form/form-checkbox-template.tpl.html', 'form/form-input-template.tpl.html', 'form/form-localized-input-template.tpl.html', 'form/form-radio-group-template.tpl.html', 'form/form-radio-template.tpl.html', 'form/form-textarea-template.tpl.html', 'notification/notification-confirm-modal.tpl.html', 'notification/notification-modal.tpl.html']);
+
+angular.module("alert/alert-template.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("alert/alert-template.tpl.html",
+    "<uib-alert ng-repeat=\"alert in alerts\"\n" +
+    "           class=\"{{alert.growl ? 'alert-growl' : ''}}\"\n" +
+    "           type=\"{{alert.type}}\"\n" +
+    "           close=\"close($index)\">\n" +
+    "  <span ng-bind-html=\"alert.message\"></span>\n" +
+    "</uib-alert>");
+}]);
 
 angular.module("comments/comment-editor-template.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("comments/comment-editor-template.tpl.html",
@@ -1215,9 +1317,10 @@ angular.module("form/form-checkbox-template.tpl.html", []).run(["$templateCache"
     "          ng-model=\"model\"\n" +
     "          type=\"checkbox\"\n" +
     "          id=\"{{name}}\"\n" +
-    "          name=\"{{name}}\"\n" +
+    "          name=\"{{name}}{{gid}}\"\n" +
     "          form-server-error\n" +
-    "          ng-required=\"required\">\n" +
+    "          ng-required=\"required\"\n" +
+    "          ng-disabled=\"disabled\">\n" +
     "      {{label | translate}}\n" +
     "  </label>\n" +
     "\n" +
@@ -1298,6 +1401,41 @@ angular.module("form/form-localized-input-template.tpl.html", []).run(["$templat
     "    <p ng-show=\"help\" class=\"help-block\">{{help | translate}}</p>\n" +
     "\n" +
     "</div>");
+}]);
+
+angular.module("form/form-radio-group-template.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("form/form-radio-group-template.tpl.html",
+    "<div form-radio ng-repeat=\"option in options\" name=\"{{option.name}}\" on-select=\"onSelect\" model=\"model.design\"\n" +
+    "     value=\"option.value\" label=\"{{option.label}}\" gid=\"{{gid}}\"></div>");
+}]);
+
+angular.module("form/form-radio-template.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("form/form-radio-template.tpl.html",
+    "<div class=\"radio\" ng-class=\"{'has-error': (form[fieldName].$dirty || form.saveAttempted) && form[name].$invalid}\">\n" +
+    "\n" +
+    "  <label for=\"{{name}}\" class=\"control-label\">\n" +
+    "    <span ng-show=\"required\">*</span>\n" +
+    "    <input ng-click=\"onSelect(value)\"\n" +
+    "          ng-model=\"model\"\n" +
+    "          ng-value=\"value\"\n" +
+    "          type=\"radio\"\n" +
+    "          id=\"{{name}}\"\n" +
+    "          name=\"{{name}}{{gid}}\"\n" +
+    "          form-server-error\n" +
+    "          ng-required=\"required\">\n" +
+    "      {{label | translate}}\n" +
+    "  </label>\n" +
+    "\n" +
+    "  <ul class=\"input-error list-unstyled\" ng-show=\"form[name].$dirty && form[name].$invalid\">\n" +
+    "    <li ng-show=\"form[name].$error.required\" translate>required</li>\n" +
+    "    <li ng-repeat=\"error in form[name].errors\">{{error}}</li>\n" +
+    "  </ul>\n" +
+    "\n" +
+    "  <p ng-show=\"help\" class=\"help-block\">{{help | translate}}</p>\n" +
+    "\n" +
+    "</div>\n" +
+    "\n" +
+    "");
 }]);
 
 angular.module("form/form-textarea-template.tpl.html", []).run(["$templateCache", function($templateCache) {
