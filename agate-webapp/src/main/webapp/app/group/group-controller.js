@@ -59,7 +59,7 @@ agate.group
       $scope.applicationList = [];
       ApplicationsResource.query().$promise.then(function(applications){
         applications.forEach(function(application){
-          $scope.applicationList.push(application.name);
+          $scope.applicationList.push(application.id);
         });
       });
 

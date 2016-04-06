@@ -40,6 +40,7 @@
       <table class="table table-striped table-hover table-bordered" ng-show="applications && applications.length > 0">
         <thead>
         <tr>
+          <th>ID</th>
           <th translate>application.name</th>
           <th translate>application.description</th>
           <th translate>application.actions</th>
@@ -48,7 +49,10 @@
         <tbody>
         <tr dir-paginate="application in applications | filter:searchText | itemsPerPage: 20">
           <td>
-            <a ng-href="#/application/{{application.id}}" class="action">{{application.name}}</a>
+            <a ng-href="#/application/{{application.id}}" class="action">{{application.id}}</a>
+          </td>
+          <td>
+            {{application.name}}
           </td>
           <td>
             {{application.description}}
