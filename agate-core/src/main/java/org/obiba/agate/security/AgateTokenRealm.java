@@ -47,7 +47,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.MalformedJwtException;
 
 /**
- * Realm for users defined in opal's own users database.
+ * Realm for users defined in Agate's database accessing using an OAuth2 token (ticket).
  */
 @Component
 public class AgateTokenRealm extends AuthorizingRealm {
