@@ -10,7 +10,9 @@
 package org.obiba.agate.security;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -21,70 +23,69 @@ import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UnknownAccountException;
-import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
+import org.apache.shiro.authc.credential.AllowAllCredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.cache.MemoryConstrainedCacheManager;
-import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
-import org.apache.shiro.util.SimpleByteSource;
+import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.domain.UserCredentials;
+import org.obiba.agate.service.TicketService;
+import org.obiba.agate.service.TokenUtils;
 import org.obiba.agate.service.UserService;
-import org.springframework.boot.bind.RelaxedPropertyResolver;
-import org.springframework.core.env.Environment;
+import org.obiba.shiro.authc.TicketAuthenticationToken;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.MalformedJwtException;
 
 /**
  * Realm for users defined in opal's own users database.
  */
 @Component
-public class AgateUserRealm extends AuthorizingRealm {
-
-  public static final String AGATE_REALM = "agate-user-realm";
+public class AgateTokenRealm extends AuthorizingRealm {
+  public static final String AGATE_TOKEN_REALM = "agate-token-realm";
 
   @Inject
   private UserService userService;
 
   @Inject
-  private Environment env;
+  private TicketService ticketService;
 
-  /**
-   * Number of times the user password is hashed for attack resiliency
-   */
-  private int nbHashIterations;
-
-  private String salt;
+  @Inject
+  private TokenUtils tokenUtils;
 
   @PostConstruct
   public void postConstruct() {
-
     setCacheManager(new MemoryConstrainedCacheManager());
+    setCredentialsMatcher(new AllowAllCredentialsMatcher());
+  }
 
-    RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "shiro.password.");
-    nbHashIterations = propertyResolver.getProperty("nbHashIterations", Integer.class);
-
-    HashedCredentialsMatcher credentialsMatcher = new HashedCredentialsMatcher(Sha512Hash.ALGORITHM_NAME);
-    credentialsMatcher.setHashIterations(nbHashIterations);
-    setCredentialsMatcher(credentialsMatcher);
-
-    salt = propertyResolver.getProperty("salt");
+  @Override
+  public boolean supports(AuthenticationToken token) {
+    return token instanceof TicketAuthenticationToken;
   }
 
   @Override
   public String getName() {
-    return AGATE_REALM;
+    return AGATE_TOKEN_REALM;
   }
 
   @Override
   protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-    UsernamePasswordToken upToken = (UsernamePasswordToken) token;
-    String username = upToken.getUsername();
+    TicketAuthenticationToken ticketAuthenticationToken = (TicketAuthenticationToken) token;
+    String ticketId = ticketAuthenticationToken.getTicketId();
+    Ticket ticket = ticketService.getTicket(ticketAuthenticationToken.getTicketId());
+    ticket.addEvent("agate", "validate");
+    ticketService.save(ticket);
+    String username = ticket.getUsername();
 
     // Null username is invalid
     if(username == null) {
@@ -98,31 +99,41 @@ public class AgateUserRealm extends AuthorizingRealm {
       username = user.getName();
     }
 
-    if(user == null || !user.isEnabled() || !user.getRealm().equals(AGATE_REALM)) {
+    if(user == null || !user.isEnabled() || !user.getRealm().equals(AgateUserRealm.AGATE_REALM)) {
       throw new UnknownAccountException("No account found for user [" + username + "]");
     }
+
     UserCredentials userCredentials = userService.findUserCredentials(username);
     if(userCredentials == null) throw new UnknownAccountException("No account found for user [" + username + "]");
 
-    SimpleAuthenticationInfo authInfo = new SimpleAuthenticationInfo(username, userCredentials.getPassword(), getName());
-    authInfo.setCredentialsSalt(new SimpleByteSource(salt));
-    return authInfo;
+    List<String> principals = Lists.newArrayList(username);
+    if(!Strings.isNullOrEmpty(ticketId)) principals.add(ticketId);
+    return new SimpleAuthenticationInfo(new SimplePrincipalCollection(principals, getName()), token.getCredentials());
   }
 
   @Override
   protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
     Collection<?> thisPrincipals = principals.fromRealm(getName());
-    if(thisPrincipals != null && !thisPrincipals.isEmpty()) {
-      Object primary = thisPrincipals.iterator().next();
-      PrincipalCollection simplePrincipals = new SimplePrincipalCollection(primary, getName());
-      String username = (String) getAvailablePrincipal(simplePrincipals);
-      User user = userService.findActiveUser(username);
-      return new SimpleAuthorizationInfo(user == null
-          ? Collections.emptySet()
-          : ImmutableSet.<String>builder().add(user.getRole(), Roles.AGATE_USER.toString()).build()); //adding agate-user role implicitly.
-    }
-    return new SimpleAuthorizationInfo();
 
+    if(thisPrincipals != null && !thisPrincipals.isEmpty()) {
+      Optional<List<String>> scopes = thisPrincipals.stream().map(p -> {
+        try {
+          return getScopesFromToken(p.toString());
+        } catch(MalformedJwtException e) {
+          //ignore
+          return null;
+        }
+      }).filter(s -> s != null).findFirst();
+
+      if (scopes.isPresent()) return new SimpleAuthorizationInfo(Sets.newHashSet(scopes.get()));
+    }
+
+    return new SimpleAuthorizationInfo();
   }
 
+  private List<String> getScopesFromToken(String token) {
+    Claims claims = tokenUtils.parseClaims(token);
+
+    return (List<String>)claims.get("context", Map.class).getOrDefault("scopes", Lists.newArrayList());
+  }
 }

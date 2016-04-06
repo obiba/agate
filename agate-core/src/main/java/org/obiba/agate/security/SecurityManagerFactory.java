@@ -118,15 +118,11 @@ public class SecurityManagerFactory implements FactoryBean<SecurityManager> {
     @SuppressWarnings("ChainOfInstanceofChecks")
     protected SecurityManager createDefaultInstance() {
       DefaultSecurityManager dsm = (DefaultSecurityManager) super.createDefaultInstance();
-
       initializeCacheManager(dsm);
       initializeSessionManager(dsm);
       initializeSubjectDAO(dsm);
       initializeAuthorizer(dsm);
       initializeAuthenticator(dsm);
-
-
-
 //      ((AbstractAuthenticator) dsm.getAuthenticator()).setAuthenticationListeners(authenticationListeners);
 
       return dsm;
@@ -221,5 +217,4 @@ public class SecurityManagerFactory implements FactoryBean<SecurityManager> {
       urls.put("/trace/**", Roles.AGATE_ADMIN.name());
     }
   }
-
 }

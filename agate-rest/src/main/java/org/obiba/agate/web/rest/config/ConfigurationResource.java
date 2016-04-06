@@ -13,7 +13,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.json.JSONException;
 import org.obiba.agate.config.ClientConfiguration;
@@ -43,7 +42,7 @@ public class ConfigurationResource {
 
   @GET
   @Timed
-  @RequiresAuthentication
+  @RequiresRoles("agate-user")
   public Agate.ConfigurationDto get() {
     return dtos.asDto(configurationService.getConfiguration());
   }
