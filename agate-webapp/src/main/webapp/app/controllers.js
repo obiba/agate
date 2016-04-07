@@ -124,11 +124,15 @@ agate.controller('OAuthController', ['$log', '$scope', '$q', '$location', 'Appli
   $scope.scopes = $scope.auth.scope.split(' ').map(function (s) {
     var scopeParts = s.split(':');
     var appId = scopeParts[0];
-    return {application: appId, name: scopeParts[1] };
+    if(OPENID_SCOPES.indexOf(appId) < 0) {
+      return {application: appId, name: scopeParts[1]};
+    } else {
+      return {application: 'openid', name: appId};
+    }
   });
 
   var applications = $scope.scopes.reduce(function(applications, scope) {
-    var application = OPENID_SCOPES.indexOf(scope.application) < 0 ? scope.application : 'openid';
+    var application = scope.application;
     
     if(applications.indexOf(application) < 0) {
       applications.push(application);
@@ -142,13 +146,14 @@ agate.controller('OAuthController', ['$log', '$scope', '$q', '$location', 'Appli
       return ApplicationSummaryResource.get({id: application}).$promise;
     } else {
       var deferred = $q.defer();
-      deferred.resolve({id: 'openid', scopes: []});
+      deferred.resolve({id: application, scopes: OPENID_SCOPES.map(function(s) {return {name: s};})});
       return deferred.promise;
     }
   })).then(function(applications) {
     var res = $scope.scopes.map(function(scope) {
-      var application = applications.filter(function(application) { return application.id === scope.application; })[0];
-      var found = application && application.scopes ? application.scopes.filter(function(s) {return s.name === scope.name; })[0] : {};
+      var application, found;
+      application = applications.filter(function (application) { return application.id === scope.application; })[0];
+      found = application && application.scopes ? application.scopes.filter(function(s) {return s.name === scope.name; })[0] : {};
 
       if (!found && scope.name) {
         scope.isMissing = true;

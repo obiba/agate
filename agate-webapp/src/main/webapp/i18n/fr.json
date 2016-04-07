@@ -421,6 +421,9 @@
     "unknown-client-application": "Client application requesting authorization could not be identified.",
     "unknown-resource-application": "Resource application could not be identified.",
     "unknown-resource-scope": "Resource scope could not be identified.",
-    "openid-request": "Permission to view your profile information (including email)."
+    "openid-request": "Identity provider.",
+    "openid-openid-description": "Permission to get your basic identity information (username).",
+    "openid-email-description": "Permission to get your email address.",
+    "openid-profile-description": "Permission to get your profile information."
   }
 }

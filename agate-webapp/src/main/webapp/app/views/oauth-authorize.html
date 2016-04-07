@@ -25,24 +25,30 @@
         <div class="panel panel-default voffset4">
           <div class="panel-heading" translate>oauth.review-permissions</div>
           <div class="panel-body">
-            <div ng-repeat="appScope in applicationScopes">
+            <div ng-repeat="appScope in applicationScopes | orderBy:'application.name':true">
               <div ng-if="appScope.application.id !== 'openid'">
                 <h4>{{appScope.application.name}}</h4>
                 <p class="help-block">
                   {{appScope.application.description}}
                 </p>
+                <ul>
+                  <li ng-repeat="scope in appScope.scopes">
+                    <code ng-if="scope.name">{{scope.name}}</code>
+                    <span ng-if="scope.description">{{scope.description}}</span>
+                    <span ng-if="!scope.name" translate>oauth.all-permissions</span>
+                  </li>
+                </ul>
               </div>
               <div ng-if="appScope.application.id === 'openid'">
                 <h4 translate>{{agateConfig.name}}</h4>
+                <p class="help-block" translate>oauth.openid-request</p>
+                <ul>
+                  <li ng-repeat="scope in appScope.scopes">
+                    <code>{{scope.name}}</code>
+                    <span>{{'oauth.openid-' + scope.name + '-description' | translate}}</span>
+                  </li>
+                </ul>
               </div>
-              <ul>
-                <li ng-repeat="scope in appScope.scopes">
-                  <code ng-if="scope.name">{{scope.name}}</code>
-                  <span ng-if="scope.description">{{scope.description}}</span>
-                  <span ng-if="!scope.name && scope.application !== 'openid'" translate>oauth.all-permissions</span>
-                  <span ng-if="scope.application === 'openid'" translate>oauth.openid-request</span>
-                </li>
-              </ul>
             </div>
           </div>
         </div>

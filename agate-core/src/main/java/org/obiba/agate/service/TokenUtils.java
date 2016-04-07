@@ -10,6 +10,7 @@
 
 package org.obiba.agate.service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,6 +25,7 @@ import org.obiba.agate.domain.User;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -39,8 +41,18 @@ import io.jsonwebtoken.SignatureException;
 public class TokenUtils {
 
   public static final String OPENID_SCOPE = "openid";
+  public static final String OPENID_EMAIL_SCOPE = "email";
+  public static final String OPENID_PROFILE_SCOPE = "profile";
+  public static final String OPENID_ADDRESS_SCOPE = "address";
+  public static final String OPENID_PHONE_SCOPE = "phone";
+  public static final String OPENID_OFFLINE_ACCESS_SCOPE = "offline_access";
   public static final Set<String> OPENID_SCOPES = Sets.newHashSet(
-      "openid", "profile", "email", "address", "phone", "offline_access"); // http://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims
+      OPENID_SCOPE,
+      OPENID_EMAIL_SCOPE,
+      OPENID_PROFILE_SCOPE,
+      OPENID_PHONE_SCOPE,
+      OPENID_ADDRESS_SCOPE,
+      OPENID_OFFLINE_ACCESS_SCOPE); // http://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims
   public static final String OPENID_TOKEN = "id_token";
 
   /**
@@ -114,11 +126,11 @@ public class TokenUtils {
    * @param authorization
    * @return
    */
-  public String makeIDToken(@NotNull Authorization authorization) {
+  public String makeIDToken(@NotNull Authorization authorization, @NotNull List<String> scopes) {
     if(!authorization.hasScope(OPENID_SCOPE)) return "";
 
     DateTime expires = authorizationService.getExpirationDate(authorization);
-    Claims claims = buildClaims(authorization.getUsername());
+    Claims claims = buildClaims(authorization.getUsername(), scopes);
     claims.setIssuedAt(authorization.getCreatedDate().toDate()) //
         .setExpiration(expires.toDate());
     claims.put(Claims.AUDIENCE, authorization.getApplication());
@@ -127,14 +139,13 @@ public class TokenUtils {
         .signWith(SignatureAlgorithm.HS256, configurationService.getConfiguration().getSecretKey().getBytes()).compact();
   }
 
-  public Claims buildClaims(String subject) {
+  public Claims buildClaims(String subject,@NotNull List<String> scopes) {
     User user = userService.findUser(subject);
     Claims claims = Jwts.claims().setSubject(subject).setIssuer(getIssuerID());
-    putUserClaims(claims, user);
+    if(!scopes.isEmpty()) putUserClaims(claims, user, scopes);
 
     return claims;
   }
-
 
   public Claims parseClaims(String token) {
     Claims claims = Jwts.parser()
@@ -191,8 +202,27 @@ public class TokenUtils {
    * @param claims
    * @param user
    */
-  private void putUserClaims(Claims claims, User user) {
+  private void putUserClaims(Claims claims, User user, List<String> scopes) {
+    if(scopes.contains("profile")) {
+      putProfileClaims(claims, user);
+    }
+
+    if(scopes.contains("email")) {
+      putEmailClaims(claims, user);
+    }
+
+    //claims.put("locale", user.getLocale());
+  }
+
+  private void putEmailClaims(Claims claims, User user) {
+    claims.put("email", user.getEmail());
+    // TODO
+    claims.put("email_verified", false);//user.isEmailVerified());
+  }
+
+  private void putProfileClaims(Claims claims, User user) {
     String name = "";
+
     if(user.hasFirstName()) {
       name = user.getFirstName();
       claims.put("given_name", user.getFirstName());
@@ -203,11 +233,6 @@ public class TokenUtils {
       claims.put("family_name", user.getLastName());
     }
     if(!Strings.isNullOrEmpty(name)) claims.put("name", name);
-
-    claims.put("email", user.getEmail());
-    // TODO
-    claims.put("email_verified", false);//user.isEmailVerified());
-    //claims.put("locale", user.getLocale());
   }
 
   /**

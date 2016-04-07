@@ -12,6 +12,8 @@ package org.obiba.agate.web.rest.ticket;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -63,6 +65,8 @@ import com.google.common.base.Throwables;
 
 import io.jsonwebtoken.Claims;
 
+import static java.util.stream.Collectors.toList;
+
 @Component
 @Path("/oauth2")
 @Scope("request")
@@ -98,8 +102,10 @@ public class OAuthResource {
   @RequiresRoles("openid")
   @Produces("application/json")
   public Claims userInfo(@Context HttpServletRequest servletRequest) {
-    String username = SecurityUtils.getSubject().getPrincipal().toString();
-    return tokenUtils.buildClaims(username);
+    Subject subject = SecurityUtils.getSubject();
+    String username = subject.getPrincipal().toString();
+
+    return tokenUtils.buildClaims(username, getSupportedOpenIdScopes((s) -> subject.hasRole(s)));
   }
 
   @POST
@@ -289,11 +295,17 @@ public class OAuthResource {
       .setExpiresIn(expiresIn / 1000 + "");
 
     if (authorization != null && authorization.hasScope(TokenUtils.OPENID_SCOPE)) {
-      responseBuilder.setParam(TokenUtils.OPENID_TOKEN, tokenUtils.makeIDToken(authorization));
+      responseBuilder.setParam(TokenUtils.OPENID_TOKEN, tokenUtils.makeIDToken(authorization,
+          getSupportedOpenIdScopes((s) -> authorization.hasScope(s))));
     }
 
     OAuthResponse response = responseBuilder.buildJSONMessage();
     return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
+  }
+
+  private List<String> getSupportedOpenIdScopes(Function<String, Boolean> filter) {
+    String[] supported = {TokenUtils.OPENID_EMAIL_SCOPE, TokenUtils.OPENID_PROFILE_SCOPE};
+    return Arrays.stream(supported).filter(s -> filter.apply(s)).collect(toList());
   }
 
   /**
