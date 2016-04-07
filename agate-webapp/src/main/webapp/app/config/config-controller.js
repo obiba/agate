@@ -186,7 +186,36 @@ agate.config
         $scope.agateConfig.inactiveTimeout = $scope.inactiveTimeoutDays * 24;
         $scope.agateConfig.$save(
           function () {
-            $location.path('/config').replace();
+            $location.path('/admin/general');
+          },
+          function (response) {
+            FormServerValidation.error(response, $scope.form);
+          });
+      };
+
+    }])
+
+  .controller('ConfigurationStyleEditController', ['$scope', '$resource', '$location', '$log', 'ConfigurationResource', 'FormServerValidation',
+
+    function ($scope, $resource, $location, $log, ConfigurationResource, FormServerValidation) {
+      var reload = false;
+      $scope.agateConfig = ConfigurationResource.get();
+
+      $scope.agateConfig.$promise.then(function() {
+        $scope.$watch('agateConfig.style', function(value, oldValue) {
+          if(!angular.equals(value,oldValue)) {
+            reload = true;
+          }
+        });
+      });
+
+      $scope.save = function () {
+        $scope.agateConfig.$save(
+          function () {
+            $location.path('/admin');
+            if(reload) {
+              $window.location.reload();
+            }
           },
           function (response) {
             FormServerValidation.error(response, $scope.form);

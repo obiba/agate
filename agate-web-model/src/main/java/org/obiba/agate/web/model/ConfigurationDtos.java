@@ -24,6 +24,7 @@ class ConfigurationDtos {
     if(configuration.getAgateVersion() != null) {
       builder.setVersion(configuration.getAgateVersion().toString());
     }
+    if(configuration.hasStyle()) builder.setStyle(configuration.getStyle());
     return builder.build();
   }
 
@@ -39,6 +40,7 @@ class ConfigurationDtos {
     configuration.setJoinWithUsername(dto.getJoinWithUsername());
     if(dto.getUserAttributesCount() > 0)
       dto.getUserAttributesList().forEach(c -> configuration.addUserAttribute(fromDto(c)));
+    if(dto.hasStyle()) configuration.setStyle(dto.getStyle());
     return configuration;
   }
 

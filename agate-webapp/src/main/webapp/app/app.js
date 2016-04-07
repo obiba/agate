@@ -8,6 +8,7 @@ var agate = angular.module('agate', [
   'localytics.directives',
   'agate.config',
   'ngObiba',
+  'agate.admin',
   'agate.application',
   'agate.ticket',
   'agate.user',

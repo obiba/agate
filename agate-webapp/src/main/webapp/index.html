@@ -28,6 +28,7 @@
   <link rel="stylesheet" href="bower_components/ng-obiba/dist/css/ng-obiba.css" />
   <!-- endbower -->
   <!-- endbuild -->
+  <link rel="stylesheet" href="ws/config/style.css">
 </head>
 <body ng-app="agate" ng-controller="MainController">
 <!--[if lt IE 10]>
@@ -73,7 +74,7 @@
 
       <ul class="nav navbar-nav navbar-right" ng-if="authenticated">
         <li ng-if="hasRole('agate-administrator')">
-          <a href="#/config">
+          <a href="#/admin">
             <span translate>global.menu.admin</span>
           </a>
         </li>
@@ -173,6 +174,9 @@
 <script src="app/controllers.js"></script>
 <script src="app/services.js"></script>
 <script src="app/directives.js"></script>
+<script src="app/admin/admin.js"></script>
+<script src="app/admin/admin-router.js"></script>
+<script src="app/admin/admin-controller.js"></script>
 <script src="app/config/config.js"></script>
 <script src="app/config/config-router.js"></script>
 <script src="app/config/config-controller.js"></script>
