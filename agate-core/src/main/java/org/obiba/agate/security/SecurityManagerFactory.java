@@ -186,7 +186,8 @@ public class SecurityManagerFactory implements FactoryBean<SecurityManager> {
         protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
           SimpleAccount account = (SimpleAccount) super.doGetAuthorizationInfo(principals);
           // implicitly, give the role agate-user to all users from ini
-          account.addRole(Roles.AGATE_USER.toString());
+          if(account != null) account.addRole(Roles.AGATE_USER.toString());
+
           return account;
         }
       };
