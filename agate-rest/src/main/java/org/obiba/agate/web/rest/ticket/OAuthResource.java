@@ -258,7 +258,7 @@ public class OAuthResource {
     }
 
     Ticket ticket = ticketService.create(authorization);
-    return getAccessResponse(ticket, authorization);
+    return getAccessResponse(ticket, authorization, clientId);
   }
 
   private Response accessPasswordGrant(HttpServletRequest servletRequest, OAuthTokenRequest oAuthRequest)
@@ -282,11 +282,11 @@ public class OAuthResource {
     subject.logout();
 
     Ticket ticket = ticketService.create(user.getName(), false, false, clientId);
-    return getAccessResponse(ticket, null);
+    return getAccessResponse(ticket, null, clientId);
   }
 
-  private Response getAccessResponse(@NotNull Ticket ticket, @Nullable Authorization authorization) throws OAuthSystemException {
-    String token = tokenUtils.makeAccessToken(ticket);
+  private Response getAccessResponse(@NotNull Ticket ticket, @Nullable Authorization authorization, String clientId) throws OAuthSystemException {
+    String token = tokenUtils.makeAccessToken(ticket, clientId);
     long expiresIn = ticketService.getExpirationDate(ticket).getMillis() - DateTime.now().getMillis();
 
     OAuthASResponse.OAuthTokenResponseBuilder responseBuilder = OAuthASResponse.tokenResponse(HttpServletResponse.SC_OK) //
