@@ -25,7 +25,6 @@ import org.obiba.agate.domain.User;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -79,6 +78,10 @@ public class TokenUtils {
    * @return
    */
   public String makeAccessToken(@NotNull Ticket ticket) {
+    return makeAccessToken(ticket, null);
+  }
+
+  public String makeAccessToken(@NotNull Ticket ticket, String clientId) {
     User user = userService.findUser(ticket.getUsername());
 
     DateTime expires = ticketService.getExpirationDate(ticket);
@@ -94,7 +97,7 @@ public class TokenUtils {
       authorization = authorizationService.get(ticket.getAuthorization());
     }
 
-    putAudienceClaim(claims, user, authorization);
+    putAudienceClaim(claims, user, authorization, clientId);
     putContextClaim(claims, user, authorization);
 
     return Jwts.builder().setClaims(claims)
@@ -242,13 +245,18 @@ public class TokenUtils {
    * @param claims
    * @param user
    * @param authorization
+   * @param clientId
    */
-  private void putAudienceClaim(Claims claims, User user, Authorization authorization) {
+  private void putAudienceClaim(Claims claims, User user, Authorization authorization, String clientId) {
     if(user == null) return;
 
     Set<String> applications = userService.getUserApplications(user);
     if(authorization == null) {
-      claims.put(Claims.AUDIENCE, applications);
+      if (clientId == null) {
+        claims.put(Claims.AUDIENCE, applications);
+      } else {
+        claims.put(Claims.AUDIENCE, Sets.newHashSet(clientId));
+      }
     } else {
       Set<String> audience = Sets.newTreeSet();
       // authorized application can always validated the access token
