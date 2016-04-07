@@ -295,6 +295,18 @@ module.exports = function (grunt) {
             src: [
               'generated/*'
             ]
+          },
+          {
+            expand: true,
+            dot: true,
+            cwd: 'src/main/webapp/bower_components/ace-builds/src-min-noconflict',
+            dest: '<%= yeoman.dist %>/scripts',
+            src: [
+              'mode-css.js',
+              'worker-css.js',
+              'theme-monokai.js',
+              'ext-searchbox.js'
+            ]
           }
         ]
       },

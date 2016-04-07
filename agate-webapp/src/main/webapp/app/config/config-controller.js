@@ -195,9 +195,9 @@ agate.config
 
     }])
 
-  .controller('ConfigurationStyleEditController', ['$scope', '$resource', '$location', '$log', 'ConfigurationResource', 'FormServerValidation',
-
-    function ($scope, $resource, $location, $log, ConfigurationResource, FormServerValidation) {
+  .controller('ConfigurationStyleEditController', ['$scope', '$resource', '$window', '$location', '$log', 'ConfigurationResource',
+    'FormServerValidation', 'StyleEditorService',
+    function ($scope, $resource, $window, $location, $log, ConfigurationResource, FormServerValidation, StyleEditorService) {
       var reload = false;
       $scope.agateConfig = ConfigurationResource.get();
 
@@ -208,6 +208,8 @@ agate.config
           }
         });
       });
+
+      $scope.ace = StyleEditorService.getEditorOptions();
 
       $scope.save = function () {
         $scope.agateConfig.$save(
