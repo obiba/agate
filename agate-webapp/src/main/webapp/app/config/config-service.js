@@ -1,6 +1,7 @@
 'use strict';
 
-agate.config.factory('ConfigurationResource', ['$resource',
+agate.config
+  .factory('ConfigurationResource', ['$resource',
   function ($resource) {
     return $resource('ws/config', {}, {
       // override $resource.save method because it uses POST by default
@@ -8,6 +9,13 @@ agate.config.factory('ConfigurationResource', ['$resource',
       'get': {method: 'GET'}
     });
   }])
+  .factory('PublicConfigurationResource', ['$resource',
+    function ($resource) {
+      return $resource('ws/config/_public', {}, {
+        // override $resource.save method because it uses POST by default
+        'get': {method: 'GET'}
+      });
+    }])
   .factory('KeyStoreResource', ['$resource',
     function ($resource) {
       return $resource('ws/config/keystore/system/https', {}, {

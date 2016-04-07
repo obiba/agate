@@ -2,11 +2,13 @@
 
 /* Controllers */
 
-agate.controller('MainController', ['$rootScope', '$scope', '$log', 'ConfigurationResource', 'screenSize', 'AuthenticationSharedService',
-  function ($rootScope, $scope, $log, ConfigurationResource, screenSize, AuthenticationSharedService) {
+agate.controller('MainController', ['$rootScope', '$scope', '$log', 'ConfigurationResource', 'PublicConfigurationResource', 'screenSize', 'AuthenticationSharedService',
+  function ($rootScope, $scope, $log, ConfigurationResource, PublicConfigurationResource, screenSize, AuthenticationSharedService) {
     $rootScope.screen = $scope.screen = {size: null, device: null};
     if (AuthenticationSharedService.isAuthenticated()) {
       $scope.agateConfig = ConfigurationResource.get();
+    } else {
+      $scope.agateConfig = PublicConfigurationResource.get();
     }
     $rootScope.$on('event:auth-loginConfirmed', function () {
       $scope.agateConfig = ConfigurationResource.get();
