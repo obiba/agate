@@ -165,15 +165,20 @@ agate.config
       };
     }])
 
-  .controller('ConfigurationEditController', ['$scope', '$resource', '$location', '$log', 'ConfigurationResource', 'FormServerValidation',
+  .controller('ConfigurationEditController', ['$scope', '$resource', '$window', '$location', '$log', 'ConfigurationResource', 'FormServerValidation',
 
-    function ($scope, $resource, $location, $log, ConfigurationResource, FormServerValidation) {
-
-      $scope.agateConfig = {};
-
-      ConfigurationResource.get(function(config) {
-        $scope.agateConfig = config;
+    function ($scope, $resource, $window, $location, $log, ConfigurationResource, FormServerValidation) {
+      $scope.agateConfig = ConfigurationResource.get(function() {
         $scope.inactiveTimeoutDays = $scope.agateConfig.inactiveTimeout / 24;
+      });
+
+      var reload = false;
+      $scope.agateConfig.$promise.then(function() {
+        $scope.$watch('agateConfig.name', function(value, oldValue) {
+          if(!angular.equals(value,oldValue)) {
+            reload = true;
+          }
+        });
       });
 
       $scope.save = function () {
@@ -187,6 +192,9 @@ agate.config
         $scope.agateConfig.$save(
           function () {
             $location.path('/admin/general');
+            if(reload) {
+              $window.location.reload();
+            }
           },
           function (response) {
             FormServerValidation.error(response, $scope.form);

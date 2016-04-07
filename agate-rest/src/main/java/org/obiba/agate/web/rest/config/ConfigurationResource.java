@@ -48,6 +48,12 @@ public class ConfigurationResource {
   }
 
   @GET
+  @Path("/_public")
+  public Agate.PublicConfigurationDto getPublic() {
+    return Agate.PublicConfigurationDto.newBuilder().setName(configurationService.getConfiguration().getName()).build();
+  }
+
+  @GET
   @Path("/style.css")
   @Produces("text/css")
   public Response getStyle() {

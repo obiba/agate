@@ -59,6 +59,10 @@ message ConfigurationDto {
   optional string style = 10;
 }
 
+message PublicConfigurationDto {
+  required string name = 1;
+}
+
 message AttributeDto {
   required string name = 1;
   optional string value = 2;
