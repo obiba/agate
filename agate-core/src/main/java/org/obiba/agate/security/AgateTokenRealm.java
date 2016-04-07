@@ -118,11 +118,12 @@ public class AgateTokenRealm extends AuthorizingRealm {
     if(thisPrincipals != null && !thisPrincipals.isEmpty()) {
       Optional<List<String>> scopes = thisPrincipals.stream().map(p -> {
         try {
-          return getScopesFromToken(p.toString());
+          if(p.toString().split("\\.").length == 3) return getScopesFromToken(p.toString());
         } catch(MalformedJwtException e) {
           //ignore
-          return null;
         }
+
+        return null;
       }).filter(s -> s != null).findFirst();
 
       if (scopes.isPresent()) return new SimpleAuthorizationInfo(Sets.newHashSet(scopes.get()));
