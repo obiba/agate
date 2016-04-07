@@ -19,9 +19,11 @@ import javax.inject.Inject;
 import net.sf.ehcache.CacheManager;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.SimpleAccount;
 import org.apache.shiro.authc.credential.PasswordMatcher;
 import org.apache.shiro.authc.pam.FirstSuccessfulStrategy;
 import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
+import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.ModularRealmAuthorizer;
 import org.apache.shiro.authz.permission.PermissionResolver;
 import org.apache.shiro.authz.permission.PermissionResolverAware;
@@ -37,6 +39,7 @@ import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.session.mgt.ExecutorServiceSessionValidationScheduler;
 import org.apache.shiro.session.mgt.SessionValidationScheduler;
 import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
+import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.LifecycleUtils;
 import org.obiba.shiro.SessionStorageEvaluator;
 import org.slf4j.Logger;
@@ -178,7 +181,15 @@ public class SecurityManagerFactory implements FactoryBean<SecurityManager> {
     protected Realm createRealm(Ini ini) {
       // Set the resolvers first, because IniRealm is initialized before the resolvers
       // are applied by the ModularRealmAuthorizer
-      IniRealm realm = new IniRealm();
+      IniRealm realm = new IniRealm() {
+        @Override
+        protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+          SimpleAccount account = (SimpleAccount) super.doGetAuthorizationInfo(principals);
+          // implicitly, give the role agate-user to all users from ini
+          account.addRole(Roles.AGATE_USER.toString());
+          return account;
+        }
+      };
       realm.setName(INI_REALM);
 //      realm.setRolePermissionResolver(rolePermissionResolver);
       realm.setPermissionResolver(permissionResolver);
