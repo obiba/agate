@@ -7,5 +7,6 @@ agate.config = angular.module('agate.config', [
   'ngResource',
   'ngRoute',
   'pascalprecht.translate',
+  'ui.ace',
   'ui.bootstrap'
 ]);

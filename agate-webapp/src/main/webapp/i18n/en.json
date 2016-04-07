@@ -36,6 +36,12 @@
       "adminMessage": "You are logged in as user \"{{username}}\" with administrator rights."
     }
   },
+  "admin-page": {
+    "help": {
+      "general": "Configure server properties.",
+      "style": "Override the default style with your own stylesheet."
+    }
+  },
   "login": {
     "title": "Authentication",
     "form": {
@@ -213,6 +219,13 @@
       "values": "Values",
       "valuesHelp": "Comma separated values",
       "required": "Required"
+    },
+    "general": {
+      "title": "General"
+    },
+    "style": {
+      "title": "Style",
+      "info": "Override the default style with your own stylesheet."
     }
   },
   "applications": "Applications",

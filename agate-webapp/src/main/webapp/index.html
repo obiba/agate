@@ -28,6 +28,7 @@
   <link rel="stylesheet" href="bower_components/ng-obiba/dist/css/ng-obiba.css" />
   <!-- endbower -->
   <!-- endbuild -->
+  <link rel="stylesheet" href="ws/config/style.css">
 </head>
 <body ng-app="agate" ng-controller="MainController">
 <!--[if lt IE 10]>
@@ -73,7 +74,7 @@
 
       <ul class="nav navbar-nav navbar-right" ng-if="authenticated">
         <li ng-if="hasRole('agate-administrator')">
-          <a href="#/config">
+          <a href="#/admin">
             <span translate>global.menu.admin</span>
           </a>
         </li>
@@ -165,6 +166,8 @@
 <script src="bower_components/objectpath/lib/ObjectPath.js"></script>
 <script src="bower_components/angular-schema-form/dist/schema-form.js"></script>
 <script src="bower_components/angular-schema-form/dist/bootstrap-decorator.js"></script>
+<script src="bower_components/ace-builds/src-noconflict/ace.js"></script>
+<script src="bower_components/angular-ui-ace/ui-ace.js"></script>
 <script src="bower_components/angular-recaptcha/release/angular-recaptcha.js"></script>
 <script src="bower_components/angular-media-queries/match-media.js"></script>
 <!-- endbower -->
@@ -173,6 +176,9 @@
 <script src="app/controllers.js"></script>
 <script src="app/services.js"></script>
 <script src="app/directives.js"></script>
+<script src="app/admin/admin.js"></script>
+<script src="app/admin/admin-router.js"></script>
+<script src="app/admin/admin-controller.js"></script>
 <script src="app/config/config.js"></script>
 <script src="app/config/config-router.js"></script>
 <script src="app/config/config-controller.js"></script>

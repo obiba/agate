@@ -45,6 +45,8 @@ public class Configuration extends AbstractAuditableDocument {
 
   private List<AttributeConfiguration> userAttributes;
 
+  private String style;
+
   public String getName() {
     return name;
   }
@@ -148,5 +150,17 @@ public class Configuration extends AbstractAuditableDocument {
 
   public Version getAgateVersion() {
     return agateVersion;
+  }
+
+  public boolean hasStyle() {
+    return !Strings.isNullOrEmpty(style);
+  }
+
+  public void setStyle(String style) {
+    this.style = style;
+  }
+
+  public String getStyle() {
+    return style;
   }
 }

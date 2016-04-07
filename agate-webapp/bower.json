@@ -31,6 +31,7 @@
     "ng-obiba": "https://github.com/obiba/ng-obiba.git#1.2",
     "angular-utils-pagination": "0.9.3",
     "angular-schema-form": "0.8.12",
+    "angular-ui-ace": "0.2.3",
     "angular-recaptcha": "2.2.5",
     "angular-media-queries": "0.6.0"
   },
@@ -44,6 +45,9 @@
     },
     "bootstrap": {
       "main": "./dist/js/bootstrap.min.js"
+    },
+    "ace-builds": {
+      "main": "./src-noconflict/ace.js"
     },
     "chosen": {
       "main": "./chosen.jquery.js"

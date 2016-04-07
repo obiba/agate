@@ -47,6 +47,15 @@ public class ConfigurationResource {
     return dtos.asDto(configurationService.getConfiguration());
   }
 
+  @GET
+  @Path("/style.css")
+  @Produces("text/css")
+  public Response getStyle() {
+    return Response
+      .ok(configurationService.getConfiguration().getStyle(), "text/css")
+      .header("Content-Disposition", "attachment; filename=\"style.css\"").build();
+  }
+
   /**
    * Get the Json representation of the form to be filled for submitting a join request.
    *
