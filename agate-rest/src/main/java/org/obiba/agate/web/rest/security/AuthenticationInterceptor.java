@@ -35,7 +35,7 @@ public class AuthenticationInterceptor implements ContainerResponseFilter {
       Session session = SecurityUtils.getSubject().getSession();
       session.touch();
       int timeout = (int) (session.getTimeout() / 1000);
-      responseContext.getHeaders().putSingle(HttpHeaders.SET_COOKIE,
+      responseContext.getHeaders().add(HttpHeaders.SET_COOKIE,
           new NewCookie(AGATE_SESSION_ID_COOKIE_NAME, session.getId().toString(), "/", null, null, timeout, false));
     } else {
       if(responseContext.getHeaders().get(HttpHeaders.SET_COOKIE) == null) {
