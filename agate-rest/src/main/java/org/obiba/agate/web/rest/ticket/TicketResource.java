@@ -194,14 +194,14 @@ public class TicketResource extends ApplicationAwareResource {
   @Path("/{idOrToken}")
   public Response logout(@PathParam("idOrToken") String idOrToken,
     @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) {
-    if(SecurityUtils.getSubject().hasRole("agate-administrator")) {
-      ticketService.delete(idOrToken);
-
-      return Response.ok().build();
+    if(!SecurityUtils.getSubject().hasRole("agate-administrator")) {
+      validateApplication(authHeader);
     }
-
-    validateApplication(authHeader);
-    ticketService.delete(idOrToken);
+    try {
+      ticketService.delete(idOrToken);
+    } catch(Exception e) {
+      // ignore
+    }
 
     Configuration configuration = getConfiguration();
     return Response.noContent().header(HttpHeaders.SET_COOKIE,
