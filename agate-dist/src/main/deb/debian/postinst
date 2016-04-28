@@ -34,7 +34,7 @@ case "$1" in
         if [ ! -f "$tfile" ]; then
           return 1
         fi
-        cat /etc/agate/shiro.ini | sed -e "s/^administrator\s*=.*,/administrator=$adminpw,/" > $tfile && \
+        cat /etc/agate/shiro.ini | sed -e "s,^administrator\s*=.*\,,administrator=$adminpw\,," > $tfile && \
           mv $tfile /etc/agate/shiro.ini
         # clear password in db_get so it won't be re-encoded during next upgrade
         db_set agate/admin_password ""
