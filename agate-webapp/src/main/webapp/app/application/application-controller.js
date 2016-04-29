@@ -105,7 +105,6 @@ agate.application
 
     function ($scope, $location, $routeParams, ApplicationsResource, ApplicationResource, $log) {
       $scope.status_codes = {
-        NO_MATCH: -1,
         ERROR: -2,
         SUCCESS: 1
       };
@@ -113,8 +112,8 @@ agate.application
       $scope.application = $routeParams.id ? ApplicationResource.get({id: $routeParams.id}) : {};
 
       $scope.save = function(form) {
-        if (!form.$valid || $scope.confirmKey !== $scope.key) {
-          $scope.status = $scope.confirmKey !== $scope.key ? $scope.status_codes.NO_MATCH : $scope.status_codes.ERROR;
+        if (!form.$valid) {
+          $scope.status = $scope.status_codes.ERROR;
           form.saveAttempted = true;
           return;
         }
@@ -141,6 +140,17 @@ agate.application
           ApplicationsResource.save($scope.application, onSuccess, onError);
         }
       };
+
+      $scope.generateKey = function() {
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        for( var i=0; i < 30; i++ ) {
+          text += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+
+        $scope.key = text;
+      }
 
       $scope.cancel = function () {
         if ($scope.application.id) {

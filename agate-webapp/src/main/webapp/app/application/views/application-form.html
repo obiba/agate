@@ -3,7 +3,7 @@
     <ol class="agate-breadcrumb">
       <li><a href="#/applications" translate>applications</a></li>
       <li class="active"><span ng-if="application.name">{{application.name}}</span><span ng-if="!application.name"
-        translate>application.new</span></li>
+          translate>application.new</span></li>
     </ol>
   </h2>
   <div class="row">
@@ -13,23 +13,22 @@
       <form name="form" role="form" novalidate ng-submit="save(form)" autocomplete="off">
         <p class="alert alert-danger" ng-show="status && status !== status_codes.SUCCESS" translate="">fix-error</p>
         <div class="alert alert-danger" ng-show="status === status_codes.NO_MATCH"
-          translate="password.messages.error.dontmatch">
+            translate="password.messages.error.dontmatch">
           The key and its confirmation do not match!
         </div>
 
         <div form-input disabled="application.id" name="name" model="application.name" label="application.name"
-          help="application.name-help" required="true"></div>
+            help="application.name-help" required="true"></div>
 
         <div form-textarea name="description" model="application.description" label="application.description"></div>
 
-        <div class="voffset3">
-          <div form-input type="password" name="key" model="key" label="application.key" help="application.key-help"
+        <a href class="pull-right" ng-click="generateKey()" translate>application.key-generate</a>
+        <div form-input name="key" model="key" label="application.key"
+            help="{{application.id ? 'application.key-help' : '' | translate}}"
             required="!application.id"></div>
-          <div form-input type="password" name="confirmKey" model="confirmKey" label="application.confirmKey" required="!application.id"></div>
-        </div>
 
         <div form-input name="redirectURI" model="application.redirectURI" label="application.redirectURI"
-          help="application.redirectURI-help" required="false"></div>
+            help="application.redirectURI-help" required="false"></div>
 
         <button type="button" class="btn btn-default" ng-click="cancel()">
           <span translate>cancel</span>

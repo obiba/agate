@@ -240,6 +240,7 @@
     "description": "Description",
     "key": "Key",
     "key-help": "Leave blank to not modify application's secret key.",
+    "key-generate": "Generate Key",
     "redirectURI": "Redirect URI",
     "redirectURI-help": "Callback URL to the application's server, required in the OAuth context.",
     "confirmKey": "Confirm key",
