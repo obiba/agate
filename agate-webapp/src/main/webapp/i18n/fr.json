@@ -236,12 +236,16 @@
       "message": "Are you sure you want to delete application '{{arg0}}'?"
     },
     "none": "No applications.",
-    "scopes": "Scopes",
-    "scope": {
-      "help": "Scopes allow to qualify the authorization access to the application that is granted in the OAuth context. Scopes are optional.",
-      "none": "No scopes.",
-      "add": "Add Scope",
-      "edit": "Edit Scope"
+    "scope-permissions": "Permissions",
+    "scope-permission": {
+      "help": "Permissions allow to qualify the authorization access to the application that is granted in the OAuth context. Permissions are optional.",
+      "none": "No permissions.",
+      "add": "Add Permission",
+      "edit": "Edit Permission",
+      "name": "Name",
+      "name-help": "Name of the permission, without spaces.",
+      "description": "Description",
+      "description-help": "Short description of the requested permission that will be shown to the user."
     }
   },
   "groups": "Groups",
@@ -424,6 +428,8 @@
     "openid-request": "Identity provider.",
     "openid-openid-description": "Permission to get your basic identity information (username).",
     "openid-email-description": "Permission to get your email address.",
-    "openid-profile-description": "Permission to get your profile information."
+    "openid-profile-description": "Permission to get your profile information.",
+    "openid-phone-description": "Permission to get your phone (not supported).",
+    "openid-address-description": "Permission to get your address (not supported)."
   }
 }

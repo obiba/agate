@@ -38,15 +38,15 @@
     </div>
 
     <div class="col-md-6">
-      <h3 translate>application.scopes</h3>
+      <h3 translate>application.scope-permissions</h3>
       <p class="help-block">
-        <span translate>application.scope.help</span>
+        <span translate>application.scope-permission.help</span>
       </p>
       <a href="" ng-click="editScope()" class="btn btn-info">
-        <i class="fa fa-plus"></i> <span translate>application.scope.add</span>
+        <i class="fa fa-plus"></i> <span translate>application.scope-permission.add</span>
       </a>
       <p class="help-block" ng-if="!application.scopes || application.scopes.length == 0">
-        <span translate>application.scope.none</span>
+        <span translate>application.scope-permission.none</span>
       </p>
       <div ng-if="application.scopes && application.scopes.length > 0">
         <div class="row voffset2">
@@ -74,7 +74,7 @@
             <tbody>
             <tr dir-paginate="scope in application.scopes | filter:searchText | itemsPerPage: 20">
               <td>
-                {{scope.name}}
+                <code>{{scope.name}}</code>
               </td>
               <td>
                 {{scope.description}}
