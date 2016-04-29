@@ -16,6 +16,7 @@ message AuthorizationDto {
   optional string redirectURI = 5;
   repeated string scopes = 6;
   optional TimestampsDto timestamps = 7;
+  optional string applicationName = 8;
 }
 
 message TicketDto {

@@ -3,8 +3,10 @@ package org.obiba.agate.web.model;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
+import org.obiba.agate.domain.Application;
 import org.obiba.agate.domain.Authorization;
 import org.obiba.agate.domain.Ticket;
+import org.obiba.agate.service.ApplicationService;
 import org.obiba.agate.service.AuthorizationService;
 import org.obiba.agate.service.TicketService;
 import org.springframework.stereotype.Component;
@@ -20,6 +22,9 @@ class TicketDtos {
 
   @Inject
   private AuthorizationService authorizationService;
+
+  @Inject
+  private ApplicationService applicationService;
 
   @NotNull
   Agate.TicketDto asDto(@NotNull Ticket ticket) {
@@ -51,9 +56,13 @@ class TicketDtos {
   @NotNull
   Agate.AuthorizationDto asDto(@NotNull Authorization authorization) {
     Agate.AuthorizationDto.Builder builder = Agate.AuthorizationDto.newBuilder();
+
+    Application application = applicationService.find(authorization.getApplication());
+
     builder.setId(authorization.getId()) //
       .setUsername(authorization.getUsername()) //
       .setApplication(authorization.getApplication()) //
+      .setApplicationName(application == null ? authorization.getApplication() : application.getName()) //
       .setCode(authorization.getCode()) //
       .setRedirectURI(authorization.getRedirectURI()) //
       .setTimestamps(TimestampsDtos.asDto(authorization));
