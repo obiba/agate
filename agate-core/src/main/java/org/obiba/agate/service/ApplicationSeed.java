@@ -34,6 +34,12 @@ public class ApplicationSeed implements ApplicationListener<ContextRefreshedEven
   }
 
   private void save(Application application) {
-    if(applicationService.findByName(application.getName()) == null) applicationService.save(application);
+    if(applicationService.findByName(application.getName()) == null) {
+      try {
+        applicationService.save(application);
+      } catch(Exception e) {
+        // ignore
+      }
+    }
   }
 }
