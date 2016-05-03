@@ -26,15 +26,16 @@ public class ApplicationSeed implements ApplicationListener<ContextRefreshedEven
   @Override
   public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
     save(Application.newBuilder().name("Opal").description("The data storage application.")
-      .key(applicationService.hashKey("changeit")).build());
+        .key(applicationService.hashKey("changeit")).build());
     save(Application.newBuilder().name("Mica").description("The study catalogue application.")
-      .key(applicationService.hashKey("changeit")).build());
+        .key(applicationService.hashKey("changeit")).build());
     save(Application.newBuilder().name("Drupal").description("The web data portal application.")
-      .key(applicationService.hashKey("changeit")).build());
+        .key(applicationService.hashKey("changeit")).build());
   }
 
   private void save(Application application) {
-    if(applicationService.findByName(application.getName()) == null) {
+    if(applicationService.findByName(application.getName().toLowerCase()) == null &&
+        applicationService.findByName(application.getName()) == null) {
       try {
         applicationService.save(application);
       } catch(Exception e) {
