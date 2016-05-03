@@ -53,7 +53,7 @@ public class ApplicationService {
   public Application getApplication(@NotNull String id) throws NoSuchApplicationException {
     Application application = applicationRepository.findOne(id);
 
-    if (application == null) throw NoSuchApplicationException.withId(id);
+    if(application == null) throw NoSuchApplicationException.withId(id);
 
     return application;
   }
@@ -79,17 +79,17 @@ public class ApplicationService {
   }
 
   public void save(@NotNull Application application) {
-    if (application.isNew()) application.setNameAsId();
+    if(application.isNew()) generateId(application);
     applicationRepository.save(application);
   }
 
   public void delete(@NotNull String id) {
     Application application = getApplication(id);
-    List<User> users = userRepository.findByApplications(application.getName());
-    List<Group> groups = groupRepository.findByApplications(application.getName());
+    List<User> users = userRepository.findByApplications(application.getId());
+    List<Group> groups = groupRepository.findByApplications(application.getId());
 
     if(!users.isEmpty() || !groups.isEmpty()) {
-      throw NotOrphanApplicationException.withName(application.getName());
+      throw NotOrphanApplicationException.withId(application.getId());
     }
 
     applicationRepository.delete(application);
@@ -98,6 +98,22 @@ public class ApplicationService {
   public String hashKey(String key) {
     RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "shiro.password.");
     return new Sha512Hash(key, propertyResolver.getProperty("salt"),
-      propertyResolver.getProperty("nbHashIterations", Integer.class)).toString();
+        propertyResolver.getProperty("nbHashIterations", Integer.class)).toString();
+  }
+
+  //
+  // Private methods
+  //
+
+  private void generateId(@NotNull Application application) {
+    application.setNameAsId();
+    String id = application.getId();
+    Application found = find(id);
+    int i = 1;
+    while(found != null) {
+      application.setId(id + i);
+      i++;
+      found = find(application.getId());
+    }
   }
 }
