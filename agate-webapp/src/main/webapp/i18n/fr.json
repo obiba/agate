@@ -1,436 +1,436 @@
 {
   "language": {
-    "en": "English",
-    "fr": "French"
+    "en": "Anglais",
+    "fr": "Français"
   },
   "global": {
-    "browsehappy": "You are using an <strong>outdated</strong> browser. Please <a href=\"http://browsehappy.com/\">upgrade your browser</a> to improve your experience.",
+    "browsehappy": "Votre navigateur web est <strong>obselète</strong>. S'il-vous-plaît <a href=\"http://browsehappy.com/\">actuliser votre navigateur</a> pour améliorer votre expérience.",
     "menu": {
       "admin": "Administration",
       "applications": "Applications",
       "configuration": "Configuration",
-      "groups": "Groups",
-      "requests": "Pending Requests",
-      "tickets": "Tickets",
-      "users": "Users",
-      "myProfile": "My Profile",
-      "logout": "Sign Out",
+      "groups": "Groupes",
+      "requests": "Requêtes en attente",
+      "tickets": "Tiquets",
+      "users": "Utilisateurs",
+      "myProfile": "Mon profil",
+      "logout": "Déconnection",
       "account": {
-        "main": "Account",
-        "settings": "Settings",
-        "password": "Password",
-        "login": "Authenticate"
+        "main": "Compte",
+        "settings": "Options",
+        "password": "Mot de passe",
+        "login": "Authentification"
       }
     },
     "language": {
-      "en": "English",
-      "fr": "French",
-      "de": "German"
+      "en": "Anglais",
+      "fr": "Français",
+      "de": "Allemand"
     }
   },
   "main": {
-    "title": "Welcome to Agate!",
-    "subtitle": "Agate allows you to manage your own account and, for those with administrator rights, other users accounts, groups and integrated applications.",
+    "title": "Bienvenue chez Agate!",
+    "subtitle": "Agate vous permet de gérer votre propre compte et, pour ceux avec les droits administrateurs, d'autres comptes utilisateur, groupes et applications intégrée.",
     "logged": {
-      "userMessage": "You are logged in as user \"{{username}}\".",
-      "adminMessage": "You are logged in as user \"{{username}}\" with administrator rights."
+      "userMessage": "Vous êtes connecté en tant que \"{{username}}\".",
+      "adminMessage": "Vous êtes connecté en tant que  \"{{username}}\" avec les droits administrateur."
     }
   },
   "login": {
-    "title": "Authentication",
+    "title": "Authentification",
     "form": {
-      "username": "User Name or Email",
-      "username.placeholder": "Your login",
-      "password": "Password",
-      "password.placeholder": "Your password",
-      "rememberme": "Automatic Login",
-      "button": "Sign In",
-      "forgot-login": "Can't access your account?"
+      "username": "Nom d'utilisateur ou courriel",
+      "username.placeholder": "Votre identifiant",
+      "password": "Mot de passe",
+      "password.placeholder": "Votre mot de passe",
+      "rememberme": "Garder la session ouverte",
+      "button": "Connexion",
+      "forgot-login": "Problème d'accès au compte?"
     },
     "messages": {
       "error": {
-        "authentication": "<strong>Authentication failed!</strong> Please check your credentials and try again."
+        "authentication": "<strong>Erreur d'autentification!</strong> Veuillez vérifier vos identifiants de connexion."
       }
     }
   },
   "join": {
-    "title": "Request an Account",
+    "title": "Demande de création de compte",
     "form": {
-      "button": "Sign Up",
-      "submit": "Join"
+      "button": "S'inscrire",
+      "submit": "Joindre"
     }
   },
   "settings": {
-    "title": "User settings for [<b>{{username}}</b>]",
+    "title": "Détails de compte pour [<b>{{username}}</b>]",
     "form": {
-      "username": "User Name",
-      "firstname": "First Name",
-      "firstname.placeholder": "Your first name",
-      "lastname": "Last Name",
-      "lastname.placeholder": "Your last name",
-      "email": "E-mail",
-      "email.placeholder": "Your e-mail",
-      "button": "Save"
+      "username": "Nom d'utilisateur",
+      "firstname": "Nom",
+      "firstname.placeholder": "Votre nom",
+      "lastname": "Nom de famille",
+      "lastname.placeholder": "Votre nom de famille",
+      "email": "Courriel",
+      "email.placeholder": "Votre courriel",
+      "button": "Sauvegarder"
     },
     "messages": {
-      "error": "<strong>An error has occured!</strong> Settings could not be saved.",
-      "success": "<strong>Settings saved!</strong>",
+      "error": "<strong>Une erreur s'est produite!</strong> Les détails n'ont pas pu être sauvegardés.",
+      "success": "<strong>Détails sauvegardés!</strong>",
       "validate": {
         "firstname": {
-          "required": "Your first name is required.",
-          "minlength": "Your first name is required to be at least 1 character",
-          "maxlength": "Your first name cannot be longer than 50 characters"
+          "required": "Votre nom est requis.",
+          "minlength": "Votre nom doit avoir au moins 1 caractère de long",
+          "maxlength": "Votre nom ne peut pas avoir plus de 50 caractères de long"
         },
         "lastname": {
-          "required": "Your last name is required.",
-          "minlength": "Your last name is required to be at least 1 character",
-          "maxlength": "Your last name cannot be longer than 50 characters"
+          "required": "Votre nom de faille est requis.",
+          "minlength": "Votre nom de famille doit avoir au moins 1 caractère de long",
+          "maxlength": "Votre nom de famille ne peut pas avoir plus de 50 caractères de long"
         },
         "email": {
-          "required": "Your e-mail is required.",
-          "invalid": "Your e-mail is invalid.",
-          "minlength": "Your e-mail is required to be at least 1 character",
-          "maxlength": "Your e-mail cannot be longer than 50 characters"
+          "required": "Votre courriel est requis.",
+          "invalid": "Votre courriel est invalide.",
+          "minlength": "Votre courriel doit avoir au moins 1 caractère de long",
+          "maxlength": "Votre courriel ne peut pas avoir plus de 50 caractères de long"
         }
       }
     }
   },
   "password": {
-    "title": "Change Password",
+    "title": "Modification du mot de passe",
     "form": {
-      "newpassword": "New password",
-      "newpassword.placeholder": "New password",
-      "confirmpassword": "Password confirmation",
-      "confirmpassword.placeholder": "Confirm the new password",
-      "button": "Save"
+      "newpassword": "Nouveau mot de passe",
+      "newpassword.placeholder": "Nouveau mot de passe",
+      "confirmpassword": "Confirmation du mot de passe",
+      "confirmpassword.placeholder": "Confirmer le mot de passe",
+      "button": "Sauvegarder"
     },
-    "success": "<strong>Password changed!</strong>",
+    "success": "<strong>Mot de pass modifié!</strong>",
     "error": {
-      "global": "The password could not be changed.",
-      "dontmatch": "The password and its confirmation do not match!"
+      "global": "Le mot de passe n'a pas pu être modifié.",
+      "dontmatch": "Le mot de passe et sa confirmation ne correspondent pas!"
     },
     "messages": {
       "error": {
-        "global": "<strong>An error has occured!</strong> The password could not be changed.",
-        "dontmatch": "The password and its confirmation do not match!"
+        "global": "<strong>Une erreur s'est produite!</strong> Le mot de pass n'a pas pu être modifié.",
+        "dontmatch": "Le mot de passe et sa confirmation ne correspondent pas!"
       },
-      "success": "<strong>Password changed!</strong>",
+      "success": "<strong>Mot de passe modifié!</strong>",
       "validate": {
         "newpassword": {
-          "required": "Your password is required.",
-          "minlength": "Your password is required to be at least 5 characters",
-          "maxlength": "Your password cannot be longer than 50 characters",
-          "strength": "Password strength:"
+          "required": "Votre mot de passe est requis.",
+          "minlength": "Votre mot de passe doit avoir au moins 5 caractère de long",
+          "maxlength": "Votre mot de passe ne peut pas avoir plus de 50 caractères de long",
+          "strength": "Force du mot de passe:"
         },
         "confirmpassword": {
-          "required": "Your confirm password is required.",
-          "minlength": "Your confirm password is required to be at least 5 character",
-          "maxlength": "Your confirm password cannot be longer than 50 characters"
+          "required": "La confirmation du mot de passe est requise.",
+          "minlength": "Votre confirmation de mot de passe doit avoir au moins 5 caractère de long",
+          "maxlength": "Votre confirmation de mot de passe ne peut pas avoir plus de 50 caractères de long"
         }
       }
     }
   },
   "forgot-login": {
-    "title": "Can't access your account?",
-    "success": "Check your email to complete your login recovery.",
-    "username-option": "I forgot my username",
-    "username": "Username or Email",
-    "email": "Email",
-    "password-option": "I forgot my password",
-    "submit": "Submit"
+    "title": "Problème d'accès au compte?",
+    "success": "Verifiez vos courriels pour compléter la récupération de vos identifiants.",
+    "username-option": "Oubli de l'identifiant",
+    "username": "Identifiant ou courriel",
+    "email": "Courriel",
+    "password-option": "J'ai oublié mon mot de passe",
+    "submit": "Soumettre"
   },
   "sessions": {
-    "title": "Active sessions for [<b>{{username}}</b>]",
+    "title": "Sessions actives pour [<b>{{username}}</b>]",
     "table": {
-      "ipaddress": "IP address",
+      "ipaddress": "Adresse IP",
       "useragent": "User Agent",
       "date": "Date",
-      "button": "Invalidate"
+      "button": "Invalider"
     },
     "messages": {
-      "success": "<strong>Session invalidated!</strong>",
-      "error": "<strong>An error has occured!</strong> The session could not be invalidated."
+      "success": "<strong>Session invalidée!</strong>",
+      "error": "<strong>Une erreur s'est produite!</strong> La session n'a pas pu être invalidée."
     }
   },
   "errors": {
-    "title": "Error!",
-    "403": "You are not authorized to access the page."
+    "title": "Erreur!",
+    "403": "Vous n'ếtes pas authorisé à acceder à cette page."
   },
-  "footer": "This is your footer",
+  "footer": "Ceci est votre pied de page",
   "config": {
-    "title": "Properties",
-    "title-edit": "Edit Configuration",
-    "name": "Name",
-    "name-help": "Name of your organization.",
-    "publicUrl": "Public URL",
-    "publicUrl-help": "Public base URL of the server that will be used when sending notification emails.",
-    "domain": "Domain",
-    "domain-help": "Single sign-on cookie domain.",
-    "shortTimeout": "Short term timeout (hours)",
-    "shortTimeout-help": "Ticket expiration timeout in hours.",
-    "longTimeout": "Long term timeout (hours)",
-    "longTimeout-help": "Ticket expiration timeout in hours when \"remember me\" option is selected.",
-    "inactiveTimeout": "Inactive timeout (days)",
-    "inactiveTimeout-help": "User account expiration timeout in days.",
-    "joinWithUsername": "Sign up form offers to choose the username",
-    "joinWithUsername-help": "User name will be extracted from user email.",
-    "encryption-keys": "Encryption Keys",
-    "encryption-keys-help": "HTTPS connection requires to have a private key and a public key (certificate) defined. A self-signed key-pair is available by default. You can provide your own.",
-    "addKeyPair": "Add Keys",
-    "downloadCertificate": "Download Certificate",
+    "title": "Propriétés",
+    "title-edit": "Modifier la configuration",
+    "name": "Nom",
+    "name-help": "Nom de votre organization.",
+    "publicUrl": "URL publique",
+    "publicUrl-help": "Base URL publique du serveur qui sera utilisée pour l'envoi de courriels de notifiaction.",
+    "domain": "Domaine",
+    "domain-help": "Domaine du cookie de connexion unique.",
+    "shortTimeout": "Temps mort à court terme (heures)",
+    "shortTimeout-help": "Temps d'expiration de tiquet en heures.",
+    "longTimeout": "Temps mort à long terme (heures)",
+    "longTimeout-help": "Temps d'expiration du tiquet lorse que l'option \"Garder la session ouverte\" est sélectionnée.",
+    "inactiveTimeout": "Temps mort (jours)",
+    "inactiveTimeout-help": "Temps d'expiration du compte utilisateur en jours.",
+    "joinWithUsername": "S'inscrire avec les options de nom d'utilisateur",
+    "joinWithUsername-help": "Le nom d'utilisateur sera extrait de votre courriel.",
+    "encryption-keys": "Clé d'encryption",
+    "encryption-keys-help": "La connection HTTPS éxige qu'un clé privée et une clé publique (certificat) soient définies. Une paire de clés auto-signée est disponible par défaut. Vous pouvez fournir la vôtre.",
+    "addKeyPair": "Ajout de clés",
+    "downloadCertificate": "Télécharger un certificat",
     "actions": "Actions",
-    "create": "Create",
-    "import": "Import",
-    "user-attributes": "User Attributes",
-    "user-attributes-help": "User description fields can be extended with some declared attributes. Apply also to join requests.",
+    "create": "Créer",
+    "import": "Importer",
+    "user-attributes": "Attributs d'utilisateur",
+    "user-attributes-help": "Les champs de déscription d'utilisateur peuvent être étendues à l'aide d'attributs déclarés. Cela s'applique aussi aux requêtes d'inscription.",
     "keys": {
-      "titleCreate": "Create Certificate",
-      "titleImport": "Import Certificate",
-      "name": "Name",
-      "organization": "Organization",
-      "organizationalUnit": "Organizational Unit",
-      "locality": "Locality",
-      "state": "State",
-      "country": "Country",
-      "algo": "Algorithm",
-      "size": "Size",
-      "private": "Private Key",
-      "public": "Public Key"
+      "titleCreate": "Créer un certificat",
+      "titleImport": "Importer un certificat",
+      "name": "Nom",
+      "organization": "Organisation",
+      "organizationalUnit": "Unité d'organisation",
+      "locality": "Région",
+      "state": "Province",
+      "country": "Pays",
+      "algo": "Algorithme",
+      "size": "Taille",
+      "private": "Clé privée",
+      "public": "Clé publique"
     },
     "attributes": {
       "actions": "Actions",
-      "addAttribute": "Add attribute",
-      "editTitle": "Edit attribute",
+      "addAttribute": "Ajout d'attribute",
+      "editTitle": "Modification d'attribute",
       "type": "Type",
       "types":{
-        "STRING":"String",
-        "INTEGER":"Integer",
-        "NUMBER":"Number",
-        "BOOLEAN":"Boolean"
+        "STRING":"Chaîne de caractères",
+        "INTEGER":"Entier",
+        "NUMBER":"Numéro",
+        "BOOLEAN":"Booléen"
       },
-      "name": "Name",
-      "description": "Description",
-      "values": "Values",
-      "valuesHelp": "Comma separated values",
-      "required": "Required"
+      "name": "Nom",
+      "description": "Déscription",
+      "values": "Valeurs",
+      "valuesHelp": "Valeurs séparées par des virgules",
+      "required": "Requis"
     }
   },
   "applications": "Applications",
   "application": {
-    "titleView": "Application Details",
-    "titleEdit": "Edit Application",
-    "add": "Add Application",
-    "new": "New Application",
+    "titleView": "Détails d'application",
+    "titleEdit": "Modification d'application",
+    "add": "Ajout d'application",
+    "new": "Nouvelle application",
     "actions": "Actions",
-    "name": "Name",
-    "name-help": "Name must be unique.",
-    "description": "Description",
-    "key": "Key",
-    "key-help": "Leave blank to not modify application's secret key.",
-    "key-generate": "Generate Key",
-    "redirectURI": "Redirect URI",
-    "redirectURI-help": "Callback URL to the application's server, required in the OAuth context.",
-    "confirmKey": "Confirm key",
-    "changeKey": "Change Key",
+    "name": "Nom",
+    "name-help": "Le nom doit être unique.",
+    "description": "Déscription",
+    "key": "Clé",
+    "key-help": "Laisser vide pour ne pas modifier la clé secrète de l'application.",
+    "key-generate": "Générer un clé",
+    "redirectURI": "URI de redirection",
+    "redirectURI-help": "L'URL de rappel au serveur d'application, requise dans le context d'OAuth.",
+    "confirmKey": "Confirmer la clé",
+    "changeKey": "Changer la clé",
     "delete-dialog": {
-      "title": "Delete Application",
-      "message": "Are you sure you want to delete application '{{arg0}}'?"
+      "title": "Effacer l'application",
+      "message": "Êtes-vous sûre de vouloir effacer l'application '{{arg0}}'?"
     },
-    "none": "No applications.",
+    "none": "Aucune application.",
     "scope-permissions": "Permissions",
     "scope-permission": {
-      "help": "Permissions allow to qualify the authorization access to the application that is granted in the OAuth context. Permissions are optional.",
-      "none": "No permissions.",
-      "add": "Add Permission",
-      "edit": "Edit Permission",
-      "name": "Name",
-      "name-help": "Name of the permission, without spaces.",
-      "description": "Description",
-      "description-help": "Short description of the requested permission that will be shown to the user."
+      "help": "Les permissions permettent de qualifier l'authorisation d'accès à l'application qui est accordée dans le contexte d'OAuth. Les permissions sont optionelles.",
+      "none": "Aucune permission.",
+      "add": "Ajout de permission",
+      "edit": "Modification de permission",
+      "name": "Nom",
+      "name-help": "Nom de la permission, sans espace.",
+      "description": "Déscription",
+      "description-help": "Déscription courte de la permission qui sera affichée à l'utilisateur."
     }
   },
-  "groups": "Groups",
+  "groups": "Groupes",
   "group": {
-    "titleEdit": "Edit Group",
-    "titleView": "Group Details",
-    "new": "New Group",
-    "add": "Add Group",
+    "titleEdit": "Modification d'un groupe",
+    "titleView": "Détails d'un groupe",
+    "new": "Nouveau groupe",
+    "add": "Ajout d'un groupe",
     "applications": "Applications",
-    "inherited-applications": "Inherited from: {{groups}}",
+    "inherited-applications": "Héritées de: {{groups}}",
     "actions": "Actions",
-    "name": "Name",
-    "name-help": "Name must be unique.",
-    "description": "Description",
+    "name": "Nom",
+    "name-help": "Le nom doit être unique.",
+    "description": "Déscription",
     "delete-dialog": {
-      "title": "Delete Group",
-      "message": "Are you sure you want to delete group '{{arg0}}'?"
+      "title": "Effacer un groupe",
+      "message": "Êtes-vous sûre de vouloir effacer le groupe '{{arg0}}'?"
     },
-    "none": "No groups."
+    "none": "Aucun groupe."
   },
-  "tickets": "Tickets",
+  "tickets": "Tiquets",
   "ticket": {
-    "titleView": "Ticket Details",
+    "titleView": "Détails d'un tiquet",
     "actions": "Actions",
-    "created": "Created",
-    "events": "Events",
+    "created": "Crée",
+    "events": "Événements",
     "expires": "Expires",
-    "none": "No open tickets.",
-    "properties": "Properties",
+    "none": "Aucun tiquet ouvert.",
+    "properties": "Propriétés",
     "remembered": "Remember-me",
-    "token": "Token",
-    "username": "User Name",
+    "token": "Jeton",
+    "username": "Nom d'utilisateur",
     "eventAction": "Action",
-    "eventTime": "Time",
+    "eventTime": "Temps",
     "eventApplication": "Application",
-    "token-decoder": "Token Decoder",
-    "token-decoder-help": "When a ticket is issued a token is sent to the client. This token is signed and contains information to track back the associated ticket.",
-    "paste-token": "Paste json web token here.",
-    "encoded": "Encoded",
-    "decoded": "Decoded",
-    "token-none": "No or invalid token.",
-    "authorization-help": "Authorization constraint that applies to this ticket. If none is specified, all the applications that are accessible by the user can validate the ticket's token.",
-    "authorization-none": "No authorization."
+    "token-decoder": "Décodeur de jeton",
+    "token-decoder-help": "Lorqu'un tiquet recevant un jeton est envoyé au client. Ce jeton est signé et contient de l'information pour retrouver le tiquet associé.",
+    "paste-token": "Coller le jeton json web ici.",
+    "encoded": "Encodé",
+    "decoded": "Décodé",
+    "token-none": "Aucoun jeton ou jeton invalide.",
+    "authorization-help": "Les contraintes d'authorisation qui s'applique à ce tiquet. Si aucun est spécifié, toutes les applications accessibles à l'utilisateur peuvent valider le jeton du tiquet.",
+    "authorization-none": "Aucune authorisation."
   },
   "authorization": {
-    "title": "Authorization",
+    "title": "Authorisation",
     "code": "Code",
-    "username": "User Name",
+    "username": "Nom d'utilisateur",
     "application": "Application",
-    "redirectURI": "Redirect URI",
-    "scopes": "Scopes",
-    "created": "Created"
+    "redirectURI": "URI de redirection",
+    "scopes": "Étendues",
+    "created": "Créée"
   },
-  "users": "Users",
+  "users": "Utilisateurs",
   "user": {
-    "none": "No users.",
-    "details": "User Details",
-    "required-info": "Required Information",
-    "general-info": "General Information",
-    "add": "Add User",
-    "new": "New User",
-    "label-edit": "Edit User",
+    "none": "Aucun utilisateur.",
+    "details": "Détails d'utilisateur",
+    "required-info": "Information requise",
+    "general-info": "Information générale",
+    "add": "Ajout d'un utilisateur",
+    "new": "Nouel utilisateur",
+    "label-edit": "Modification d'un utilisateur User",
     "actions": "Actions",
-    "name": "Name",
-    "name-help": "Name must be unique.",
-    "realm": "Realm",
-    "firstName": "First Name",
-    "lastName": "Last Name",
-    "fullName": "Full Name",
-    "email": "Email",
-    "email-help": "Email must be unique.",
-    "status": "Status",
-    "status-help": "Only active users can sign in.",
+    "name": "Nom",
+    "name-help": "Le nom doit être unique.",
+    "realm": "Domaine",
+    "firstName": "Nom",
+    "lastName": "Nom de famille",
+    "fullName": "Nom complet",
+    "email": "Courriel",
+    "email-help": "Courriel doit être unique.",
+    "status": "Statut",
+    "status-help": "Seul les utilisateur actifs peuvent se connecter.",
     "role": "Role",
-    "role-help": "A simple user can only access to its own account.",
-    "groups": "Groups",
-    "groups-help": "Members of a group get access to the applications associated to this group.",
+    "role-help": "Un utilisateur simple ne peut accéder qu'à son compte.",
+    "groups": "Groupes",
+    "groups-help": "Les membres d'un groupe ont accès aux applications associées à celui-ci.",
     "applications": "Applications",
-    "applications-help": "Applications in which the user can sign in.",
-    "createdDate": "Created Date",
-    "lastLogin": "Last Logged-in",
-    "agate-administrator": "Administrator",
-    "agate-user": "User",
-    "pending-requests": "Join Requests",
-    "pending-requests-help": "Some people have requested to join the user directory and are awaiting approval. You can approve or reject these requests.",
-    "none-requests": "No pending join requests.",
-    "list": "All Users",
-    "approve": "Approve",
-    "reject": "Reject",
-    "view": "View",
-    "password": "Password",
-    "resetPassword": "Reset password",
-    "ACTIVE": "Active",
-    "INACTIVE": "Inactive",
-    "APPROVED": "Approved",
-    "PENDING": "Pending",
+    "applications-help": "Les applications pour lesquelles l'utilisateur peut se connecter.",
+    "createdDate": "Date de création",
+    "lastLogin": "Date de dernière connection",
+    "agate-administrator": "Administrateur",
+    "agate-user": "Utilisateur",
+    "pending-requests": "Requêtes d'inscription",
+    "pending-requests-help": "Quelques personnes ont des demandes d'inscription à l'annuaire d'utilisateur et sont en attente d'approbation. Vous pouvez accpter ou refuser ces demandes.",
+    "none-requests": "Aucune demande en attente.",
+    "list": "Tous les utilisateurs",
+    "approve": "Approuver",
+    "reject": "Rejeter",
+    "view": "Afficher",
+    "password": "Mot de passe",
+    "resetPassword": "Réinitialiser le mot de passe",
+    "ACTIVE": "Actif",
+    "INACTIVE": "Inactif",
+    "APPROVED": "Aprouvé",
+    "PENDING": "En attente",
     "delete-dialog": {
-      "title": "Delete User",
-      "message": "Are you sure you want to delete user '{{arg0}}'?"
+      "title": "Effacer l'utilisateur User",
+      "message": "Êtes-vous sûre de vouloir effacer l'utilisateur '{{arg0}}'?"
     },
     "success": {
-      "updated": "User settings updated successfully."
+      "updated": "Détails d'utilisateur modifiés avec succès."
     },
-    "authorizations": "Authorizations",
-    "authorizations-help": "Authorizations granted by the user.",
-    "authorizations-none": "No authorizations."
+    "authorizations": "Authorisations",
+    "authorizations-help": "Authorisations accordé par l'utilisateur.",
+    "authorizations-none": "Aucune authorisation."
   },
   "attributes": "Attributes",
   "attribute": {
     "actions": "Actions",
-    "add-label": "Add Attribute",
-    "edit-label": "Edit Attribute",
-    "name": "Name",
-    "description": "Description",
-    "value": "Value",
+    "add-label": "Ajout d'attribut",
+    "edit-label": "Modification d'attribut",
+    "name": "Nom",
+    "description": "Déscription",
+    "value": "Valeur",
     "delete-dialog": {
-      "title": "Delete Attribute",
-      "message": "Are you sure you want to delete attribute '{{arg0}}'?"
+      "title": "Effacer l'attribut",
+      "message": "Êtes-vous sûre de vouloir effacer l'attribut '{{arg0}}'?"
     },
     "error": {
-      "duplicated": "The '{{arg0}}' attribute already exists or it is a configuration attribute."
+      "duplicated": "L'attribut '{{arg0}}' existe déjà ou c'est un attribut de configuration."
     },
-    "none": "No attributes."
+    "none": "Aucun attribut."
   },
   "profile": {
     "identification": "Identification",
-    "update-password": "Update password",
-    "required": "{{name}} is a required field",
+    "update-password": "Modification du mot de passe",
+    "required": "{{name}} est un champs requis",
     "success": {
-      "updated": "Profile settings updated successfully."
+      "updated": "L'information du profil ont été modifiée avec succès."
     },
-    "authorizations-help": "Authorizations that you have granted to applications."
+    "authorizations-help": "Les authorisations que vous avez accordées à des applications."
   },
-  "properties": "Properties",
-  "name": "Name",
-  "edit": "Edit",
-  "view": "View",
-  "delete": "Delete",
-  "cancel": "Cancel",
+  "properties": "Propriétés",
+  "name": "Nom",
+  "edit": "Modifier",
+  "view": "Afficer",
+  "delete": "Effacer",
+  "cancel": "Annuler",
   "ok": "OK",
   "confirmation": "Confirmation",
-  "close": "Close",
-  "save": "Save",
-  "on": "On",
-  "by": "By",
-  "other": "Other",
-  "access": "Access",
+  "close": "Fermer",
+  "save": "Sauvegarder",
+  "on": "Le",
+  "by": "Par",
+  "other": "Autre",
+  "access": "Accès",
   "notification": "Notification",
-  "required": "Required fields cannot be empty.",
-  "suppl-info": "Supplementary information",
-  "fix-error": "The form has some errors. Please fix them before submitting.",
-  "missing-reCaptcha-error": "Missing reCaptcha response",
+  "required": "Les champs requis ne peuvent pas être vide.",
+  "suppl-info": "Information supplémentaire",
+  "fix-error": "Le formulaire contient quelques erreurs. S'il-vous-plait les corriger avant de soumettre.",
+  "missing-reCaptcha-error": "Réponse reCaptcha absente",
   "dnd-reorder": "Drag and drop to reorder",
-  "loading": "Loading...",
-  "error": "Error",
+  "loading": "Chargement...",
+  "error": "Erreur",
   "server": {
     "error": {
-      "403": "Server rejected your request, please make sure you are logged in and try again.",
+      "403": "Le serveur a rejeté votre requête, assuerz vous que vous ête connecté et réessayez.",
       "password": {
-        "too-short": "Password is shorter than the required {{arg0}} characters",
-        "not-changed": "New password is identical to the current password"
+        "too-short": "Le mot de passe est plus court que le {{arg0}} caractères requis",
+        "not-changed": "Le nouveau mot de passe est le même que le mot de passe actuel"
       },
-      "email-already-assigned": "Email '{{arg0}}' is already assigned to another user.",
-      "duplicate-key": "Duplicate item ID."
+      "email-already-assigned": "Le courriel '{{arg0}}' est déjà assigné à un autre utilisateur.",
+      "duplicate-key": "L'ID de l'item est en duplicata."
     }
   },
-  "form-server-error": "Error",
+  "form-server-error": "Erreur",
   "oauth": {
-    "title": "Authorize Application",
-    "review-permissions": "Review Permissions",
-    "all-permissions": "Permission to get full access.",
-    "grant-request": "would like permission to access your account.",
-    "scope": "Scope",
+    "title": "Authoriser l'application",
+    "review-permissions": "Réviser les permissions",
+    "all-permissions": "Permission pour acqu'erir l'accès total.",
+    "grant-request": "aimerais avoir la permission d'accéder à votre compte.",
+    "scope": "Étendue",
     "scope-description": "Description",
-    "accept": "Accept",
-    "decline": "Decline",
-    "unknown-client-application": "Client application requesting authorization could not be identified.",
-    "unknown-resource-application": "Resource application could not be identified.",
-    "unknown-resource-scope": "Resource scope could not be identified.",
-    "openid-request": "Identity provider.",
-    "openid-openid-description": "Permission to get your basic identity information (username).",
-    "openid-email-description": "Permission to get your email address.",
-    "openid-profile-description": "Permission to get your profile information.",
-    "openid-phone-description": "Permission to get your phone (not supported).",
-    "openid-address-description": "Permission to get your address (not supported)."
+    "accept": "Accepter",
+    "decline": "Refuser",
+    "unknown-client-application": "L'application client demandant authorisation n'a pas pu être identifiée.",
+    "unknown-resource-application": "L'application ressource n'a pas pu être identifiée.",
+    "unknown-resource-scope": "L'étendue de la ressource n'a pas pu être identifiée.",
+    "openid-request": "Fournisseur d'identité.",
+    "openid-openid-description": "Permission d'obtenir l'information de base de votre identité (nom d'utilisateur).",
+    "openid-email-description": "Permission d'obtenir votre adresse courriel.",
+    "openid-profile-description": "Permission d'obtenir de l'information sur votre profil.",
+    "openid-phone-description": "Permission d'obtenire vtre numéro de téléphone (pas supportée).",
+    "openid-address-description": "Permission d'obtenir votre adresse (pas supportée)."
   }
 }
