@@ -114,18 +114,15 @@ agate
         .useStaticFilesLoader({
           prefix: 'i18n/',
           suffix: '.json'
-        })
-        .preferredLanguage('en')
-        .fallbackLanguage('en')
-        .useCookieStorage()
+        })        
         .registerAvailableLanguageKeys(['en', 'fr'], {
-          'en_CA': 'en',
-          'en_US': 'en',
-          'en_UK': 'en',
-          'fr_CA': 'fr',
-          'fr_FR': 'fr'
+          'en_*': 'en',
+          'fr_*': 'fr',
+          '*': 'en'
         })
         .determinePreferredLanguage()
+        .fallbackLanguage('en')
+        .useCookieStorage()
         .useSanitizeValueStrategy('escaped');
 
       paginationTemplateProvider.setPath('app/views/pagination-template.html');

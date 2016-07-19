@@ -9,7 +9,6 @@ agate.user
         $scope.nonConfigAttributes = AttributesService.findNonConfigAttributes($scope.attributes, $scope.attributesConfig);
       }, true);
 
-
       /**
        * Pops modal for adding new attribute
        */

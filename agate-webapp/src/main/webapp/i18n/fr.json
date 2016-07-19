@@ -30,7 +30,7 @@
   },
   "main": {
     "title": "Bienvenue chez Agate!",
-    "subtitle": "Agate vous permet de gérer votre propre compte et, pour ceux avec les droits administrateurs, d'autres comptes utilisateur, groupes et applications intégrée.",
+    "subtitle": "Agate vous permet de gérer votre propre compte et, pour ceux avec les droits administrateurs, d'autres comptes utilisateur, groupes et applications intégrées.",
     "logged": {
       "userMessage": "Vous êtes connecté en tant que \"{{username}}\".",
       "adminMessage": "Vous êtes connecté en tant que  \"{{username}}\" avec les droits administrateur."
@@ -111,20 +111,20 @@
     },
     "messages": {
       "error": {
-        "global": "<strong>Une erreur s'est produite!</strong> Le mot de pass n'a pas pu être modifié.",
+        "global": "<strong>Une erreur s'est produite!</strong> Le mot de passe n'a pas pu être modifié.",
         "dontmatch": "Le mot de passe et sa confirmation ne correspondent pas!"
       },
       "success": "<strong>Mot de passe modifié!</strong>",
       "validate": {
         "newpassword": {
           "required": "Votre mot de passe est requis.",
-          "minlength": "Votre mot de passe doit avoir au moins 5 caractère de long",
+          "minlength": "Votre mot de passe doit avoir au moins 5 caractères de long",
           "maxlength": "Votre mot de passe ne peut pas avoir plus de 50 caractères de long",
           "strength": "Force du mot de passe:"
         },
         "confirmpassword": {
           "required": "La confirmation du mot de passe est requise.",
-          "minlength": "Votre confirmation de mot de passe doit avoir au moins 5 caractère de long",
+          "minlength": "Votre confirmation de mot de passe doit avoir au moins 5 caractères de long",
           "maxlength": "Votre confirmation de mot de passe ne peut pas avoir plus de 50 caractères de long"
         }
       }
@@ -161,9 +161,11 @@
     "title": "Propriétés",
     "title-edit": "Modifier la configuration",
     "name": "Nom",
+    "languages": "Langues",
+    "languages-help": "Langues de notification possibles.",
     "name-help": "Nom de votre organization.",
     "publicUrl": "URL publique",
-    "publicUrl-help": "Base URL publique du serveur qui sera utilisée pour l'envoi de courriels de notifiaction.",
+    "publicUrl-help": "Base URL publique du serveur qui sera utilisée pour l'envoi de courriels de notification.",
     "domain": "Domaine",
     "domain-help": "Domaine du cookie de connexion unique.",
     "shortTimeout": "Temps mort à court terme (heures)",
@@ -338,6 +340,7 @@
     "reject": "Rejeter",
     "view": "Afficher",
     "password": "Mot de passe",
+    "preferredLanguage": "Langue de préférence",
     "resetPassword": "Réinitialiser le mot de passe",
     "ACTIVE": "Actif",
     "INACTIVE": "Inactif",

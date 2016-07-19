@@ -2,6 +2,10 @@ package org.obiba.agate.web.rest.config;
 
 import java.io.IOException;
 import java.security.KeyStoreException;
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -13,6 +17,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.json.JSONException;
 import org.obiba.agate.config.ClientConfiguration;
@@ -166,4 +171,13 @@ public class ConfigurationResource {
     }
   }
 
+  @GET
+  @Path("/languages")
+  @Timed
+  @RequiresAuthentication
+  public Map<String, String> getAvailableLanguages() {
+    Locale locale = Locale.ENGLISH;
+    return Arrays.asList(Locale.getISOLanguages()).stream()
+      .collect(Collectors.toMap(lang -> lang, lang -> new Locale(lang).getDisplayLanguage(locale)));
+  }
 }

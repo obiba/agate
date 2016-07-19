@@ -2,8 +2,8 @@
 
 /* Controllers */
 
-agate.controller('MainController', ['$rootScope', '$scope', '$window', '$log', 'ConfigurationResource', 'PublicConfigurationResource', 'screenSize', 'AuthenticationSharedService',
-  function ($rootScope, $scope, $window, $log, ConfigurationResource, PublicConfigurationResource, screenSize, AuthenticationSharedService) {
+agate.controller('MainController', ['$rootScope', '$scope', '$window', '$log', 'ConfigurationResource', 'PublicConfigurationResource', 'screenSize', 'AuthenticationSharedService', 'Account', '$translate',
+  function ($rootScope, $scope, $window, $log, ConfigurationResource, PublicConfigurationResource, screenSize, AuthenticationSharedService, Account, $translate) {
     $rootScope.screen = $scope.screen = {size: null, device: null};
     var applyTitle = function(config) {
       $window.document.title = config.name;
@@ -14,6 +14,9 @@ agate.controller('MainController', ['$rootScope', '$scope', '$window', '$log', '
       $scope.agateConfig = PublicConfigurationResource.get(applyTitle);
     }
     $rootScope.$on('event:auth-loginConfirmed', function () {
+      if (AuthenticationSharedService.hasProfile()) {
+        Account.get(function (user) { $translate.use(user.preferredLanguage); });
+      }
       $scope.agateConfig = ConfigurationResource.get();
     });
 
@@ -192,6 +195,7 @@ agate.controller('ProfileController', ['$scope', '$location', '$uibModal', 'Acco
     var getConfigAttributes = function () {
       ConfigurationResource.get(function (config) {
         $scope.attributesConfig = config.userAttributes || [];
+        $scope.languages = config.languages || [];
         $scope.attributeConfigPairs = AttributesService.getAttributeConfigPairs($scope.settingsAccount.attributes, $scope.attributesConfig);
         $scope.usedAttributeNames = AttributesService.getUsedAttributeNames($scope.settingsAccount.attributes, $scope.attributesConfig);
       });
@@ -249,6 +253,9 @@ agate.controller('ProfileController', ['$scope', '$location', '$uibModal', 'Acco
             },
             usedAttributeNames: function () {
               return $scope.usedAttributeNames;
+            },
+            configLanguages: function () {
+              return $scope.languages;
             }
           }
         })
@@ -267,12 +274,13 @@ agate.controller('ProfileController', ['$scope', '$location', '$uibModal', 'Acco
 
   }]);
 
-agate.controller('ProfileModalController', ['$scope', '$uibModalInstance', '$filter', 'Account', 'settingsAccount', 'attributeConfigPairs', 'attributesConfig', 'usedAttributeNames', 'AttributesService', 'AlertService',
-  function ($scope, $uibModalInstance, $filter, Account, settingsAccount, attributeConfigPairs, attributesConfig, usedAttributeNames, AttributesService, AlertService) {
+agate.controller('ProfileModalController', ['$scope', '$uibModalInstance', '$filter', '$translate', 'Account', 'settingsAccount', 'attributeConfigPairs', 'attributesConfig', 'usedAttributeNames', 'configLanguages', 'AttributesService', 'AlertService',
+  function ($scope, $uibModalInstance, $filter, $translate, Account, settingsAccount, attributeConfigPairs, attributesConfig, usedAttributeNames, configLanguages, AttributesService, AlertService) {
     $scope.settingsAccount = settingsAccount;
     $scope.attributeConfigPairs = attributeConfigPairs;
     $scope.attributesConfig = attributesConfig;
     $scope.usedAttributeNames = usedAttributeNames;
+    $scope.languages = configLanguages;
 
     $scope.requiredField = $filter('translate')('user.email');
 
@@ -293,6 +301,7 @@ agate.controller('ProfileModalController', ['$scope', '$uibModalInstance', '$fil
 
       Account.save($scope.settingsAccount,
         function () {
+          $translate.use($scope.settingsAccount.preferredLanguage);
           $uibModalInstance.close($scope.attributeConfigPairs);
         },
         function () {

@@ -80,13 +80,14 @@ agate.user
       });
     }])
 
-  .controller('UserEditController', ['$rootScope', '$scope', '$routeParams', '$log', '$location', 'UsersResource', 'UserResource', 'FormServerValidation', 'UserStatusResource', 'GroupsResource', 'ApplicationsResource', 'ConfigurationResource', 'AttributesService', 'AlertService',
+  .controller('UserEditController', ['$rootScope', '$scope', '$routeParams', '$log', '$location', '$translate', 'UsersResource', 'UserResource', 'FormServerValidation', 'UserStatusResource', 'GroupsResource', 'ApplicationsResource', 'ConfigurationResource', 'AttributesService', 'AlertService',
 
-    function ($rootScope, $scope, $routeParams, $log, $location, UsersResource, UserResource, FormServerValidation, UserStatusResource, GroupsResource, ApplicationsResource, ConfigurationResource, AttributesService, AlertService) {
+    function ($rootScope, $scope, $routeParams, $log, $location, $translate, UsersResource, UserResource, FormServerValidation, UserStatusResource, GroupsResource, ApplicationsResource, ConfigurationResource, AttributesService, AlertService) {
 
       $scope.roles = ["agate-administrator", "agate-user"];
       $scope.attributesConfig = [];
       ConfigurationResource.get(function(config) {
+        $scope.languages = config.languages;
         $scope.attributesConfig = config.userAttributes || [];
         $scope.attributeConfigPairs = AttributesService.getAttributeConfigPairs($scope.user.attributes, $scope.attributesConfig);
         $scope.usedAttributeNames = AttributesService.getUsedAttributeNames($scope.user.attributes, $scope.attributesConfig);

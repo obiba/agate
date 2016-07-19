@@ -6,6 +6,7 @@ agate.config
 
     function ($rootScope, $scope, $resource, $route, $log, $window, ConfigurationResource, NOTIFICATION_EVENTS, $uibModal, KeyStoreResource) {
       $scope.agateConfig = {userAttributes: []};
+      $scope.availableLanguages = $resource('ws/config/languages').get();
 
       ConfigurationResource.get(function(config) {
         $scope.agateConfig = config;
@@ -180,6 +181,8 @@ agate.config
           }
         });
       });
+
+      $scope.availableLanguages = $resource('ws/config/languages').get();
 
       $scope.save = function () {
 
