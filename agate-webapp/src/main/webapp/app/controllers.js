@@ -43,6 +43,7 @@ agate.controller('LanguageController', ['$scope', '$translate',
     $scope.changeLanguage = function (languageKey) {
       $translate.use(languageKey);
     };
+    $scope.getCurrentLanguage = $translate.use;
   }]);
 
 agate.controller('MenuController', [function () {}]);
@@ -136,7 +137,7 @@ agate.controller('OAuthController', ['$log', '$scope', '$q', '$location', 'Appli
 
   var applications = $scope.scopes.reduce(function(applications, scope) {
     var application = scope.application;
-    
+
     if(applications.indexOf(application) < 0) {
       applications.push(application);
     }
@@ -176,7 +177,7 @@ agate.controller('OAuthController', ['$log', '$scope', '$q', '$location', 'Appli
 
     $scope.applicationScopes = applications.map(function(application) {
       var scopes = res.filter(function(scope) { return scope.application === application.id; });
-      
+
       return {application: application, scopes: scopes};
     });
   }).catch(function(e) {
