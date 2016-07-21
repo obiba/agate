@@ -48,7 +48,9 @@ public class ConfigurationService {
 
   @Cacheable(value = "agateConfig", key = "#root.methodName")
   public Configuration getConfiguration() {
-    return getOrCreateConfiguration();
+    Configuration configuration = getOrCreateConfiguration();
+    if (configuration.getLocales().size() == 0) configuration.getLocales().add(Configuration.DEFAULT_LOCALE);
+    return configuration;
   }
 
   @CacheEvict(value = "agateConfig", allEntries = true)
@@ -268,6 +270,7 @@ public class ConfigurationService {
   private Configuration getOrCreateConfiguration() {
     if(agateConfigRepository.count() == 0) {
       Configuration configuration = new Configuration();
+      configuration.getLocales().add(Configuration.DEFAULT_LOCALE);
       configuration.setSecretKey(generateSecretKey());
       agateConfigRepository.save(configuration);
       return getConfiguration();

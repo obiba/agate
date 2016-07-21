@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.BadRequestException;
 
+import org.apache.commons.lang.LocaleUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -335,6 +336,7 @@ public class UserService {
     RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "registration.");
     Context ctx = new Context();
     String organization = configurationService.getConfiguration().getName();
+    ctx.setLocale(LocaleUtils.toLocale(user.getPreferredLanguage()));
     ctx.setVariable("user", user);
     ctx.setVariable("organization", organization);
     ctx.setVariable("publicUrl", configurationService.getPublicUrl());
@@ -353,6 +355,7 @@ public class UserService {
     Context ctx = new Context();
     User user = userJoinedEvent.getPersistable();
     String organization = configurationService.getConfiguration().getName();
+    ctx.setLocale(LocaleUtils.toLocale(user.getPreferredLanguage()));
     ctx.setVariable("user", user);
     ctx.setVariable("organization", organization);
     ctx.setVariable("publicUrl", configurationService.getPublicUrl());
@@ -373,6 +376,7 @@ public class UserService {
     Context ctx = new Context();
     User user = userApprovedEvent.getPersistable();
     String organization = configurationService.getConfiguration().getName();
+    ctx.setLocale(LocaleUtils.toLocale(user.getPreferredLanguage()));
     ctx.setVariable("user", user);
     ctx.setVariable("organization", organization);
     ctx.setVariable("publicUrl", configurationService.getPublicUrl());
@@ -427,6 +431,7 @@ public class UserService {
     profile.put("email", user.getEmail());
     profile.put("firstname", user.getFirstName());
     profile.put("lastname", user.getLastName());
+    profile.put("locale", user.getPreferredLanguage());
 
     if(user.hasAttributes()) {
       user.getAttributes().forEach((k, v) -> {
@@ -460,6 +465,8 @@ public class UserService {
           user.setLastName(value);
         } else if("email".equals(k)) {
           user.setEmail(value);
+        } else if("locale".equals(k)) {
+          user.setPreferredLanguage(value);
         } else {
           user.getAttributes().put(k, value);
         }

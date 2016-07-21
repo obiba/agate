@@ -54,6 +54,8 @@ public class User extends AbstractAuditableDocument {
 
   private DateTime lastLogin;
 
+  private String preferredLanguage;
+
   public User() {
   }
 
@@ -224,6 +226,14 @@ public class User extends AbstractAuditableDocument {
     this.applications = applications;
   }
 
+  public String getPreferredLanguage() {
+    return (preferredLanguage == null || preferredLanguage.length() == 0) ? Configuration.DEFAULT_LOCALE.getLanguage() : preferredLanguage;
+  }
+
+  public void setPreferredLanguage(String preferredLanguage) {
+    this.preferredLanguage = preferredLanguage;
+  }
+
   @Override
   public boolean equals(Object o) {
     if(this == o) {
@@ -319,6 +329,11 @@ public class User extends AbstractAuditableDocument {
 
     public Builder status(String status) {
       user.setStatus(UserStatus.valueOf(status));
+      return this;
+    }
+
+    public Builder preferredLanguage(String preferredLanguage) {
+      user.setPreferredLanguage(preferredLanguage);
       return this;
     }
 

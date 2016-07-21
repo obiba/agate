@@ -1,7 +1,10 @@
 package org.obiba.agate.domain;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
+import com.google.common.collect.Iterables;
 import org.hibernate.validator.constraints.NotBlank;
 import org.obiba.mongodb.domain.AbstractAuditableDocument;
 import org.obiba.runtime.Version;
@@ -17,6 +20,8 @@ public class Configuration extends AbstractAuditableDocument {
   private static final long serialVersionUID = -9020464712632680519L;
 
   public static final String DEFAULT_NAME = "Agate";
+
+  public static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
 
   public static final int DEFAULT_SHORT_TIMEOUT = 8; // 8 hours
 
@@ -46,6 +51,8 @@ public class Configuration extends AbstractAuditableDocument {
   private List<AttributeConfiguration> userAttributes;
 
   private String style;
+
+  private List<Locale> locales = Lists.newArrayList();
 
   public String getName() {
     return name;
@@ -162,5 +169,19 @@ public class Configuration extends AbstractAuditableDocument {
 
   public String getStyle() {
     return style;
+  }
+
+  public List<Locale> getLocales() {
+    return locales == null ? (locales = Lists.newArrayList()) : locales;
+  }
+
+  public List<String> getLocalesAsString() {
+    List<String> list = Lists.newArrayList(Iterables.transform(getLocales(), Locale::getLanguage));
+    Collections.sort(list);
+    return list;
+  }
+
+  public void setLocales(List<Locale> locales) {
+    this.locales = locales;
   }
 }

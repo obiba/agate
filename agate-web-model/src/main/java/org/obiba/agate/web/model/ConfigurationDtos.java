@@ -2,9 +2,12 @@ package org.obiba.agate.web.model;
 
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.LocaleUtils;
 import org.obiba.agate.domain.AttributeConfiguration;
 import org.obiba.agate.domain.Configuration;
 import org.springframework.stereotype.Component;
+
+import java.util.Locale;
 
 @Component
 class ConfigurationDtos {
@@ -17,6 +20,9 @@ class ConfigurationDtos {
       .setLongTimeout(configuration.getLongTimeout())//
       .setInactiveTimeout(configuration.getInactiveTimeout()) //
       .setJoinWithUsername(configuration.isJoinWithUsername());
+
+    configuration.getLocales().forEach(locale -> builder.addLanguages(locale.getLanguage()));
+
     if(configuration.hasDomain()) builder.setDomain(configuration.getDomain());
     if(configuration.hasPublicUrl()) builder.setPublicUrl(configuration.getPublicUrl());
     if(configuration.hasUserAttributes())
@@ -34,6 +40,7 @@ class ConfigurationDtos {
     configuration.setName(dto.getName());
     if(dto.hasDomain()) configuration.setDomain(dto.getDomain());
     if(dto.hasPublicUrl()) configuration.setPublicUrl(dto.getPublicUrl());
+    dto.getLanguagesList().forEach(lang -> configuration.getLocales().add(LocaleUtils.toLocale(lang)));
     configuration.setShortTimeout(dto.getShortTimeout());
     configuration.setLongTimeout(dto.getLongTimeout());
     configuration.setInactiveTimeout(dto.getInactiveTimeout());

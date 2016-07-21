@@ -214,7 +214,7 @@ public class TokenUtils {
       putEmailClaims(claims, user);
     }
 
-    //claims.put("locale", user.getLocale());
+    claims.put("locale", user.getPreferredLanguage());
   }
 
   private void putEmailClaims(Claims claims, User user) {

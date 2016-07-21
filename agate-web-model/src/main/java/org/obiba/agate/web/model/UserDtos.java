@@ -38,7 +38,8 @@ class UserDtos {
       .setRealm(user.getRealm()) //
       .setRole(user.getRole())//
       .setStatus(user.getStatus().toString()) //
-      .setTimestamps(TimestampsDtos.asDto(user));
+      .setTimestamps(TimestampsDtos.asDto(user))
+      .setPreferredLanguage(user.getPreferredLanguage());
 
     if(!Strings.isNullOrEmpty(user.getFirstName())) builder.setFirstName(user.getFirstName());
     if(!Strings.isNullOrEmpty(user.getLastName())) builder.setLastName(user.getLastName());
@@ -88,6 +89,10 @@ class UserDtos {
       .realm(dto.getRealm())
       .role(dto.getRole())
       .status(dto.getStatus());
+
+    if (dto.hasPreferredLanguage()) {
+      builder.preferredLanguage(dto.getPreferredLanguage());
+    }
 
     if (dto.hasId()) {
       builder.id(dto.getId());

@@ -25,6 +25,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.LocaleUtils;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.MailService;
@@ -126,6 +127,7 @@ public class NotificationsResource extends ApplicationAwareResource {
 
     recipients.forEach(rec -> {
       ctx.setVariable("user", rec);
+      ctx.setLocale(LocaleUtils.toLocale(rec.getAttributes().get(rec.getPreferredLanguage())));
       mailService
         .sendEmail(rec.getEmail(), subject, templateEngine.process(templateLocation, ctx));
     });

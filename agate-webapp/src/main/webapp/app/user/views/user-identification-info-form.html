@@ -19,6 +19,13 @@
 <div form-input name="user.firstName" model="user.firstName" label="user.firstName"></div>
 <div form-input name="user.lastName" model="user.lastName" label="user.lastName"></div>
 
+<div class="form-group">
+  <label class="control-label">
+    <span translate>user.preferredLanguage</span>
+  </label>
+  <select class="form-control" value="{{getCurrentLanguage}}" name="user.preferredLanguage" ng-model="user.preferredLanguage" ng-options="('language.' + locale | translate) for locale in languages"></select>
+</div>
+
 <div ng-repeat="attributeConfigPair in attributeConfigPairs | requiredConfigAttributes">
   <attribute-item attribute="attributeConfigPair.attribute" attribute-config="attributeConfigPair.attributeConfig"></attribute-item>
 </div>
