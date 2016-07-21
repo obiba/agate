@@ -189,6 +189,7 @@ public class TokenUtils {
       name += user.getLastName();
       userMap.put("last_name", user.getLastName());
     }
+    userMap.put("locale", user.getPreferredLanguage());
     if(!Strings.isNullOrEmpty(name)) userMap.put("name", name);
     userMap.put("groups", user.getGroups());
     Map<String, Object> contextMap = Maps.newHashMap();

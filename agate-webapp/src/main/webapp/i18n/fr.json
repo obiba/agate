@@ -379,7 +379,7 @@
     "update-password": "Modification du mot de passe",
     "required": "{{name}} est un champs requis",
     "success": {
-      "updated": "L'information du profil ont été modifiée avec succès."
+      "updated": "Le profil a été modifié avec succès."
     },
     "authorizations-help": "Les authorisations que vous avez accordées à des applications."
   },
