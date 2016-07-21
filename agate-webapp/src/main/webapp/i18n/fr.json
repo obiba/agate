@@ -184,7 +184,7 @@
     "create": "Créer",
     "import": "Importer",
     "user-attributes": "Attributs d'utilisateur",
-    "user-attributes-help": "Les champs de déscription d'utilisateur peuvent être étendues à l'aide d'attributs déclarés. Cela s'applique aussi aux requêtes d'inscription.",
+    "user-attributes-help": "Les champs de description d'utilisateur peuvent être étendues à l'aide d'attributs déclarés. Cela s'applique aussi aux requêtes d'inscription.",
     "keys": {
       "titleCreate": "Créer un certificat",
       "titleImport": "Importer un certificat",
@@ -211,7 +211,7 @@
         "BOOLEAN":"Booléen"
       },
       "name": "Nom",
-      "description": "Déscription",
+      "description": "Description",
       "values": "Valeurs",
       "valuesHelp": "Valeurs séparées par des virgules",
       "required": "Requis"
@@ -226,7 +226,7 @@
     "actions": "Actions",
     "name": "Nom",
     "name-help": "Le nom doit être unique.",
-    "description": "Déscription",
+    "description": "Description",
     "key": "Clé",
     "key-help": "Laisser vide pour ne pas modifier la clé secrète de l'application.",
     "key-generate": "Générer un clé",
@@ -241,14 +241,14 @@
     "none": "Aucune application.",
     "scope-permissions": "Permissions",
     "scope-permission": {
-      "help": "Les permissions permettent de qualifier l'authorisation d'accès à l'application qui est accordée dans le contexte d'OAuth. Les permissions sont optionelles.",
+      "help": "Les permissions permettent de qualifier l'autorisation d'accès à l'application qui est accordée dans le contexte d'OAuth. Les permissions sont optionelles.",
       "none": "Aucune permission.",
       "add": "Ajout de permission",
       "edit": "Modification de permission",
       "name": "Nom",
       "name-help": "Nom de la permission, sans espace.",
-      "description": "Déscription",
-      "description-help": "Déscription courte de la permission qui sera affichée à l'utilisateur."
+      "description": "Description",
+      "description-help": "Description courte de la permission qui sera affichée à l'utilisateur."
     }
   },
   "groups": "Groupes",
@@ -262,7 +262,7 @@
     "actions": "Actions",
     "name": "Nom",
     "name-help": "Le nom doit être unique.",
-    "description": "Déscription",
+    "description": "Description",
     "delete-dialog": {
       "title": "Effacer un groupe",
       "message": "Êtes-vous sûre de vouloir effacer le groupe '{{arg0}}'?"
@@ -290,11 +290,11 @@
     "encoded": "Encodé",
     "decoded": "Décodé",
     "token-none": "Aucoun jeton ou jeton invalide.",
-    "authorization-help": "Les contraintes d'authorisation qui s'applique à ce tiquet. Si aucun est spécifié, toutes les applications accessibles à l'utilisateur peuvent valider le jeton du tiquet.",
-    "authorization-none": "Aucune authorisation."
+    "authorization-help": "Les contraintes d'autorisation qui s'applique à ce tiquet. Si aucun est spécifié, toutes les applications accessibles à l'utilisateur peuvent valider le jeton du tiquet.",
+    "authorization-none": "Aucune autorisation."
   },
   "authorization": {
-    "title": "Authorisation",
+    "title": "Autorisation",
     "code": "Code",
     "username": "Nom d'utilisateur",
     "application": "Application",
@@ -353,9 +353,9 @@
     "success": {
       "updated": "Détails d'utilisateur modifiés avec succès."
     },
-    "authorizations": "Authorisations",
-    "authorizations-help": "Authorisations accordé par l'utilisateur.",
-    "authorizations-none": "Aucune authorisation."
+    "authorizations": "Autorisations",
+    "authorizations-help": "Autorisations accordé par l'utilisateur.",
+    "authorizations-none": "Aucune autorisation."
   },
   "attributes": "Attributes",
   "attribute": {
@@ -363,7 +363,7 @@
     "add-label": "Ajout d'attribut",
     "edit-label": "Modification d'attribut",
     "name": "Nom",
-    "description": "Déscription",
+    "description": "Description",
     "value": "Valeur",
     "delete-dialog": {
       "title": "Effacer l'attribut",
@@ -381,7 +381,7 @@
     "success": {
       "updated": "Le profil a été modifié avec succès."
     },
-    "authorizations-help": "Les authorisations que vous avez accordées à des applications."
+    "authorizations-help": "Les autorisations que vous avez accordées à des applications."
   },
   "properties": "Propriétés",
   "name": "Nom",
@@ -426,7 +426,7 @@
     "scope-description": "Description",
     "accept": "Accepter",
     "decline": "Refuser",
-    "unknown-client-application": "L'application client demandant authorisation n'a pas pu être identifiée.",
+    "unknown-client-application": "L'application client demandant autorisation n'a pas pu être identifiée.",
     "unknown-resource-application": "L'application ressource n'a pas pu être identifiée.",
     "unknown-resource-scope": "L'étendue de la ressource n'a pas pu être identifiée.",
     "openid-request": "Fournisseur d'identité.",
