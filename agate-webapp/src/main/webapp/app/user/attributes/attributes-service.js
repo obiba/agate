@@ -168,7 +168,10 @@ agate.user
       }
 
       function createAttributeFromConfig(attributeConfig) {
-        var attribute = {name: attributeConfig.name};
+        var attribute = {
+          name: attributeConfig.name,
+          description: attributeConfig.description
+        };
         switch (attributeConfig.type) {
           case 'BOOLEAN':
             attribute.value = 'false';
@@ -213,7 +216,9 @@ agate.user
       function singleChosenTemplate(required) {
         var requiredAttr = required ? 'required' : '';
         var requiredMarker = required ? '*' : '';
-        return '<div class="form-group"> <label for="attribute.name" class="control-label"> <span>{{attribute.name}}</span> '+ requiredMarker +' </label> <select id="attribute.name" name="attribute.name" class="form-control" ng-model="attribute.value" ng-options="t for t in attributeConfig.values"'+requiredAttr+'></select> </div>';
+        return '<div class="form-group"> <label for="attribute.name" class="control-label"> <span translate>{{attribute.name}}</span> '+ requiredMarker +' </label>' +
+          '<select id="attribute.name" name="attribute.name" class="form-control" ng-model="attribute.value" ng-options="t for t in attributeConfig.values"'+requiredAttr+'></select>' +
+          '<div class="help-block" translate>{{attribute.description}}</div></div>';
       }
 
       function booleanTemplate(required) {

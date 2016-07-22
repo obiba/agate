@@ -12,38 +12,38 @@
         <table class="table table-bordered table-striped">
           <tbody>
           <tr>
-            <td translate>user.firstName</td>
+            <th translate>user.firstName</th>
             <td>{{settingsAccount.firstName}}</td>
           </tr>
           <tr>
-            <td translate>user.lastName</td>
+            <th translate>user.lastName</th>
             <td>{{settingsAccount.lastName}}</td>
           </tr>
           <tr>
-            <td translate>user.email</td>
+            <th translate>user.email</th>
             <td>{{settingsAccount.email}}</td>
           </tr>
           <tr>
-            <td translate>user.preferredLanguage</td>
+            <th translate>user.preferredLanguage</th>
             <td>{{'language.' + settingsAccount.preferredLanguage | translate}}</td>
           </tr>
           <tr>
-            <td translate>user.role</td>
+            <th translate>user.role</th>
             <td>{{settingsAccount.role}}</td>
           </tr>
           <tr>
-            <td translate>user.groups</td>
+            <th translate>user.groups</th>
             <td><span class="label label-default hoffset-right"
               ng-repeat="group in settingsAccount.groups">{{group}}</span></td>
           </tr>
           <tr>
-            <td translate>user.applications</td>
+            <th translate>user.applications</th>
             <td><span class="label label-default hoffset-right"
               ng-repeat="app in settingsAccount.applications">{{app}}</span></td>
           </tr>
 
           <tr ng-repeat="userConfigAttribute in userConfigAttributes">
-            <td>{{userConfigAttribute.name}}</td>
+            <th translate>{{userConfigAttribute.name}}</th>
             <td>
               <span ng-show="userConfigAttribute.type !== 'BOOLEAN'">{{userConfigAttribute.value}}</span>
               <span ng-show="userConfigAttribute.type === 'BOOLEAN' && userConfigAttribute.value"><i
