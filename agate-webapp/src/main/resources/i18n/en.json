@@ -333,6 +333,7 @@
     "fullName": "Full Name",
     "email": "Email",
     "email-help": "Email must be unique.",
+    "email-invalid": "Not a valid email.",
     "status": "Status",
     "status-help": "Only active users can sign in.",
     "role": "Role",

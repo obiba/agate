@@ -1,11 +1,16 @@
 package org.obiba.agate.service;
 
+import java.io.File;
 import java.io.IOException;
 import java.security.Key;
+import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.shiro.codec.CodecSupport;
 import org.apache.shiro.codec.Hex;
@@ -17,6 +22,8 @@ import org.json.JSONObject;
 import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.event.AgateConfigUpdatedEvent;
 import org.obiba.agate.repository.AgateConfigRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -25,12 +32,23 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.JsonPathException;
+
+import static com.jayway.jsonpath.Configuration.defaultConfiguration;
 
 @Component
 public class ConfigurationService {
+
+  private static final Logger log = LoggerFactory.getLogger(ConfigurationService.class);
+
+  private static final com.jayway.jsonpath.Configuration conf = defaultConfiguration();
 
   @Inject
   private AgateConfigRepository agateConfigRepository;
@@ -43,6 +61,9 @@ public class ConfigurationService {
 
   @Inject
   private ApplicationContext applicationContext;
+
+  @Inject
+  private ObjectMapper objectMapper;
 
   private final AesCipherService cipherService = new AesCipherService();
 
@@ -109,25 +130,28 @@ public class ConfigurationService {
    * @return
    * @throws JSONException
    */
-  public JSONObject getJoinConfiguration() throws JSONException, IOException {
+  public JSONObject getJoinConfiguration(String locale) throws JSONException, IOException {
     Configuration config = getConfiguration();
     JSONObject rval = new JSONObject();
     rval.put("schema", getJoinSchema(config));
     rval.put("definition", getJoinDefinition(config));
+    translate(rval, getTranslationDocument(locale));
     return rval;
   }
 
   /**
    * Get the schema and the definition of the profile form.
    *
+   * @param locale
    * @return
    * @throws JSONException
    */
-  public JSONObject getProfileConfiguration() throws JSONException, IOException {
+  public JSONObject getProfileConfiguration(String locale) throws JSONException, IOException {
     Configuration config = getConfiguration();
     JSONObject rval = new JSONObject();
     rval.put("schema", getProfileSchema(config));
     rval.put("definition", getProfileDefinition(config));
+    translate(rval, getTranslationDocument(locale));
     return rval;
   }
 
@@ -135,7 +159,7 @@ public class ConfigurationService {
   // Private methods
   //
 
-  private JSONObject getJoinSchema(Configuration config) throws JSONException {
+  private JSONObject getJoinSchema(Configuration config) throws JSONException, IOException {
     return getUserFormSchema(config, config.isJoinWithUsername());
   }
 
@@ -144,7 +168,7 @@ public class ConfigurationService {
       config.isJoinWithUsername());
   }
 
-  private JSONObject getProfileSchema(Configuration config) throws JSONException {
+  private JSONObject getProfileSchema(Configuration config) throws JSONException, IOException {
     return getUserFormSchema(config, false);
   }
 
@@ -152,21 +176,21 @@ public class ConfigurationService {
     return getUserFormDefinition(config, applicationContext.getResource("classpath:profile/formDefinition.json"), false);
   }
 
-  private JSONObject getUserFormSchema(Configuration config, boolean withUsername) throws JSONException {
+  private JSONObject getUserFormSchema(Configuration config, boolean withUsername) throws JSONException, IOException {
     JSONObject schema = new JSONObject();
     schema.putOnce("type", "object");
     JSONObject properties = new JSONObject();
-    properties.put("email", newSchemaProperty("string", "Email") //
+    properties.put("email", newSchemaProperty("string", "t(user.email)") //
       .put("pattern", "^\\S+@\\S+$") //
-      .put("validationMessage", "Not a valid email.") //
+      .put("validationMessage", "t(user.email-invalid)") //
     );
     JSONArray required = new JSONArray();
     if(withUsername) {
-      properties.put("username", newSchemaProperty("string", "User Name").put("minLength", 3));
+      properties.put("username", newSchemaProperty("string", "t(user.name)").put("minLength", 3));
       required.put("username");
     }
-    properties.put("firstname", newSchemaProperty("string", "First Name"));
-    properties.put("lastname", newSchemaProperty("string", "Last Name"));
+    properties.put("firstname", newSchemaProperty("string", "t(user.firstName)"));
+    properties.put("lastname", newSchemaProperty("string", "t(user.lastName)"));
 
     Lists.newArrayList("email", "firstname", "lastname").forEach(required::put);
 
@@ -174,7 +198,7 @@ public class ConfigurationService {
       config.getUserAttributes().forEach(a -> {
         try {
           String type = a.getType().name().toLowerCase();
-          JSONObject property = newSchemaProperty(type, a.getName());
+          JSONObject property = newSchemaProperty(type, "t(" + a.getName() + ")");
           if(a.hasValues()) {
             //noinspection ConstantConditions
             a.getValues().forEach(e -> {
@@ -195,6 +219,7 @@ public class ConfigurationService {
 
     schema.put("properties", properties);
     schema.put("required", required);
+
     return schema;
   }
 
@@ -223,17 +248,30 @@ public class ConfigurationService {
     JSONArray definition = new JSONArray();
 
     if(withUsername) {
-      definition.put(newDefinitionProperty("username","User Name", ""));
+      definition.put(newDefinitionProperty("username","t(user.name)", ""));
     }
 
-    definition.put(newDefinitionProperty("email","Email", ""));
-    definition.put(newDefinitionProperty("firstname","First Name", ""));
-    definition.put(newDefinitionProperty("lastname","Last Name", ""));
+    definition.put(newDefinitionProperty("email","t(user.email)", ""));
+    definition.put(newDefinitionProperty("firstname","t(user.firstName)", ""));
+    definition.put(newDefinitionProperty("lastname","t(user.lastName)", ""));
 
     if(config.hasUserAttributes()) {
       config.getUserAttributes().forEach(a -> {
         try {
-          definition.put(newDefinitionProperty(a.getName(), a.getName(), a.getDescription()));
+          JSONObject property = newDefinitionProperty(a.getName(), "t(" + a.getName() + ")", "t(" + a.getDescription() + ")");
+          if(a.hasValues()) {
+            JSONObject titleMap = new JSONObject();
+            //noinspection ConstantConditions
+            a.getValues().forEach(e -> {
+              try {
+                titleMap.put(e, "t(" + e + ")");
+              } catch(JSONException e1) {
+                // ignored
+              }
+            });
+            property.put("titleMap", titleMap);
+          }
+          definition.put(property);
         } catch(JSONException e) {
           // ignore
         }
@@ -241,6 +279,52 @@ public class ConfigurationService {
     }
 
     return definition;
+  }
+
+  private void translate(JSONObject object, DocumentContext translations) throws JSONException {
+    Iterator<String> keys = object.keys();
+    while (keys.hasNext()) {
+      String key = keys.next();
+      Object property = object.get(key);
+      log.info("{} : {}", key, property.toString());
+      if (property instanceof String) {
+        object.put(key, translate((String)property, translations));
+      } else if (property instanceof JSONArray) {
+        translate((JSONArray) property, translations);
+      } else if (property instanceof JSONObject) {
+        translate((JSONObject) property, translations);
+      }
+    }
+  }
+
+  private void translate(JSONArray array, DocumentContext translations) throws JSONException {
+    for (int i = 0; i<array.length(); i++) {
+      Object value = array.get(i);
+      if (value instanceof JSONArray) {
+        translate((JSONArray) value, translations);
+      } else if (value instanceof JSONObject) {
+        translate((JSONObject) value, translations);
+      } else if (value instanceof String) {
+        array.put(i, translate((String)value, translations));
+      }
+    }
+  }
+
+  private String translate(String value, DocumentContext translations) {
+    if (Strings.isNullOrEmpty(value)) return value;
+    Pattern p = Pattern.compile("t\\(([^\\)]+)\\)");
+    Matcher m = p.matcher(value);
+    StringBuffer s = new StringBuffer();
+    while (m.find()) {
+      String key = m.group(1);
+      try {
+        String translated = translations.read("$." + key);
+        m.appendReplacement(s, translated);
+      } catch(JsonPathException e) {
+        m.appendReplacement(s, key);
+      }
+    }
+    return s.length() == 0 ? value : s.toString();
   }
 
   private JSONObject newSchemaProperty(String type, String title) throws JSONException {
@@ -280,5 +364,26 @@ public class ConfigurationService {
 
   private byte[] getSecretKey() {
     return Hex.decode(getOrCreateConfiguration().getSecretKey());
+  }
+
+  private DocumentContext getTranslationDocument(String locale) throws IOException {
+    return JsonPath.using(conf).parse(getTranslations(locale).toString());
+  }
+
+  public JsonNode getTranslations(String locale) throws IOException {
+    File translations;
+
+    try {
+      translations = getTranslationsResource(locale).getFile();
+    } catch (IOException e) {
+      locale = "en";
+      translations = getTranslationsResource(locale).getFile();
+    }
+
+    return objectMapper.readTree(FileUtils.readFileToString(translations, "utf-8"));
+  }
+
+  private Resource getTranslationsResource(String locale) {
+    return applicationContext.getResource(String.format("classpath:/i18n/%s.json", locale));
   }
 }

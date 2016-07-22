@@ -36,6 +36,12 @@
       "adminMessage": "Vous êtes connecté en tant que  \"{{username}}\" avec les droits administrateur."
     }
   },
+  "admin-page": {
+    "help": {
+      "general": "Configurer les propriétés.",
+      "style": "Remplacer le style par défaut avec votre propre style."
+    }
+  },
   "login": {
     "title": "Authentification",
     "form": {
@@ -168,11 +174,11 @@
     "publicUrl-help": "Base URL publique du serveur qui sera utilisée pour l'envoi de courriels de notification.",
     "domain": "Domaine",
     "domain-help": "Domaine du cookie de connexion unique.",
-    "shortTimeout": "Temps mort à court terme (heures)",
+    "shortTimeout": "Délai d'expiration à court terme (heures)",
     "shortTimeout-help": "Temps d'expiration de ticket en heures.",
-    "longTimeout": "Temps mort à long terme (heures)",
-    "longTimeout-help": "Temps d'expiration du ticket lorse que l'option \"Garder la session ouverte\" est sélectionnée.",
-    "inactiveTimeout": "Temps mort (jours)",
+    "longTimeout": "Délai d'expiration à long terme (heures)",
+    "longTimeout-help": "Temps d'expiration du ticket lorsque l'option \"Garder la session ouverte\" est sélectionnée.",
+    "inactiveTimeout": "Délai d'expiration (jours)",
     "inactiveTimeout-help": "Temps d'expiration du compte utilisateur en jours.",
     "joinWithUsername": "S'inscrire avec les options de nom d'utilisateur",
     "joinWithUsername-help": "Le nom d'utilisateur sera extrait de votre courriel.",
@@ -215,6 +221,13 @@
       "values": "Valeurs",
       "valuesHelp": "Valeurs séparées par des virgules",
       "required": "Requis"
+    },
+    "general": {
+      "title": "Général"
+    },
+    "style": {
+      "title": "Style",
+      "info": "Remplacer le style par défaut avec votre propre style. Les classes CSS sont celles de <a target='_blank' href='http://getbootstrap.com/'>Bootstrap</a> (thème de <a target='_blank' href='http://bootswatch.com/flatly/'>Bootswatch Flatly</a>)."
     }
   },
   "applications": "Applications",
@@ -289,7 +302,7 @@
     "paste-token": "Coller le jeton json web ici.",
     "encoded": "Encodé",
     "decoded": "Décodé",
-    "token-none": "Aucoun jeton ou jeton invalide.",
+    "token-none": "Aucun jeton ou jeton invalide.",
     "authorization-help": "Les contraintes d'autorisation qui s'applique à ce ticket. Si aucun est spécifié, toutes les applications accessibles à l'utilisateur peuvent valider le jeton du ticket.",
     "authorization-none": "Aucune autorisation."
   },
@@ -320,6 +333,7 @@
     "fullName": "Nom complet",
     "email": "Courriel",
     "email-help": "Courriel doit être unique.",
+    "email-invalid": "Courriel non valide.",
     "status": "Statut",
     "status-help": "Seul les utilisateur actifs peuvent se connecter.",
     "role": "Role",
@@ -340,7 +354,7 @@
     "reject": "Rejeter",
     "view": "Afficher",
     "password": "Mot de passe",
-    "preferredLanguage": "Langue de préférence",
+    "preferredLanguage": "Langue préférée",
     "resetPassword": "Réinitialiser le mot de passe",
     "ACTIVE": "Actif",
     "INACTIVE": "Inactif",
@@ -421,7 +435,7 @@
     "title": "Authoriser l'application",
     "review-permissions": "Réviser les permissions",
     "all-permissions": "Permission pour acqu'erir l'accès total.",
-    "grant-request": "aimerais avoir la permission d'accéder à votre compte.",
+    "grant-request": "aimerait avoir la permission d'accéder à votre compte.",
     "scope": "Étendue",
     "scope-description": "Description",
     "accept": "Accepter",

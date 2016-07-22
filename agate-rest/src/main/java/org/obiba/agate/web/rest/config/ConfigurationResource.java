@@ -13,6 +13,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -76,8 +77,8 @@ public class ConfigurationResource {
   @Path("/join")
   @Produces(APPLICATION_JSON)
   @Timed
-  public Response getJoinConfiguration() throws JSONException, IOException {
-    return Response.ok(configurationService.getJoinConfiguration().toString()).build();
+  public Response getJoinConfiguration(@QueryParam("locale") String locale) throws JSONException, IOException {
+    return Response.ok(configurationService.getJoinConfiguration(locale).toString()).build();
   }
 
   /**
@@ -89,8 +90,8 @@ public class ConfigurationResource {
   @Path("/profile")
   @Produces(APPLICATION_JSON)
   @Timed
-  public Response getProfileConfiguration() throws JSONException, IOException {
-    return Response.ok(configurationService.getProfileConfiguration().toString()).build();
+  public Response getProfileConfiguration(@QueryParam("locale") String locale) throws JSONException, IOException {
+    return Response.ok(configurationService.getProfileConfiguration(locale).toString()).build();
   }
 
   @GET
@@ -179,5 +180,13 @@ public class ConfigurationResource {
     Locale locale = Locale.ENGLISH;
     return Arrays.asList(Locale.getISOLanguages()).stream()
       .collect(Collectors.toMap(lang -> lang, lang -> new Locale(lang).getDisplayLanguage(locale)));
+  }
+
+  @GET
+  @Path("/i18n/{locale}.json")
+  @Produces("application/json")
+  public Response getTranslation(@PathParam("locale") String locale) throws IOException {
+    return Response.ok(
+      configurationService.getTranslations(locale).toString(), "application/json").build();
   }
 }

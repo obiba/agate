@@ -12,11 +12,11 @@
           translate translate-values="{username: '{{subject.login}}'}">
         main.logged.adminMessage
       </div>
-      <a href="#/login" class="btn btn-info" ng-if="!authenticated">
-        <span translate>login.form.button</span>
-      </a>
-      <a href="#/join" class="btn btn-default" ng-if="!authenticated">
+      <a href="#/join" class="btn btn-info" ng-if="!authenticated">
         <span translate>join.form.button</span>
+      </a>
+      <a href="#/login" class="btn btn-default" ng-if="!authenticated">
+        <span translate>login.form.button</span>
       </a>
       <a href="#/profile" class="btn btn-info" ng-if="authenticated && hasProfile">
         <span translate>global.menu.myProfile</span>

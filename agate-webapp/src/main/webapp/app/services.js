@@ -102,9 +102,9 @@ agate.factory('ForgotPasswordResource', ['$http',
     };
   }]);
 
-agate.factory('JoinConfigResource', ['$resource',
-  function ($resource) {
-    return $resource('ws/config/join');
+agate.factory('JoinConfigResource', ['$resource', '$translate',
+  function ($resource, $translate) {
+    return $resource('ws/config/join',{locale: $translate.use});
   }]);
 
 agate.factory('ClientConfig', ['$resource',
