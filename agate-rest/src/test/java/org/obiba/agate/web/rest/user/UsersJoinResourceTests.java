@@ -84,11 +84,12 @@ public class UsersJoinResourceTests {
     ArgumentCaptor<User> user = ArgumentCaptor.forClass(User.class);
 
     resource
-      .create("un", "fn", "ln", "test@localhost.domain", Lists.newArrayList("app"), Lists.newArrayList("g1", "g2"),
+      .create("un", "fn", "ln", "test@localhost.domain", "fr", Lists.newArrayList("app"), Lists.newArrayList("g1", "g2"),
         "password", "recaptchacode", request);
     verify(userService).createUser(user.capture(), eq("password"));
     assertEquals("id", user.getValue().getId());
     assertEquals("test@localhost.domain", user.getValue().getEmail());
+    assertEquals("fr", user.getValue().getPreferredLanguage());
     assertEquals("fn", user.getValue().getFirstName());
     assertEquals(Sets.newHashSet("g1", "g2"), user.getValue().getGroups());
     assertEquals(Sets.newHashSet("app"), user.getValue().getApplications());
@@ -106,7 +107,7 @@ public class UsersJoinResourceTests {
     exception.expect(BadRequestException.class);
     exception.expectMessage(Matchers.containsString("att1"));
     resource
-      .create("un", "fn", "ln", "test@localhost.domain", Lists.newArrayList("app"), Lists.newArrayList("g1", "g2"),
+      .create("un", "fn", "ln", "test@localhost.domain", "fr", Lists.newArrayList("app"), Lists.newArrayList("g1", "g2"),
         null, "recaptchacode", request);
   }
 }

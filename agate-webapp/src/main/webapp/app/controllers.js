@@ -64,9 +64,9 @@ agate.controller('LoginController', ['$scope', '$location', 'AuthenticationShare
     };
   }]);
 
-agate.controller('JoinController', ['$rootScope', '$scope', '$location', 'JoinConfigResource', 'JoinResource', 'ClientConfig',
+agate.controller('JoinController', ['$rootScope', '$scope', '$location', '$translate', 'JoinConfigResource', 'JoinResource', 'ClientConfig',
   'NOTIFICATION_EVENTS', 'ServerErrorUtils', 'AlertService', 'vcRecaptchaService',
-  function ($rootScope, $scope, $location, JoinConfigResource, JoinResource, ClientConfig, NOTIFICATION_EVENTS, ServerErrorUtils, AlertService, vcRecaptchaService) {
+  function ($rootScope, $scope, $location, $translate, JoinConfigResource, JoinResource, ClientConfig, NOTIFICATION_EVENTS, ServerErrorUtils, AlertService, vcRecaptchaService) {
 
     $scope.joinConfig = JoinConfigResource.get();
     $scope.model = {};
@@ -92,7 +92,11 @@ agate.controller('JoinController', ['$rootScope', '$scope', '$location', 'JoinCo
       }
 
       if (form.$valid) {
-        JoinResource.post(angular.extend({}, $scope.model, {reCaptchaResponse: $scope.response}))
+        var model = $scope.model;
+        if (!model.locale) {
+          model.locale = $translate.use();
+        }
+        JoinResource.post(angular.extend({}, model, {reCaptchaResponse: $scope.response}))
           .success(function () {
             $location.url($location.path());
             $location.path('/');

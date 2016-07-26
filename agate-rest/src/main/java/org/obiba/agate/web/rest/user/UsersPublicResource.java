@@ -53,7 +53,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
- * Public resource for user join requests. Default realm is {@link org.obiba.agate.security.AgateUserRealm}.
+ * Public resource for user join requests. Default realm is {@link AgateUserRealm}.
  */
 @Component
 @Path("/users")
@@ -62,7 +62,7 @@ public class UsersPublicResource {
   private static final String CURRENT_USER_NAME = "_current";
 
   private static final String[] BUILTIN_PARAMS = new String[] { "username", "firstname", "lastname", "application", //
-    "email", "group", "reCaptchaResponse" };
+    "email", "locale", "group", "reCaptchaResponse" };
 
   @Inject
   private UserService userService;
@@ -133,7 +133,7 @@ public class UsersPublicResource {
   @POST
   @Path("/_join")
   public Response create(@FormParam("username") String username, @FormParam("firstname") String firstName,
-    @FormParam("lastname") String lastName, @FormParam("email") String email,
+    @FormParam("lastname") String lastName, @FormParam("email") String email, @FormParam("locale") String preferredLanguage,
     @FormParam("application") List<String> applications, @FormParam("group") List<String> groups,
     @FormParam("password") String password, @FormParam("reCaptchaResponse") String reCaptchaResponse,
     @Context HttpServletRequest request) {
@@ -175,7 +175,7 @@ public class UsersPublicResource {
     }
 
     user = User.newBuilder().name(name).realm(AgateUserRealm.AGATE_REALM).role(Roles.AGATE_USER).pending()
-      .firstName(firstName).lastName(lastName).email(email).build();
+      .firstName(firstName).lastName(lastName).email(email).preferredLanguage(preferredLanguage).build();
     user.setGroups(Sets.newHashSet(groups));
     user.setApplications(Sets.newHashSet(applications));
     user.setAttributes(extractAttributes(request));
