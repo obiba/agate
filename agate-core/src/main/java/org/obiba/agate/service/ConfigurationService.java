@@ -192,7 +192,10 @@ public class ConfigurationService {
     properties.put("firstname", newSchemaProperty("string", "t(user.firstName)"));
     properties.put("lastname", newSchemaProperty("string", "t(user.lastName)"));
 
-    Lists.newArrayList("email", "firstname", "lastname").forEach(required::put);
+    properties.put("locale", newSchemaProperty("string", "t(user.preferredLanguage)")
+      .put("enum", config.getLocalesAsString()).put("default", Configuration.DEFAULT_LOCALE.getLanguage()));
+
+    Lists.newArrayList("email", "firstname", "lastname", "locale").forEach(required::put);
 
     if(config.hasUserAttributes()) {
       config.getUserAttributes().forEach(a -> {
@@ -254,6 +257,18 @@ public class ConfigurationService {
     definition.put(newDefinitionProperty("email","t(user.email)", ""));
     definition.put(newDefinitionProperty("firstname","t(user.firstName)", ""));
     definition.put(newDefinitionProperty("lastname","t(user.lastName)", ""));
+
+    JSONObject localeTitleMap = new JSONObject();
+    config.getLocalesAsString().forEach(l -> {
+      try {
+        localeTitleMap.put(l, "t(language." + l + ")");
+      } catch (JSONException e) {
+        // ignored
+      }
+    });
+
+    definition.put(newDefinitionProperty("locale", "t(user.preferredLanguage)", "")
+      .put("titleMap", localeTitleMap));
 
     if(config.hasUserAttributes()) {
       config.getUserAttributes().forEach(a -> {
