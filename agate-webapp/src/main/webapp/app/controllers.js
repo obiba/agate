@@ -2,8 +2,8 @@
 
 /* Controllers */
 
-agate.controller('MainController', ['$rootScope', '$scope', '$window', '$log', 'ConfigurationResource', 'PublicConfigurationResource', 'screenSize', 'AuthenticationSharedService', 'Account', '$translate',
-  function ($rootScope, $scope, $window, $log, ConfigurationResource, PublicConfigurationResource, screenSize, AuthenticationSharedService, Account, $translate) {
+agate.controller('MainController', ['$rootScope', '$scope', '$window', '$log', '$sce', 'ConfigurationResource', 'PublicConfigurationResource', 'screenSize', 'AuthenticationSharedService', 'Account', '$translate',
+  function ($rootScope, $scope, $window, $log, $sce, ConfigurationResource, PublicConfigurationResource, screenSize, AuthenticationSharedService, Account, $translate) {
     $rootScope.screen = $scope.screen = {size: null, device: null};
     var applyTitle = function(config) {
       $window.document.title = config.name;
@@ -19,6 +19,20 @@ agate.controller('MainController', ['$rootScope', '$scope', '$window', '$log', '
       }
       $scope.agateConfig = ConfigurationResource.get();
     });
+
+    $rootScope.$on('$translateChangeSuccess', function () {
+
+      $scope.currentLanguage = 'https://www.google.com/recaptcha/api.js?onload=vcRecaptchaApiLoaded&render=explicit&hl=' + $translate.use();
+      loadScript($scope.currentLanguage);
+    });
+
+    function loadScript(src) {
+
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src = src;
+      document.getElementById("recaptcha").appendChild(script);
+    }
 
     function getScreenSize() {
       var size = ['lg', 'md', 'sm', 'xs'].filter(function (size) {
