@@ -110,7 +110,7 @@
       "confirmpassword.placeholder": "Confirmer le mot de passe",
       "button": "Sauvegarder"
     },
-    "success": "<strong>Mot de pass modifié!</strong>",
+    "success": "<strong>Mot de passe modifié!</strong>",
     "error": {
       "global": "Le mot de passe n'a pas pu être modifié.",
       "dontmatch": "Le mot de passe et sa confirmation ne correspondent pas!"
@@ -231,6 +231,7 @@
     }
   },
   "applications": "Applications",
+  "applications-description": "Les applications peuvent utiliser le registre des utilisateurs qui leur sont associées (directement ou par l'intermédiaire d'un groupe). Elles peuvent également définir des permissions pouvant être accordées à d'autres applications par l'utilisateur (voir la documentation de <a href='https://wiki.obiba.org/display/AGATEDOC/Agate+OAuth2+API' target='_blank'>OAuth2</a>).",
   "application": {
     "titleView": "Détails d'application",
     "titleEdit": "Modification d'application",
@@ -265,6 +266,7 @@
     }
   },
   "groups": "Groupes",
+  "groups-description": "Les utilisateurs peuvent être groupés et ces groupes peuvent être associés à plusieurs applications. Les utilisateurs d'un groupe peuvent s'identifier auprès de ces applications.",
   "group": {
     "titleEdit": "Modification d'un groupe",
     "titleView": "Détails d'un groupe",
@@ -316,6 +318,7 @@
     "created": "Créée"
   },
   "users": "Utilisateurs",
+  "users-description": "Les utilisateurs peuvent s'identifier auprès des applications qui leurs sont associées (soit directement, soit par l'intermédiaire des groupes). Un utilisateur peut également autoriser une application à accéder à ses données d'une autre application (voir la documentation de <a href='https://wiki.obiba.org/display/AGATEDOC/Agate+OAuth2+API' target='_blank'>OAuth2</a>)",
   "user": {
     "none": "Aucun utilisateur.",
     "details": "Détails d'utilisateur",
@@ -347,7 +350,7 @@
     "agate-administrator": "Administrateur",
     "agate-user": "Utilisateur",
     "pending-requests": "Requêtes d'inscription",
-    "pending-requests-help": "Quelques personnes ont des demandes d'inscription à l'annuaire d'utilisateur et sont en attente d'approbation. Vous pouvez accpter ou refuser ces demandes.",
+    "pending-requests-help": "Des personnes ont des demandes d'inscription au registre des utilisateurs et sont en attente d'approbation. Vous pouvez accepter ou refuser ces demandes.",
     "none-requests": "Aucune demande en attente.",
     "list": "Tous les utilisateurs",
     "approve": "Approuver",
@@ -419,6 +422,7 @@
   "dnd-reorder": "Drag and drop to reorder",
   "loading": "Chargement...",
   "error": "Erreur",
+  "system": "Système",
   "server": {
     "error": {
       "403": "Le serveur a rejeté votre requête, assuerz vous que vous ête connecté et réessayez.",
