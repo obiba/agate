@@ -39,7 +39,8 @@
   "admin-page": {
     "help": {
       "general": "Configure server properties.",
-      "style": "Override the default style with your own stylesheet."
+      "style": "Override the default style with your own stylesheet.",
+      "translations": "Manage labels translations."
     }
   },
   "login": {
@@ -228,6 +229,16 @@
     "style": {
       "title": "Style",
       "info": "Override the default style with your own stylesheet."
+    },
+    "translations": {
+      "title": "Translations",
+      "path": "Name",
+      "value": "Value",
+      "info": "Override the default translations or add new ones.",
+      "add": "Add Translation",
+      "new": {
+        "title": "New Translation Entry"
+      }
     }
   },
   "applications": "Applications",
