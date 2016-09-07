@@ -51,4 +51,8 @@ agate.config
           };
         }
       };
+    }])
+  .factory('TranslationsResource', ['$resource',
+    function ($resource) {
+      return $resource('ws/config/i18n/:id.json');
     }]);

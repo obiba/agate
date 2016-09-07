@@ -24,5 +24,12 @@ agate.config
           access: {
             authorizedRoles: ['agate-administrator']
           }
+        })
+        .when('/admin/translations/edit', {
+          templateUrl: 'app/config/views/config-translations-form.html',
+          controller: 'ConfigurationTranslationsEditController',
+          access: {
+            authorizedRoles: ['agate-administrator']
+          }
         });
     }]);

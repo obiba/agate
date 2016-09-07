@@ -52,6 +52,8 @@ public class Configuration extends AbstractAuditableDocument {
 
   private String style;
 
+  private LocalizedString translations;
+
   private List<Locale> locales = Lists.newArrayList();
 
   public String getName() {
@@ -183,5 +185,17 @@ public class Configuration extends AbstractAuditableDocument {
 
   public void setLocales(List<Locale> locales) {
     this.locales = locales;
+  }
+
+  public LocalizedString getTranslations() {
+    return translations;
+  }
+
+  public void setTranslations(LocalizedString translations) {
+    this.translations = translations;
+  }
+
+  public boolean hasTranslations() {
+    return translations != null && !translations.isEmpty();
   }
 }

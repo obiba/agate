@@ -1,5 +1,6 @@
 package org.obiba.agate.web.model;
 
+import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.LocaleUtils;
@@ -11,6 +12,10 @@ import java.util.Locale;
 
 @Component
 class ConfigurationDtos {
+
+
+  @Inject
+  private LocalizedStringDtos localizedStringDtos;
 
   @NotNull
   Agate.ConfigurationDto asDto(@NotNull Configuration configuration) {
@@ -31,6 +36,7 @@ class ConfigurationDtos {
       builder.setVersion(configuration.getAgateVersion().toString());
     }
     if(configuration.hasStyle()) builder.setStyle(configuration.getStyle());
+    if(configuration.hasTranslations()) builder.addAllTranslations(localizedStringDtos.asDto(configuration.getTranslations()));
     return builder.build();
   }
 
@@ -48,6 +54,7 @@ class ConfigurationDtos {
     if(dto.getUserAttributesCount() > 0)
       dto.getUserAttributesList().forEach(c -> configuration.addUserAttribute(fromDto(c)));
     if(dto.hasStyle()) configuration.setStyle(dto.getStyle());
+    if(dto.getTranslationsCount() > 0) configuration.setTranslations(localizedStringDtos.fromDto(dto.getTranslationsList()));
     return configuration;
   }
 

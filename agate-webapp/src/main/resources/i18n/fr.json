@@ -39,7 +39,8 @@
   "admin-page": {
     "help": {
       "general": "Configurer les propriétés.",
-      "style": "Remplacer le style par défaut avec votre propre style."
+      "style": "Remplacer le style par défaut avec votre propre style.",
+      "translations": "Gérer les traductions des libellés."
     }
   },
   "login": {
@@ -228,6 +229,16 @@
     "style": {
       "title": "Style",
       "info": "Remplacer le style par défaut avec votre propre style. Les classes CSS sont celles de <a target='_blank' href='http://getbootstrap.com/'>Bootstrap</a> (thème de <a target='_blank' href='http://bootswatch.com/flatly/'>Bootswatch Flatly</a>)."
+    },
+    "translations": {
+      "title": "Traductions",
+      "path": "Nom",
+      "value": "Valeur",
+      "info": "Remplacer les traductions par défaut ou ajouter de nouvelles traductions.",
+      "add": "Ajouter une traduction",
+      "new": {
+        "title": "Nouvelle traduction"
+      }
     }
   },
   "applications": "Applications",

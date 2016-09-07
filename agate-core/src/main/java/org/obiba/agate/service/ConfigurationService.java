@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 import javax.validation.Valid;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.shiro.codec.CodecSupport;
@@ -301,7 +302,7 @@ public class ConfigurationService {
     while (keys.hasNext()) {
       String key = keys.next();
       Object property = object.get(key);
-      log.info("{} : {}", key, property.toString());
+      log.debug("{} : {}", key, property.toString());
       if (property instanceof String) {
         object.put(key, translate((String)property, translations));
       } else if (property instanceof JSONArray) {
@@ -382,10 +383,10 @@ public class ConfigurationService {
   }
 
   private DocumentContext getTranslationDocument(String locale) throws IOException {
-    return JsonPath.using(conf).parse(getTranslations(locale).toString());
+    return JsonPath.using(conf).parse(getTranslations(locale, false).toString());
   }
 
-  public JsonNode getTranslations(String locale) throws IOException {
+  public JsonNode getTranslations(String locale, boolean _default) throws IOException {
     File translations;
 
     try {
@@ -395,7 +396,34 @@ public class ConfigurationService {
       translations = getTranslationsResource(locale).getFile();
     }
 
-    return objectMapper.readTree(FileUtils.readFileToString(translations, "utf-8"));
+    Configuration configuration = getOrCreateConfiguration();
+    JsonNode original = objectMapper.readTree(translations);
+
+    if (!_default && configuration.hasTranslations()) {
+      JsonNode custom = objectMapper.readTree(configuration.getTranslations().get(locale));
+      return mergeJson(original, custom);
+    }
+
+    return original;
+  }
+
+  private JsonNode mergeJson(JsonNode mainNode, JsonNode updateNode) {
+    Iterator<String> fieldNames = updateNode.fieldNames();
+    while (fieldNames.hasNext()) {
+      String fieldName = fieldNames.next();
+      JsonNode jsonNode = mainNode.get(fieldName);
+      if (jsonNode != null && jsonNode.isObject()) {
+        mergeJson(jsonNode, updateNode.get(fieldName));
+      }
+      else {
+        if (mainNode instanceof ObjectNode) {
+          JsonNode value = updateNode.get(fieldName);
+          ((ObjectNode) mainNode).replace(fieldName, value);
+        }
+      }
+    }
+
+    return mainNode;
   }
 
   private Resource getTranslationsResource(String locale) {

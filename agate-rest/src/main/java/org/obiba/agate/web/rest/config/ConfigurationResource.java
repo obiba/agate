@@ -185,8 +185,8 @@ public class ConfigurationResource {
   @GET
   @Path("/i18n/{locale}.json")
   @Produces("application/json")
-  public Response getTranslation(@PathParam("locale") String locale) throws IOException {
+  public Response getTranslation(@PathParam("locale") String locale, @QueryParam("default") boolean _default) throws IOException {
     return Response.ok(
-      configurationService.getTranslations(locale).toString(), "application/json").build();
+      configurationService.getTranslations(locale, _default).toString(), "application/json").build();
   }
 }
