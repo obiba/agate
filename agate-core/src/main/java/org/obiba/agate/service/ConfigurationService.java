@@ -284,7 +284,7 @@ public class ConfigurationService {
     if(config.hasUserAttributes()) {
       config.getUserAttributes().forEach(a -> {
         try {
-          JSONObject property = newDefinitionProperty(a.getName(), "t(" + a.getName() + ")", "t(" + a.getDescription() + ")");
+          JSONObject property = newDefinitionProperty(a.getName(), "t(" + a.getName() + ")", a.hasDescription() ? "t(" + a.getDescription() + ")" : "");
           if(a.hasValues()) {
             JSONObject titleMap = new JSONObject();
             //noinspection ConstantConditions
