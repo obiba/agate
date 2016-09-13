@@ -212,9 +212,9 @@
       "editTitle": "Modification d'attribute",
       "type": "Type",
       "types":{
-        "STRING":"Chaîne de caractères",
+        "STRING":"Texte",
         "INTEGER":"Entier",
-        "NUMBER":"Numéro",
+        "NUMBER":"Nombre",
         "BOOLEAN":"Booléen"
       },
       "name": "Nom",
