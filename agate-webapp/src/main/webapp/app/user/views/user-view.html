@@ -80,7 +80,7 @@
         <tr ng-repeat="userConfigAttribute in userConfigAttributes">
           <th translate>{{userConfigAttribute.name}}</th>
           <td>
-            <span ng-show="userConfigAttribute.type !== 'BOOLEAN'">{{userConfigAttribute.value}}</span>
+            <span ng-show="userConfigAttribute.type !== 'BOOLEAN'" translate>{{userConfigAttribute.value}}</span>
             <span ng-show="userConfigAttribute.type === 'BOOLEAN' && userConfigAttribute.value === 'true'"><i class="fa fa-check"></i></span>
           </td>
         </tr>
