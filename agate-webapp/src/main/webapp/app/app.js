@@ -124,7 +124,7 @@ agate
         .useStaticFilesLoader({
           prefix: 'ws/config/i18n/',
           suffix: '.json'
-        })        
+        })
         .registerAvailableLanguageKeys(['en', 'fr'], {
           'en_*': 'en',
           'fr_*': 'fr',
@@ -172,8 +172,28 @@ agate
     }]);
   }])
 
-  .run(['$rootScope', '$location', '$http', 'AuthenticationSharedService', 'Session', 'USER_ROLES', 'ServerErrorUtils',
-    function ($rootScope, $location, $http, AuthenticationSharedService, Session, USER_ROLES, ServerErrorUtils) {
+  .run(['$rootScope',
+    '$location',
+    '$http',
+    'AuthenticationSharedService',
+    'Session',
+    'USER_ROLES',
+    'ServerErrorUtils',
+    'amMoment',
+    '$cookies',
+    function ($rootScope,
+              $location,
+              $http,
+              AuthenticationSharedService,
+              Session,
+              USER_ROLES,
+              ServerErrorUtils,
+              amMoment,
+              $cookies) {
+
+      var langKey = $cookies.get('NG_TRANSLATE_LANG_KEY');
+      amMoment.changeLocale(langKey ? langKey.replace(/"/g, '') : 'en');
+
       $rootScope.$on('$routeChangeStart', function (event, next) {
         $rootScope.authenticated = AuthenticationSharedService.isAuthenticated();
         $rootScope.hasRole = AuthenticationSharedService.isAuthorized;

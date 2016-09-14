@@ -65,10 +65,11 @@ agate.controller('MainController', ['$rootScope', '$scope', '$window', '$log', '
 
 agate.controller('AdminController', [function () {}]);
 
-agate.controller('LanguageController', ['$scope', '$translate',
-  function ($scope, $translate) {
+agate.controller('LanguageController', ['$scope', '$translate', 'amMoment',
+  function ($scope, $translate, amMoment) {
     $scope.changeLanguage = function (languageKey) {
       $translate.use(languageKey);
+      amMoment.changeLocale(languageKey);
     };
     $scope.getCurrentLanguage = $translate.use;
   }]);
