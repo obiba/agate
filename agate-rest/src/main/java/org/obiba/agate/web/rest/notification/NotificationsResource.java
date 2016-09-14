@@ -127,7 +127,7 @@ public class NotificationsResource extends ApplicationAwareResource {
 
     recipients.forEach(rec -> {
       ctx.setVariable("user", rec);
-      ctx.setLocale(LocaleUtils.toLocale(rec.getAttributes().get(rec.getPreferredLanguage())));
+      ctx.setLocale(LocaleUtils.toLocale(rec.getPreferredLanguage()));
       mailService
         .sendEmail(rec.getEmail(), subject, templateEngine.process(templateLocation, ctx));
     });
