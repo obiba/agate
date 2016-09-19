@@ -392,7 +392,7 @@ public class ConfigurationService {
     return Hex.decode(getOrCreateConfiguration().getSecretKey());
   }
 
-  private DocumentContext getTranslationDocument(String locale) throws IOException {
+  public DocumentContext getTranslationDocument(String locale) throws IOException {
     return JsonPath.using(conf).parse(getTranslations(locale, false).toString());
   }
 
