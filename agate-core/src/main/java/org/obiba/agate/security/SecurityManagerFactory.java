@@ -33,6 +33,7 @@ import org.apache.shiro.config.IniSecurityManagerFactory;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.mgt.SessionsSecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.realm.text.IniRealm;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
@@ -53,7 +54,7 @@ import com.google.common.collect.ImmutableList;
 
 @Component
 @DependsOn("cacheConfiguration")
-public class SecurityManagerFactory implements FactoryBean<SecurityManager> {
+public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManager> {
 
   public static final String INI_REALM = "agate-ini-realm";
 
@@ -69,10 +70,10 @@ public class SecurityManagerFactory implements FactoryBean<SecurityManager> {
 
   private final PermissionResolver permissionResolver = new AgatePermissionResolver();
 
-  private SecurityManager securityManager;
+  private SessionsSecurityManager securityManager;
 
   @Override
-  public SecurityManager getObject() throws Exception {
+  public SessionsSecurityManager getObject() throws Exception {
     if(securityManager == null) {
       securityManager = doCreateSecurityManager();
       SecurityUtils.setSecurityManager(securityManager);
@@ -82,7 +83,7 @@ public class SecurityManagerFactory implements FactoryBean<SecurityManager> {
 
   @Override
   public Class<?> getObjectType() {
-    return DefaultSecurityManager.class;
+    return SessionsSecurityManager.class;
   }
 
   @Override
@@ -99,8 +100,8 @@ public class SecurityManagerFactory implements FactoryBean<SecurityManager> {
     securityManager = null;
   }
 
-  private SecurityManager doCreateSecurityManager() {
-    return new CustomIniSecurityManagerFactory(getShiroIniPath()).createInstance();
+  private SessionsSecurityManager doCreateSecurityManager() {
+    return (SessionsSecurityManager) new CustomIniSecurityManagerFactory(getShiroIniPath()).createInstance();
   }
 
   private String getShiroIniPath() {

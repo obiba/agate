@@ -31,7 +31,7 @@ import javax.ws.rs.core.UriBuilder;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
-import org.hibernate.validator.internal.constraintvalidators.EmailValidator;
+import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.joda.time.DateTime;
 import org.obiba.agate.domain.AttributeConfiguration;
 import org.obiba.agate.domain.User;
