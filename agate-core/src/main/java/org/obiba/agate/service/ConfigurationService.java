@@ -165,15 +165,15 @@ public class ConfigurationService {
     return rval;
   }
 
-  public JsonNode getUserRelatedTranslations(String locale) throws IOException {
+  public JsonNode getUserProfileTranslations(String locale) throws IOException {
 
     String customTranslations = getConfiguration().getTranslations().get(locale);
+    JsonNode customTranslationsParsed = objectMapper.readTree(customTranslations);
+
     JsonNode globalTranslations = getTranslations(locale, false);
-    JsonNode user = globalTranslations.get("user");
+    JsonNode userProfileTranslations = globalTranslations.get("user");
 
-    JsonNode customTranslations2 = objectMapper.readTree(customTranslations);
-
-    return mergeJson(user, customTranslations2);
+    return mergeJson(userProfileTranslations, customTranslationsParsed);
   }
 
   //
