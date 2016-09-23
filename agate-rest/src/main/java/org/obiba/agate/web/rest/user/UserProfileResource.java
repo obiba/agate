@@ -43,6 +43,4 @@ public class UserProfileResource extends ApplicationAwareResource {
     if (user == null) NoSuchUserException.withName(username);
     return dtos.asDto(user, true);
   }
-
-
 }

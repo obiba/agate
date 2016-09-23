@@ -10,24 +10,10 @@
 
 package org.obiba.agate.web.rest.user;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
@@ -48,9 +34,25 @@ import org.obiba.shiro.authc.HttpAuthorizationToken;
 import org.obiba.shiro.realm.ObibaRealm;
 import org.springframework.stereotype.Component;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Public resource for user join requests. Default realm is {@link AgateUserRealm}.
@@ -75,6 +77,16 @@ public class UsersPublicResource {
 
   @Inject
   private ReCaptchaService reCaptchaService;
+
+  @GET
+  @Path("/i18n/{locale}.json")
+  @Produces("application/json")
+  public Response getUserProfileTranslations(@PathParam("locale") String locale) throws IOException {
+
+    JsonNode userProfileTranslations = configurationService.getUserProfileTranslations(locale);
+
+    return Response.ok(userProfileTranslations, "application/json").build();
+  }
 
   @POST
   @Path("/_confirm")
