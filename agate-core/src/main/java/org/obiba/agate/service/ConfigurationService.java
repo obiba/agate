@@ -30,6 +30,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.obiba.agate.domain.Configuration;
+import org.obiba.agate.domain.LocalizedString;
 import org.obiba.agate.event.AgateConfigUpdatedEvent;
 import org.obiba.agate.repository.AgateConfigRepository;
 import org.slf4j.Logger;
@@ -167,13 +168,20 @@ public class ConfigurationService {
 
   public JsonNode getUserProfileTranslations(String locale) throws IOException {
 
-    String customTranslations = getConfiguration().getTranslations().get(locale);
-    JsonNode customTranslationsParsed = objectMapper.readTree(customTranslations);
-
     JsonNode globalTranslations = getTranslations(locale, false);
     JsonNode userProfileTranslations = globalTranslations.get("user");
 
-    return mergeJson(userProfileTranslations, customTranslationsParsed);
+    LocalizedString translations = getConfiguration().getTranslations();
+
+    if (translations != null ) {
+      String customTranslations = translations.get(locale);
+      if (customTranslations != null) {
+        JsonNode customTranslationsParsed = objectMapper.readTree(customTranslations);
+        return mergeJson(userProfileTranslations, customTranslationsParsed);
+      }
+    }
+    
+    return userProfileTranslations;
   }
 
   //
