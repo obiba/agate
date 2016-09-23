@@ -81,11 +81,11 @@ public class UsersPublicResource {
   @GET
   @Path("/i18n/{locale}.json")
   @Produces("application/json")
-  public Response getUserRelatedTranslations(@PathParam("locale") String locale) throws IOException {
+  public Response getUserProfileTranslations(@PathParam("locale") String locale) throws IOException {
 
-    JsonNode userRelatedTranslations = configurationService.getUserRelatedTranslations(locale);
+    JsonNode userProfileTranslations = configurationService.getUserProfileTranslations(locale);
 
-    return Response.ok(userRelatedTranslations, "application/json").build();
+    return Response.ok(userProfileTranslations, "application/json").build();
   }
 
   @POST
