@@ -199,4 +199,14 @@ public class ConfigurationResource {
     return Response.ok(
       configurationService.getTranslations(locale, _default).toString(), "application/json").build();
   }
+
+  @GET
+  @Path("/i18n/custom/{locale}.json")
+  @Produces("application/json")
+  public Response getCustomTranslation(@PathParam("locale") String locale) throws IOException {
+
+    String translations = configurationService.getConfiguration().getTranslations().get(locale);
+
+    return Response.ok(translations, "application/json").build();
+  }
 }
