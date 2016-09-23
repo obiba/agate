@@ -21,7 +21,6 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.shiro.codec.CodecSupport;
 import org.apache.shiro.codec.Hex;
@@ -164,6 +163,17 @@ public class ConfigurationService {
     rval.put("definition", getProfileDefinition(config));
     translate(rval, getTranslationDocument(locale));
     return rval;
+  }
+
+  public JsonNode getUserProfileTranslations(String locale) throws IOException {
+
+    String customTranslations = getConfiguration().getTranslations().get(locale);
+    JsonNode customTranslationsParsed = objectMapper.readTree(customTranslations);
+
+    JsonNode globalTranslations = getTranslations(locale, false);
+    JsonNode userProfileTranslations = globalTranslations.get("user");
+
+    return mergeJson(userProfileTranslations, customTranslationsParsed);
   }
 
   //
@@ -397,24 +407,27 @@ public class ConfigurationService {
   }
 
   public JsonNode getTranslations(String locale, boolean _default) throws IOException {
-    File translations;
 
-    try {
-      translations = getTranslationsResource(locale).getFile();
-    } catch (IOException e) {
-      locale = "en";
-      translations = getTranslationsResource(locale).getFile();
-    }
+    locale = getAvailableLocale(locale);
+
+    JsonNode original = getFileBasedTranslations(locale);
 
     Configuration configuration = getOrCreateConfiguration();
-    JsonNode original = objectMapper.readTree(translations);
-
     if (!_default && configuration.hasTranslations()) {
       JsonNode custom = objectMapper.readTree(configuration.getTranslations().get(locale));
       return mergeJson(original, custom);
     }
 
     return original;
+  }
+
+  private JsonNode getFileBasedTranslations(String locale) throws IOException {
+    File translations = getTranslationsResource(locale).getFile();
+    return objectMapper.readTree(translations);
+  }
+
+  private String getAvailableLocale(String locale) {
+    return getTranslationsResource(locale).exists() ? locale : "en";
   }
 
   private JsonNode mergeJson(JsonNode mainNode, JsonNode updateNode) {
