@@ -22,7 +22,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
 import org.apache.shiro.authz.annotation.RequiresRoles;
-import org.hibernate.validator.internal.constraintvalidators.EmailValidator;
+import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.domain.UserStatus;
 import org.obiba.agate.service.UserService;
