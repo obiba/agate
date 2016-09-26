@@ -122,8 +122,10 @@
     <embed-mongo.version>1.50.0</embed-mongo.version>
     <guava.version>19.0</guava.version>
     <geronimo-javamail_1.4_mail.version>1.8.3</geronimo-javamail_1.4_mail.version>
+    <jackson.version>2.6.7</jackson.version>
     <javax.inject.version>1</javax.inject.version>
     <jersey.version>2.21</jersey.version>
+    <jetty.version>9.2.18.v20160721</jetty.version>
     <jhipsterloaded.version>0.7</jhipsterloaded.version>
     <jjwt.version>0.6.0</jjwt.version>
     <json-path.version>2.0.0</json-path.version>
