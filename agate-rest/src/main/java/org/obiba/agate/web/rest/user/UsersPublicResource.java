@@ -10,13 +10,13 @@
 
 package org.obiba.agate.web.rest.user;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.bson.types.ObjectId;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.joda.time.DateTime;
 import org.obiba.agate.domain.AttributeConfiguration;

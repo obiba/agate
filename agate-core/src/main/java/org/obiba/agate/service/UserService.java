@@ -24,10 +24,10 @@ import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.BadRequestException;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.LocaleUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.crypto.hash.Sha512Hash;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
