@@ -18,6 +18,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.ForbiddenException;
 
+import com.google.common.base.Strings;
 import org.joda.time.DateTime;
 import org.obiba.agate.domain.Authorization;
 import org.obiba.agate.domain.Ticket;
@@ -31,7 +32,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.google.common.eventbus.Subscribe;
-import com.mysql.jdbc.StringUtils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -265,7 +265,7 @@ public class TicketService {
   }
 
   private void deleteById(@NotNull String id) {
-    if(!StringUtils.isNullOrEmpty(id)) ticketRepository.delete(id);
+    if(!Strings.isNullOrEmpty(id)) ticketRepository.delete(id);
   }
 
   private void removeExpired(List<Ticket> tickets) {
