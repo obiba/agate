@@ -9,7 +9,7 @@
   "_resolution": {
     "type": "version",
     "tag": "0.1.32",
-    "commit": "ac7143c1e87b58b87cc0c1821af86969553df0da"
+    "commit": "543954af49872d937c1baca44722cc406f49a6e8"
   },
   "_source": "https://github.com/lgalfaso/angular-dynamic-locale.git",
   "_target": "0.1.32",

@@ -52,5 +52,10 @@
     "chosen": {
       "main": "./chosen.jquery.js"
     }
+  },
+  "resolutions": {
+    "angular": "1.5.5",
+    "jquery": "2.2.3",
+    "angular-bootstrap": "1.3.2"
   }
 }
