@@ -33,6 +33,9 @@ import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.LocalizedString;
 import org.obiba.agate.event.AgateConfigUpdatedEvent;
 import org.obiba.agate.repository.AgateConfigRepository;
+import org.obiba.core.translator.JsonTranslator;
+import org.obiba.core.translator.TranslationUtils;
+import org.obiba.core.translator.Translator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -146,8 +149,8 @@ public class ConfigurationService {
     JSONObject rval = new JSONObject();
     rval.put("schema", getJoinSchema(config));
     rval.put("definition", getJoinDefinition(config));
-    translate(rval, getTranslationDocument(locale));
-    return rval;
+
+    return new TranslationUtils().translate(rval, getTranslator(locale));
   }
 
   /**
@@ -162,8 +165,7 @@ public class ConfigurationService {
     JSONObject rval = new JSONObject();
     rval.put("schema", getProfileSchema(config));
     rval.put("definition", getProfileDefinition(config));
-    translate(rval, getTranslationDocument(locale));
-    return rval;
+    return new TranslationUtils().translate(rval, getTranslator(locale));
   }
 
   public JsonNode getUserProfileTranslations(String locale) throws IOException {
@@ -180,7 +182,7 @@ public class ConfigurationService {
         return mergeJson(userProfileTranslations, customTranslationsParsed);
       }
     }
-    
+
     return userProfileTranslations;
   }
 
@@ -325,52 +327,6 @@ public class ConfigurationService {
     return definition;
   }
 
-  private void translate(JSONObject object, DocumentContext translations) throws JSONException {
-    Iterator<String> keys = object.keys();
-    while (keys.hasNext()) {
-      String key = keys.next();
-      Object property = object.get(key);
-      log.debug("{} : {}", key, property.toString());
-      if (property instanceof String) {
-        object.put(key, translate((String)property, translations));
-      } else if (property instanceof JSONArray) {
-        translate((JSONArray) property, translations);
-      } else if (property instanceof JSONObject) {
-        translate((JSONObject) property, translations);
-      }
-    }
-  }
-
-  private void translate(JSONArray array, DocumentContext translations) throws JSONException {
-    for (int i = 0; i<array.length(); i++) {
-      Object value = array.get(i);
-      if (value instanceof JSONArray) {
-        translate((JSONArray) value, translations);
-      } else if (value instanceof JSONObject) {
-        translate((JSONObject) value, translations);
-      } else if (value instanceof String) {
-        array.put(i, translate((String)value, translations));
-      }
-    }
-  }
-
-  private String translate(String value, DocumentContext translations) {
-    if (Strings.isNullOrEmpty(value)) return value;
-    Pattern p = Pattern.compile("t\\(([^\\)]+)\\)");
-    Matcher m = p.matcher(value);
-    StringBuffer s = new StringBuffer();
-    while (m.find()) {
-      String key = m.group(1);
-      try {
-        String translated = translations.read("$." + key);
-        m.appendReplacement(s, translated);
-      } catch(JsonPathException e) {
-        m.appendReplacement(s, key);
-      }
-    }
-    return s.length() == 0 ? value : s.toString();
-  }
-
   private JSONObject newSchemaProperty(String type, String title) throws JSONException {
     JSONObject property = new JSONObject();
     property.put("type", type);
@@ -408,6 +364,10 @@ public class ConfigurationService {
 
   private byte[] getSecretKey() {
     return Hex.decode(getOrCreateConfiguration().getSecretKey());
+  }
+
+  private Translator getTranslator(String locale) {
+    return JsonTranslator.buildSafeTranslator(() -> getTranslations(locale, false).toString());
   }
 
   private DocumentContext getTranslationDocument(String locale) throws IOException {
