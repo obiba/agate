@@ -9,6 +9,7 @@ module.exports = function (grunt) {
       src: {
         js: [
           // order is important!
+          'src/graphics/graphics.js',
           'src/utils/utils.js',
           'src/notification/notification.js',
           'src/notification/notification-controller.js',

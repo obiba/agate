@@ -6,5 +6,6 @@ angular.module('ngObiba', [
   'obiba.rest',
   'obiba.utils',
   'obiba.alert',
-  'obiba.comments'
+  'obiba.comments',
+  'obiba.graphics'
 ]);

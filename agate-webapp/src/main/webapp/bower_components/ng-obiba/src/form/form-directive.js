@@ -194,4 +194,68 @@ angular.module('obiba.form')
         }, true);
       }
     };
+  }])
+
+  .directive('formUiSelect', [function() {
+    return {
+      restrict: 'AE',
+      scope: {
+        title: '=',
+        showTitle: '=',
+        description: '=',
+        autoComplete: '=',
+        disabled: '=',
+        items: '=',
+        model: '=',
+        multiple: '='
+      },
+      templateUrl: 'form/form-ui-select.tpl.html',
+      link: function ($scope) {
+
+        var defaultAutoComplete = {
+          format: ':label (:value)',
+          label: 'label',
+          value: 'value'
+        };
+
+        $scope.data = {};
+
+        $scope.$watch('model', function(){
+          if ($scope.model) {
+            $scope.data.selected = $scope.model;
+          }
+        });
+
+        $scope.$watchCollection('data.selected', function() {
+          if ($scope.data.selected) {
+            $scope.model = $scope.data.selected;
+          }
+        });
+
+        function initializeAutoComplete() {
+          if ($scope.autoComplete) {
+            $scope.autoComplete.format = $scope.autoComplete.format || defaultAutoComplete.format;
+            $scope.autoComplete.label = $scope.autoComplete.label || defaultAutoComplete.label;
+            $scope.autoComplete.value = $scope.autoComplete.value || defaultAutoComplete.value;
+          } else {
+            $scope.autoComplete = defaultAutoComplete;
+          }
+        }
+
+        $scope.formatList = function(item) {
+          return $scope.autoComplete.format
+            .replace(':label', item[$scope.autoComplete.label])
+            .replace(':value', item[$scope.autoComplete.value]);
+        };
+
+        $scope.$watch('autoComplete', initializeAutoComplete);
+        $scope.$watch('items', function() {
+          if ($scope.items) {
+            initializeAutoComplete();
+          }
+        });
+
+      }
+    };
+
   }]);
