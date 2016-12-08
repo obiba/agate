@@ -8,7 +8,7 @@ def add_agate_arguments(parser):
     """
     Add Agate access arguments
     """
-    parser.add_argument('--agate', '-ag', required=False, help='Agate server base url')
+    parser.add_argument('--agate', '-ag', required=False, default='http://localhost:8081', help='Agate server base url (default: http://localhost:8081)')
     parser.add_argument('--user', '-u', required=False, help='User name')
     parser.add_argument('--password', '-p', required=False, help='User password')
     parser.add_argument('--ssl-cert', '-sc', required=False, help='Certificate (public key) file')
