@@ -14,8 +14,6 @@ import java.io.File;
 import java.io.IOException;
 import java.security.Key;
 import java.util.Iterator;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -34,6 +32,7 @@ import org.obiba.agate.domain.LocalizedString;
 import org.obiba.agate.event.AgateConfigUpdatedEvent;
 import org.obiba.agate.repository.AgateConfigRepository;
 import org.obiba.core.translator.JsonTranslator;
+import org.obiba.core.translator.PrefixedValueTranslator;
 import org.obiba.core.translator.TranslationUtils;
 import org.obiba.core.translator.Translator;
 import org.slf4j.Logger;
@@ -53,7 +52,6 @@ import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.JsonPathException;
 
 import static com.jayway.jsonpath.Configuration.defaultConfiguration;
 
@@ -367,7 +365,9 @@ public class ConfigurationService {
   }
 
   private Translator getTranslator(String locale) {
-    return JsonTranslator.buildSafeTranslator(() -> getTranslations(locale, false).toString());
+    Translator translator = JsonTranslator.buildSafeTranslator(() -> getTranslations(locale, false).toString());
+    translator = new PrefixedValueTranslator(translator);
+    return translator;
   }
 
   private DocumentContext getTranslationDocument(String locale) throws IOException {
