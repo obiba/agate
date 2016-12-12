@@ -211,19 +211,19 @@ public class ConfigurationService {
     JSONObject schema = new JSONObject();
     schema.putOnce("type", "object");
     JSONObject properties = new JSONObject();
-    properties.put("email", newSchemaProperty("string", "t(user.email)") //
+    properties.put("email", newSchemaProperty("string", "user.email") //
       .put("pattern", "^\\S+@\\S+$") //
-      .put("validationMessage", "t(user.email-invalid)") //
+      .put("validationMessage", "user.email-invalid") //
     );
     JSONArray required = new JSONArray();
     if(withUsername) {
-      properties.put("username", newSchemaProperty("string", "t(user.name)").put("minLength", 3));
+      properties.put("username", newSchemaProperty("string", "user.name").put("minLength", 3));
       required.put("username");
     }
-    properties.put("firstname", newSchemaProperty("string", "t(user.firstName)"));
-    properties.put("lastname", newSchemaProperty("string", "t(user.lastName)"));
+    properties.put("firstname", newSchemaProperty("string", "user.firstName"));
+    properties.put("lastname", newSchemaProperty("string", "user.lastName"));
 
-    properties.put("locale", newSchemaProperty("string", "t(user.preferredLanguage)")
+    properties.put("locale", newSchemaProperty("string", "user.preferredLanguage")
       .put("enum", config.getLocalesAsString()).put("default", Configuration.DEFAULT_LOCALE.getLanguage()));
 
     Lists.newArrayList("email", "firstname", "lastname", "locale").forEach(required::put);
@@ -232,7 +232,7 @@ public class ConfigurationService {
       config.getUserAttributes().forEach(a -> {
         try {
           String type = a.getType().name().toLowerCase();
-          JSONObject property = newSchemaProperty(type, "t(" + a.getName() + ")");
+          JSONObject property = newSchemaProperty(type, a.getName());
           if(a.hasValues()) {
             //noinspection ConstantConditions
             a.getValues().forEach(e -> {
@@ -282,35 +282,35 @@ public class ConfigurationService {
     JSONArray definition = new JSONArray();
 
     if(withUsername) {
-      definition.put(newDefinitionProperty("username","t(user.name)", ""));
+      definition.put(newDefinitionProperty("username","user.name", ""));
     }
 
-    definition.put(newDefinitionProperty("email","t(user.email)", ""));
-    definition.put(newDefinitionProperty("firstname","t(user.firstName)", ""));
-    definition.put(newDefinitionProperty("lastname","t(user.lastName)", ""));
+    definition.put(newDefinitionProperty("email","user.email", ""));
+    definition.put(newDefinitionProperty("firstname","user.firstName", ""));
+    definition.put(newDefinitionProperty("lastname","user.lastName", ""));
 
     JSONObject localeTitleMap = new JSONObject();
     config.getLocalesAsString().forEach(l -> {
       try {
-        localeTitleMap.put(l, "t(language." + l + ")");
+        localeTitleMap.put(l, "language." + l);
       } catch (JSONException e) {
         // ignored
       }
     });
 
-    definition.put(newDefinitionProperty("locale", "t(user.preferredLanguage)", "")
+    definition.put(newDefinitionProperty("locale", "user.preferredLanguage", "")
       .put("titleMap", localeTitleMap));
 
     if(config.hasUserAttributes()) {
       config.getUserAttributes().forEach(a -> {
         try {
-          JSONObject property = newDefinitionProperty(a.getName(), "t(" + a.getName() + ")", a.hasDescription() ? "t(" + a.getDescription() + ")" : "");
+          JSONObject property = newDefinitionProperty(a.getName(), a.getName(), a.hasDescription() ? a.getDescription() : "");
           if(a.hasValues()) {
             JSONObject titleMap = new JSONObject();
             //noinspection ConstantConditions
             a.getValues().forEach(e -> {
               try {
-                titleMap.put(e, "t(" + e + ")");
+                titleMap.put(e, e);
               } catch(JSONException e1) {
                 // ignored
               }
