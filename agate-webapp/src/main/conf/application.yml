@@ -8,6 +8,12 @@ https:
 spring:
     profiles: prod
 
+    data:
+        mongodb:
+          host: localhost
+          port: 27017
+          database: agate
+
     thymeleaf:
         mode: XHTML
         cache: true
@@ -24,14 +30,6 @@ spring:
 
     messageSource:
         cacheSeconds: 1
-
-mongodb:
-    url: localhost:27017
-    databaseName: agate
-    username:
-    password:
-    authSource:
-    options:
 
 shiro:
   password:
