@@ -10,9 +10,7 @@ spring:
 
     data:
         mongodb:
-          host: localhost
-          port: 27017
-          database: agate
+            uri: mongodb://localhost:27017/agate
 
     thymeleaf:
         mode: XHTML
