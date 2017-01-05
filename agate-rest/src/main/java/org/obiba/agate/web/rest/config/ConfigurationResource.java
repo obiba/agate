@@ -32,6 +32,7 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.json.JSONException;
 import org.obiba.agate.config.ClientConfiguration;
+import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.KeyStoreService;
 import org.obiba.agate.web.model.Agate;
@@ -66,7 +67,12 @@ public class ConfigurationResource {
   @GET
   @Path("/_public")
   public Agate.PublicConfigurationDto getPublic() {
-    return Agate.PublicConfigurationDto.newBuilder().setName(configurationService.getConfiguration().getName()).build();
+    Configuration configuration = configurationService.getConfiguration();
+
+    return Agate.PublicConfigurationDto.newBuilder()
+      .setName(configuration.getName())
+      .addAllLanguages(configuration.getLocalesAsString())
+      .build();
   }
 
   @GET

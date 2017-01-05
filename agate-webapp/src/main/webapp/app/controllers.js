@@ -65,13 +65,17 @@ agate.controller('MainController', ['$rootScope', '$scope', '$window', '$log', '
 
 agate.controller('AdminController', [function () {}]);
 
-agate.controller('LanguageController', ['$scope', '$translate', 'amMoment',
-  function ($scope, $translate, amMoment) {
+agate.controller('LanguageController', ['$scope', '$translate', 'amMoment', 'PublicConfigurationResource',
+  function ($scope, $translate, amMoment, PublicConfigurationResource) {
     $scope.changeLanguage = function (languageKey) {
       $translate.use(languageKey);
       amMoment.changeLocale(languageKey);
     };
     $scope.getCurrentLanguage = $translate.use;
+
+    $scope.publicMicaConfig = PublicConfigurationResource.get(function (config) {
+      $scope.languages = config.languages;
+    });
   }]);
 
 agate.controller('MenuController', [function () {}]);

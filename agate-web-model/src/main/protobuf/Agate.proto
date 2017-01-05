@@ -69,6 +69,7 @@ message ConfigurationDto {
 
 message PublicConfigurationDto {
   required string name = 1;
+  repeated string languages = 2;
 }
 
 message AttributeDto {
