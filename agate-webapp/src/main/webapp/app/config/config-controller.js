@@ -185,7 +185,7 @@ agate.config
 
       var reload = false;
       $scope.agateConfig.$promise.then(function() {
-        $scope.$watch('agateConfig.name', function(value, oldValue) {
+        $scope.$watchGroup(['agateConfig.name', 'agateConfig.languages'], function(value, oldValue) {
           if(!angular.equals(value,oldValue)) {
             reload = true;
           }
