@@ -20,7 +20,7 @@ NAME=opal
 
 case "$1" in
 
-  0)
+  [0-1])
     chkconfig --del agate
 
     # Read configuration variable file if it is present
