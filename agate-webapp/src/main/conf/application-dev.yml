@@ -8,15 +8,9 @@ https:
 
 spring:
     profiles: dev
-
     data:
         mongodb:
             uri: mongodb://localhost:27017/agate
-
-    thymeleaf:
-        mode: XHTML
-        cache: false
-
     mail:
         host: localhost
         port: 25
@@ -27,13 +21,10 @@ spring:
         auth: false
         from: no-reply@obiba.org
 
-    messageSource:
-        cacheSeconds: 1
-
 shiro:
-  password:
-    nbHashIterations: 10000
-    salt: agate
+    password:
+        nbHashIterations: 10000
+        salt: agate
 
 registration:
     pendingForApprovalSubject: Account Registration
@@ -53,13 +44,13 @@ client:
 hotReload:
     enabled: true
     package:
-      project: org.obiba.agate
-      domain: org.obiba.agate.domain
-      restdto: org.obiba.agate.web.rest.dto
+        project: org.obiba.agate
+        domain: org.obiba.agate.domain
+        restdto: org.obiba.agate.web.rest.dto
     liquibase:
-      defaultCatalogName:
-      defaultSchema:
+        defaultCatalogName:
+        defaultSchema:
     watchdir:
-      - target/classes
+        - target/classes
 
 endpoints.enabled: true

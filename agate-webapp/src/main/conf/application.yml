@@ -7,15 +7,9 @@ https:
 
 spring:
     profiles: prod
-
     data:
         mongodb:
             uri: mongodb://localhost:27017/agate
-
-    thymeleaf:
-        mode: XHTML
-        cache: true
-
     mail:
         host: localhost
         port: 25
@@ -26,13 +20,10 @@ spring:
         auth: false
         from: agate@example.org
 
-    messageSource:
-        cacheSeconds: 1
-
 shiro:
-  password:
-    nbHashIterations: 10000
-    salt: agate
+    password:
+        nbHashIterations: 10000
+        salt: agate
 
 registration:
     pendingForApprovalSubject: Account Registration
