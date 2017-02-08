@@ -198,36 +198,8 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
       realm.setResourcePath(getShiroIniPath());
       realm.setCredentialsMatcher(new PasswordMatcher());
       realm.setIni(ini);
-      configureUrl(realm.getIni().getSection("urls") == null
-          ? realm.getIni().addSection("urls")
-          : realm.getIni().getSection("urls"));
       return realm;
     }
 
-    @SuppressWarnings("OverlyLongMethod")
-    private void configureUrl(@SuppressWarnings("TypeMayBeWeakened") Ini.Section urls) {
-      urls.put("/ws/logs/**", Roles.AGATE_ADMIN.name());
-      urls.put("/websocket/tracker", Roles.AGATE_ADMIN.name());
-      urls.put("/metrics*", Roles.AGATE_ADMIN.name());
-      urls.put("/metrics/**", Roles.AGATE_ADMIN.name());
-      urls.put("/health*", Roles.AGATE_ADMIN.name());
-      urls.put("/health/**", Roles.AGATE_ADMIN.name());
-      urls.put("/trace*", Roles.AGATE_ADMIN.name());
-      urls.put("/trace/**", Roles.AGATE_ADMIN.name());
-      urls.put("/dump*", Roles.AGATE_ADMIN.name());
-      urls.put("/dump/**", Roles.AGATE_ADMIN.name());
-      urls.put("/shutdown*", Roles.AGATE_ADMIN.name());
-      urls.put("/shutdown/**", Roles.AGATE_ADMIN.name());
-      urls.put("/beans*", Roles.AGATE_ADMIN.name());
-      urls.put("/beans/**", Roles.AGATE_ADMIN.name());
-      urls.put("/info*", Roles.AGATE_ADMIN.name());
-      urls.put("/info/**", Roles.AGATE_ADMIN.name());
-      urls.put("/autoconfig*", Roles.AGATE_ADMIN.name());
-      urls.put("/autoconfig/**", Roles.AGATE_ADMIN.name());
-      urls.put("/env*", Roles.AGATE_ADMIN.name());
-      urls.put("/env/**", Roles.AGATE_ADMIN.name());
-      urls.put("/trace*", Roles.AGATE_ADMIN.name());
-      urls.put("/trace/**", Roles.AGATE_ADMIN.name());
-    }
   }
 }

@@ -15,15 +15,6 @@ metrics:
 
 cache.timeToLiveSeconds: 3600
 
-# Disable the spring security default configuration from spring-boot-actuator
-#management.security.enabled: false
-
-# Disable all endpoints
-endpoints.enabled: false
-
-# security configuration (this key should be unique for your application, and kept secret)
-#jhipster.security.rememberme.key: agate
-
 async:
     corePoolSize: 2
     maxPoolSize: 50
