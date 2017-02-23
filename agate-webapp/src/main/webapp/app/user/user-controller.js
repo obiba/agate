@@ -75,7 +75,7 @@ agate.user
 
       $scope.getStatusTitle = function(status) {
         return LocaleStringUtils.translate('user.' + status);
-      }
+      };
 
       $scope.resetPassword = function (user) {
         $scope.selectedUser = user.id;
@@ -177,7 +177,7 @@ agate.user
             $location.path('/user/' + parts[parts.length - 1]).replace();
           },
           saveErrorHandler);
-      }
+      };
 
       var saveErrorHandler = function (response) {
         $scope.form.saveAttempted = true;

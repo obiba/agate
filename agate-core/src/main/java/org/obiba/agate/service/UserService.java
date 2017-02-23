@@ -228,8 +228,6 @@ public class UserService {
   }
 
   public User createUser(@NotNull User user, @Nullable String password) {
-    User saved = save(user);
-
     if(!Strings.isNullOrEmpty(password)) {
       updateUserPassword(user, password);
     } else if(user.getStatus() == UserStatus.PENDING) {
@@ -238,7 +236,7 @@ public class UserService {
       eventBus.post(new UserApprovedEvent(user));
     }
 
-    return saved;
+    return save(user);
   }
 
   /**
@@ -464,7 +462,7 @@ public class UserService {
    * @throws JSONException
    */
   public void updateUserProfile(User user, JSONObject profile) throws JSONException {
-    Iterable<String> iterable = () -> profile.keys();
+    Iterable<String> iterable = profile::keys;
     StreamSupport.stream(iterable.spliterator(), false).forEach(k -> {
       String value = null;
       try {
@@ -538,7 +536,7 @@ public class UserService {
   public Set<String> getUserApplications(User user) {
     Set<String> applications = Sets.newTreeSet();
     if(user.hasApplications()) applications.addAll(user.getApplications());
-    if(user.hasGroups()) user.getGroups().forEach(g -> Optional.ofNullable(findGroup(g)).flatMap(r -> {
+    if(user.hasGroups()) user.getGroups().forEach(g -> Optional.ofNullable(findGroup(g)).flatMap((Group r) -> {
       r.getApplications().forEach(applications::add);
       return Optional.of(r);
     }));
@@ -600,7 +598,7 @@ public class UserService {
   /**
    * Delete a {@link org.obiba.agate.domain.Group}.
    *
-   * @param user
+   * @param group
    */
   public void delete(@NotNull Group group) {
     for(User user : userRepository.findAll()) {
