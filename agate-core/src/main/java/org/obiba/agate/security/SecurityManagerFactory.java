@@ -174,7 +174,7 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
     @Override
     protected void applyRealmsToSecurityManager(Collection<Realm> shiroRealms, @SuppressWarnings(
         "ParameterHidesMemberVariable") SecurityManager securityManager) {
-      super.applyRealmsToSecurityManager(ImmutableList.<Realm>builder().addAll(realms).addAll(shiroRealms).build(),
+      super.applyRealmsToSecurityManager(ImmutableList.<Realm>builder().addAll(shiroRealms).addAll(realms).build(),
           securityManager);
     }
 
