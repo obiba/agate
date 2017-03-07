@@ -28,9 +28,6 @@ import org.springframework.stereotype.Component;
 public class Dtos {
 
   @Inject
-  private TicketService ticketService;
-
-  @Inject
   private TicketDtos ticketDtos;
 
   @Inject
@@ -63,6 +60,11 @@ public class Dtos {
   @NotNull
   public AuthDtos.SubjectDto asDto(@NotNull User user, boolean withAttributes) {
     return userDtos.asDto(user, withAttributes);
+  }
+
+  @NotNull
+  public AuthDtos.SubjectDto asDto(@NotNull User user, boolean withAttributes, String locale) {
+    return userDtos.asDto(user, withAttributes, locale);
   }
 
   @NotNull
