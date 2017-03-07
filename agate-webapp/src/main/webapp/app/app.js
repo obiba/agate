@@ -13,6 +13,7 @@
 /* App Module */
 
 var agate = angular.module('agate', [
+  'obibaShims',
   'angular-loading-bar',
   'http-auth-interceptor',
   'localytics.directives',
