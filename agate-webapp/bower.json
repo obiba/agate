@@ -32,7 +32,8 @@
     "angular-schema-form": "0.8.13",
     "angular-ui-ace": "0.2.3",
     "angular-recaptcha": "3.0.3",
-    "angular-media-queries": "0.6.1"
+    "angular-media-queries": "0.6.1",
+    "obiba-shims": "https://github.com/obiba/obiba-shims.git#master"
   },
   "devDependencies": {
     "angular-mocks": "1.5.8",
@@ -50,6 +51,12 @@
     },
     "chosen": {
       "main": "./chosen.jquery.js"
+    },
+    "moment": {
+      "main": [
+        "./moment.js",
+        "./min/locales.min.js"
+      ]
     }
   },
   "resolutions": {
