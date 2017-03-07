@@ -58,6 +58,18 @@ public class UsersResource {
     return builder.build();
   }
 
+  @GET
+  @Path("/find")
+  public Agate.UserDto getUserId(@QueryParam("q") String searchTerm) {
+
+    User user = userService.findUser(searchTerm);
+    if(user == null) user = userService.findUserByEmail(searchTerm);
+
+    if (user == null)  throw new BadRequestException(String.format("Cannot find user \"%s\"", searchTerm));
+
+    return dtos.asDto(user);
+  }
+
   @POST
   public Response create(Agate.UserCreateFormDto userCreateFormDto) {
     Agate.UserDto userDto = userCreateFormDto.getUser();
