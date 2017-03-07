@@ -1,5 +1,5 @@
 """
-Python commands for adding or deleting an Applciation
+Python commands for adding or deleting an Application
 """
 
 import json
@@ -21,7 +21,7 @@ def application_add_arguments(parser):
 
 def do_add_command(args):
     """
-    Execute add group management command
+    Execute add application management command
     """
 
     try:

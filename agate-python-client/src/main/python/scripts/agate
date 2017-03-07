@@ -40,22 +40,22 @@ subparsers = parser.add_subparsers(title='sub-commands',
 # Add subcommands
 add_subcommand('rest', 'Request directly the Agate REST API, for advanced users.', agate.rest.add_arguments,
                agate.rest.do_command)
-add_subcommand('add-user', 'Request a user add action using the Agate REST API, for advanced users.',
+add_subcommand('add-user', 'Add a new user.',
                agate.auth_management.user.user_add_arguments, agate.auth_management.user.do_add_command)
-add_subcommand('delete-user', 'Request a user delete action using the Agate REST API, for advanced users.',
+add_subcommand('delete-user', 'Delete a user.',
                agate.auth_management.user.user_delete_arguments,
                agate.auth_management.user.do_delete_command)
-add_subcommand('add-group', 'Request a group add action using the Agate REST API, for advanced users.',
+add_subcommand('add-group', 'Add a new group.',
                agate.auth_management.group.group_add_arguments,
                agate.auth_management.group.do_add_command)
-add_subcommand('delete-group', 'Request a group delete action using the Agate REST API, for advanced users.',
+add_subcommand('delete-group', 'Delete a group (does NOT delete users of the group).',
                agate.auth_management.group.group_delete_arguments,
                agate.auth_management.group.do_delete_command)
-add_subcommand('add-application', 'Request an application add action using the Agate REST API, for advanced users.',
+add_subcommand('add-application', 'Add a new application.',
                agate.auth_management.application.application_add_arguments,
                agate.auth_management.application.do_add_command)
 add_subcommand('delete-application',
-               'Request an application delete action using the Agate REST API, for advanced users.',
+               'Delete an application.',
                agate.auth_management.application.application_delete_arguments,
                agate.auth_management.application.do_delete_command)
 

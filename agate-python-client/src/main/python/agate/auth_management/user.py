@@ -17,8 +17,12 @@ def user_add_arguments(parser):
     parser.add_argument('--upassword', help='The user Password (required)', required=True)
     parser.add_argument('--first-name', help='The user First Name', required=False)
     parser.add_argument('--last-name', help='The user Last Name', required=False)
-    parser.add_argument('--applications', help='Applications in which the user can sign in', required=False, nargs='*')
-    parser.add_argument('--groups', help='Members of a group get access to the applications associated to this group',
+    parser.add_argument('--applications', help='Applications in which the user can sign in, e.g. "opal mica drupal"',
+                        required=False, nargs='*')
+    parser.add_argument('--groups',
+                        help='Members of a group get access to the applications associated to this group, e.g. \
+                        "mica-administrator mica-reviewer mica-editor mica-data-access-officer mica-user \
+                        opal-administrator"',
                         required=False, nargs='*')
     parser.add_argument('--role', help='A simple user can only access to its own account (default is: "agate-user")',
                         required=False, default='agate-user')
@@ -67,8 +71,8 @@ def user_delete_arguments(parser):
     """
 
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument('--name', help='')
-    group.add_argument('--email', help='')
+    group.add_argument('--name', help='User name')
+    group.add_argument('--email', help='User email')
 
 
 def do_delete_command(args):
