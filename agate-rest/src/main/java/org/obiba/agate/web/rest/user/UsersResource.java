@@ -60,6 +60,7 @@ public class UsersResource {
 
   @GET
   @Path("/find")
+  @RequiresRoles("agate-administrator")
   public Agate.UserDto getUserId(@QueryParam("q") String searchTerm) {
 
     User user = userService.findUser(searchTerm);
