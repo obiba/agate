@@ -17,7 +17,7 @@ agate.passwordModal
       $scope.userId = userId;
       $scope.profile = {
         password: null,
-        condfirmPassword: null
+        confirmPassword: null
       };
 
       $scope.cancel = function() {

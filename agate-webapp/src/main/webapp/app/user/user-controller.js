@@ -126,7 +126,7 @@ agate.user
 
       $scope.profile = {
         password: null,
-        condfirmPassword: null
+        confirmPassword: null
       };
 
       $scope.user = $routeParams.id ?
