@@ -87,7 +87,7 @@ public class TicketsResource extends ApplicationAwareResource {
   @POST
   public Response login(@Context HttpServletRequest servletRequest,
     @QueryParam("rememberMe") @DefaultValue("false") boolean rememberMe,
-    @QueryParam("renew") @DefaultValue("false") boolean renew, @FormParam("username") String username,
+    @QueryParam("renew") @DefaultValue("true") boolean renew, @FormParam("username") String username,
     @FormParam("password") String password, @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) {
     validateApplication(authHeader);
 
@@ -106,6 +106,8 @@ public class TicketsResource extends ApplicationAwareResource {
       subject.login(new UsernamePasswordToken(user.getName(), password));
       authorizationValidator.validateRealm(servletRequest, user, subject);
 
+      if (log.isDebugEnabled())
+        log.debug("User '{}' has {} ticket(s)", user.getName(), ticketService.findByUsername(user.getName()).size());
       Ticket ticket = ticketService.create(user.getName(), renew, rememberMe, getApplicationName());
       String token = tokenUtils.makeAccessToken(ticket);
       Configuration configuration = getConfiguration();
@@ -116,8 +118,10 @@ public class TicketsResource extends ApplicationAwareResource {
       user.setLastLogin(DateTime.now());
       userService.save(user);
 
-      log.info("Successful login for user '{}' from application '{}' with token: {}", username, getApplicationName(),
-        token);
+      if (log.isDebugEnabled())
+        log.info("Successful login for user '{}' from application '{}' with token: {}", username, getApplicationName(), token);
+      else
+        log.info("Successful login for user '{}' from application '{}'", username, getApplicationName());
       return Response
         .created(UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(TicketResource.class).build(token))
         .header(HttpHeaders.SET_COOKIE, cookie).build();

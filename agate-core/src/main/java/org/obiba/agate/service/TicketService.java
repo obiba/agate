@@ -12,6 +12,7 @@ package org.obiba.agate.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -58,14 +59,16 @@ public class TicketService {
    * Create or reuse a ticket for the given username.
    *
    * @param username
-   * @param renew delete any existing tickets for the username before creating a new one
+   * @param renew delete any existing tickets (created for the application) of the user before creating a new one
    * @param rememberMe
    * @param application application name issuing the login event
    * @return
    */
   public Ticket create(String username, boolean renew, boolean rememberMe, String application) {
     List<Ticket> tickets = findByUsername(username);
-    if(renew) deleteAll(tickets);
+    if(renew) deleteAll(tickets.stream()
+        .filter(t -> application.equals(t.getEvents().get(0).getApplication()))
+        .collect(Collectors.toList()));
 
     Ticket ticket = new Ticket();
     ticket.setUsername(username);
