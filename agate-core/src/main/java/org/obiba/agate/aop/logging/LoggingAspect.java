@@ -36,7 +36,7 @@ public class LoggingAspect {
   @Inject
   private Environment env;
 
-  private static final String WITHIN_EXPR = "within(org.obiba.agate.repository..*) || within(org.obiba.agate.service..*)";
+  private static final String WITHIN_EXPR = "within(org.obiba.agate.repository..*)";// || within(org.obiba.agate.service..*)";
 
   @AfterThrowing(pointcut = WITHIN_EXPR, throwing = "e")
   public void logAfterThrowing(JoinPoint joinPoint, Throwable e) {

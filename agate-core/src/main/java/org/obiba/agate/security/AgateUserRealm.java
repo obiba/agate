@@ -92,15 +92,11 @@ public class AgateUserRealm extends AuthorizingRealm {
     }
 
     User user = userService.findActiveUser(username);
-
-    if(user == null) {
-      user = userService.findActiveUserByEmail(username);
-      username = user.getName();
-    }
-
-    if(user == null || !user.isEnabled() || !user.getRealm().equals(AGATE_REALM)) {
+    if(user == null) user = userService.findActiveUserByEmail(username);
+    if(user == null || !user.isEnabled() || !user.getRealm().equals(AGATE_REALM))
       throw new UnknownAccountException("No account found for user [" + username + "]");
-    }
+
+    username = user.getName();
     UserCredentials userCredentials = userService.findUserCredentials(username);
     if(userCredentials == null) throw new UnknownAccountException("No account found for user [" + username + "]");
 

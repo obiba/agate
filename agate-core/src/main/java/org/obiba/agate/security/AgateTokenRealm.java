@@ -17,12 +17,7 @@ import java.util.Optional;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.apache.shiro.authc.AccountException;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.AuthenticationInfo;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.SimpleAuthenticationInfo;
-import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.AllowAllCredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
@@ -33,6 +28,7 @@ import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.domain.UserCredentials;
+import org.obiba.agate.service.NoSuchTicketException;
 import org.obiba.agate.service.TicketService;
 import org.obiba.agate.service.TokenUtils;
 import org.obiba.agate.service.UserService;
@@ -80,12 +76,18 @@ public class AgateTokenRealm extends AuthorizingRealm {
 
   @Override
   protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+    String username;
     TicketAuthenticationToken ticketAuthenticationToken = (TicketAuthenticationToken) token;
     String ticketId = ticketAuthenticationToken.getTicketId();
-    Ticket ticket = ticketService.getTicket(ticketAuthenticationToken.getTicketId());
-    ticket.addEvent("agate", "validate");
-    ticketService.save(ticket);
-    String username = ticket.getUsername();
+
+    try {
+      Ticket ticket = ticketService.getTicket(ticketAuthenticationToken.getTicketId());
+      ticket.addEvent("agate", "validate");
+      ticketService.save(ticket);
+      username = ticket.getUsername();
+    } catch (NoSuchTicketException e) {
+      throw new ExpiredCredentialsException("Ticket cannot be found.");
+    }
 
     // Null username is invalid
     if(username == null) {

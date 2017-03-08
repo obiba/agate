@@ -135,7 +135,7 @@ public class TicketService {
         .parseClaimsJws(token).getBody();
       return ticketRepository.findOne(claims.getId());
     } catch(SignatureException e) {
-      throw new ForbiddenException();
+      return null;
     }
   }
 
