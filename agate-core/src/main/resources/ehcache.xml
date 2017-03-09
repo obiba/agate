@@ -13,7 +13,7 @@
     xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd"
     name="CM1"
     updateCheck="false"
-    maxBytesLocalHeap="128M">
+    maxBytesLocalHeap="1G">
 
   <!--
     This is a default configuration, it is re-configured by the CacheConfiguration Spring Bean, using the
@@ -33,7 +33,7 @@
         diskPersistent=true since we want an enterprise session management feature - ability to use sessions after
         even after a JVM restart.  -->
   <cache name="shiro-activeSessionCache"
-      maxBytesLocalHeap="16M"
+      maxBytesLocalHeap="500M"
       overflowToDisk="true"
       eternal="true"
       timeToLiveSeconds="0"
@@ -42,7 +42,7 @@
       diskExpiryThreadIntervalSeconds="600"/>
 
   <cache name="org.apache.shiro.realm.text.PropertiesRealm-0-accounts"
-      maxBytesLocalHeap="16M"
+      maxBytesLocalHeap="100M"
       eternal="true"
       overflowToDisk="true"/>
 
