@@ -6,6 +6,10 @@
   "dependencies": {},
   "devDependencies": {
     "grunt": "0.4.5",
+    "imagemin-gifsicle": "5.2.0",
+    "imagemin-jpegtran": "5.0.2",
+    "imagemin-optipng": "5.2.1",
+    "imagemin-pngquant": "5.0.1",
     "grunt-autoprefixer": "0.7.3",
     "grunt-bower-install": "1.6.0",
     "grunt-cli": "0.1.13",
