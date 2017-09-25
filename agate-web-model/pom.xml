@@ -95,6 +95,9 @@
                 <condition property="os.protoc" value="${protobuf.version}-win32">
                   <os family="windows" />
                 </condition>
+                <condition property="os.protoc" value="${protobuf.version}-osx-sierra-x86_64">
+                  <os family="mac" />
+                </condition>
 
                 <fail message="No protoc binary for your OS: ${os.name} ${os.arch}." unless="os.protoc" />
 

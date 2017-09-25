@@ -16,3 +16,5 @@ spring_loaded
 *.log
 .vagrant
 .work
+.vscode
+package-lock.json
