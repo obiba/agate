@@ -16,11 +16,11 @@ set -e
 # for details, see http://www.debian.org/doc/debian-policy/ or
 # the debian-policy package
 
-NAME=opal
+NAME=agate
 
 case "$1" in
 
-  [0-1])
+  0)
     chkconfig --del agate
 
     # Read configuration variable file if it is present
@@ -33,6 +33,9 @@ case "$1" in
     else
             /etc/init.d/agate stop
     fi
+  ;;
+
+  1)
   ;;
 
   *)
