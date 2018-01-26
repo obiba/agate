@@ -27,13 +27,13 @@
     "json3": "3.3.2",
     "modernizr": "2.8.3",
     "angular-moment": "1.0.0",
-    "ng-obiba": "https://github.com/obiba/ng-obiba.git#master",
+    "ng-obiba": "https://github.com/obiba/ng-obiba.git#1.6.0",
     "angular-utils-pagination": "0.11.1",
     "angular-schema-form": "0.8.13",
     "angular-ui-ace": "0.2.3",
     "angular-recaptcha": "3.0.3",
     "angular-media-queries": "0.6.1",
-    "obiba-shims": "https://github.com/obiba/obiba-shims.git#master"
+    "obiba-shims": "https://github.com/obiba/obiba-shims.git#1.0.0"
   },
   "devDependencies": {
     "angular-mocks": "1.5.8",
