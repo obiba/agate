@@ -2,11 +2,10 @@
 
 case "$1" in
   2)
-    latest_version="$(yum -q list installed agate 2> /dev/null|grep agate| awk '{print $2}' | cut -d'-' -f1)"
+    latest_version="$(ls -t /usr/share | grep agate- | head -1| cut -d'-' -f2)"
     if [ ! -z "$latest_version" ] ; then
       latest_version_number="${latest_version//.}"
       if [ $latest_version_number -lt 131 ] ; then
-        printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' =
         echo
         echo "WARNING: versions before 1.3.1 have an uninstall script error, please run the"
         echo "following script to safely remove the current version before installing a new"
@@ -14,7 +13,6 @@ case "$1" in
         echo
         echo "https://download.obiba.org/tools/rpm/safely-remove-agate-package-before-1.3.1.sh.gz"
         echo
-        printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' =
         exit 1
       fi
     fi
