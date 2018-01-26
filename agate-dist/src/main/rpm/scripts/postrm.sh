@@ -19,9 +19,12 @@ set -e
 
 
 case "$1" in
-	[0-1])
+  0)
     userdel -f agate || true
     rm -rf /var/lib/agate /var/log/agate /tmp/agate /etc/agate /usr/share/agate*
+  ;;
+
+  1)
   ;;
 
   *)

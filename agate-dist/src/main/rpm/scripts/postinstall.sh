@@ -35,7 +35,8 @@ case "$1" in
     # /var/log: logs
 
     rm -f /usr/share/agate
-    ln -s /usr/share/agate-* /usr/share/agate
+    new_release="$(ls -t /usr/share/ |grep agate|head -1)"
+    ln -s /usr/share/${new_release} /usr/share/agate
 
     if [ ! -e /var/lib/agate/conf ] ; then
       ln -s /etc/agate /var/lib/agate/conf
