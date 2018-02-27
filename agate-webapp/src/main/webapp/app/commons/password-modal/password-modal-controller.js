@@ -20,20 +20,19 @@ agate.passwordModal
         confirmPassword: null
       };
 
-      $scope.cancel = function() {
+      $scope.cancel = function () {
         $uibModalInstance.dismiss('cancel');
       };
 
-      $scope.save = function() {
+      $scope.save = function () {
         if ($scope.profile.password !== $scope.profile.confirmPassword) {
-          AlertService.alert({id: 'PasswordModalController', type: 'danger', msgKey: 'password.error.dontmatch'});
+          AlertService.alert({ id: 'PasswordModalController', type: 'danger', msgKey: 'password.error.dontmatch' });
         } else {
-          Password.put($scope.userId, {password: $scope.profile.password})
-            .success(function() {
+          Password.put($scope.userId, { password: $scope.profile.password })
+            .then(function () {
               $uibModalInstance.close();
-            })
-            .error(function(response) {
-              AlertService.alert({id: 'PasswordModalController', type: 'danger', msgKey: 'password.error.global'});
+            }, function (response) {
+              AlertService.alert({ id: 'PasswordModalController', type: 'danger', msgKey: 'password.error.global' });
               FormServerValidation.error(response, $scope.form);
             });
         }
@@ -43,7 +42,7 @@ agate.passwordModal
 
   .controller('UpdatePasswordButtonController', ['$scope', '$uibModal',
     function ($scope, $uibModal) {
-      $scope.updatePassword = function() {
+      $scope.updatePassword = function () {
         $uibModal
           .open({
             templateUrl: 'app/commons/password-modal/password-modal-template.html',

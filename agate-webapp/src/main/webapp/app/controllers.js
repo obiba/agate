@@ -14,8 +14,8 @@
 
 agate.controller('MainController', ['$rootScope', '$scope', '$window', '$log', '$sce', 'ConfigurationResource', 'PublicConfigurationResource', 'screenSize', 'AuthenticationSharedService', 'Account', '$translate',
   function ($rootScope, $scope, $window, $log, $sce, ConfigurationResource, PublicConfigurationResource, screenSize, AuthenticationSharedService, Account, $translate) {
-    $rootScope.screen = $scope.screen = {size: null, device: null};
-    var applyTitle = function(config) {
+    $rootScope.screen = $scope.screen = { size: null, device: null };
+    var applyTitle = function (config) {
       $window.document.title = config.name;
     };
     if (AuthenticationSharedService.isAuthenticated()) {
@@ -32,7 +32,7 @@ agate.controller('MainController', ['$rootScope', '$scope', '$window', '$log', '
 
     $rootScope.$on('$translateChangeSuccess', function () {
 
-      $scope.currentLanguage = 'https://www.google.com/recaptcha/api.js?onload=vcRecaptchaApiLoaded&render=explicit&hl=' + $translate.use();
+      $scope.currentLanguage = 'https://www.google.com/recaptcha/api.js?onload=vcRecaptchaApiLoaded()&render=explicit&hl=' + $translate.use();
       loadScript($scope.currentLanguage);
     });
 
@@ -63,7 +63,7 @@ agate.controller('MainController', ['$rootScope', '$scope', '$window', '$log', '
     });
   }]);
 
-agate.controller('AdminController', [function () {}]);
+agate.controller('AdminController', [function () { }]);
 
 agate.controller('LanguageController', ['$scope', '$translate', 'amMoment', 'PublicConfigurationResource',
   function ($scope, $translate, amMoment, PublicConfigurationResource) {
@@ -78,7 +78,7 @@ agate.controller('LanguageController', ['$scope', '$translate', 'amMoment', 'Pub
     });
   }]);
 
-agate.controller('MenuController', [function () {}]);
+agate.controller('MenuController', [function () { }]);
 
 agate.controller('LoginController', ['$scope', '$location', 'AuthenticationSharedService',
   function ($scope, $location, AuthenticationSharedService) {
@@ -116,7 +116,7 @@ agate.controller('JoinController', ['$rootScope', '$scope', '$location', '$trans
       $scope.$broadcast('schemaFormValidate');
 
       if (!$scope.response) {
-        AlertService.alert({id: 'JoinController', type: 'danger', msgKey: 'missing-reCaptcha-error'});
+        AlertService.alert({ id: 'JoinController', type: 'danger', msgKey: 'missing-reCaptcha-error' });
         return;
       }
 
@@ -125,12 +125,11 @@ agate.controller('JoinController', ['$rootScope', '$scope', '$location', '$trans
         if (!model.locale) {
           model.locale = $translate.use();
         }
-        JoinResource.post(angular.extend({}, model, {reCaptchaResponse: $scope.response}))
-          .success(function () {
+        JoinResource.post(angular.extend({}, model, { reCaptchaResponse: $scope.response }))
+          .then(function () {
             $location.url($location.path());
             $location.path('/');
-          })
-          .error(function (data) {
+          }, function (data) {
             $rootScope.$broadcast(NOTIFICATION_EVENTS.showNotificationDialog, {
               message: ServerErrorUtils.buildMessage(data)
             });
@@ -152,76 +151,76 @@ agate.controller('LogoutController', ['$location', 'AuthenticationSharedService'
   }]);
 
 agate.controller('OAuthController', ['$log', '$scope', '$q', '$location', 'ApplicationSummaryResource',
-  function($log, $scope, $q, $location, ApplicationSummaryResource) {
-  var OPENID_SCOPES = ['openid', 'profile', 'email', 'address', 'phone', 'offline_access'];
-  $scope.auth = $location.search();
-  $scope.client = ApplicationSummaryResource.get({ id: $scope.auth.client_id },function(){
-  }, function(){
-    $scope.error = 'unknown-client-application';
-    $scope.errorArgs = $scope.auth.client_id;
-  });
+  function ($log, $scope, $q, $location, ApplicationSummaryResource) {
+    var OPENID_SCOPES = ['openid', 'profile', 'email', 'address', 'phone', 'offline_access'];
+    $scope.auth = $location.search();
+    $scope.client = ApplicationSummaryResource.get({ id: $scope.auth.client_id }, function () {
+    }, function () {
+      $scope.error = 'unknown-client-application';
+      $scope.errorArgs = $scope.auth.client_id;
+    });
 
-  $scope.scopes = $scope.auth.scope.split(' ').map(function (s) {
-    var scopeParts = s.split(':');
-    var appId = scopeParts[0];
-    if(OPENID_SCOPES.indexOf(appId) < 0) {
-      return {application: appId, name: scopeParts[1]};
-    } else {
-      return {application: 'openid', name: appId};
-    }
-  });
-
-  var applications = $scope.scopes.reduce(function(applications, scope) {
-    var application = scope.application;
-
-    if(applications.indexOf(application) < 0) {
-      applications.push(application);
-    }
-
-    return applications;
-  }, []);
-
-  $q.all(applications.map(function(application) {
-    if (OPENID_SCOPES.indexOf(application) < 0) {
-      return ApplicationSummaryResource.get({id: application}).$promise;
-    } else {
-      var deferred = $q.defer();
-      deferred.resolve({id: application, scopes: OPENID_SCOPES.map(function(s) {return {name: s};})});
-      return deferred.promise;
-    }
-  })).then(function(applications) {
-    var res = $scope.scopes.map(function(scope) {
-      var application, found;
-      application = applications.filter(function (application) { return application.id === scope.application; })[0];
-      found = application && application.scopes ? application.scopes.filter(function(s) {return s.name === scope.name; })[0] : {};
-
-      if (!found && scope.name) {
-        scope.isMissing = true;
+    $scope.scopes = $scope.auth.scope.split(' ').map(function (s) {
+      var scopeParts = s.split(':');
+      var appId = scopeParts[0];
+      if (OPENID_SCOPES.indexOf(appId) < 0) {
+        return { application: appId, name: scopeParts[1] };
       } else {
-        scope.description = found ? found.description : null;
+        return { application: 'openid', name: appId };
+      }
+    });
+
+    var applications = $scope.scopes.reduce(function (applications, scope) {
+      var application = scope.application;
+
+      if (applications.indexOf(application) < 0) {
+        applications.push(application);
       }
 
-      return scope;
+      return applications;
+    }, []);
+
+    $q.all(applications.map(function (application) {
+      if (OPENID_SCOPES.indexOf(application) < 0) {
+        return ApplicationSummaryResource.get({ id: application }).$promise;
+      } else {
+        var deferred = $q.defer();
+        deferred.resolve({ id: application, scopes: OPENID_SCOPES.map(function (s) { return { name: s }; }) });
+        return deferred.promise;
+      }
+    })).then(function (applications) {
+      var res = $scope.scopes.map(function (scope) {
+        var application, found;
+        application = applications.filter(function (application) { return application.id === scope.application; })[0];
+        found = application && application.scopes ? application.scopes.filter(function (s) { return s.name === scope.name; })[0] : {};
+
+        if (!found && scope.name) {
+          scope.isMissing = true;
+        } else {
+          scope.description = found ? found.description : null;
+        }
+
+        return scope;
+      });
+
+      var missingScopes = res.filter(function (scope) { return scope.isMissing; });
+
+      if (missingScopes.length > 0) {
+        $scope.error = 'unknown-resource-scope';
+        $scope.errorArgs = missingScopes.map(function (s) { return s.application + ':' + s.name; }).join(', ');
+      }
+
+      $scope.applicationScopes = applications.map(function (application) {
+        var scopes = res.filter(function (scope) { return scope.application === application.id; });
+
+        return { application: application, scopes: scopes };
+      });
+    }).catch(function (e) {
+      $log.error(e);
+      $scope.error = 'unknown-resource-application';
+      $scope.errorArgs = applications.join(', ');
     });
-
-    var missingScopes = res.filter(function(scope) { return scope.isMissing; });
-
-    if(missingScopes.length > 0) {
-      $scope.error = 'unknown-resource-scope';
-      $scope.errorArgs = missingScopes.map(function(s) { return s.application + ':' + s.name; }).join(', ');
-    }
-
-    $scope.applicationScopes = applications.map(function(application) {
-      var scopes = res.filter(function(scope) { return scope.application === application.id; });
-
-      return {application: application, scopes: scopes};
-    });
-  }).catch(function(e) {
-    $log.error(e);
-    $scope.error = 'unknown-resource-application';
-    $scope.errorArgs = applications.join(', ');
-  });
-}]);
+  }]);
 
 agate.controller('ProfileController', ['$scope', '$location', '$uibModal', 'Account', 'AccountAuthorizations', 'AccountAuthorization', 'ConfigurationResource', 'AttributesService', 'AlertService',
   function ($scope, $location, $uibModal, Account, AccountAuthorizations, AccountAuthorization, ConfigurationResource, AttributesService, AlertService) {
@@ -251,13 +250,13 @@ agate.controller('ProfileController', ['$scope', '$location', '$uibModal', 'Acco
     getSettingsAccount();
 
     $scope.deleteAuthorization = function (authz) {
-      AccountAuthorization.delete({authz: authz.id}, function () {
+      AccountAuthorization.delete({ authz: authz.id }, function () {
         $scope.authorizations = AccountAuthorizations.query();
       });
     };
 
     $scope.onPasswordUpdated = function () {
-      AlertService.alert({id: 'ProfileController', type: 'success', msgKey: 'profile.success.updated', delay: 5000});
+      AlertService.alert({ id: 'ProfileController', type: 'success', msgKey: 'profile.success.updated', delay: 5000 });
     };
 
     $scope.cancel = function () {
@@ -324,7 +323,7 @@ agate.controller('ProfileModalController', ['$scope', '$uibModalInstance', '$fil
     $scope.save = function (form) {
       if (!form.$valid) {
         form.saveAttempted = true;
-        AlertService.alert({id: 'ProfileModalController', type: 'danger', msgKey: 'fix-error'});
+        AlertService.alert({ id: 'ProfileModalController', type: 'danger', msgKey: 'fix-error' });
         return;
       }
 
@@ -338,7 +337,7 @@ agate.controller('ProfileModalController', ['$scope', '$uibModalInstance', '$fil
           $uibModalInstance.close($scope.attributeConfigPairs);
         },
         function () {
-          AlertService.alert({id: 'ProfileModalController', type: 'danger', msgKey: 'fix-error'});
+          AlertService.alert({ id: 'ProfileModalController', type: 'danger', msgKey: 'fix-error' });
         });
     };
   }]);
@@ -361,7 +360,7 @@ agate.controller('ResetPasswordController', ['$scope', '$location', 'ConfirmReso
           key: $scope.key,
           password: $scope.password
         })
-          .success(function () {
+          .then(function () {
             $location.url($location.path());
             $location.path('/');
           });
@@ -373,24 +372,24 @@ agate.controller('ForgotLoginDetailsController', ['$scope', 'AlertService', 'For
   function ($scope, AlertService, ForgotPasswordResource) {
     $scope.username = '';
 
-    $scope.sendRequest = function(form) {
+    $scope.sendRequest = function (form) {
       if (!form.$valid) {
         form.saveAttempted = true;
-        AlertService.alert({id: 'ForgotLoginDetailsController', type: 'danger', msgKey: 'fix-error', delay: 5000});
+        AlertService.alert({ id: 'ForgotLoginDetailsController', type: 'danger', msgKey: 'fix-error', delay: 5000 });
         return;
       }
 
-      var successHandler = function() {
-        AlertService.alert({id: 'ForgotLoginDetailsController', type: 'success', msgKey: 'forgot-login.success'});
+      var successHandler = function () {
+        AlertService.alert({ id: 'ForgotLoginDetailsController', type: 'success', msgKey: 'forgot-login.success' });
         $scope.email = '';
         $scope.username = '';
         form.$setPristine();
       };
 
-      var errorHandler = function() {
-        AlertService.alert({id: 'ForgotLoginDetailsController', type: 'danger', msgKey: 'error', delay: 5000});
+      var errorHandler = function () {
+        AlertService.alert({ id: 'ForgotLoginDetailsController', type: 'danger', msgKey: 'error', delay: 5000 });
       };
 
-      ForgotPasswordResource.post({username: $scope.username}).success(successHandler).error(errorHandler);
+      ForgotPasswordResource.post({ username: $scope.username }).then(successHandler, errorHandler);
     };
   }]);
