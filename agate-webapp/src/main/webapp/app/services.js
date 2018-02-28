@@ -26,31 +26,31 @@ agate.factory('CurrentSession', ['$resource',
 agate.factory('Account', ['$resource',
   function ($resource) {
     return $resource('ws/user/_current', {}, {
-      'save': {method: 'PUT', params: {id: '@id'}, errorHandler: true}
+      'save': { method: 'PUT', params: { id: '@id' }, errorHandler: true }
     });
   }]);
 
 agate.factory('AccountAuthorizations', ['$resource',
   function ($resource) {
     return $resource('ws/user/_current/authorizations', {}, {
-      'get': {method: 'GET'}
+      'get': { method: 'GET' }
     });
   }]);
 
 agate.factory('AccountAuthorization', ['$resource',
   function ($resource) {
     return $resource('ws/user/_current/authorization/:authz', {}, {
-      'get': {method: 'GET', params: {authz: '@authz'}},
-      'delete': {method: 'DELETE', params: {authz: '@authz'}, errorHandler: true}
+      'get': { method: 'GET', params: { authz: '@authz' } },
+      'delete': { method: 'DELETE', params: { authz: '@authz' }, errorHandler: true }
     });
   }]);
 
 agate.factory('Password', ['$resource', '$http',
   function ($resource, $http) {
     return {
-      put: function(userId, data) {
-        return $http.put('ws/user/'+userId+'/password', $.param(data), {
-          headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      put: function (userId, data) {
+        return $http.put('ws/user/' + userId + '/password', $.param(data), {
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           errorHandler: true
         });
       }
@@ -60,9 +60,9 @@ agate.factory('Password', ['$resource', '$http',
 agate.factory('ConfirmResource', ['$http',
   function ($http) {
     return {
-      post: function(data) {
+      post: function (data) {
         return $http.post('ws/users/_confirm', $.param(data), {
-          headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
         });
       }
     };
@@ -71,9 +71,9 @@ agate.factory('ConfirmResource', ['$http',
 agate.factory('PasswordResetResource', ['$http',
   function ($http) {
     return {
-      post: function(data) {
+      post: function (data) {
         return $http.post('ws/users/_reset_password', $.param(data), {
-          headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
         });
       }
     };
@@ -82,9 +82,9 @@ agate.factory('PasswordResetResource', ['$http',
 agate.factory('JoinResource', ['$http',
   function ($http) {
     return {
-      post: function(data) {
+      post: function (data) {
         return $http.post('ws/users/_join', $.param(data), {
-          headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
         });
       }
     };
@@ -93,9 +93,9 @@ agate.factory('JoinResource', ['$http',
 agate.factory('ForgotUsernameResource', ['$http',
   function ($http) {
     return {
-      post: function(data) {
+      post: function (data) {
         return $http.post('ws/users/_forgot_username', $.param(data), {
-          headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
         });
       }
     };
@@ -104,9 +104,9 @@ agate.factory('ForgotUsernameResource', ['$http',
 agate.factory('ForgotPasswordResource', ['$http',
   function ($http) {
     return {
-      post: function(data) {
+      post: function (data) {
         return $http.post('ws/users/_forgot_password', $.param(data), {
-          headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
         });
       }
     };
@@ -114,7 +114,7 @@ agate.factory('ForgotPasswordResource', ['$http',
 
 agate.factory('JoinConfigResource', ['$resource', '$translate',
   function ($resource, $translate) {
-    return $resource('ws/config/join',{locale: $translate.use});
+    return $resource('ws/config/join', { locale: $translate.use });
   }]);
 
 agate.factory('ClientConfig', ['$resource',
@@ -151,13 +151,13 @@ agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$log', '$c
             'Content-Type': 'application/x-www-form-urlencoded'
           },
           ignoreAuthModule: 'ignoreAuthModule'
-        }).success(function () {
+        }).then(function () {
           CurrentSession.get(function (data) {
             Session.create(data.username, data.role, data.realm);
             $cookieStore.put('agate_subject', JSON.stringify(Session));
             authService.loginConfirmed(data);
           });
-        }).error(function () {
+        }, function () {
           $rootScope.authenticationError = true;
           Session.destroy();
         });
@@ -225,15 +225,14 @@ agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$log', '$c
       },
       logout: function () {
         $rootScope.authenticationError = false;
-        $http({method: 'DELETE', url: 'ws/auth/session/_current', errorHandler: true})
-          .success(function () {
+        $http({ method: 'DELETE', url: 'ws/auth/session/_current', errorHandler: true })
+          .then(function () {
             Session.destroy();
             authService.loginCancelled(null, 'logout');
-          }).error(function () {
+          }, function () {
             Session.destroy();
             authService.loginCancelled(null, 'logout failure');
-          }
-        );
+          });
       }
     };
   }]);

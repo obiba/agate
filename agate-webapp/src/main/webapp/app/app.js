@@ -40,8 +40,11 @@ var agate = angular.module('agate', [
 ]);
 
 agate
-  .config(['$routeProvider', '$httpProvider', '$translateProvider', 'tmhDynamicLocaleProvider', 'USER_ROLES', 'paginationTemplateProvider',
-    function ($routeProvider, $httpProvider, $translateProvider, tmhDynamicLocaleProvider, USER_ROLES, paginationTemplateProvider) {
+  .config(['$routeProvider', '$httpProvider', '$translateProvider', '$locationProvider', 'tmhDynamicLocaleProvider', 'USER_ROLES', 'paginationTemplateProvider',
+    function ($routeProvider, $httpProvider, $translateProvider, $locationProvider, tmhDynamicLocaleProvider, USER_ROLES, paginationTemplateProvider) {
+
+      $locationProvider.hashPrefix('');
+
       $routeProvider
         .when('/login', {
           templateUrl: 'app/views/login.html',
@@ -141,38 +144,6 @@ agate
       tmhDynamicLocaleProvider.useCookieStorage('NG_TRANSLATE_LANG_KEY');
     }])
 
-  // Workaround for bug #1404
-  // https://github.com/angular/angular.js/issues/1404
-  // Source: http://plnkr.co/edit/hSMzWC?p=preview
-  .config(['$provide', function ($provide) {
-    $provide.decorator('ngModelDirective', ['$delegate', function ($delegate) {
-      var ngModel = $delegate[0], controller = ngModel.controller;
-      ngModel.controller = ['$scope', '$element', '$attrs', '$injector', function (scope, element, attrs, $injector) {
-        var $interpolate = $injector.get('$interpolate');
-        attrs.$set('name', $interpolate(attrs.name || '')(scope));
-        $injector.invoke(controller, this, {
-          '$scope': scope,
-          '$element': element,
-          '$attrs': attrs
-        });
-      }];
-      return $delegate;
-    }]);
-    $provide.decorator('formDirective', ['$delegate', function ($delegate) {
-      var form = $delegate[0], controller = form.controller;
-      form.controller = ['$scope', '$element', '$attrs', '$injector', function (scope, element, attrs, $injector) {
-        var $interpolate = $injector.get('$interpolate');
-        attrs.$set('name', $interpolate(attrs.name || attrs.ngForm || '')(scope));
-        $injector.invoke(controller, this, {
-          '$scope': scope,
-          '$element': element,
-          '$attrs': attrs
-        });
-      }];
-      return $delegate;
-    }]);
-  }])
-
   .run(['$rootScope',
     '$location',
     '$http',
@@ -183,14 +154,14 @@ agate
     'amMoment',
     '$cookies',
     function ($rootScope,
-              $location,
-              $http,
-              AuthenticationSharedService,
-              Session,
-              USER_ROLES,
-              ServerErrorUtils,
-              amMoment,
-              $cookies) {
+      $location,
+      $http,
+      AuthenticationSharedService,
+      Session,
+      USER_ROLES,
+      ServerErrorUtils,
+      amMoment,
+      $cookies) {
 
       var langKey = $cookies.get('NG_TRANSLATE_LANG_KEY');
       amMoment.changeLocale(langKey ? langKey.replace(/"/g, '') : 'en');
