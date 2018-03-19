@@ -13,6 +13,7 @@ package org.obiba.agate;
 import org.obiba.agate.config.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration;
@@ -61,7 +62,7 @@ public class Application {
     checkSystemProperty("AGATE_HOME");
 
     SpringApplication app = new SpringApplication(Application.class);
-    app.setShowBanner(false);
+    app.setBannerMode(Banner.Mode.OFF);
 
     SimpleCommandLinePropertySource source = new SimpleCommandLinePropertySource(args);
 
