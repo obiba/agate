@@ -85,7 +85,7 @@ public class NotificationsResource extends ApplicationAwareResource {
     Set<User> recipients = Sets.newHashSet();
     if((usernames == null || usernames.isEmpty()) && (groups == null || groups.isEmpty())) {
       // all users having access to the application
-      userService.findActiveUsersByApplication(getApplicationName()).forEach(recipients::add);
+      recipients.addAll(userService.findActiveUsersByApplication(getApplicationName()));
     } else {
       // all the specified users having access to the application
       appendRecipientsFromUsernames(usernames, recipients);
