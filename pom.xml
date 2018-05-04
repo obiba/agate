@@ -27,7 +27,6 @@
     <module>agate-web-model</module>
     <module>agate-webapp</module>
     <module>agate-dist</module>
-    <module>agate-python-client</module>
   </modules>
 
   <profiles>
