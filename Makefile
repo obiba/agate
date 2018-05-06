@@ -46,6 +46,9 @@ rest:
 proto:
 	cd agate-web-model && ${mvn_exec} install
 
+python:
+	cd ../agate-python-client && ${mvn_exec} install
+
 run:
 	cd agate-webapp && \
 	${mvn_exec} spring-boot:run -Pdev -DAGATE_HOME="${agate_home}" -DAGATE_LOG="${agate_log}"
@@ -68,9 +71,9 @@ debug:
 	${mvn_exec} spring-boot:run -Pdev -Dspring.profiles.active=dev -DAGATE_HOME="${agate_home}" -DAGATE_LOG="${agate_log}"
 
 run-python:
-	cd agate-python-client/target/agate-python/bin && \
+	cd ../agate-python-client/target/agate-python/bin && \
 	chmod +x ./scripts/agate && \
-	export PYTHONPATH=${current_dir}/agate-python-client/target/agate-python/bin && \
+	export PYTHONPATH=${current_dir}/../agate-python-client/target/agate-python/bin && \
 	./scripts/agate ${args}
 
 grunt:
