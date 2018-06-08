@@ -1,6 +1,4 @@
-[![Build Status](https://travis-ci.org/obiba/agate.svg?branch=master)](https://travis-ci.org/obiba/agate)
-
-# Agate
+# Agate [![Build Status](https://travis-ci.org/obiba/agate.svg?branch=master)](https://travis-ci.org/obiba/agate)
 
 Central authentication server for OBiBa applications.
 
