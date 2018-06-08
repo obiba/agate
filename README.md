@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/obiba/agate.svg?branch=master)](https://travis-ci.org/obiba/agate)
+
 # OBiBa acknowledgments
 
 If you are using OBiBa software, please cite our work in your code, websites, publications or reports.
