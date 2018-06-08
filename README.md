@@ -1,12 +1,13 @@
 [![Build Status](https://travis-ci.org/obiba/agate.svg?branch=master)](https://travis-ci.org/obiba/agate)
 
-# OBiBa acknowledgments
-
-If you are using OBiBa software, please cite our work in your code, websites, publications or reports.
-
-"The work presented herein was made possible using the OBiBa suite (www.obiba.org), a  software suite developed by Maelstrom Research (www.maelstrom-research.org)"
-
 # Agate
+
+Central authentication server for OBiBa applications.
+
+* See [download instructions](http://www.obiba.org/pages/products/agate/#download).
+* Read the [documentation](http://agatedoc.obiba.org).
+* Have a bug or a question? Please create an issue on [GitHub](https://github.com/obiba/agate/issues).
+* Continuous integration is on [Travis](https://travis-ci.org/obiba/agate).
 
 ## For developers
 
@@ -34,24 +35,6 @@ During development, run
 
 See `make help` for other targets.
 
-
-
-## Download
-
-See [download instructions](http://www.obiba.org/pages/products/agate/#download).
-
-## Documentation
-
-See [documentation](http://agatedoc.obiba.org).
-
-## Bug tracker
-
-Have a bug or a question? Please create an issue on [GitHub](https://github.com/obiba/agate/issues).
-
-## Continuous integration
-
-See [Travis](https://travis-ci.org/obiba/agate).
-
 ## Mailing list
 
 Have a question? Ask on our mailing list!
@@ -60,7 +43,12 @@ obiba-users@googlegroups.com
 
 [http://groups.google.com/group/obiba-users](http://groups.google.com/group/obiba-users)
 
-
 ## License
 
 OBiBa software are open source and made available under the [GPL3 licence](http://www.obiba.org/node/62). OBiBa software are free of charge.
+
+## OBiBa acknowledgments
+
+If you are using OBiBa software, please cite our work in your code, websites, publications or reports.
+
+"The work presented herein was made possible using the OBiBa suite (www.obiba.org), a  software suite developed by Maelstrom Research (www.maelstrom-research.org)"
