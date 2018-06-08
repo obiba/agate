@@ -36,20 +36,19 @@ See `make help` for other targets.
 
 ## Download
 
-See Obiba Maven 2.x repository: [http://www.obiba.org/maven2](http://www.obiba.org/maven2)
+See [download instructions](http://www.obiba.org/pages/products/agate/#download)
 
-And Obiba Snaphot Maven 2.x repository: [http://www.obiba.org/maven2-snapshots](http://www.obiba.org/maven2-snapshots)
+## Documentation
 
+See [documentation](http://agatedoc.obiba.org)
 
 ## Bug tracker
 
-Have a bug? Please create an issue on [OBiBa JIRA](http://jira.obiba.org/jira/browse/AGATE).
-
+Have a bug or a question? Please create an issue on [GitHub](https://github.com/obiba/agate/issues).
 
 ## Continuous integration
 
-See [OBiBa Jenkins](http://ci.obiba.org/view/agate).
-
+See [Travis](https://travis-ci.org/obiba/agate).
 
 ## Mailing list
 
