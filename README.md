@@ -36,11 +36,11 @@ See `make help` for other targets.
 
 ## Download
 
-See [download instructions](http://www.obiba.org/pages/products/agate/#download)
+See [download instructions](http://www.obiba.org/pages/products/agate/#download).
 
 ## Documentation
 
-See [documentation](http://agatedoc.obiba.org)
+See [documentation](http://agatedoc.obiba.org).
 
 ## Bug tracker
 
