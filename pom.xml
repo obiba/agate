@@ -76,82 +76,6 @@
 
   </properties>
 
-  <profiles>
-
-    <profile>
-      <id>dev</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <properties>
-        <!-- Spring profile to use -->
-        <spring.profiles.active>dev</spring.profiles.active>
-        <!-- log configuration -->
-        <logback.loglevel>DEBUG</logback.loglevel>
-        <logback.logDir>${project.build.directory}/logs</logback.logDir>
-      </properties>
-    </profile>
-
-    <profile>
-      <id>prod</id>
-      <properties>
-        <!-- Spring profile to use -->
-        <spring.profiles.active>prod</spring.profiles.active>
-        <!-- log configuration -->
-        <logback.loglevel>INFO</logback.loglevel>
-        <logback.appender>CONSOLE</logback.appender>
-        <logback.logDir>/var/logs/agate</logback.logDir>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>com.github.trecloux</groupId>
-            <artifactId>yeoman-maven-plugin</artifactId>
-            <version>0.2</version>
-            <configuration>
-              <yeomanProjectDirectory>${project.basedir}/agate-webapp</yeomanProjectDirectory>
-            </configuration>
-            <executions>
-              <execution>
-                <id>run-grunt</id>
-                <phase>generate-resources</phase>
-                <goals>
-                  <goal>build</goal>
-                </goals>
-                <configuration>
-                  <gruntBuildArgs>--force</gruntBuildArgs>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <artifactId>maven-clean-plugin</artifactId>
-            <configuration>
-              <filesets>
-                <fileset>
-                  <directory>.tmp</directory>
-                </fileset>
-                <fileset>
-                  <directory>node_modules</directory>
-                </fileset>
-              </filesets>
-            </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-maven-plugin</artifactId>
-            <configuration>
-              <arguments>
-                <argument>--spring.profiles.active=prod</argument>
-              </arguments>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-  </profiles>
-
   <dependencyManagement>
     <dependencies>
 
@@ -523,7 +447,7 @@
           <configuration>
             <!-- Use parent version as modules' version -->
             <autoVersionSubmodules>true</autoVersionSubmodules>
-            <releaseProfiles>ci-build,release</releaseProfiles>
+            <releaseProfiles>release</releaseProfiles>
             <!-- Comment this profile because Jenkins crashes while performing the release -->
             <!--<preparationGoals>clean verify install</preparationGoals>-->
           </configuration>
@@ -563,6 +487,12 @@
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>rpm-maven-plugin</artifactId>
           <version>${rpm-maven-plugin.version}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>com.carrotgarden.maven</groupId>
+          <artifactId>bintray-maven-plugin</artifactId>
+          <version>${bintray-maven-plugin.version}</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -781,5 +711,44 @@
       <url>https://www.gnu.org/licenses/gpl-3.0.txt</url>
     </license>
   </licenses>
+
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <!-- Disable default deployer. -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-deploy-plugin</artifactId>
+            <configuration>
+              <skip>true</skip>
+            </configuration>
+          </plugin>
+
+          <!-- Enable alternative deployer. -->
+          <plugin>
+            <groupId>com.carrotgarden.maven</groupId>
+            <artifactId>bintray-maven-plugin</artifactId>
+            <configuration>
+              <skip>false</skip>
+              <subject>obiba</subject>
+              <repository>maven</repository>
+              <serverId>obiba-bintray</serverId>
+              <packageVcsUrl>https://github.com/obiba/onyx</packageVcsUrl>
+            </configuration>
+            <executions>
+              <!-- Activate "bintray:deploy" during "deploy" -->
+              <execution>
+                <goals>
+                  <goal>deploy</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
   
 </project>
