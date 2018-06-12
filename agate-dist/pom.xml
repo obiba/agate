@@ -64,6 +64,15 @@
         </executions>
       </plugin>
 
+      <!-- Disable default deployer. -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+
     </plugins>
 
   </build>
@@ -72,7 +81,7 @@
 
     <profile>
       <!-- A profile for the builds performed by the continuous integration server -->
-      <id>ci-build</id>
+      <id>release</id>
       <build>
         <plugins>
           <plugin>
@@ -282,60 +291,52 @@
                     <move file="${deb.dir}/usr/share/agate-dist-${project.version}" tofile="${deb.dir}/usr/share/agate-${project.version}" />
 
                     <mkdir dir="${deb.dir}/etc" />
-                    <move todir="${deb.dir}/etc/agate">
+                    <copy todir="${deb.dir}/etc/agate">
                       <fileset dir="${deb.dir}/usr/share/agate-${project.version}/conf" />
-                    </move>
+                    </copy>
 
                     <exec executable="debuild" dir="${deb.dir}" failonerror="true" osfamily="unix">
                       <arg value="-b" />
-                      <!-- Uncomment following options to package locally  -->
-                      <!--<arg value="-i" />-->
-                      <!--<arg value="-us" />-->
-                      <!--<arg value="-uc" />-->
+                      <arg value="-i" />
+                      <arg value="-us" />
+                      <arg value="-uc" />
                     </exec>
                   </target>
                 </configuration>
               </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>de.jutzig</groupId>
+            <artifactId>github-release-plugin</artifactId>
+            <executions>
               <execution>
-                <id>deploy-deb</id>
+                <id>make-release</id>
                 <phase>deploy</phase>
                 <goals>
-                  <goal>run</goal>
+                  <goal>release</goal>
                 </goals>
                 <configuration>
-                  <target>
-                    <property name="deb.version" value="${project.version}-b${buildNumber}" />
-                    <!-- Deploy deb file in deb repo -->
-                    <copy file="target/agate_${deb.version}_all.deb" todir="${obiba.deb.dir}/${agate.deploy.dir}" />
-                  </target>
-                </configuration>
-              </execution>
-              <execution>
-                <id>deploy-package</id>
-                <phase>deploy</phase>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-                <configuration>
-                  <target>
-                    <!-- Deploy Agate package file in download repo -->
-                    <copy file="target/agate-dist-${project.version}-dist.zip" tofile="${obiba.download.dir}/agate/${agate.deploy.dir}/agate-${project.version}-dist.zip" />
-                  </target>
-                </configuration>
-              </execution>
-              <execution>
-                <id>deploy-rpm</id>
-                <phase>deploy</phase>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-                <configuration>
-                  <target>
-                    <!-- Deploy rpm file in rpm repo -->
-                    <copy todir="${obiba.rpm.dir}/${agate.deploy.dir}">
-                      <fileset dir="target/rpm/agate/RPMS/noarch" />
-                    </copy>
-                  </target>
+                  <releaseName>${project.version}</releaseName>
+                  <tag>${project.version}</tag>
+                  <repositoryId>obiba/agate</repositoryId>
+                  <artifact>donotuploadjar</artifact>
+                  <fileSets>
+                    <fileSet>
+                      <directory>${basedir}/target</directory>
+                      <includes>
+                        <include>*.zip</include>
+                        <include>*.deb</include>
+                      </includes>
+                    </fileSet>
+                    <fileSet>
+                      <directory>${basedir}/target/rpm/agate/RPMS/noarch</directory>
+                      <includes>
+                        <include>*.rpm</include>
+                      </includes>
+                    </fileSet>
+                  </fileSets>
                 </configuration>
               </execution>
             </executions>
