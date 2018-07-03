@@ -52,6 +52,7 @@
     <logback.version>1.1.11</logback.version>
     <logstash-logback.version>4.5.1</logstash-logback.version>
     <metrics-spring.version>3.0.0</metrics-spring.version>
+    <mongodb-driver.version>3.8.0</mongodb-driver.version>
     <nosqlunit.version>0.7.9</nosqlunit.version>
     <obiba-commons.version>1.10.2</obiba-commons.version>
     <oltu.version>1.0.1</oltu.version>
@@ -238,6 +239,12 @@
         <version>${jersey.version}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.mongodb</groupId>
+        <artifactId>mongodb-driver</artifactId>
+        <version>${mongodb-driver.version}</version>
       </dependency>
 
       <dependency>
