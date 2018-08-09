@@ -19,8 +19,10 @@ case "$1" in
   ;;
 esac
 
-getent group adm >/dev/null || groupadd -r adm
 getent passwd agate >/dev/null || \
-    useradd -r -g adm -d /home/agate -s /sbin/nologin \
+    useradd -r -d /home/agate -s /sbin/nologin \
     -c "User for Agate Server" agate
+
+usermod -g nobody agate
+
 exit 0
