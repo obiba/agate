@@ -38,6 +38,14 @@ case "$1" in
     new_release="$(ls -t /usr/share/ |grep agate|head -1)"
     ln -s /usr/share/${new_release} /usr/share/agate
 
+    if [ ! -e /var/lib/agate/data ] ; then
+      mkdir /var/lib/agate/data
+    fi
+
+    if [ ! -e /var/lib/agate/work ] ; then
+      mkdir /var/lib/agate/work
+    fi
+
     if [ ! -e /var/lib/agate/conf ] ; then
       ln -s /etc/agate /var/lib/agate/conf
     fi
