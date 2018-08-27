@@ -12,6 +12,7 @@ node_modules
 .DS_Store
 agate-webapp/src/main/webapp/dist
 agate-webapp/src/main/webapp/bower_components
+agate-webapp/src/main/webapp/styles/agate.css.map
 spring_loaded
 *.log
 .vagrant
