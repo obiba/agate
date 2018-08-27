@@ -56,7 +56,8 @@
     },
     "messages": {
       "error": {
-        "authentication": "<strong>Erreur d'autentification!</strong> Veuillez vérifier vos identifiants de connexion."
+        "authentication": "<strong>Erreur d'autentification!</strong> Veuillez vérifier vos identifiants de connexion.",
+        "userBanned": "<strong>Trop d'erreurs d'authentification.</strong> Veuillez essayer plus tard."
       }
     }
   },

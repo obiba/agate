@@ -25,6 +25,8 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.rest.config.JerseyConfiguration;
+import org.obiba.shiro.web.filter.AuthenticationExecutor;
+import org.obiba.shiro.web.filter.UserBannedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -36,6 +38,9 @@ public class SessionsResource {
   private static final Logger log = LoggerFactory.getLogger(SessionsResource.class);
 
   @Inject
+  private AuthenticationExecutor authenticationExecutor;
+
+  @Inject
   private UserService userService;
 
   @POST
@@ -43,18 +48,15 @@ public class SessionsResource {
   public Response createSession(@SuppressWarnings("TypeMayBeWeakened") @Context HttpServletRequest servletRequest,
       @FormParam("username") String username, @FormParam("password") String password) {
     try {
-      Subject subject = SecurityUtils.getSubject();
-      subject.login(new UsernamePasswordToken(username, password));
-      ThreadContext.bind(subject);
+      authenticationExecutor.login(new UsernamePasswordToken(username, password));
       String sessionId = SecurityUtils.getSubject().getSession().getId().toString();
-
       userService.updateUserLastLogin(username);
-
       log.info("Successful session creation for user '{}' session ID is '{}'.", username, sessionId);
       return Response.created(
-          UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(SessionResource.class).build(sessionId))
-          .build();
-
+        UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(SessionResource.class).build(sessionId))
+        .build();
+    } catch(UserBannedException e) {
+      throw e;
     } catch(AuthenticationException e) {
       log.info("Authentication failure of user '{}' at ip: '{}': {}", username, servletRequest.getRemoteAddr(),
           e.getMessage());

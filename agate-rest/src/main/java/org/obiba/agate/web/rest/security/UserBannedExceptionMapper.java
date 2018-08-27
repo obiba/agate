@@ -8,7 +8,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.obiba.mica.web.rest.security;
+package org.obiba.agate.web.rest.security;
 
 import com.google.protobuf.GeneratedMessage;
 import org.obiba.jersey.exceptionmapper.AbstractErrorDtoExceptionMapper;

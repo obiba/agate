@@ -26,3 +26,12 @@ authentication:
         secret: mySecretOAuthSecret
 # Token is valid 30 minutes
         tokenValidityInSeconds: 1800
+
+#
+# Security
+#
+
+login:
+  maxTry: 3
+  trialTime: 300
+  banTime: 300

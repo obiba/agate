@@ -12,10 +12,27 @@ package org.obiba.agate.web.rest.security;
 
 import org.apache.shiro.subject.Subject;
 import org.obiba.shiro.web.filter.AbstractAuthenticationExecutor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
 
 @Component
 public class AuthenticationExecutorImpl extends AbstractAuthenticationExecutor {
+
+  @Value("${login.maxTry:3}")
+  private int maxTry;
+
+  @Value("${login.trialTime:300}")
+  private int trialTime;
+
+  @Value("${login.banTime:300}")
+  private int banTime;
+
+  @PostConstruct
+  public void configure() {
+    configureBan(maxTry, trialTime, banTime);
+  }
 
   @Override
   protected void ensureProfile(Subject subject) {

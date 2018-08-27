@@ -145,6 +145,7 @@ agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$log', '$c
     return {
       login: function (param) {
         $rootScope.authenticationError = false;
+        $rootScope.userBannedError = false;
         var data = 'username=' + param.username + '&password=' + param.password;
         $http.post('ws/auth/sessions', data, {
           headers: {
@@ -157,7 +158,11 @@ agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$log', '$c
             $cookieStore.put('agate_subject', JSON.stringify(Session));
             authService.loginConfirmed(data);
           });
-        }, function () {
+        }, function (response) {
+          var resp = response.data;
+          if (resp.messageTemplate && resp.messageTemplate === 'error.userBanned') {
+            $rootScope.userBannedError = true;
+          }
           $rootScope.authenticationError = true;
           Session.destroy();
         });
@@ -225,6 +230,7 @@ agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$log', '$c
       },
       logout: function () {
         $rootScope.authenticationError = false;
+        $rootScope.userBannedError = false;
         $http({ method: 'DELETE', url: 'ws/auth/session/_current', errorHandler: true })
           .then(function () {
             Session.destroy();
