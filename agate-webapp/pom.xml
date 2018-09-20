@@ -268,7 +268,7 @@
     </profile>
 
     <profile>
-      <id>ci-build</id>
+      <id>release</id>
       <build>
         <plugins>
           <plugin>
