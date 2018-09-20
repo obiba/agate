@@ -23,11 +23,6 @@ NAME=agate
 case "$1" in
   [1-2])
 
-    # Create agate user if it doesn't exist.
-    if ! id agate > /dev/null 2>&1 ; then
-      adduser --system --home-dir /var/lib/agate --no-create-home agate
-    fi
-
     # Agate file structure on Debian
     # /etc/agate: configuration
     # /usr/share/agate: executable

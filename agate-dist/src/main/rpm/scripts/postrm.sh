@@ -21,7 +21,13 @@ set -e
 case "$1" in
   0)
     userdel -f agate || true
-    rm -rf /var/lib/agate /var/log/agate /tmp/agate /etc/agate /usr/share/agate*
+    rm -rf /var/log/agate /tmp/agate /etc/agate /usr/share/agate*
+
+    # Backup agate home
+    timestamp="$(date '+%N')"
+    echo "Backing up /var/lib/agate to /var/lib/agate-backup-$timestamp"
+    mv /var/lib/agate /var/lib/agate-backup-$timestamp >/dev/null 2>&1
+    chown -R root:root /var/lib/agate-backup-$timestamp >/dev/null 2>&1
   ;;
 
   1)
