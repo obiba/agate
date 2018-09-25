@@ -28,6 +28,10 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.obiba.agate</groupId>
+      <artifactId>agate-web-model</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.codahale.metrics</groupId>
       <artifactId>metrics-core</artifactId>
     </dependency>
