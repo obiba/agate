@@ -22,9 +22,9 @@
   </parent>
 
   <modules>
+    <module>agate-web-model</module>
     <module>agate-core</module>
     <module>agate-rest</module>
-    <module>agate-web-model</module>
     <module>agate-webapp</module>
     <module>agate-dist</module>
   </modules>
@@ -712,26 +712,13 @@
             </configuration>
           </plugin>
 
-          <!-- Enable alternative deployer. -->
+          <!-- Disable alternative deployer by default. -->
           <plugin>
             <groupId>com.carrotgarden.maven</groupId>
             <artifactId>bintray-maven-plugin</artifactId>
             <configuration>
               <skip>false</skip>
-              <subject>obiba</subject>
-              <repository>maven</repository>
-              <serverId>obiba-bintray</serverId>
-              <packageVcsUrl>https://github.com/obiba/onyx</packageVcsUrl>
-              <performCleanup>false</performCleanup>
             </configuration>
-            <executions>
-              <!-- Activate "bintray:deploy" during "deploy" -->
-              <execution>
-                <goals>
-                  <goal>deploy</goal>
-                </goals>
-              </execution>
-            </executions>
           </plugin>
         </plugins>
       </build>

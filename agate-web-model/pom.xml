@@ -23,16 +23,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.obiba.agate</groupId>
-      <artifactId>agate-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.obiba.agate</groupId>
-      <artifactId>agate-core</artifactId>
-      <classifier>tests</classifier>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>com.google.protobuf</groupId>
       <artifactId>protobuf-java</artifactId>
     </dependency>
@@ -161,5 +151,36 @@
 
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <!-- Enable alternative deployer. -->
+          <plugin>
+            <groupId>com.carrotgarden.maven</groupId>
+            <artifactId>bintray-maven-plugin</artifactId>
+            <configuration>
+              <skip>false</skip>
+              <subject>obiba</subject>
+              <repository>maven</repository>
+              <serverId>obiba-bintray</serverId>
+              <packageVcsUrl>https://github.com/obiba/agate</packageVcsUrl>
+              <performCleanup>false</performCleanup>
+            </configuration>
+            <executions>
+              <!-- Activate "bintray:deploy" during "deploy" -->
+              <execution>
+                <goals>
+                  <goal>deploy</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>
