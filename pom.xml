@@ -717,7 +717,7 @@
             <groupId>com.carrotgarden.maven</groupId>
             <artifactId>bintray-maven-plugin</artifactId>
             <configuration>
-              <skip>false</skip>
+              <skip>true</skip>
             </configuration>
           </plugin>
         </plugins>
