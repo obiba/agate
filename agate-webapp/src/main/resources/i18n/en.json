@@ -243,7 +243,7 @@
     }
   },
   "applications": "Applications",
-  "applications-description": "The applications can use the registry of the associated users (either direct association or through a group). They can also define some permissions that can be granted to other applications by the user (see <a href='https://wiki.obiba.org/display/AGATEDOC/Agate+OAuth2+API' target='_blank'>OAuth2</a> documentation).",
+  "applications-description": "The applications can use the registry of the associated users (either direct association or through a group). They can also define some permissions that can be granted to other applications by the user (see <a href='http://agatedoc.obiba.org/en/latest/oauth2-api/' target='_blank'>OAuth2</a> documentation).",
   "application": {
     "titleView": "Application Details",
     "titleEdit": "Edit Application",
@@ -330,7 +330,7 @@
     "created": "Created"
   },
   "users": "Users",
-  "users-description": "Users can sign in their associated applications (this association can be direct or through a group). A user can also authorize an application to access its data in another application (see <a href='https://wiki.obiba.org/display/AGATEDOC/Agate+OAuth2+API' target='_blank'>OAuth2</a> documentation).",
+  "users-description": "Users can sign in their associated applications (this association can be direct or through a group). A user can also authorize an application to access its data in another application (see <a href='http://agatedoc.obiba.org/en/latest/oauth2-api/' target='_blank'>OAuth2</a> documentation).",
   "user": {
     "none": "No users.",
     "details": "User Details",
