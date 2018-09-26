@@ -243,7 +243,7 @@
     }
   },
   "applications": "Applications",
-  "applications-description": "Les applications peuvent utiliser le registre des utilisateurs qui leur sont associées (directement ou par l'intermédiaire d'un groupe). Elles peuvent également définir des permissions pouvant être accordées à d'autres applications par l'utilisateur (voir la documentation de <a href='https://wiki.obiba.org/display/AGATEDOC/Agate+OAuth2+API' target='_blank'>OAuth2</a>).",
+  "applications-description": "Les applications peuvent utiliser le registre des utilisateurs qui leur sont associées (directement ou par l'intermédiaire d'un groupe). Elles peuvent également définir des permissions pouvant être accordées à d'autres applications par l'utilisateur (voir la documentation de <a href='http://agatedoc.obiba.org/en/latest/oauth2-api/' target='_blank'>OAuth2</a>).",
   "application": {
     "titleView": "Détails d'application",
     "titleEdit": "Modification d'application",
@@ -330,7 +330,7 @@
     "created": "Créée"
   },
   "users": "Utilisateurs",
-  "users-description": "Les utilisateurs peuvent s'identifier auprès des applications qui leurs sont associées (soit directement, soit par l'intermédiaire des groupes). Un utilisateur peut également autoriser une application à accéder à ses données d'une autre application (voir la documentation de <a href='https://wiki.obiba.org/display/AGATEDOC/Agate+OAuth2+API' target='_blank'>OAuth2</a>)",
+  "users-description": "Les utilisateurs peuvent s'identifier auprès des applications qui leurs sont associées (soit directement, soit par l'intermédiaire des groupes). Un utilisateur peut également autoriser une application à accéder à ses données d'une autre application (voir la documentation de <a href='http://agatedoc.obiba.org/en/latest/oauth2-api/' target='_blank'>OAuth2</a>)",
   "user": {
     "none": "Aucun utilisateur.",
     "details": "Détails d'utilisateur",
