@@ -478,9 +478,9 @@ public class UserService {
   public void updateUserProfile(User user, JSONObject profile) throws JSONException {
     Iterable<String> iterable = profile::keys;
     StreamSupport.stream(iterable.spliterator(), false).forEach(k -> {
-      String value = null;
+      String value;
       try {
-        value = profile.getString(k);
+        value = profile.get(k) == null ? null : profile.get(k).toString();
         if("firstname".equals(k)) {
           user.setFirstName(value);
         } else if("lastname".equals(k)) {
