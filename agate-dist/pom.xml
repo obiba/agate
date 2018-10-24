@@ -52,6 +52,7 @@
           <descriptors>
             <descriptor>src/main/assembly/agate.xml</descriptor>
           </descriptors>
+          <finalName>${project.parent.name}-${project.version}</finalName>
         </configuration>
         <executions>
           <execution>
@@ -287,8 +288,8 @@
                     </copy>
 
                     <mkdir dir="${deb.dir}/usr/share" />
-                    <unzip src="${basedir}/target/agate-dist-${project.version}-dist.zip" dest="${deb.dir}/usr/share" />
-                    <move file="${deb.dir}/usr/share/agate-dist-${project.version}" tofile="${deb.dir}/usr/share/agate-${project.version}" />
+                    <unzip src="${basedir}/target/agate-${project.version}-dist.zip" dest="${deb.dir}/usr/share" />
+                    <move file="${deb.dir}/usr/share/agate-${project.version}" tofile="${deb.dir}/usr/share/agate-${project.version}" />
 
                     <mkdir dir="${deb.dir}/etc" />
                     <copy todir="${deb.dir}/etc/agate">
@@ -350,7 +351,7 @@
   <properties>
     <install.dir>/usr/share</install.dir>
     <agate.dir>${install.dir}/agate-${project.version}</agate.dir>
-    <package.name>agate-dist-${project.version}</package.name>
+    <package.name>${project.parent.name}-${project.version}</package.name>
     <dist.location>${basedir}/target/${package.name}-dist/${package.name}</dist.location>
   </properties>
 
