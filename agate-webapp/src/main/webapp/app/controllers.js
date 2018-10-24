@@ -32,7 +32,7 @@ agate.controller('MainController', ['$rootScope', '$scope', '$window', '$log', '
 
     $rootScope.$on('$translateChangeSuccess', function () {
 
-      $scope.currentLanguage = 'https://www.google.com/recaptcha/api.js?onload=vcRecaptchaApiLoaded()&render=explicit&hl=' + $translate.use();
+      $scope.currentLanguage = 'https://www.google.com/recaptcha/api.js?onload=vcRecaptchaApiLoaded&render=explicit&hl=' + $translate.use();
       loadScript($scope.currentLanguage);
     });
 
