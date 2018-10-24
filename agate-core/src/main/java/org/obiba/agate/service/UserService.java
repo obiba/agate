@@ -12,10 +12,8 @@ package org.obiba.agate.service;
 
 import java.io.IOException;
 import java.security.SignatureException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -31,10 +29,7 @@ import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.obiba.agate.domain.Group;
-import org.obiba.agate.domain.User;
-import org.obiba.agate.domain.UserCredentials;
-import org.obiba.agate.domain.UserStatus;
+import org.obiba.agate.domain.*;
 import org.obiba.agate.event.UserApprovedEvent;
 import org.obiba.agate.event.UserJoinedEvent;
 import org.obiba.agate.repository.GroupRepository;
@@ -435,6 +430,8 @@ public class UserService {
    * @throws JSONException
    */
   public JSONObject getUserProfile(User user) throws JSONException {
+    List<AttributeConfiguration> attrConfigs = configurationService.getConfiguration().getUserAttributes();
+    Map<String, AttributeConfiguration> attrConfigMap = attrConfigs.stream().collect(Collectors.toMap(AttributeConfiguration::getName, Function.identity()));
     JSONObject profile = new JSONObject();
     profile.put("email", user.getEmail());
     profile.put("firstname", user.getFirstName());
@@ -444,7 +441,24 @@ public class UserService {
     if(user.hasAttributes()) {
       user.getAttributes().forEach((k, v) -> {
         try {
-          profile.put(k, v);
+          if (attrConfigMap.containsKey(k)) {
+            AttributeConfiguration attrConfig = attrConfigMap.get(k);
+            switch (attrConfig.getType()) {
+              case BOOLEAN:
+                profile.put(k, Boolean.parseBoolean(v));
+                break;
+              case INTEGER:
+                profile.put(k, Long.parseLong(v));
+                break;
+              case NUMBER:
+                profile.put(k, Double.parseDouble(v));
+                break;
+              default:
+                profile.put(k, v);
+            }
+          } else {
+            profile.put(k, v);
+          }
         } catch(JSONException e) {
           //ignore
         }
