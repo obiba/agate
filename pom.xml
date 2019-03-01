@@ -54,7 +54,7 @@
     <metrics-spring.version>3.0.0</metrics-spring.version>
     <mongodb-driver.version>3.8.0</mongodb-driver.version>
     <nosqlunit.version>0.7.9</nosqlunit.version>
-    <obiba-commons.version>1.11-SNAPSHOT</obiba-commons.version>
+    <obiba-commons.version>1.11.1</obiba-commons.version>
     <oltu.version>1.0.1</oltu.version>
     <protobuf.version>2.5.0</protobuf.version>
     <protobuf-java-format.version>1.2.1-obiba</protobuf-java-format.version>
