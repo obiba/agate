@@ -448,10 +448,10 @@ public class UserService {
                 profile.put(k, Boolean.parseBoolean(v));
                 break;
               case INTEGER:
-                profile.put(k, Long.parseLong(v));
+                profile.put(k, Strings.isNullOrEmpty(v) ? null : Long.parseLong(v));
                 break;
               case NUMBER:
-                profile.put(k, Double.parseDouble(v));
+                profile.put(k, Strings.isNullOrEmpty(v) ? null : Double.parseDouble(v));
                 break;
               default:
                 profile.put(k, v);
