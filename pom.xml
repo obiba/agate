@@ -41,7 +41,6 @@
     <commons-lang.version>2.6</commons-lang.version>
     <embed-mongo.version>1.50.0</embed-mongo.version>
     <guava.version>19.0</guava.version>
-    <geronimo-javamail_1.4_mail.version>1.8.3</geronimo-javamail_1.4_mail.version>
     <javax.inject.version>1</javax.inject.version>
     <jersey.version>2.25.1</jersey.version>
     <jetty.version>9.4.11.v20180605</jetty.version>
@@ -171,11 +170,6 @@
         <groupId>javax.inject</groupId>
         <artifactId>javax.inject</artifactId>
         <version>${javax.inject.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.geronimo.javamail</groupId>
-        <artifactId>geronimo-javamail_1.4_mail</artifactId>
-        <version>${geronimo-javamail_1.4_mail.version}</version>
       </dependency>
       <dependency>
         <groupId>org.springframework.boot</groupId>
@@ -406,6 +400,11 @@
           <artifactId>spring-boot-starter-tomcat</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-mail</artifactId>
     </dependency>
 
     <dependency>
