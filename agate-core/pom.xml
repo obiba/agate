@@ -15,7 +15,7 @@
   <parent>
     <groupId>org.obiba.agate</groupId>
     <artifactId>agate</artifactId>
-    <version>1.4.4</version>
+    <version>1.4-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
 
