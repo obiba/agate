@@ -9,15 +9,8 @@
  */
 package org.obiba.agate.security;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Set;
-
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
-
+import com.google.common.collect.ImmutableList;
 import net.sf.ehcache.CacheManager;
-
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.SimpleAccount;
 import org.apache.shiro.authc.credential.PasswordMatcher;
@@ -37,8 +30,6 @@ import org.apache.shiro.mgt.SessionsSecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.realm.text.IniRealm;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
-import org.apache.shiro.session.mgt.ExecutorServiceSessionValidationScheduler;
-import org.apache.shiro.session.mgt.SessionValidationScheduler;
 import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.LifecycleUtils;
@@ -50,7 +41,11 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.ImmutableList;
+import javax.annotation.PreDestroy;
+import javax.inject.Inject;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Set;
 
 @Component
 @DependsOn("cacheConfiguration")
@@ -145,10 +140,8 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
         DefaultSessionManager sessionManager = (DefaultSessionManager) dsm.getSessionManager();
 //        sessionManager.setSessionListeners(sessionListeners);
         sessionManager.setSessionDAO(new EnterpriseCacheSessionDAO());
-        SessionValidationScheduler sessionValidationScheduler = new ExecutorServiceSessionValidationScheduler();
-        sessionValidationScheduler.enableSessionValidation();
-        sessionManager.setSessionValidationScheduler(sessionValidationScheduler);
         sessionManager.setSessionValidationInterval(SESSION_VALIDATION_INTERVAL);
+        sessionManager.setSessionValidationSchedulerEnabled(true);
       }
     }
 
