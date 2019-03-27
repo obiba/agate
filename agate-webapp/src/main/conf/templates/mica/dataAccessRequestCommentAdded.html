@@ -33,7 +33,7 @@
         <p style="margin: 0 0 10px;" th:text="#{email.generic.presentation(${user.firstName}, ${user.lastName})}">
           Dear <span>(first name)</span> <span>(last name)</span>,
         </p>
-        <p style="margin: 0 0 10px;" th:utext="#{mica.email.dataAccessRequestCommentAdded.body(${title})}">
+        <p style="margin: 0 0 10px;" th:utext="#{mica.email.dataAccessRequestCommentAdded.body(${#strings.defaultString(title,id)})}">
           A new comment was added to the data access request "<strong>(title)</strong>". Go to this data access request to view all comments.
         </p>
         <p style="margin: 0 0 10px;">
