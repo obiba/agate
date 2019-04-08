@@ -107,6 +107,10 @@ class UserDtos {
       builder.lastName(dto.getLastName());
     }
 
+    if (dto.hasRealm()) {
+      builder.email(dto.getRealm());
+    }
+
     if (dto.hasEmail()) {
       builder.email(dto.getEmail());
     }

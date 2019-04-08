@@ -218,6 +218,7 @@ public class ConfigurationService {
       properties.put("username", newSchemaProperty("string", "t(user.name)").put("minLength", 3));
       required.put("username");
     }
+    properties.put("realm", newSchemaProperty("string", "t(user.realm)"));
     properties.put("firstname", newSchemaProperty("string", "t(user.firstName)"));
     properties.put("lastname", newSchemaProperty("string", "t(user.lastName)"));
 
@@ -283,6 +284,7 @@ public class ConfigurationService {
       definition.put(newDefinitionProperty("username","t(user.name)", ""));
     }
 
+    definition.put(newDefinitionProperty("realm","t(user.realm)", ""));
     definition.put(newDefinitionProperty("email","t(user.email)", ""));
     definition.put(newDefinitionProperty("firstname","t(user.firstName)", ""));
     definition.put(newDefinitionProperty("lastname","t(user.lastName)", ""));
