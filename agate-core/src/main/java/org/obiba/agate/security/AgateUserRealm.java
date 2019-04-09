@@ -31,6 +31,7 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.util.SimpleByteSource;
+import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.domain.UserCredentials;
 import org.obiba.agate.service.UserService;
@@ -46,7 +47,7 @@ import com.google.common.collect.ImmutableSet;
 @Component
 public class AgateUserRealm extends AuthorizingRealm {
 
-  public static final String AGATE_REALM = "agate-user-realm";
+//  public static final String AGATE_REALM = "agate-user-realm";
 
   @Inject
   private UserService userService;
@@ -78,7 +79,7 @@ public class AgateUserRealm extends AuthorizingRealm {
 
   @Override
   public String getName() {
-    return AGATE_REALM;
+    return AgateRealm.USER_REALM.getName();
   }
 
   @Override
@@ -93,7 +94,7 @@ public class AgateUserRealm extends AuthorizingRealm {
 
     User user = userService.findActiveUser(username);
     if(user == null) user = userService.findActiveUserByEmail(username);
-    if(user == null || !user.isEnabled() || !user.getRealm().equals(AGATE_REALM))
+    if(user == null || !user.isEnabled() || !user.getRealm().equals(AgateRealm.USER_REALM))
       throw new UnknownAccountException("No account found for user [" + username + "]");
 
     username = user.getName();
