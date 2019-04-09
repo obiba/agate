@@ -7,6 +7,7 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
+import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.service.UserService;
 import org.springframework.core.env.Environment;
@@ -23,8 +24,6 @@ import java.util.Collections;
 
 @Component
 public class AgateLdapRealm extends AuthorizingRealm {
-  public static final String AGATE_LDAP_REALM = "agate-ldap-realm";
-
   private LdapTemplate ldapTemplate;
 
   @PostConstruct
@@ -47,7 +46,7 @@ public class AgateLdapRealm extends AuthorizingRealm {
 
   @Override
   public String getName() {
-    return AGATE_LDAP_REALM;
+    return AgateRealm.LDAP_REALM.getName();
   }
 
   @Override

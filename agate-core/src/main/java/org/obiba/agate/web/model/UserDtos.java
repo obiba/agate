@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
 import org.joda.time.DateTime;
+import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.service.GroupService;
 import org.obiba.agate.service.UserService;
@@ -95,7 +96,7 @@ class UserDtos {
   User fromDto(@NotNull Agate.UserDto dto) {
     User.Builder builder = User.newBuilder()
       .name(dto.getName())
-      .realm(dto.getRealm())
+      .realm(AgateRealm.valueOf(dto.getRealm()))
       .role(dto.getRole())
       .status(dto.getStatus());
 

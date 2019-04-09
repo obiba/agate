@@ -171,3 +171,14 @@ message PublicKeyForm {
   required string state = 5;
   required string country = 6;
 }
+
+message RealmConfigDto {
+  optional string id = 1;
+  required string name = 2;
+  optional string title = 3;
+  optional string description = 4;
+  repeated string groups = 5;
+  required string realm = 6;
+  optional bool defaultRealm = 7;
+  optional bool forSignup = 8;
+}
