@@ -1,6 +1,8 @@
 package org.obiba.agate.web.model;
 
 import com.google.common.base.Strings;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.domain.RealmStatus;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
+import java.util.IllegalFormatException;
 
 @Component
 public class RealmConfigDtos {
@@ -52,7 +55,12 @@ public class RealmConfigDtos {
     builder.realm(AgateRealm.fromString(dto.getRealm()));
     builder.defaultRealm(dto.getDefaultRealm());
     builder.forSignup(dto.getForSignup());
-    builder.setGroups(dto.getGroupsList());
+    builder.groups(dto.getGroupsList());
+    try {
+      builder.content(new JSONObject(dto.getContent()));
+    } catch (JSONException e) {
+      throw new RuntimeException("Realm content is an invalid JSON.");
+    }
     if (dto.hasTitle()) builder.title(dto.getTitle());
     if (dto.hasDescription()) builder.description(dto.getDescription());
     if (dto.hasStatus()) builder.status(RealmStatus.valueOf(dto.getStatus().name()));

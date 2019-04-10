@@ -187,6 +187,7 @@ message RealmConfigDto {
   optional bool defaultRealm = 7;
   optional bool forSignup = 8;
   optional RealmStatus status = 9;
+  required string content = 10;
 }
 
 message RealmConfigSummaryDto {
