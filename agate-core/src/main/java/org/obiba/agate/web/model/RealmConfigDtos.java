@@ -3,6 +3,7 @@ package org.obiba.agate.web.model;
 import com.google.common.base.Strings;
 import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.RealmConfig;
+import org.obiba.agate.domain.RealmStatus;
 import org.obiba.agate.repository.GroupRepository;
 import org.obiba.agate.service.RealmConfigService;
 import org.obiba.agate.web.model.Agate.RealmConfigDto;
@@ -31,7 +32,8 @@ public class RealmConfigDtos {
       .setName(config.getName())
       .setRealm(config.getRealm().getName())
       .setDefaultRealm(config.isDefaultRealm())
-      .setForSignup(config.isForSignup());
+      .setForSignup(config.isForSignup())
+      .setStatus(Agate.RealmStatus.valueOf(config.getStatus().toString()));
 
     if(!Strings.isNullOrEmpty(config.getTitle())) builder.setTitle(config.getTitle());
     if(!Strings.isNullOrEmpty(config.getDescription())) builder.setDescription(config.getDescription());
@@ -44,17 +46,28 @@ public class RealmConfigDtos {
 
   @NotNull
   public RealmConfig fromDto(RealmConfigDto dto) {
-    RealmConfig config = new RealmConfig();
-    config.setId(dto.getId());
-    config.setName(dto.getName());
-    config.setRealm(AgateRealm.valueOf(dto.getName()));
-    config.setDefaultRealm(dto.getDefaultRealm());
-    config.setForSignup(dto.getForSignup());
-    config.setGroups(dto.getGroupsList());
-    if (dto.hasTitle()) config.setTitle(dto.getTitle());
-    if (dto.hasDescription()) config.setTitle(dto.getDescription());
+    RealmConfig.Builder builder = RealmConfig.newBuilder();
+    if (dto.hasId()) builder.id(dto.getId());
+    builder.name(dto.getName());
+    builder.realm(AgateRealm.fromString(dto.getRealm()));
+    builder.defaultRealm(dto.getDefaultRealm());
+    builder.forSignup(dto.getForSignup());
+    builder.setGroups(dto.getGroupsList());
+    if (dto.hasTitle()) builder.title(dto.getTitle());
+    if (dto.hasDescription()) builder.description(dto.getDescription());
+    if (dto.hasStatus()) builder.status(RealmStatus.valueOf(dto.getStatus().name()));
 
-    return config;
+    return builder.build();
   }
 
+  @NotNull
+  public Agate.RealmConfigSummaryDto asSummaryDto(RealmConfig config) {
+    Agate.RealmConfigSummaryDto.Builder builder = Agate.RealmConfigSummaryDto.newBuilder()
+      .setId(config.getId())
+      .setName(config.getName());
+
+    if(!Strings.isNullOrEmpty(config.getTitle())) builder.setTitle(config.getTitle());
+    if(!Strings.isNullOrEmpty(config.getDescription())) builder.setDescription(config.getDescription());
+    return builder.build();
+  }
 }

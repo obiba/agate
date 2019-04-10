@@ -118,4 +118,9 @@ public class Dtos {
   public Agate.RealmConfigDto asDto(RealmConfig config) {
     return realmConfigDtos.asDto(config);
   }
+
+  @NotNull
+  public Agate.RealmConfigSummaryDto asSummaryDto(RealmConfig config) {
+    return realmConfigDtos.asSummaryDto(config);
+  }
 }

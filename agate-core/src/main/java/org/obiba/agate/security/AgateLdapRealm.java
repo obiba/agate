@@ -46,7 +46,7 @@ public class AgateLdapRealm extends AuthorizingRealm {
 
   @Override
   public String getName() {
-    return AgateRealm.LDAP_REALM.getName();
+    return AgateRealm.AGATE_LDAP_REALM.getName();
   }
 
   @Override

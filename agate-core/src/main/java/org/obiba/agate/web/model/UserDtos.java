@@ -96,7 +96,7 @@ class UserDtos {
   User fromDto(@NotNull Agate.UserDto dto) {
     User.Builder builder = User.newBuilder()
       .name(dto.getName())
-      .realm(AgateRealm.valueOf(dto.getRealm()))
+      .realm(AgateRealm.fromString(dto.getRealm()))
       .role(dto.getRole())
       .status(dto.getStatus());
 

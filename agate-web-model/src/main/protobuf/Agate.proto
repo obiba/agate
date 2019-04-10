@@ -172,6 +172,11 @@ message PublicKeyForm {
   required string country = 6;
 }
 
+enum RealmStatus {
+  INACTIVE = 0;
+  ACTIVE = 1;
+}
+
 message RealmConfigDto {
   optional string id = 1;
   required string name = 2;
@@ -181,4 +186,12 @@ message RealmConfigDto {
   required string realm = 6;
   optional bool defaultRealm = 7;
   optional bool forSignup = 8;
+  optional RealmStatus status = 9;
+}
+
+message RealmConfigSummaryDto {
+  optional string id = 1;
+  required string name = 2;
+  optional string title = 3;
+  optional string description = 4;
 }
