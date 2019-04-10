@@ -1,10 +1,9 @@
 package org.obiba.agate.domain;
 
 import com.google.common.collect.Sets;
-import net.minidev.json.annotate.JsonIgnore;
+import org.json.JSONObject;
 import org.obiba.mongodb.domain.AbstractAuditableDocument;
 import org.springframework.beans.BeanUtils;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -33,6 +32,8 @@ public class RealmConfig extends AbstractAuditableDocument {
   private boolean defaultRealm = false;
 
   private boolean forSignup = false;
+
+  private JSONObject content;
 
   public String getName() {
     return name;
@@ -81,6 +82,10 @@ public class RealmConfig extends AbstractAuditableDocument {
   public static void mergePropeties(RealmConfig config, RealmConfig from) {
     BeanUtils.copyProperties(config, from, "id", "name", "createdBy", "createdDate", "lastModifiedBy",
       "lastModifiedDate");
+  }
+
+  public JSONObject getContent() {
+    return content;
   }
 
   public static class Builder {
@@ -135,12 +140,17 @@ public class RealmConfig extends AbstractAuditableDocument {
       return this;
     }
 
-    public Builder setGroups(List<String> groups) {
-      return setGroups(Sets.newHashSet(groups));
+    public Builder groups(List<String> groups) {
+      return groups(Sets.newHashSet(groups));
     }
 
-    public Builder setGroups(Set<String> groups) {
+    public Builder groups(Set<String> groups) {
       config.groups = groups;
+      return this;
+    }
+
+    public Builder content(JSONObject value) {
+      config.content = value;
       return this;
     }
 

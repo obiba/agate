@@ -1,10 +1,7 @@
 package org.obiba.agate.service;
 
-import com.google.common.base.Strings;
 import org.obiba.agate.domain.RealmConfig;
-import org.obiba.agate.domain.RealmStatus;
 import org.obiba.agate.repository.RealmConfigRepository;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
