@@ -1,9 +1,9 @@
 package org.obiba.agate.domain;
 
 public enum AgateRealm {
-  USER_REALM("agate-user-realm"),
-  TOKEN_REALM("agate-token-realm"),
-  LDAP_REALM("agate-ldap-realm");
+  AGATE_USER_REALM("agate-user-realm"),
+  AGATE_TOKEN_REALM("agate-token-realm"),
+  AGATE_LDAP_REALM("agate-ldap-realm");
 
   private final String name;
 
@@ -13,5 +13,9 @@ public enum AgateRealm {
 
   public String getName() {
     return name;
+  }
+
+  public static AgateRealm fromString(String name) {
+    return valueOf(name.replaceAll("-","_").toUpperCase());
   }
 }

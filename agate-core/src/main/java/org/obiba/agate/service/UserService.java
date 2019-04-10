@@ -210,7 +210,7 @@ public class UserService {
   public void updateUserPassword(@NotNull User user, @NotNull String password) {
     if(user == null) throw new BadRequestException("Invalid User");
     if(Strings.isNullOrEmpty(password)) throw new BadRequestException("User password cannot be empty");
-    if(!user.getRealm().equals(AgateRealm.USER_REALM))
+    if(!user.getRealm().equals(AgateRealm.AGATE_USER_REALM))
       throw new BadRequestException("User password cannot be changed");
     if(password.length() < MINIMUM_LEMGTH) throw new PasswordTooShortException(MINIMUM_LEMGTH);
 
@@ -529,7 +529,7 @@ public class UserService {
    */
   public UserCredentials getCurrentUserCredentials() {
     User user = getCurrentUser();
-    if(!user.getRealm().equals(AgateRealm.USER_REALM)) throw NoSuchUserException.withName(user.getName());
+    if(!user.getRealm().equals(AgateRealm.AGATE_USER_REALM)) throw NoSuchUserException.withName(user.getName());
     UserCredentials currentUser = findUserCredentials(user.getName());
     if(currentUser == null) throw NoSuchUserException.withName(user.getName());
     return currentUser;

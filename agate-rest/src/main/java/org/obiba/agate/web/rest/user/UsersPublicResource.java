@@ -183,7 +183,7 @@ public class UsersPublicResource {
       i++;
     }
 
-    user = User.newBuilder().name(name).realm(AgateRealm.USER_REALM).role(Roles.AGATE_USER).pending()
+    user = User.newBuilder().name(name).realm(AgateRealm.AGATE_USER_REALM).role(Roles.AGATE_USER).pending()
       .firstName(firstName).lastName(lastName).email(email).preferredLanguage(preferredLanguage).build();
     user.setGroups(Sets.newHashSet(groups));
     user.setApplications(Sets.newHashSet(applications));
