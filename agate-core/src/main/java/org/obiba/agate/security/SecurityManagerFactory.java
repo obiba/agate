@@ -33,6 +33,9 @@ import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.LifecycleUtils;
+import org.obiba.agate.domain.AgateRealm;
+import org.obiba.agate.domain.RealmConfig;
+import org.obiba.agate.service.RealmConfigService;
 import org.obiba.shiro.SessionStorageEvaluator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +65,12 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
 
   @Inject
   private CacheManager cacheManager;
+
+  @Inject
+  private RealmConfigService realmConfigService;
+
+  @Inject
+  private AgateRealmFactory agateRealmFactory;
 
   private final PermissionResolver permissionResolver = new AgatePermissionResolver();
 
@@ -166,9 +175,13 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
 
     @Override
     protected void applyRealmsToSecurityManager(Collection<Realm> shiroRealms, @SuppressWarnings(
-        "ParameterHidesMemberVariable") SecurityManager securityManager) {
-      super.applyRealmsToSecurityManager(ImmutableList.<Realm>builder().addAll(shiroRealms).addAll(realms).build(),
-          securityManager);
+      "ParameterHidesMemberVariable") SecurityManager securityManager) {
+      super.applyRealmsToSecurityManager(
+        ImmutableList.<Realm>builder()
+          .addAll(shiroRealms)
+          .addAll(realms)
+          .add(agateRealmFactory.build(RealmConfig.newBuilder().name("jacksonville").realm(AgateRealm.AGATE_LDAP_REALM).build())).build(),
+        securityManager);
     }
 
     @Override
