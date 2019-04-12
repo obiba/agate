@@ -17,6 +17,7 @@ import javax.validation.constraints.NotNull;
 
 import org.joda.time.DateTime;
 import org.obiba.agate.domain.User;
+import org.obiba.agate.service.GroupService;
 import org.obiba.agate.service.UserService;
 import org.obiba.web.model.AuthDtos;
 import org.springframework.stereotype.Component;
@@ -27,8 +28,15 @@ import com.google.common.base.Strings;
 @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
 class UserDtos {
 
+  final UserService userService;
+
+  final GroupService groupService;
+
   @Inject
-  UserService userService;
+  public UserDtos(UserService userService, GroupService groupService) {
+    this.userService = userService;
+    this.groupService = groupService;
+  }
 
   @NotNull
   Agate.UserDto asDto(@NotNull User user) {
@@ -50,7 +58,7 @@ class UserDtos {
     if(user.hasGroups()) {
       builder.addAllGroups(user.getGroups());
 
-      user.getGroups().forEach(g -> Optional.ofNullable(userService.findGroup(g)).flatMap(r -> {
+      user.getGroups().forEach(g -> Optional.ofNullable(groupService.findGroup(g)).flatMap(r -> {
           r.getApplications().forEach(
             a -> builder.addGroupApplications(Agate.GroupApplicationDto.newBuilder().setGroup(g).setApplication(a))
               .build());
