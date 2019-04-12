@@ -10,8 +10,7 @@
 
 package org.obiba.agate.service;
 
-import javax.inject.Inject;
-
+import com.google.common.collect.Lists;
 import org.obiba.agate.config.Profiles;
 import org.obiba.agate.domain.Group;
 import org.obiba.agate.domain.User;
@@ -21,16 +20,23 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.Lists;
+import javax.inject.Inject;
 
 @Component
 public class UserGroupSeed implements ApplicationListener<ContextRefreshedEvent> {
 
-  @Inject
-  private UserService userService;
+  private final UserService userService;
+
+  private final GroupService groupService;
+
+  private final Environment env;
 
   @Inject
-  private Environment env;
+  public UserGroupSeed(UserService userService, GroupService groupService, Environment env) {
+    this.userService = userService;
+    this.groupService = groupService;
+    this.env = env;
+  }
 
   @Override
   public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
@@ -51,8 +57,8 @@ public class UserGroupSeed implements ApplicationListener<ContextRefreshedEvent>
   }
 
   private void save(Group group) {
-    if(userService.findGroup(group.getName()) == null) {
-      userService.save(group);
+    if(groupService.findGroup(group.getName()) == null) {
+      groupService.save(group);
     }
   }
 

@@ -14,7 +14,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -23,13 +22,12 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.obiba.agate.domain.Group;
-import org.obiba.agate.service.UserService;
+import org.obiba.agate.service.GroupService;
 import org.obiba.agate.web.model.Agate;
 import org.obiba.agate.web.model.Dtos;
 import org.obiba.agate.web.rest.config.JerseyConfiguration;
 import org.springframework.stereotype.Component;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 
 @Component
@@ -37,20 +35,23 @@ import com.google.common.collect.ImmutableList;
 @Path("/groups")
 public class GroupsResource {
 
-  @Inject
-  private UserService userService;
+  private final GroupService groupService;
+
+  private final Dtos dtos;
 
   @Inject
-  private Dtos dtos;
+  public GroupsResource(GroupService groupService, Dtos dtos) {
+    this.groupService = groupService;
+    this.dtos = dtos;
+  }
 
   @POST
   public Response create(Agate.GroupDto groupDto) {
-    Group group = userService.findGroup(groupDto.getName());
+    Group group = groupService.findGroup(groupDto.getName());
 
     if(group != null) throw new BadRequestException("Group already exists: " + group);
 
-    group = dtos.fromDto(groupDto);
-    userService.save(group);
+    groupService.save(dtos.fromDto(groupDto));
 
     return Response
         .created(UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(GroupResource.class).build(group.getId()))
@@ -61,7 +62,7 @@ public class GroupsResource {
   public List<Agate.GroupDto> get() {
     ImmutableList.Builder<Agate.GroupDto> builder = ImmutableList.builder();
 
-    for(Group group : userService.findGroups()) {
+    for(Group group : groupService.findGroups()) {
       builder.add(dtos.asDto(group));
     }
 

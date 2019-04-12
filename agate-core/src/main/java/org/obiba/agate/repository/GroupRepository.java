@@ -20,6 +20,8 @@ import org.springframework.data.mongodb.repository.MongoRepository;
  */
 public interface GroupRepository extends MongoRepository<Group, String> {
 
+  Group findOneByName(String name);
+
   List<Group> findByName(String name);
 
   List<Group> findByApplications(String application);
