@@ -21,7 +21,7 @@ public class NoSuchRealmConfigException extends NoSuchElementException {
   }
 
   public static NoSuchRealmConfigException withName(String name) {
-    return new NoSuchRealmConfigException("User with name '" + name + "' does not exist");
+    return new NoSuchRealmConfigException("Realm with name '" + name + "' does not exist");
   }
 
 }
