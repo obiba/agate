@@ -10,32 +10,36 @@
 
 package org.obiba.agate.web.rest.security;
 
-import javax.inject.Inject;
-import javax.servlet.ServletRequest;
-import javax.ws.rs.ForbiddenException;
-
 import org.apache.shiro.subject.Subject;
 import org.obiba.agate.domain.Group;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.domain.UserStatus;
 import org.obiba.agate.service.ApplicationService;
-import org.obiba.agate.service.UserService;
+import org.obiba.agate.service.GroupService;
 import org.obiba.shiro.authc.HttpAuthorizationToken;
 import org.obiba.shiro.realm.ObibaRealm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
+import javax.servlet.ServletRequest;
+import javax.ws.rs.ForbiddenException;
+
 @Component
 public class AuthorizationValidator {
 
   private static final Logger log = LoggerFactory.getLogger(AuthorizationValidator.class);
 
-  @Inject
-  private UserService userService;
+  private final GroupService groupService;
+
+  private final ApplicationService applicationService;
 
   @Inject
-  private ApplicationService applicationService;
+  public AuthorizationValidator(GroupService groupService, ApplicationService applicationService) {
+    this.groupService = groupService;
+    this.applicationService = applicationService;
+  }
 
   public String validateApplication(String appAuthHeader) {
     if (appAuthHeader == null) throw new ForbiddenException();
@@ -78,7 +82,7 @@ public class AuthorizationValidator {
   public void validateApplication(ServletRequest servletRequest, User user, String appName) {
     // check application
     if(!user.hasApplication(appName) && user.getGroups().stream().noneMatch(g -> {
-      Group group = userService.findGroup(g);
+      Group group = groupService.findGroup(g);
       return group != null && group.hasApplication(appName);
     })) {
       log.info("Application '{}' not allowed for user '{}' at ip: '{}'", appName, user.getName(),

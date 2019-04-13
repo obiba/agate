@@ -26,11 +26,8 @@ import org.springframework.stereotype.Component;
 @Path("/auth/session/{id}")
 public class SessionResource  {
 
-  @PathParam("id")
-  String sessionId;
-
   @HEAD
-  public Response checkSession() {
+  public Response checkSession(@PathParam("id") String sessionId) {
     // Find the Shiro Session
     return isValidSessionId(sessionId) ? Response.ok().build() : Response.status(Response.Status.NOT_FOUND).build();
   }
@@ -40,7 +37,7 @@ public class SessionResource  {
   }
 
   @Nullable
-  Session getSession(String sessionId) {
+  private Session getSession(String sessionId) {
     if(sessionId != null) {
       SessionKey key = new DefaultSessionKey(sessionId);
       try {

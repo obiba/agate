@@ -1,4 +1,4 @@
-/*
+  /*
  * Copyright (c) 2018 OBiBa. All rights reserved.
  *
  * This program and the accompanying materials
@@ -10,19 +10,11 @@
 
 package org.obiba.agate.service;
 
-import java.io.IOException;
-import java.security.SignatureException;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import javax.annotation.Nullable;
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.BadRequestException;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import org.apache.commons.lang.LocaleUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.crypto.hash.Sha512Hash;
@@ -32,10 +24,8 @@ import org.json.JSONObject;
 import org.obiba.agate.domain.*;
 import org.obiba.agate.event.UserApprovedEvent;
 import org.obiba.agate.event.UserJoinedEvent;
-import org.obiba.agate.repository.GroupRepository;
 import org.obiba.agate.repository.UserCredentialsRepository;
 import org.obiba.agate.repository.UserRepository;
-import org.obiba.agate.security.AgateUserRealm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -48,10 +38,16 @@ import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Sets;
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.BadRequestException;
+import java.io.IOException;
+import java.security.SignatureException;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Service class for managing users.
@@ -64,29 +60,39 @@ public class UserService {
 
   private static final int MINIMUM_LEMGTH = 8;
 
-  @Inject
-  private UserRepository userRepository;
+  private final UserRepository userRepository;
+
+  private final GroupService groupService;
+
+  private final UserCredentialsRepository userCredentialsRepository;
+
+  private final Environment env;
+
+  private final EventBus eventBus;
+
+  private final SpringTemplateEngine templateEngine;
+
+  private final MailService mailService;
+
+  private final ConfigurationService configurationService;
 
   @Inject
-  private UserCredentialsRepository userCredentialsRepository;
-
-  @Inject
-  private GroupRepository groupRepository;
-
-  @Inject
-  private Environment env;
-
-  @Inject
-  private EventBus eventBus;
-
-  @Inject
-  private SpringTemplateEngine templateEngine;
-
-  @Inject
-  private MailService mailService;
-
-  @Inject
-  private ConfigurationService configurationService;
+  public UserService(UserRepository userRepository,
+                     GroupService groupService, UserCredentialsRepository userCredentialsRepository,
+                     Environment env,
+                     EventBus eventBus,
+                     SpringTemplateEngine templateEngine,
+                     MailService mailService,
+                     ConfigurationService configurationService) {
+    this.userRepository = userRepository;
+    this.groupService = groupService;
+    this.userCredentialsRepository = userCredentialsRepository;
+    this.env = env;
+    this.eventBus = eventBus;
+    this.templateEngine = templateEngine;
+    this.mailService = mailService;
+    this.configurationService = configurationService;
+  }
 
   //
   // Finders
@@ -113,7 +119,7 @@ public class UserService {
    * @return
    */
   public List<User> findActiveUsersByApplicationAndGroup(@NotNull String application, @Nullable String group) {
-    List<String> groupNames = groupRepository.findByApplications(application).stream() //
+    List<String> groupNames = groupService.findByApplication(application).stream() //
       .map(Group::getName) //
       .collect(Collectors.toList());
 
@@ -130,7 +136,7 @@ public class UserService {
 
   public List<User> findActiveUserByApplicationAndGroup(@NotNull String username, @NotNull String application,
     @Nullable String group) {
-    List<String> groupNames = groupRepository.findByApplications(application).stream() //
+    List<String> groupNames = groupService.findByApplication(application).stream() //
       .map(Group::getName) //
       .collect(Collectors.toList());
 
@@ -204,7 +210,7 @@ public class UserService {
   public void updateUserPassword(@NotNull User user, @NotNull String password) {
     if(user == null) throw new BadRequestException("Invalid User");
     if(Strings.isNullOrEmpty(password)) throw new BadRequestException("User password cannot be empty");
-    if(!user.getRealm().equals(AgateUserRealm.AGATE_REALM))
+    if(!user.getRealm().equals(AgateRealm.AGATE_USER_REALM))
       throw new BadRequestException("User password cannot be changed");
     if(password.length() < MINIMUM_LEMGTH) throw new PasswordTooShortException(MINIMUM_LEMGTH);
 
@@ -265,8 +271,8 @@ public class UserService {
 
     if(saved.getGroups() != null) {
       for(String groupName : saved.getGroups()) {
-        Group group = findGroup(groupName);
-        if(group == null) save(new Group(groupName));
+        Group group = groupService.findGroup(groupName);
+        if(group == null) groupService.save(new Group(groupName));
       }
     }
 
@@ -523,7 +529,7 @@ public class UserService {
    */
   public UserCredentials getCurrentUserCredentials() {
     User user = getCurrentUser();
-    if(!user.getRealm().equals(AgateUserRealm.AGATE_REALM)) throw NoSuchUserException.withName(user.getName());
+    if(!user.getRealm().equals(AgateRealm.AGATE_USER_REALM)) throw NoSuchUserException.withName(user.getName());
     UserCredentials currentUser = findUserCredentials(user.getName());
     if(currentUser == null) throw NoSuchUserException.withName(user.getName());
     return currentUser;
@@ -550,78 +556,11 @@ public class UserService {
   public Set<String> getUserApplications(User user) {
     Set<String> applications = Sets.newTreeSet();
     if(user.hasApplications()) applications.addAll(user.getApplications());
-    if(user.hasGroups()) user.getGroups().forEach(g -> Optional.ofNullable(findGroup(g)).flatMap((Group r) -> {
+    if(user.hasGroups()) user.getGroups().forEach(g -> Optional.ofNullable(groupService.findGroup(g)).flatMap((Group r) -> {
       r.getApplications().forEach(applications::add);
       return Optional.of(r);
     }));
     return applications;
-  }
-
-  //
-  // Group methods
-  //
-
-  /**
-   * Find all {@link org.obiba.agate.domain.Group}.
-   *
-   * @return
-   */
-  public List<Group> findGroups() {
-    return groupRepository.findAll();
-  }
-
-  /**
-   * Find a {@link org.obiba.agate.domain.Group} by its name.
-   *
-   * @param name
-   * @return null if not found
-   */
-  public
-  @Nullable
-  Group findGroup(@NotNull String name) {
-    List<Group> groups = groupRepository.findByName(name);
-    return groups == null || groups.isEmpty() ? null : groups.get(0);
-  }
-
-  /**
-   * Get group with id and throws {@link org.obiba.agate.service.NoSuchGroupException} if not found.
-   *
-   * @param id
-   * @return
-   */
-  public Group getGroup(String id) {
-    Group group = groupRepository.findOne(id);
-    if(group == null) throw NoSuchGroupException.withId(id);
-    return group;
-  }
-
-  /**
-   * Insert of update a {@link org.obiba.agate.domain.Group}.
-   *
-   * @param group
-   * @return
-   */
-  public Group save(@NotNull Group group) {
-    if(group.isNew()) {
-      group.setNameAsId();
-    }
-    groupRepository.save(group);
-    return group;
-  }
-
-  /**
-   * Delete a {@link org.obiba.agate.domain.Group}.
-   *
-   * @param group
-   */
-  public void delete(@NotNull Group group) {
-    for(User user : userRepository.findAll()) {
-      if(user.getGroups().contains(group.getName())) {
-        throw NotOrphanGroupException.withName(group.getName());
-      }
-    }
-
-    groupRepository.delete(group);
   }
 
 }

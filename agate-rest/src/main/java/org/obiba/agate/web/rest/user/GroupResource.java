@@ -10,50 +10,47 @@
 
 package org.obiba.agate.web.rest.user;
 
-import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Response;
-
+import com.google.common.collect.Sets;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.obiba.agate.domain.Group;
+import org.obiba.agate.service.GroupService;
 import org.obiba.agate.service.NoSuchGroupException;
-import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.model.Agate;
 import org.obiba.agate.web.model.Dtos;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.Sets;
+import javax.inject.Inject;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
 
 @Component
 @RequiresRoles("agate-administrator")
 @Path("/group/{id}")
 public class GroupResource {
 
-  @Inject
-  private UserService userService;
+  private final GroupService groupService;
+
+  private final Dtos dtos;
 
   @Inject
-  private Dtos dtos;
+  public GroupResource(GroupService groupService, Dtos dtos) {
+    this.groupService = groupService;
+    this.dtos = dtos;
+  }
 
   @GET
   public Agate.GroupDto get(@PathParam("id") String id) {
-    Group group = userService.getGroup(id);
+    Group group = groupService.getGroup(id);
     return dtos.asDto(group);
   }
 
   @PUT
   public Response update(@PathParam("id") String id, Agate.GroupDto groupDto) {
-    final Group group = userService.getGroup(id);
+    final Group group = groupService.getGroup(id);
     group.setDescription(groupDto.getDescription());
     group.setApplications(Sets.newHashSet(groupDto.getApplicationsList()));
 
-    userService.save(group);
+    groupService.save(group);
 
     return Response.noContent().build();
   }
@@ -61,8 +58,8 @@ public class GroupResource {
   @DELETE
   public Response delete(@PathParam("id") String id) {
     try {
-      Group group = userService.getGroup(id);
-      userService.delete(group);
+      Group group = groupService.getGroup(id);
+      groupService.delete(group);
     } catch (NoSuchGroupException e) {
       // ignore
     }

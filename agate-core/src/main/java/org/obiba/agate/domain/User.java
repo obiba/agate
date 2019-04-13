@@ -19,7 +19,6 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Email;
 import org.joda.time.DateTime;
-import org.obiba.agate.security.AgateUserRealm;
 import org.obiba.agate.security.Roles;
 import org.obiba.mongodb.domain.AbstractAuditableDocument;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -294,7 +293,7 @@ public class User extends AbstractAuditableDocument {
     private Builder() {
       user = new User();
       active();
-      realm(AgateUserRealm.AGATE_REALM);
+      realm(AgateRealm.AGATE_USER_REALM);
     }
 
     public Builder id(String id) {
@@ -307,8 +306,9 @@ public class User extends AbstractAuditableDocument {
       return this;
     }
 
-    public Builder realm(String realm) {
-      user.setRealm(Strings.isNullOrEmpty(realm) ? AgateUserRealm.AGATE_REALM : realm);
+    public Builder realm(AgateRealm realm) {
+      assert realm != null;
+      user.setRealm(realm.getName());
       return this;
     }
 

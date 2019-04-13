@@ -25,6 +25,7 @@ import org.apache.shiro.cache.MemoryConstrainedCacheManager;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
+import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.domain.UserCredentials;
@@ -47,8 +48,6 @@ import io.jsonwebtoken.MalformedJwtException;
  */
 @Component
 public class AgateTokenRealm extends AuthorizingRealm {
-  public static final String AGATE_TOKEN_REALM = "agate-token-realm";
-
   @Inject
   private UserService userService;
 
@@ -71,7 +70,7 @@ public class AgateTokenRealm extends AuthorizingRealm {
 
   @Override
   public String getName() {
-    return AGATE_TOKEN_REALM;
+    return AgateRealm.AGATE_TOKEN_REALM.getName();
   }
 
   @Override
@@ -101,7 +100,7 @@ public class AgateTokenRealm extends AuthorizingRealm {
       username = user.getName();
     }
 
-    if(user == null || !user.isEnabled() || !user.getRealm().equals(AgateUserRealm.AGATE_REALM)) {
+    if(user == null || !user.isEnabled() || !user.getRealm().equals(AgateRealm.AGATE_USER_REALM)) {
       throw new UnknownAccountException("No account found for user [" + username + "]");
     }
 

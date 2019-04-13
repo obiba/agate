@@ -26,11 +26,7 @@ import org.obiba.agate.domain.Group;
 import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.domain.UserStatus;
-import org.obiba.agate.service.ApplicationService;
-import org.obiba.agate.service.ConfigurationService;
-import org.obiba.agate.service.TicketService;
-import org.obiba.agate.service.TokenUtils;
-import org.obiba.agate.service.UserService;
+import org.obiba.agate.service.*;
 import org.obiba.agate.web.rest.security.AuthorizationValidator;
 
 import com.google.common.collect.Lists;
@@ -46,6 +42,9 @@ import static org.mockito.Mockito.when;
 public class TicketsResourceTests {
   @InjectMocks
   private TicketsResource ticketsResource;
+
+  @Mock
+  private GroupService groupService;
 
   @Mock
   private UserService userService;
@@ -108,7 +107,7 @@ public class TicketsResourceTests {
     group.setApplications(Sets.newHashSet("mica"));
 
     when(userService.findActiveUser(anyString())).thenReturn(user);
-    when(userService.findGroup("group1")).thenReturn(group);
+    when(groupService.findGroup("group1")).thenReturn(group);
 
     Response res = ticketsResource.login(httpServletRequest, false, false, "toto", "password", "Basic bWljYTpwYXNzd29yZA=="); //Basic mica:password
 

@@ -19,10 +19,7 @@ import com.google.common.collect.Sets;
 import org.bson.types.ObjectId;
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.joda.time.DateTime;
-import org.obiba.agate.domain.AttributeConfiguration;
-import org.obiba.agate.domain.User;
-import org.obiba.agate.domain.UserCredentials;
-import org.obiba.agate.domain.UserStatus;
+import org.obiba.agate.domain.*;
 import org.obiba.agate.security.AgateUserRealm;
 import org.obiba.agate.security.Roles;
 import org.obiba.agate.service.ApplicationService;
@@ -186,7 +183,7 @@ public class UsersPublicResource {
       i++;
     }
 
-    user = User.newBuilder().name(name).realm(AgateUserRealm.AGATE_REALM).role(Roles.AGATE_USER).pending()
+    user = User.newBuilder().name(name).realm(AgateRealm.AGATE_USER_REALM).role(Roles.AGATE_USER).pending()
       .firstName(firstName).lastName(lastName).email(email).preferredLanguage(preferredLanguage).build();
     user.setGroups(Sets.newHashSet(groups));
     user.setApplications(Sets.newHashSet(applications));
