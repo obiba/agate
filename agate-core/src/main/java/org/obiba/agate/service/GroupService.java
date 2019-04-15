@@ -52,7 +52,7 @@ public class GroupService {
   @Nullable
   public List<Group> findByApplication(@NotNull String application) {
     Assert.notNull(application, "Application name cannot be null.");
-    return findByApplication(application);
+    return groupRepository.findByApplications(application);
   }
 
   public void ensureGroups(@NotNull Collection<String> names) {
