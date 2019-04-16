@@ -48,13 +48,16 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
 
   private final Set<Realm> realms;
 
+  private final AgateRealmFactory agateRealmFactory;
+
   @Inject
   @Lazy
   public SecurityManagerFactory(
     CacheManager cacheManager,
-    Set<Realm> realms) {
+    Set<Realm> realms, AgateRealmFactory agateRealmFactory) {
     this.cacheManager = cacheManager;
     this.realms = realms;
+    this.agateRealmFactory = agateRealmFactory;
   }
 
   @Override
@@ -86,6 +89,13 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
   }
 
   private SessionsSecurityManager doCreateSecurityManager() {
+// TODO uncomment below once the LdapRealm is completed
+//    ImmutableList<Realm> mergedRealms = ImmutableList.<Realm>builder()
+//      .addAll(realms)
+//      .add(agateRealmFactory.build(RealmConfig.newBuilder()
+//        .name("agate-realm-factory")
+//        .realm(AgateRealm.AGATE_LDAP_REALM).build())).build();
+
     DefaultWebSecurityManager manager = new DefaultWebSecurityManager(realms);
 
     initializeCacheManager(manager);
