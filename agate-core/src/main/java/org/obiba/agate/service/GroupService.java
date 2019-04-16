@@ -55,7 +55,7 @@ public class GroupService {
     return groupRepository.findByApplications(application);
   }
 
-  public void ensureGroups(@NotNull Collection<String> names) {
+  public void ensureGroupsByName(@NotNull Collection<String> names) {
     Assert.notNull(names, "Group names cannot be null.");
     names.forEach(this::getGroup);
   }

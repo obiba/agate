@@ -26,11 +26,12 @@ public class RealmConfigDtos {
     RealmConfigDto.Builder builder = RealmConfigDto.newBuilder()
       .setId(config.getId())
       .setName(config.getName())
-      .setRealm(config.getRealm().getName())
+      .setType(config.getType().getName())
       .setDefaultRealm(config.isDefaultRealm())
       .setForSignup(config.isForSignup())
       .setStatus(Agate.RealmStatus.valueOf(config.getStatus().toString()))
-      .addAllGroups(config.getGroups());
+      .addAllGroups(config.getGroups())
+      .setContent(config.getContent());
 
     if(!Strings.isNullOrEmpty(config.getTitle())) builder.setTitle(config.getTitle());
     if(!Strings.isNullOrEmpty(config.getDescription())) builder.setDescription(config.getDescription());
@@ -43,7 +44,7 @@ public class RealmConfigDtos {
     RealmConfig.Builder builder = RealmConfig.newBuilder();
     if (dto.hasId()) builder.id(dto.getId());
     builder.name(dto.getName());
-    builder.realm(AgateRealm.fromString(dto.getRealm()));
+    builder.type(AgateRealm.fromString(dto.getType()));
     builder.defaultRealm(dto.getDefaultRealm());
     builder.forSignup(dto.getForSignup());
     builder.groups(dto.getGroupsList());

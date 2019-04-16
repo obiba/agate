@@ -183,7 +183,7 @@ message RealmConfigDto {
   optional string title = 3;
   optional string description = 4;
   repeated string groups = 5;
-  required string realm = 6;
+  required string type = 6;
   optional bool defaultRealm = 7;
   optional bool forSignup = 8;
   optional RealmStatus status = 9;

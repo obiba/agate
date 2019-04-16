@@ -466,5 +466,9 @@
     "openid-profile-description": "Permission to get your profile information.",
     "openid-phone-description": "Permission to get your phone (not supported).",
     "openid-address-description": "Permission to get your address (not supported)."
+  },
+  "realm": {
+    "default": "Agate Realm",
+    "default-help": "The default Agate realm for user sign-up and login."
   }
 }

@@ -1,7 +1,5 @@
 package org.obiba.agate.web.rest.config;
 
-import org.obiba.agate.domain.RealmConfig;
-import org.obiba.agate.domain.RealmStatus;
 import org.obiba.agate.service.RealmConfigService;
 import org.obiba.agate.web.model.Agate;
 import org.obiba.agate.web.model.Dtos;
@@ -15,11 +13,11 @@ import java.util.List;
 public class RealmConfigResource {
 
   private final RealmConfigService realmConfigService;
+
   private final Dtos dtos;
 
   @Inject
-  public RealmConfigResource(RealmConfigService realmConfigService,
-                              Dtos dtos) {
+  public RealmConfigResource(RealmConfigService realmConfigService, Dtos dtos) {
     this.realmConfigService = realmConfigService;
     this.dtos = dtos;
   }
@@ -27,6 +25,12 @@ public class RealmConfigResource {
   @GET
   public Agate.RealmConfigDto get(@PathParam("name") String name) {
     return dtos.asDto(realmConfigService.getConfig(name));
+  }
+
+  @GET
+  @Path("/usernames")
+  public List<String> getUsernames(@PathParam("name") String name) {
+    return realmConfigService.getUsernames(name);
   }
 
   @PUT

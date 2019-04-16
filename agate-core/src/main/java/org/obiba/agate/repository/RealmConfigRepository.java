@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface RealmConfigRepository extends MongoRepository<RealmConfig, String> {
   RealmConfig findOneByName(String name);
-  List<RealmConfig> findByRealm(String realm);
+  List<RealmConfig> findByType(String realm);
   List<RealmConfig> findByForSignupTrue();
 }

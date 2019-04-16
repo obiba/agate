@@ -90,9 +90,40 @@ agate.user
       });
     }])
 
-  .controller('UserEditController', ['$rootScope', '$scope', '$routeParams', '$log', '$location', '$translate', 'UsersResource', 'UserResource', 'FormServerValidation', 'UserStatusResource', 'GroupsResource', 'ApplicationsResource', 'ConfigurationResource', 'AttributesService', 'AlertService',
+  .controller('UserEditController',
+    ['$rootScope',
+      '$scope',
+      '$routeParams',
+      '$log',
+      '$location',
+      '$translate',
+      'UsersResource',
+      'UserResource',
+      'FormServerValidation',
+      'UserStatusResource',
+      'GroupsResource',
+      'ApplicationsResource',
+      'ConfigurationResource',
+      'AttributesService',
+      'AlertService',
+      'RealmsService',
 
-    function ($rootScope, $scope, $routeParams, $log, $location, $translate, UsersResource, UserResource, FormServerValidation, UserStatusResource, GroupsResource, ApplicationsResource, ConfigurationResource, AttributesService, AlertService) {
+    function ($rootScope,
+              $scope,
+              $routeParams,
+              $log,
+              $location,
+              $translate,
+              UsersResource,
+              UserResource,
+              FormServerValidation,
+              UserStatusResource,
+              GroupsResource,
+              ApplicationsResource,
+              ConfigurationResource,
+              AttributesService,
+              AlertService,
+              RealmsService) {
 
       $scope.roles = ["agate-administrator", "agate-user"];
       $scope.attributesConfig = [];
@@ -103,7 +134,11 @@ agate.user
         $scope.usedAttributeNames = AttributesService.getUsedAttributeNames($scope.user.attributes, $scope.attributesConfig);
       });
 
-      $scope.realmList = ["agate-user-realm"];
+      RealmsService.getRealms().then(function(realms){
+        $scope.realmList = realms;
+        $scope.realm = {selected: RealmsService.getAgateDefaultRealm()};
+      });
+
       $scope.groupList = [];
       GroupsResource.query().$promise.then(function(groups){
         groups.forEach(function(group){
@@ -134,6 +169,7 @@ agate.user
           $scope.status.selected = $scope.status.list[UserStatusResource.findIndex(user.status)];
           $scope.attributeConfigPairs = AttributesService.getAttributeConfigPairs($scope.user.attributes, $scope.attributesConfig);
           $scope.usedAttributeNames = AttributesService.getUsedAttributeNames($scope.user.attributes, $scope.attributesConfig);
+          $scope.realm.selected = RealmsService.findRealm(user.realm);
           $scope.profile = null;
           return user;
         }) : { role: 'agate-user'};
@@ -163,9 +199,6 @@ agate.user
           return;
         }
 
-        // no support for other realms yet
-        $scope.user.realm = "agate-user-realm";
-
         $scope.profile.user = $scope.user;
         $scope.user.attributes = $scope.attributeConfigPairs.map(function(attributeConfigPair){
           return attributeConfigPair.attribute;
@@ -193,6 +226,7 @@ agate.user
         }
 
         $scope.user.status = $scope.status.selected.value;
+        $scope.user.realm = $scope.realm.selected.name;
 
         if ($scope.user.id) {
           updateUser();
@@ -214,19 +248,46 @@ agate.user
 
     }])
 
-  .controller('UserViewController', ['$rootScope', '$scope', '$routeParams', '$log', '$location', 'UserResource', 'UserAuthorizationsResource', 'UserAuthorizationResource', 'ConfigurationResource', 'AttributesService', 'AlertService',
+  .controller('UserViewController',
+    ['$rootScope',
+      '$scope',
+      '$routeParams',
+      '$log',
+      '$location',
+      'UserResource',
+      'UserAuthorizationsResource',
+      'UserAuthorizationResource',
+      'ConfigurationResource',
+      'AttributesService',
+      'AlertService',
+      'RealmsService',
 
-    function ($rootScope, $scope, $routeParams, $log, $location, UserResource, UserAuthorizationsResource, UserAuthorizationResource, ConfigurationResource, AttributesService, AlertService) {
+    function ($rootScope,
+              $scope,
+              $routeParams,
+              $log,
+              $location,
+              UserResource,
+              UserAuthorizationsResource,
+              UserAuthorizationResource,
+              ConfigurationResource,
+              AttributesService,
+              AlertService,
+              RealmsService) {
 
-      $scope.user = $routeParams.id ?
-        UserResource.get({id: $routeParams.id}, function(user) {
-          ConfigurationResource.get(function(config) {
-            $scope.userConfigAttributes = AttributesService.findConfigAttributes(user.attributes, config.userAttributes);
-            $scope.userNonConfigAttributes = config.userAttributes ? AttributesService.findNonConfigAttributes(user.attributes, config.userAttributes) : user.attributes;
-          });
 
-          return user;
-        }) : {};
+      RealmsService.getRealms().then(function(realms){
+        $scope.user = $routeParams.id ?
+          UserResource.get({id: $routeParams.id}, function(user) {
+            ConfigurationResource.get(function(config) {
+              $scope.userConfigAttributes = AttributesService.findConfigAttributes(user.attributes, config.userAttributes);
+              $scope.userNonConfigAttributes = config.userAttributes ? AttributesService.findNonConfigAttributes(user.attributes, config.userAttributes) : user.attributes;
+            });
+
+            user.realmTitle = RealmsService.findRealm(user.realm).title;
+            return user;
+          }) : {};
+      });
 
       $scope.authorizations = $routeParams.id ?
         UserAuthorizationsResource.query({id: $routeParams.id}) : [];

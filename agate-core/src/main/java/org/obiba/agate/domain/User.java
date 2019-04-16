@@ -293,7 +293,7 @@ public class User extends AbstractAuditableDocument {
     private Builder() {
       user = new User();
       active();
-      realm(AgateRealm.AGATE_USER_REALM);
+      realm(AgateRealm.AGATE_USER_REALM.getName());
     }
 
     public Builder id(String id) {
@@ -306,9 +306,9 @@ public class User extends AbstractAuditableDocument {
       return this;
     }
 
-    public Builder realm(AgateRealm realm) {
+    public Builder realm(String realm) {
       assert realm != null;
-      user.setRealm(realm.getName());
+      user.setRealm(realm);
       return this;
     }
 

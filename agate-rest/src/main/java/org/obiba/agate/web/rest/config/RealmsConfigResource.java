@@ -28,8 +28,7 @@ public class RealmsConfigResource {
   private final Dtos dtos;
 
   @Inject
-  public RealmsConfigResource(RealmConfigService realmConfigService,
-                              Dtos dtos) {
+  public RealmsConfigResource(RealmConfigService realmConfigService, Dtos dtos) {
     this.realmConfigService = realmConfigService;
     this.dtos = dtos;
   }
@@ -40,7 +39,7 @@ public class RealmsConfigResource {
   }
 
   @GET
-  @Path("/realm-summaries")
+  @Path("/summaries")
   public List<Agate.RealmConfigSummaryDto> getSummaries() {
     return realmConfigService.findAll().stream().map(dtos::asSummaryDto).collect(Collectors.toList());
   }

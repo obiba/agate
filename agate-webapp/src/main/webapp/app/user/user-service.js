@@ -73,4 +73,46 @@ agate.user
       return $resource('ws/user/:id/reset_password', {}, {
         'resetPassword': {method: 'PUT', params: {id: '@id'}}
       });
+    }])
+
+  .service('RealmsService', ['$q', 'RealmsConfigResource',
+    function($q, RealmsConfigResource) {
+      var DEFAULT_AGATE_REALM = {
+        name: 'agate-user-realm',
+        title: 'realm.default',
+        description: 'realm.default-help'
+      };
+
+      var REALMS = null;
+
+      function getRealms() {
+        var deferred = $q.defer();
+
+        if (REALMS !== null) {
+          deferred.resolve(REALMS);
+        } else {
+          RealmsConfigResource.summaries().$promise.then(function (realms) {
+            REALMS = [].concat(DEFAULT_AGATE_REALM, realms);
+            deferred.resolve(REALMS);
+          });
+        }
+
+        return deferred.promise;
+      }
+
+      function findRealm(target) {
+        return REALMS.filter(function(realm) {
+          return realm.name === target;
+        }).pop() || DEFAULT_AGATE_REALM;
+      }
+
+      function getAgateDefaultRealm() {
+        return DEFAULT_AGATE_REALM;
+      }
+
+      this.getRealms = getRealms;
+      this.findRealm = findRealm;
+      this.getAgateDefaultRealm = getAgateDefaultRealm;
+
+      return this;
     }]);

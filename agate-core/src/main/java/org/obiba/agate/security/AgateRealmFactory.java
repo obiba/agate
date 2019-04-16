@@ -40,7 +40,7 @@ public class AgateRealmFactory {
     AuthorizingRealm realm;
 
 //    try {
-    switch (realmConfig.getRealm()) {
+    switch (realmConfig.getType()) {
       case AGATE_LDAP_REALM:
           realm = new DefaultLdapRealm() {
             @Override

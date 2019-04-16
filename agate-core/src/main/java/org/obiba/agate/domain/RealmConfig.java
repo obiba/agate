@@ -26,7 +26,7 @@ public class RealmConfig extends AbstractAuditableDocument {
 
   private Set<String> groups = Sets.newHashSet();
 
-  private AgateRealm realm = AgateRealm.AGATE_USER_REALM;
+  private AgateRealm type = AgateRealm.AGATE_USER_REALM;
 
   private boolean defaultRealm = false;
 
@@ -84,12 +84,12 @@ public class RealmConfig extends AbstractAuditableDocument {
     this.groups = groups == null ? Sets.newHashSet() : groups;
   }
 
-  public AgateRealm getRealm() {
-    return realm;
+  public AgateRealm getType() {
+    return type;
   }
 
-  public void setRealm(AgateRealm realm) {
-    this.realm = realm;
+  public void setType(AgateRealm type) {
+    this.type = type;
   }
 
   public boolean isDefaultRealm() {
@@ -148,8 +148,8 @@ public class RealmConfig extends AbstractAuditableDocument {
       return this;
     }
 
-    public Builder realm(AgateRealm value) {
-      config.setRealm(value);
+    public Builder type(AgateRealm value) {
+      config.setType(value);
       return this;
     }
 
