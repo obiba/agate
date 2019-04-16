@@ -22,7 +22,6 @@ import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 
 import com.codahale.metrics.MetricRegistry;
 
@@ -33,17 +32,17 @@ public class CacheConfiguration {
 
   private static final Logger log = LoggerFactory.getLogger(CacheConfiguration.class);
 
-  @Inject
-  private MetricRegistry metricRegistry;
+  private final MetricRegistry metricRegistry;
 
   @Inject
-  private net.sf.ehcache.CacheManager cacheManager;
+  public CacheConfiguration(MetricRegistry metricRegistry) {
+    this.metricRegistry = metricRegistry;
+  }
 
   @PreDestroy
   public void destroy() {
     log.info("Remove Cache Manager metrics");
     metricRegistry.getNames().forEach(metricRegistry::remove);
-    cacheManager.shutdown();
   }
 
   @Bean
@@ -58,7 +57,7 @@ public class CacheConfiguration {
   public CacheManager springCacheManager() {
     log.debug("Starting Spring Cache");
     EhCacheCacheManager ehCacheManager = new EhCacheCacheManager();
-    ehCacheManager.setCacheManager(cacheManager);
+    ehCacheManager.setCacheManager(cacheManagerFactory().getObject());
     return ehCacheManager;
   }
 }

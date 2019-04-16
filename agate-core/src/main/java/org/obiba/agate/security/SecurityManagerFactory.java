@@ -9,63 +9,51 @@
  */
 package org.obiba.agate.security;
 
-import com.google.common.collect.ImmutableList;
+import java.util.Set;
+import javax.annotation.PreDestroy;
+import javax.inject.Inject;
 import net.sf.ehcache.CacheManager;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.SimpleAccount;
-import org.apache.shiro.authc.credential.PasswordMatcher;
 import org.apache.shiro.authc.pam.FirstSuccessfulStrategy;
 import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
-import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.ModularRealmAuthorizer;
-import org.apache.shiro.authz.permission.PermissionResolver;
 import org.apache.shiro.authz.permission.PermissionResolverAware;
 import org.apache.shiro.cache.ehcache.EhCacheManager;
-import org.apache.shiro.config.Ini;
-import org.apache.shiro.config.IniSecurityManagerFactory;
-import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
-import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.mgt.SessionsSecurityManager;
 import org.apache.shiro.realm.Realm;
-import org.apache.shiro.realm.text.IniRealm;
-import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
-import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.LifecycleUtils;
+import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.obiba.shiro.SessionStorageEvaluator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Set;
 
 @Component
 @DependsOn("cacheConfiguration")
 public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManager> {
 
-  public static final String INI_REALM = "agate-ini-realm";
+  private static final Logger log = LoggerFactory.getLogger(SecurityManagerFactory.class);
 
   private static final long SESSION_VALIDATION_INTERVAL = 300000l; // 5 minutes
 
-  private static final Logger log = LoggerFactory.getLogger(SecurityManagerFactory.class);
-
-  @Inject
-  private Set<Realm> realms;
-
-  @Inject
-  private CacheManager cacheManager;
-
-  private final PermissionResolver permissionResolver = new AgatePermissionResolver();
-
   private SessionsSecurityManager securityManager;
+
+  private final CacheManager cacheManager;
+
+  private final Set<Realm> realms;
+
+  @Inject
+  public SecurityManagerFactory(
+    CacheManager cacheManager,
+    Set<Realm> realms) {
+    this.cacheManager = cacheManager;
+    this.realms = realms;
+  }
 
   @Override
   public SessionsSecurityManager getObject() throws Exception {
@@ -96,103 +84,49 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
   }
 
   private SessionsSecurityManager doCreateSecurityManager() {
-    return (SessionsSecurityManager) new CustomIniSecurityManagerFactory(getShiroIniPath()).createInstance();
+    DefaultWebSecurityManager manager = new DefaultWebSecurityManager(realms);
+
+    initializeCacheManager(manager);
+    initializeSessionManager(manager);
+    initializeSubjectDAO(manager);
+    initializeAuthorizer(manager);
+    initializeAuthenticator(manager);
+
+    return manager;
   }
 
-  private String getShiroIniPath() {
-    try {
-      return new DefaultResourceLoader().getResource("classpath:/shiro.ini").getFile().getAbsolutePath();
-    } catch(IOException e) {
-      throw new RuntimeException("Cannot load shiro.ini", e);
+  private void initializeCacheManager(DefaultWebSecurityManager dsm) {
+    if(dsm.getCacheManager() == null) {
+      EhCacheManager ehCacheManager = new EhCacheManager();
+      ehCacheManager.setCacheManager(cacheManager);
+      dsm.setCacheManager(ehCacheManager);
     }
   }
 
-  private class CustomIniSecurityManagerFactory extends IniSecurityManagerFactory {
+  private void initializeSessionManager(DefaultWebSecurityManager dsm) {
+    DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();
+    sessionManager.setSessionDAO(new EnterpriseCacheSessionDAO());
+    sessionManager.setSessionValidationInterval(SESSION_VALIDATION_INTERVAL);
+    sessionManager.setSessionValidationSchedulerEnabled(true);
 
-    private CustomIniSecurityManagerFactory(String resourcePath) {
-      super(resourcePath);
+    dsm.setSessionManager(sessionManager);
+  }
+
+  private void initializeSubjectDAO(DefaultWebSecurityManager dsm) {
+    if(dsm.getSubjectDAO() instanceof DefaultSubjectDAO) {
+      ((DefaultSubjectDAO) dsm.getSubjectDAO()).setSessionStorageEvaluator(new SessionStorageEvaluator());
     }
+  }
 
-    @Override
-    @SuppressWarnings("ChainOfInstanceofChecks")
-    protected SecurityManager createDefaultInstance() {
-      DefaultSecurityManager dsm = (DefaultSecurityManager) super.createDefaultInstance();
-      initializeCacheManager(dsm);
-      initializeSessionManager(dsm);
-      initializeSubjectDAO(dsm);
-      initializeAuthorizer(dsm);
-      initializeAuthenticator(dsm);
-//      ((AbstractAuthenticator) dsm.getAuthenticator()).setAuthenticationListeners(authenticationListeners);
-
-      return dsm;
+  private void initializeAuthorizer(DefaultWebSecurityManager dsm) {
+    if(dsm.getAuthorizer() instanceof ModularRealmAuthorizer) {
+      ((PermissionResolverAware) dsm.getAuthorizer()).setPermissionResolver(new AgatePermissionResolver());
     }
+  }
 
-    private void initializeCacheManager(DefaultSecurityManager dsm) {
-      if(dsm.getCacheManager() == null) {
-        EhCacheManager ehCacheManager = new EhCacheManager();
-        ehCacheManager.setCacheManager(cacheManager);
-        dsm.setCacheManager(ehCacheManager);
-      }
+  private void initializeAuthenticator(DefaultWebSecurityManager dsm) {
+    if(dsm.getAuthenticator() instanceof ModularRealmAuthenticator) {
+      ((ModularRealmAuthenticator) dsm.getAuthenticator()).setAuthenticationStrategy(new FirstSuccessfulStrategy());
     }
-
-    private void initializeSessionManager(DefaultSecurityManager dsm) {
-      if(dsm.getSessionManager() instanceof DefaultSessionManager) {
-        DefaultSessionManager sessionManager = (DefaultSessionManager) dsm.getSessionManager();
-//        sessionManager.setSessionListeners(sessionListeners);
-        sessionManager.setSessionDAO(new EnterpriseCacheSessionDAO());
-        sessionManager.setSessionValidationInterval(SESSION_VALIDATION_INTERVAL);
-        sessionManager.setSessionValidationSchedulerEnabled(true);
-      }
-    }
-
-    private void initializeSubjectDAO(DefaultSecurityManager dsm) {
-      if(dsm.getSubjectDAO() instanceof DefaultSubjectDAO) {
-        ((DefaultSubjectDAO) dsm.getSubjectDAO()).setSessionStorageEvaluator(new SessionStorageEvaluator());
-      }
-    }
-
-    private void initializeAuthorizer(DefaultSecurityManager dsm) {
-      if(dsm.getAuthorizer() instanceof ModularRealmAuthorizer) {
-//        ((RolePermissionResolverAware) dsm.getAuthorizer()).setRolePermissionResolver(rolePermissionResolver);
-        ((PermissionResolverAware) dsm.getAuthorizer()).setPermissionResolver(permissionResolver);
-      }
-    }
-
-    private void initializeAuthenticator(DefaultSecurityManager dsm) {
-      if(dsm.getAuthenticator() instanceof ModularRealmAuthenticator) {
-        ((ModularRealmAuthenticator) dsm.getAuthenticator()).setAuthenticationStrategy(new FirstSuccessfulStrategy());
-      }
-    }
-
-    @Override
-    protected void applyRealmsToSecurityManager(Collection<Realm> shiroRealms, @SuppressWarnings(
-        "ParameterHidesMemberVariable") SecurityManager securityManager) {
-      super.applyRealmsToSecurityManager(ImmutableList.<Realm>builder().addAll(shiroRealms).addAll(realms).build(),
-          securityManager);
-    }
-
-    @Override
-    protected Realm createRealm(Ini ini) {
-      // Set the resolvers first, because IniRealm is initialized before the resolvers
-      // are applied by the ModularRealmAuthorizer
-      IniRealm realm = new IniRealm() {
-        @Override
-        protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-          SimpleAccount account = (SimpleAccount) super.doGetAuthorizationInfo(principals);
-          // implicitly, give the role agate-user to all users from ini
-          if(account != null) account.addRole(Roles.AGATE_USER.toString());
-
-          return account;
-        }
-      };
-      realm.setName(INI_REALM);
-//      realm.setRolePermissionResolver(rolePermissionResolver);
-      realm.setPermissionResolver(permissionResolver);
-      realm.setResourcePath(getShiroIniPath());
-      realm.setCredentialsMatcher(new PasswordMatcher());
-      realm.setIni(ini);
-      return realm;
-    }
-
   }
 }
