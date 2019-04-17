@@ -256,6 +256,7 @@ public class UserService {
       if(saved == null) {
         saved = user;
       } else {
+        updateUserCredentials(saved, user);
         BeanUtils.copyProperties(user, saved, "id", "name", "version", "createdBy", "createdDate", "lastModifiedBy",
           "lastModifiedDate");
       }
@@ -277,6 +278,33 @@ public class UserService {
     }
 
     return saved;
+  }
+
+  /**
+   * Remove the user credentials if new realm is other than `agate-user-realm`. Notify user for new password if new realm
+   * is `agate-user-realm` which in turn will create valid user credentials.
+   *
+   * @param saved
+   * @param user
+   */
+  private void updateUserCredentials(User saved, User user) {
+    String savedRealm = saved.getRealm();
+    String newRealm = user.getRealm();
+
+    if (!savedRealm.equals(newRealm)) {
+      String agateUserRealm = AgateRealm.AGATE_USER_REALM.getName();
+
+      if (agateUserRealm.equals(savedRealm)) {
+        // cleanup credentials
+        UserCredentials userCredential = userCredentialsRepository.findOneByName(saved.getName());
+        if (userCredential != null) userCredentialsRepository.delete(userCredential.getId());
+      } else if (agateUserRealm.equals(newRealm)) {
+        // Re-approve the user and send email so user to set a password
+        user.setStatus(UserStatus.APPROVED);
+        eventBus.post(new UserApprovedEvent(user));
+      }
+    }
+
   }
 
   public UserCredentials save(@NotNull UserCredentials userCredentials) {

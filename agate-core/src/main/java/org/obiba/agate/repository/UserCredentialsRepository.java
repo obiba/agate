@@ -22,4 +22,5 @@ public interface UserCredentialsRepository extends MongoRepository<UserCredentia
 
   List<UserCredentials> findByName(String username);
 
+  UserCredentials findOneByName(String username);
 }
