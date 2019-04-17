@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.ForbiddenException;
 
 import com.google.common.base.Strings;
 import org.joda.time.DateTime;
@@ -32,7 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.google.common.eventbus.Subscribe;
+import org.apache.shiro.event.Subscribe;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -43,17 +42,17 @@ public class TicketService {
 
   private static final Logger log = LoggerFactory.getLogger(TicketService.class);
 
-  @Inject
-  private TicketRepository ticketRepository;
+  private final TicketRepository ticketRepository;
+
+  private final ConfigurationService configurationService;
 
   @Inject
-  private ConfigurationService configurationService;
-
-  @Inject
-  private UserService userService;
-
-  @Inject
-  private AuthorizationService authorizationService;
+  public TicketService(
+    TicketRepository ticketRepository,
+    ConfigurationService configurationService) {
+    this.ticketRepository = ticketRepository;
+    this.configurationService = configurationService;
+  }
 
   /**
    * Create or reuse a ticket for the given username.

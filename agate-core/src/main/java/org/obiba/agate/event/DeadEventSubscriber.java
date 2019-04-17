@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.google.common.eventbus.DeadEvent;
-import com.google.common.eventbus.Subscribe;
+import org.apache.shiro.event.Subscribe;
 
 @Component
 public class DeadEventSubscriber {

@@ -26,8 +26,8 @@ import org.obiba.agate.repository.AuthorizationRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
+import org.apache.shiro.event.EventBus;
+import org.apache.shiro.event.Subscribe;
 
 /**
  * Manage the {@link org.obiba.agate.domain.Authorization} entities.
@@ -35,17 +35,20 @@ import com.google.common.eventbus.Subscribe;
 @Service
 public class AuthorizationService {
 
-  @Inject
-  private AuthorizationRepository authorizationRepository;
+  private final AuthorizationRepository authorizationRepository;
 
-  @Inject
-  private ConfigurationService configurationService;
+  private final ConfigurationService configurationService;
 
-  @Inject
-  private UserService userService;
+  private final EventBus eventBus;
 
-  @Inject
-  private EventBus eventBus;
+
+  public AuthorizationService(
+    AuthorizationRepository authorizationRepository, ConfigurationService configurationService,
+    EventBus eventBus) {
+    this.authorizationRepository = authorizationRepository;
+    this.configurationService = configurationService;
+    this.eventBus = eventBus;
+  }
 
   /**
    * Persist the {@link Authorization}.
@@ -159,7 +162,7 @@ public class AuthorizationService {
   public void delete(Authorization authorization) {
     if(authorization == null) return;
     authorizationRepository.delete(authorization.getId());
-    eventBus.post(new AuthorizationDeletedEvent(authorization));
+    eventBus.publish(new AuthorizationDeletedEvent(authorization));
   }
 
   /**

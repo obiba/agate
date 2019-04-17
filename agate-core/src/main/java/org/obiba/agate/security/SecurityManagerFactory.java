@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -48,6 +49,7 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
   private final Set<Realm> realms;
 
   @Inject
+  @Lazy
   public SecurityManagerFactory(
     CacheManager cacheManager,
     Set<Realm> realms) {

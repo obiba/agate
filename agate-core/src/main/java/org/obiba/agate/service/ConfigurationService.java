@@ -49,7 +49,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.google.common.eventbus.EventBus;
+import org.apache.shiro.event.EventBus;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 
@@ -94,7 +94,7 @@ public class ConfigurationService {
         "lastModifiedDate", "secretKey", "agateVersion");
     if(configuration.getAgateVersion() != null) savedConfiguration.setAgateVersion(configuration.getAgateVersion());
     agateConfigRepository.save(savedConfiguration);
-    eventBus.post(new AgateConfigUpdatedEvent(getConfiguration()));
+    eventBus.publish(new AgateConfigUpdatedEvent(getConfiguration()));
   }
 
   /**

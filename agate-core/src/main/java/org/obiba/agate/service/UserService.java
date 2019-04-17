@@ -13,11 +13,11 @@ package org.obiba.agate.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import org.apache.commons.lang.LocaleUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.crypto.hash.Sha512Hash;
+import org.apache.shiro.event.EventBus;
+import org.apache.shiro.event.Subscribe;
 import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -233,9 +233,9 @@ public class UserService {
     if(!Strings.isNullOrEmpty(password)) {
       updateUserPassword(user, password);
     } else if(user.getStatus() == UserStatus.PENDING) {
-      eventBus.post(new UserJoinedEvent(user));
+      eventBus.publish(new UserJoinedEvent(user));
     } else if(user.getStatus() == UserStatus.APPROVED) {
-      eventBus.post(new UserApprovedEvent(user));
+      eventBus.publish(new UserApprovedEvent(user));
     }
 
     return save(user);
@@ -296,7 +296,7 @@ public class UserService {
     save(user);
 
     if(prevStatus == UserStatus.PENDING && user.getStatus() == UserStatus.APPROVED)
-      eventBus.post(new UserApprovedEvent(user));
+      eventBus.publish(new UserApprovedEvent(user));
   }
 
   public void confirmUser(@NotNull User user, String password) {

@@ -10,6 +10,7 @@
 
 package org.obiba.agate.service;
 
+import org.apache.shiro.event.EventBus;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -34,8 +35,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.springframework.core.env.Environment;
-
-import com.google.common.eventbus.EventBus;
 
 public class UserServiceTest {
 
@@ -82,7 +81,7 @@ public class UserServiceTest {
   public void testSavePublishesJoinEvent() {
     User user = User.newBuilder().name("toto").pending().build();
     userService.createUser(user);
-    verify(eventBus).post(any(UserJoinedEvent.class));
+    verify(eventBus).publish(any(UserJoinedEvent.class));
   }
 
   @Test
@@ -90,6 +89,6 @@ public class UserServiceTest {
     User user = User.newBuilder().name("toto").build();
     user.setStatus(UserStatus.APPROVED);
     userService.createUser(user);
-    verify(eventBus).post(any(UserApprovedEvent.class));
+    verify(eventBus).publish(any(UserApprovedEvent.class));
   }
 }
