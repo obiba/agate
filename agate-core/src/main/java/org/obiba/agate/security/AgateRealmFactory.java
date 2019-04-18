@@ -10,7 +10,6 @@ import org.apache.shiro.realm.jdbc.JdbcRealm;
 import org.apache.shiro.realm.ldap.DefaultLdapRealm;
 import org.apache.shiro.realm.ldap.JndiLdapContextFactory;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.obiba.agate.domain.RealmConfig;
@@ -23,7 +22,6 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.util.Collection;
 import java.util.Collections;
 
 @Component
@@ -35,6 +33,10 @@ public class AgateRealmFactory {
 
   private final ConfigurationService configurationService;
 
+  private static final String MYSQL_DRIVER = "com.mysql.jdbc.Driver";
+  private static final String MARIA_DB_DRIVER = "org.mariadb.jdbc.Driver";
+  private static final String POSTGRES_DRIVER = "org.postgresql.Driver";
+
   @Inject
   public AgateRealmFactory(
     UserService userService,
@@ -44,7 +46,7 @@ public class AgateRealmFactory {
   }
 
   public AuthorizingRealm build(RealmConfig realmConfig) {
-    if (realmConfig == null || Strings.isNullOrEmpty(realmConfig.getName())/* || Strings.isNullOrEmpty(realmConfig.getContent())*/) throw new RuntimeException("No valid realm configuration");
+    if (realmConfig == null || Strings.isNullOrEmpty(realmConfig.getName()) || Strings.isNullOrEmpty(realmConfig.getContent())) throw new RuntimeException("No valid realm configuration");
 
     AuthorizingRealm realm;
 
@@ -56,18 +58,7 @@ public class AgateRealmFactory {
           DefaultLdapRealm ldapRealm = new DefaultLdapRealm() {
             @Override
             protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-              Collection<?> thisPrincipals = principals.fromRealm(getName());
-              if(thisPrincipals != null && !thisPrincipals.isEmpty()) {
-                Object primary = thisPrincipals.iterator().next();
-                PrincipalCollection simplePrincipals = new SimplePrincipalCollection(primary, getName());
-                String username = (String) getAvailablePrincipal(simplePrincipals);
-                User user = userService.findUser(username);
-                return new SimpleAuthorizationInfo(user == null
-                  ? Collections.emptySet()
-                  : ImmutableSet.<String>builder().add(user.getRole(), Roles.AGATE_USER.toString()).build()); //adding agate-user role implicitly.
-              }
-
-              return new SimpleAuthorizationInfo();
+              return processPrincipalForRole(getAvailablePrincipal(principals));
             }
           };
 
@@ -84,7 +75,12 @@ public class AgateRealmFactory {
           realm = ldapRealm;
           break;
         case AGATE_JDBC_REALM:
-          JdbcRealm jdbcRealm = new JdbcRealm();
+          JdbcRealm jdbcRealm = new JdbcRealm() {
+            @Override
+            protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+              return processPrincipalForRole(getAvailablePrincipal(principals));
+            }
+          };
 
           DataSource dataSource = createDataSource(realmConfig.getName(), decryptedContent);
 
@@ -124,14 +120,17 @@ public class AgateRealmFactory {
     return jndiLdapContextFactory;
   }
 
-  // TODO validate url with respect to chosen driver class
   private DataSource createDataSource(String configName, JSONObject content) {
     DataSourceBuilder builder = DataSourceBuilder.create();
 
     String url = content.optString("url");
+    String driverClassName = getValidDriverClassName(configName, url);
 
     if (Strings.isNullOrEmpty(url)) {
       logger.error("Validation failed for {}; No url", configName);
+      return null;
+    } else if (Strings.isNullOrEmpty(driverClassName)) {
+      logger.error("Validation failed for {}; No valid driver class name based on given url", configName);
       return null;
     }
 
@@ -139,9 +138,35 @@ public class AgateRealmFactory {
       .url(url)
       .username(content.optString("username"))
       .password(content.optString("password"))
-      .driverClassName(content.optString("driverClassName"));
+      .driverClassName(driverClassName);
 
     return builder.build();
+  }
+
+  private SimpleAuthorizationInfo processPrincipalForRole(Object availablePrincipal) {
+    if (availablePrincipal != null) {
+      User user = userService.findUser((String) availablePrincipal);
+
+      return new SimpleAuthorizationInfo(user == null
+        ? Collections.emptySet()
+        : ImmutableSet.<String>builder().add(user.getRole(), Roles.AGATE_USER.toString()).build()); //adding agate-user role explicitly.
+    }
+
+    return new SimpleAuthorizationInfo();
+  }
+
+  private String getValidDriverClassName(String configName, String url) {
+
+    if (url.startsWith("jdbc:mysql://")) {
+      return MYSQL_DRIVER;
+    } else if (url.startsWith("jdbc:mariadb://")) {
+      return MARIA_DB_DRIVER;
+    } else if (url.startsWith("jdbc:postgresql://")) {
+      return POSTGRES_DRIVER;
+    } else {
+      logger.error("Validation failed for {}; No valid driver class name based on given url", configName);
+      return null;
+    }
   }
 
 }
