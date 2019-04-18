@@ -9,7 +9,11 @@
  */
 package org.obiba.agate.security;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import net.sf.ehcache.CacheManager;
@@ -21,11 +25,15 @@ import org.apache.shiro.authz.permission.PermissionResolverAware;
 import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.mgt.SessionsSecurityManager;
+import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
 import org.apache.shiro.util.LifecycleUtils;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
+import org.obiba.agate.domain.AgateRealm;
+import org.obiba.agate.domain.RealmConfig;
+import org.obiba.agate.service.RealmConfigService;
 import org.obiba.shiro.SessionStorageEvaluator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,15 +56,20 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
 
   private final Set<Realm> realms;
 
+  private final RealmConfigService realmConfigService;
+
   private final AgateRealmFactory agateRealmFactory;
 
   @Inject
   @Lazy
   public SecurityManagerFactory(
     CacheManager cacheManager,
-    Set<Realm> realms, AgateRealmFactory agateRealmFactory) {
+    Set<Realm> realms,
+    RealmConfigService realmConfigService,
+    AgateRealmFactory agateRealmFactory) {
     this.cacheManager = cacheManager;
     this.realms = realms;
+    this.realmConfigService = realmConfigService;
     this.agateRealmFactory = agateRealmFactory;
   }
 
@@ -89,14 +102,19 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
   }
 
   private SessionsSecurityManager doCreateSecurityManager() {
-// TODO uncomment below once the LdapRealm is completed
-//    ImmutableList<Realm> mergedRealms = ImmutableList.<Realm>builder()
-//      .addAll(realms)
-//      .add(agateRealmFactory.build(RealmConfig.newBuilder()
-//        .name("agate-realm-factory")
-//        .realm(AgateRealm.AGATE_LDAP_REALM).build())).build();
+    // TODO uncomment below once the LdapRealm is completed
+    Builder<Realm> realmsBuilder = ImmutableList.<Realm>builder().addAll(realms);
 
-    DefaultWebSecurityManager manager = new DefaultWebSecurityManager(realms);
+//    realmsBuilder.add(
+//        agateRealmFactory.build(RealmConfig.newBuilder()
+//        .name("agate-realm-factory")
+//        .content("{\"url\": \"ldap://172.17.127.161:389\", \"systemUsername\": \"admin\", \"systemPassword\":\"password\", \"userDnTemplate\": \"uid={0},ou=People,dc=brandy,dc=com\"}")
+//        .type(AgateRealm.AGATE_LDAP_REALM).build()));
+
+    List<AuthorizingRealm> authorizingRealms = realmConfigService.findAll().stream().map(agateRealmFactory::build).collect(Collectors.toList());
+    if (authorizingRealms.size() > 0) realmsBuilder.addAll(authorizingRealms);
+
+    DefaultWebSecurityManager manager = new DefaultWebSecurityManager(realmsBuilder.build());
 
     initializeCacheManager(manager);
     initializeSessionManager(manager);
