@@ -2,6 +2,7 @@ package org.obiba.agate.security;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
+import java.util.Collection;
 import javax.sql.DataSource;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
@@ -10,6 +11,7 @@ import org.apache.shiro.realm.jdbc.JdbcRealm;
 import org.apache.shiro.realm.ldap.DefaultLdapRealm;
 import org.apache.shiro.realm.ldap.JndiLdapContextFactory;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.obiba.agate.domain.RealmConfig;
@@ -58,7 +60,18 @@ public class AgateRealmFactory {
           DefaultLdapRealm ldapRealm = new DefaultLdapRealm() {
             @Override
             protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-              return processPrincipalForRole(getAvailablePrincipal(principals));
+              Collection<?> thisPrincipals = principals.fromRealm(getName());
+              if(thisPrincipals != null && !thisPrincipals.isEmpty()) {
+                Object primary = thisPrincipals.iterator().next();
+                PrincipalCollection simplePrincipals = new SimplePrincipalCollection(primary, getName());
+                String username = (String) getAvailablePrincipal(simplePrincipals);
+                User user = userService.findUser(username);
+                return new SimpleAuthorizationInfo(user == null
+                  ? Collections.emptySet()
+                  : ImmutableSet.<String>builder().add(user.getRole(), Roles.AGATE_USER.toString()).build()); //adding agate-user role implicitly.
+              }
+
+              return new SimpleAuthorizationInfo();
             }
           };
 
@@ -144,15 +157,16 @@ public class AgateRealmFactory {
   }
 
   private SimpleAuthorizationInfo processPrincipalForRole(Object availablePrincipal) {
+    // adding agate-user role explicitly.
     if (availablePrincipal != null) {
       User user = userService.findUser((String) availablePrincipal);
 
       return new SimpleAuthorizationInfo(user == null
         ? Collections.emptySet()
-        : ImmutableSet.<String>builder().add(user.getRole(), Roles.AGATE_USER.toString()).build()); //adding agate-user role explicitly.
+        : ImmutableSet.<String>builder().add(user.getRole(), Roles.AGATE_USER.toString()).build());
     }
 
-    return new SimpleAuthorizationInfo();
+    return new SimpleAuthorizationInfo(ImmutableSet.of(Roles.AGATE_USER.toString()));
   }
 
   private String getValidDriverClassName(String configName, String url) {
