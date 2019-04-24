@@ -21,6 +21,7 @@ import org.obiba.agate.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
+import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -137,6 +138,7 @@ public class AgateRealmFactory {
     }
 
     builder
+      .type(SimpleDriverDataSource.class)
       .url(url)
       .username(content.optString("username"))
       .password(content.optString("password"))
