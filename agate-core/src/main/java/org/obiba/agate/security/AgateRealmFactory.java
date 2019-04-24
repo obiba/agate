@@ -2,8 +2,6 @@ package org.obiba.agate.security;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
-import java.util.Collection;
-import javax.sql.DataSource;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
@@ -13,7 +11,8 @@ import org.apache.shiro.realm.ldap.JndiLdapContextFactory;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.CollectionUtils;
 import org.json.JSONException;
-import org.json.JSONObject;
+import org.obiba.agate.domain.JdbcRealmConfig;
+import org.obiba.agate.domain.LdapRealmConfig;
 import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.service.ConfigurationService;
@@ -21,10 +20,12 @@ import org.obiba.agate.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import javax.sql.DataSource;
+import java.util.Collection;
 import java.util.Collections;
 
 @Component
@@ -49,15 +50,20 @@ public class AgateRealmFactory {
   }
 
   public AuthorizingRealm build(RealmConfig realmConfig) {
-    if (realmConfig == null || Strings.isNullOrEmpty(realmConfig.getName()) || Strings.isNullOrEmpty(realmConfig.getContent())) throw new RuntimeException("No valid realm configuration");
+    if (realmConfig == null
+      || Strings.isNullOrEmpty(realmConfig.getName())
+      || Strings.isNullOrEmpty(realmConfig.getContent())) {
+      throw new RuntimeException("No valid realm configuration");
+    }
 
     AuthorizingRealm realm;
 
     try {
-      JSONObject decryptedContent = new JSONObject(configurationService.decrypt(realmConfig.getContent()));
 
       switch (realmConfig.getType()) {
+
         case AGATE_LDAP_REALM:
+          LdapRealmConfig ldapConfig = LdapRealmConfig.newBuilder(configurationService.decrypt(realmConfig.getContent())).build();
           DefaultLdapRealm ldapRealm = new DefaultLdapRealm() {
             @Override
             protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
@@ -65,19 +71,22 @@ public class AgateRealmFactory {
             }
           };
 
-          JndiLdapContextFactory jndiLdapContextFactory = createLdapContextFactory(realmConfig.getName(), decryptedContent);
+          JndiLdapContextFactory jndiLdapContextFactory = createLdapContextFactory(realmConfig.getName(), ldapConfig);
 
           if (jndiLdapContextFactory == null) throw new RuntimeException("Realm not configurable");
 
           ldapRealm.setName(realmConfig.getName());
           ldapRealm.setContextFactory(jndiLdapContextFactory);
-          ldapRealm.setUserDnTemplate(decryptedContent.optString("userDnTemplate"));
+          ldapRealm.setUserDnTemplate(ldapConfig.getUserDnTemplate());
           ldapRealm.setPermissionResolver(new AgatePermissionResolver());
           ldapRealm.init();
 
           realm = ldapRealm;
           break;
         case AGATE_JDBC_REALM:
+          JdbcRealmConfig jdbcConfig =
+            JdbcRealmConfig.newBuilder(configurationService.decrypt(realmConfig.getContent())).build();
+
           JdbcRealm jdbcRealm = new JdbcRealm() {
             @Override
             protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
@@ -85,13 +94,13 @@ public class AgateRealmFactory {
             }
           };
 
-          DataSource dataSource = createDataSource(realmConfig.getName(), decryptedContent);
+          DataSource dataSource = createDataSource(realmConfig.getName(), jdbcConfig);
 
           if (dataSource == null) throw new RuntimeException("Realm not configurable");
 
           jdbcRealm.setName(realmConfig.getName());
           jdbcRealm.setDataSource(dataSource);
-          jdbcRealm.setAuthenticationQuery(decryptedContent.optString("authenticationQuery"));
+          jdbcRealm.setAuthenticationQuery(jdbcConfig.getAuthenticationQuery());
           jdbcRealm.setPermissionsLookupEnabled(false);
 
           realm = jdbcRealm;
@@ -106,10 +115,10 @@ public class AgateRealmFactory {
     return realm;
   }
 
-  private JndiLdapContextFactory createLdapContextFactory(String configName, JSONObject content) {
+  private JndiLdapContextFactory createLdapContextFactory(String configName, LdapRealmConfig content) {
     JndiLdapContextFactory jndiLdapContextFactory = new JndiLdapContextFactory();
 
-    String url = content.optString("url");
+    String url = content.getUrl();
 
     if (Strings.isNullOrEmpty(url)) {
       logger.error("Validation failed for {}; No url", configName);
@@ -117,16 +126,16 @@ public class AgateRealmFactory {
     }
 
     jndiLdapContextFactory.setUrl(url);
-    jndiLdapContextFactory.setSystemUsername(content.optString("systemUsername"));
-    jndiLdapContextFactory.setSystemPassword(content.optString("systemPassword"));
+    jndiLdapContextFactory.setSystemUsername(content.getSystemUsername());
+    jndiLdapContextFactory.setSystemPassword(content.getSystemPassword());
 
     return jndiLdapContextFactory;
   }
 
-  private DataSource createDataSource(String configName, JSONObject content) {
+  private DataSource createDataSource(String configName, JdbcRealmConfig content) {
     DataSourceBuilder builder = DataSourceBuilder.create();
 
-    String url = content.optString("url");
+    String url = content.getUrl();
     String driverClassName = getValidDriverClassName(configName, url);
 
     if (Strings.isNullOrEmpty(url)) {
@@ -138,10 +147,10 @@ public class AgateRealmFactory {
     }
 
     builder
-      .type(SimpleDriverDataSource.class)
+      .type(DriverManagerDataSource.class)
       .url(url)
-      .username(content.optString("username"))
-      .password(content.optString("password"))
+      .username(content.getUsername())
+      .password(content.getPassword())
       .driverClassName(driverClassName);
 
     return builder.build();

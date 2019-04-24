@@ -19,12 +19,6 @@ agate.config
       'get': {method: 'GET'}
     });
   }])
-  .factory('RealmsConfigResource', ['$resource',
-    function($resource) {
-      return $resource('ws/config/realms', {}, {
-        'summaries': {url: 'ws/config/realms/summaries', method: 'GET', isArray: true}
-      });
-    }])
   .factory('PublicConfigurationResource', ['$resource',
     function ($resource) {
       return $resource('ws/config/_public', {}, {

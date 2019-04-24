@@ -8,6 +8,7 @@
     "menu": {
       "admin": "Administration",
       "applications": "Applications",
+      "realms": "Domaines",
       "configuration": "Configuration",
       "groups": "Groupes",
       "requests": "Requêtes en attente",
@@ -22,6 +23,9 @@
         "login": "Authentification"
       }
     },
+    "name": "Nom",
+    "type": "Type",
+    "description": "Description",
     "language": {
       "en": "Anglais",
       "fr": "Français",
@@ -467,6 +471,7 @@
     "openid-phone-description": "Permission d'obtenire vtre numéro de téléphone (pas supportée).",
     "openid-address-description": "Permission d'obtenir votre adresse (pas supportée)."
   },
+  "realms": "Domaines",
   "realm": {
   "default": "Le domaine d'Agate",
   "default-help": "Le domaine d'Agate par défaut pour l'inscriptions et la connexion d'utilisateur."

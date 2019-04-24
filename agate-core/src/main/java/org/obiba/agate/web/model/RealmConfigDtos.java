@@ -1,9 +1,8 @@
 package org.obiba.agate.web.model;
 
 import com.google.common.base.Strings;
-import org.obiba.agate.domain.AgateRealm;
-import org.obiba.agate.domain.RealmConfig;
-import org.obiba.agate.domain.RealmStatus;
+import org.json.JSONException;
+import org.obiba.agate.domain.*;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.web.model.Agate.RealmConfigDto;
 import org.springframework.stereotype.Component;
@@ -31,7 +30,7 @@ public class RealmConfigDtos {
       .setForSignup(config.isForSignup())
       .setStatus(Agate.RealmStatus.valueOf(config.getStatus().toString()))
       .addAllGroups(config.getGroups())
-      .setContent(config.getContent());
+      .setContent(ensureSecuredContent(configurationService.decrypt(config.getContent()), config.getType()));
 
     if(!Strings.isNullOrEmpty(config.getTitle())) builder.setTitle(config.getTitle());
     if(!Strings.isNullOrEmpty(config.getDescription())) builder.setDescription(config.getDescription());
@@ -64,10 +63,28 @@ public class RealmConfigDtos {
   Agate.RealmConfigSummaryDto asSummaryDto(RealmConfig config) {
     Agate.RealmConfigSummaryDto.Builder builder = Agate.RealmConfigSummaryDto.newBuilder()
       .setId(config.getId())
-      .setName(config.getName());
+      .setName(config.getName())
+      .setType(config.getType().getName());
 
     if(!Strings.isNullOrEmpty(config.getTitle())) builder.setTitle(config.getTitle());
     if(!Strings.isNullOrEmpty(config.getDescription())) builder.setDescription(config.getDescription());
     return builder.build();
+  }
+
+  private String ensureSecuredContent(String content, AgateRealm agateRealm) {
+    if (!Strings.isNullOrEmpty(content)) {
+      try {
+        switch (agateRealm) {
+          case AGATE_LDAP_REALM:
+            return LdapRealmConfig.newBuilder(content).build().getAsSecuredJSONObject().toString();
+          case AGATE_JDBC_REALM:
+            return JdbcRealmConfig.newBuilder(content).build().getAsSecuredJSONObject().toString();
+        }
+      } catch (JSONException e) {
+        throw new IllegalStateException("Realm config content is not a valid JSON.");
+      }
+    }
+
+    return content;
   }
 }

@@ -21,6 +21,7 @@ var agate = angular.module('agate', [
   'ngObiba',
   'agate.admin',
   'agate.application',
+  'agate.realm',
   'agate.ticket',
   'agate.user',
   'agate.group',

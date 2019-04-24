@@ -126,7 +126,7 @@
           </execution>
           <execution>
             <id>exec-grunt</id>
-            <phase>generate-resources</phase>
+            <phase>generate-sources</phase>
             <configuration>
               <executable>grunt</executable>
             </configuration>

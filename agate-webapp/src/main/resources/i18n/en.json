@@ -8,6 +8,7 @@
     "menu": {
       "admin": "Administration",
       "applications": "Applications",
+      "realms": "Realms",
       "configuration": "Configuration",
       "groups": "Groups",
       "requests": "Pending Requests",
@@ -22,6 +23,9 @@
         "login": "Authenticate"
       }
     },
+    "name": "Name",
+    "type": "Type",
+    "description": "Description",
     "language": {
       "en": "English",
       "fr": "French",
@@ -467,6 +471,7 @@
     "openid-phone-description": "Permission to get your phone (not supported).",
     "openid-address-description": "Permission to get your address (not supported)."
   },
+  "realms": "Realms",
   "realm": {
     "default": "Agate Realm",
     "default-help": "The default Agate realm for user sign-up and login."
