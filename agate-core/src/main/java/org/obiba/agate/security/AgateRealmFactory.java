@@ -11,7 +11,7 @@ import org.apache.shiro.realm.jdbc.JdbcRealm;
 import org.apache.shiro.realm.ldap.DefaultLdapRealm;
 import org.apache.shiro.realm.ldap.JndiLdapContextFactory;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.subject.SimplePrincipalCollection;
+import org.apache.shiro.util.CollectionUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.obiba.agate.domain.RealmConfig;
@@ -60,18 +60,7 @@ public class AgateRealmFactory {
           DefaultLdapRealm ldapRealm = new DefaultLdapRealm() {
             @Override
             protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-              Collection<?> thisPrincipals = principals.fromRealm(getName());
-              if(thisPrincipals != null && !thisPrincipals.isEmpty()) {
-                Object primary = thisPrincipals.iterator().next();
-                PrincipalCollection simplePrincipals = new SimplePrincipalCollection(primary, getName());
-                String username = (String) getAvailablePrincipal(simplePrincipals);
-                User user = userService.findUser(username);
-                return new SimpleAuthorizationInfo(user == null
-                  ? Collections.emptySet()
-                  : ImmutableSet.<String>builder().add(user.getRole(), Roles.AGATE_USER.toString()).build()); //adding agate-user role implicitly.
-              }
-
-              return new SimpleAuthorizationInfo();
+              return getUserFromAvailablePrincipal(principals, principals.fromRealm(getName()));
             }
           };
 
@@ -91,7 +80,7 @@ public class AgateRealmFactory {
           JdbcRealm jdbcRealm = new JdbcRealm() {
             @Override
             protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-              return processPrincipalForRole(getAvailablePrincipal(principals));
+              return getUserFromAvailablePrincipal(principals, principals.fromRealm(getName()));
             }
           };
 
@@ -156,19 +145,6 @@ public class AgateRealmFactory {
     return builder.build();
   }
 
-  private SimpleAuthorizationInfo processPrincipalForRole(Object availablePrincipal) {
-    // adding agate-user role explicitly.
-    if (availablePrincipal != null) {
-      User user = userService.findUser((String) availablePrincipal);
-
-      return new SimpleAuthorizationInfo(user == null
-        ? Collections.emptySet()
-        : ImmutableSet.<String>builder().add(user.getRole(), Roles.AGATE_USER.toString()).build());
-    }
-
-    return new SimpleAuthorizationInfo(ImmutableSet.of(Roles.AGATE_USER.toString()));
-  }
-
   private String getValidDriverClassName(String configName, String url) {
 
     if (url.startsWith("jdbc:mysql://")) {
@@ -181,6 +157,17 @@ public class AgateRealmFactory {
       logger.error("Validation failed for {}; No valid driver class name based on given url", configName);
       return null;
     }
+  }
+
+  private SimpleAuthorizationInfo getUserFromAvailablePrincipal(PrincipalCollection principals, Collection principalsFromRealm) {
+    if(principalsFromRealm != null && !principalsFromRealm.isEmpty()) {
+      User user = userService.findUser((String) (!CollectionUtils.isEmpty(principalsFromRealm) ? principalsFromRealm.iterator().next() : principals.getPrimaryPrincipal()));
+      return new SimpleAuthorizationInfo(user == null
+        ? Collections.emptySet()
+        : ImmutableSet.<String>builder().add(user.getRole(), Roles.AGATE_USER.toString()).build());
+    }
+
+    return new SimpleAuthorizationInfo(ImmutableSet.of(Roles.AGATE_USER.toString()));
   }
 
 }
