@@ -24,6 +24,7 @@ import org.json.JSONObject;
 import org.obiba.agate.domain.*;
 import org.obiba.agate.event.UserApprovedEvent;
 import org.obiba.agate.event.UserJoinedEvent;
+import org.obiba.agate.repository.RealmConfigRepository;
 import org.obiba.agate.repository.UserCredentialsRepository;
 import org.obiba.agate.repository.UserRepository;
 import org.slf4j.Logger;
@@ -76,14 +77,19 @@ public class UserService {
 
   private final ConfigurationService configurationService;
 
+  private final RealmConfigRepository realmConfigRepository;
+
   @Inject
-  public UserService(UserRepository userRepository,
-                     GroupService groupService, UserCredentialsRepository userCredentialsRepository,
-                     Environment env,
-                     EventBus eventBus,
-                     SpringTemplateEngine templateEngine,
-                     MailService mailService,
-                     ConfigurationService configurationService) {
+  public UserService(
+    UserRepository userRepository,
+    GroupService groupService,
+    UserCredentialsRepository userCredentialsRepository,
+    Environment env,
+    EventBus eventBus,
+    SpringTemplateEngine templateEngine,
+    MailService mailService,
+    ConfigurationService configurationService,
+    RealmConfigRepository realmConfigRepository) {
     this.userRepository = userRepository;
     this.groupService = groupService;
     this.userCredentialsRepository = userCredentialsRepository;
@@ -92,6 +98,7 @@ public class UserService {
     this.templateEngine = templateEngine;
     this.mailService = mailService;
     this.configurationService = configurationService;
+    this.realmConfigRepository = realmConfigRepository;
   }
 
   //
@@ -229,6 +236,20 @@ public class UserService {
   }
 
   public User createUser(@NotNull User user, @Nullable String password) {
+    if (Strings.isNullOrEmpty(password)) {
+      if (user.getRealm() == null) user.setRealm(AgateRealm.AGATE_USER_REALM.getName());
+      else {
+        List<RealmConfig> foundConfigs = realmConfigRepository.findAll().stream().filter(realmConfig -> user.getRealm().equals(realmConfig.getName())).collect(Collectors.toList());
+        if (foundConfigs.size() == 1) {
+          RealmConfig realmConfig = foundConfigs.get(0);
+          user.setStatus(UserStatus.ACTIVE);
+          user.setGroups(realmConfig.getGroups());
+        } else {
+          user.setRealm(AgateRealm.AGATE_USER_REALM.getName());
+        }
+      }
+    }
+
     if(!Strings.isNullOrEmpty(password)) {
       updateUserPassword(user, password);
     } else if(user.getStatus() == UserStatus.PENDING) {

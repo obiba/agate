@@ -22,6 +22,7 @@ import org.obiba.agate.domain.User;
 import org.obiba.agate.domain.UserStatus;
 import org.obiba.agate.event.UserApprovedEvent;
 import org.obiba.agate.event.UserJoinedEvent;
+import org.obiba.agate.repository.RealmConfigRepository;
 import org.obiba.agate.repository.UserCredentialsRepository;
 import org.obiba.agate.repository.UserRepository;
 
@@ -57,6 +58,9 @@ public class UserServiceTest {
   @Mock
   private ConfigurationService configurationService;
 
+  @Mock
+  private RealmConfigRepository realmConfigRepository;
+
   @Rule
   public ExpectedException exception = ExpectedException.none();
 
@@ -68,6 +72,7 @@ public class UserServiceTest {
     when(environment.getProperty(matches(".*terations"), any(Class.class))).thenReturn(1);
 
     Configuration conf = new Configuration();
+
     doReturn(conf).when(configurationService).getConfiguration();
   }
 
