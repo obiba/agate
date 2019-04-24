@@ -58,7 +58,7 @@ public class UsersPublicResource {
   private static final String CURRENT_USER_NAME = "_current";
 
   private static final String[] BUILTIN_PARAMS =
-    new String[] { "username", "firstname", "lastname", "application", "email", "locale", "group", "reCaptchaResponse" };
+    new String[] { "username", "firstname", "lastname", "application", "email", "locale", "group", "reCaptchaResponse", "realm" };
 
   private final UserService userService;
 
