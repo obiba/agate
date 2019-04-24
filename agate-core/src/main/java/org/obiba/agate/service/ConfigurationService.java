@@ -16,8 +16,6 @@ import java.security.Key;
 import java.util.Iterator;
 
 import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.validation.Valid;
 
@@ -240,11 +238,9 @@ public class ConfigurationService {
       required.put("username");
     }
 
-    List<RealmConfig> realmConfigs = realmConfigRepository.findAll();
-
     LinkedList<String> list = new LinkedList<>();
     list.add(AgateRealm.AGATE_USER_REALM.getName());
-    realmConfigs.stream().map(RealmConfig::getName).forEach(list::add);
+    realmConfigRepository.findAll().stream().map(RealmConfig::getName).forEach(list::add);
 
     properties.put("realm", newSchemaProperty("string", "t(user.realm)")
       .put("enum", list)
@@ -313,8 +309,18 @@ public class ConfigurationService {
     if(withUsername) {
       definition.put(newDefinitionProperty("username","t(user.name)", ""));
     }
+    JSONObject realmTitleMap = new JSONObject();
+    realmTitleMap.put(AgateRealm.AGATE_USER_REALM.getName(), "t(realm.default)");
 
-    definition.put(newDefinitionProperty("realm","t(user.realm)", ""));
+    realmConfigRepository.findAll().forEach(realmConfig -> {
+      try {
+        realmTitleMap.put(realmConfig.getName(), "t(" + realmConfig.getTitle() + ")");
+      } catch (JSONException e) {
+        //
+      }
+    });
+
+    definition.put(newDefinitionProperty("realm","t(user.realm)", "").put("titleMap", realmTitleMap));
     definition.put(newDefinitionProperty("email","t(user.email)", ""));
     definition.put(newDefinitionProperty("firstname","t(user.firstName)", ""));
     definition.put(newDefinitionProperty("lastname","t(user.lastName)", ""));
