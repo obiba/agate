@@ -15,6 +15,9 @@ import java.io.IOException;
 import java.security.Key;
 import java.util.Iterator;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.validation.Valid;
 
@@ -27,10 +30,13 @@ import org.apache.shiro.util.ByteSource;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.LocalizedString;
+import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.event.AgateConfigUpdatedEvent;
 import org.obiba.agate.repository.AgateConfigRepository;
+import org.obiba.agate.repository.RealmConfigRepository;
 import org.obiba.core.translator.JsonTranslator;
 import org.obiba.core.translator.PrefixedValueTranslator;
 import org.obiba.core.translator.TranslationUtils;
@@ -62,22 +68,37 @@ public class ConfigurationService {
 
   private static final com.jayway.jsonpath.Configuration conf = defaultConfiguration();
 
-  @Inject
-  private AgateConfigRepository agateConfigRepository;
+  private final AgateConfigRepository agateConfigRepository;
+
+  private final RealmConfigRepository realmConfigRepository;
+
+  private final EventBus eventBus;
+
+  private final Environment env;
+
+  private final ApplicationContext applicationContext;
+
+  private final ObjectMapper objectMapper;
+
+  private final AesCipherService cipherService;
 
   @Inject
-  private EventBus eventBus;
+  public ConfigurationService(
+    AgateConfigRepository agateConfigRepository,
+    RealmConfigRepository realmConfigRepository,
+    EventBus eventBus,
+    Environment env,
+    ApplicationContext applicationContext,
+    ObjectMapper objectMapper) {
+    this.agateConfigRepository = agateConfigRepository;
+    this.realmConfigRepository = realmConfigRepository;
+    this.eventBus = eventBus;
+    this.env = env;
+    this.applicationContext = applicationContext;
+    this.objectMapper = objectMapper;
 
-  @Inject
-  private Environment env;
-
-  @Inject
-  private ApplicationContext applicationContext;
-
-  @Inject
-  private ObjectMapper objectMapper;
-
-  private final AesCipherService cipherService = new AesCipherService();
+    this.cipherService = new AesCipherService();
+  }
 
   @Cacheable(value = "agateConfig", key = "#root.methodName")
   public Configuration getConfiguration() {
@@ -218,7 +239,16 @@ public class ConfigurationService {
       properties.put("username", newSchemaProperty("string", "t(user.name)").put("minLength", 3));
       required.put("username");
     }
-    properties.put("realm", newSchemaProperty("string", "t(user.realm)"));
+
+    List<RealmConfig> realmConfigs = realmConfigRepository.findAll();
+
+    LinkedList<String> list = new LinkedList<>();
+    list.add(AgateRealm.AGATE_USER_REALM.getName());
+    realmConfigs.stream().map(RealmConfig::getName).forEach(list::add);
+
+    properties.put("realm", newSchemaProperty("string", "t(user.realm)")
+      .put("enum", list)
+      .put("default", AgateRealm.AGATE_USER_REALM.getName()));
     properties.put("firstname", newSchemaProperty("string", "t(user.firstName)"));
     properties.put("lastname", newSchemaProperty("string", "t(user.lastName)"));
 
