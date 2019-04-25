@@ -1,5 +1,6 @@
 package org.obiba.agate.web.rest.config;
 
+import java.util.regex.Pattern;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.service.RealmConfigService;
@@ -49,11 +50,11 @@ public class RealmsConfigResource {
     RealmConfig config = realmConfigService.findConfig(dto.getName());
 
     if(config != null) throw new BadRequestException("Config already exists: " + dto.getName());
+    if(Pattern.compile("[^0-9A-Za-z-_\\s]").matcher(dto.getName()).find()) throw new BadRequestException("Name should avoid special characters. Use alphanumerical characters instead (hyphens and underscores are allowed).");
+
     RealmConfig saved = realmConfigService.save(dtos.fromDto(dto));
 
-    return Response
-      .created(UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(UserResource.class)
-        .build(saved.getId())).build();
+    return Response.created(UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(RealmConfigResource.class).build(saved.getId())).build();
   }
 
 }

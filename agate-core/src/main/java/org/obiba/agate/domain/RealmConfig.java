@@ -36,16 +36,16 @@ public class RealmConfig extends AbstractAuditableDocument {
   // might have to use configurationService.encrypt
   private String content;
 
-  public static String generateId() {
-    return UUID.randomUUID().toString();
-  }
-
   public String getName() {
     return name;
   }
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public void setNameAsId() {
+    setId(getName().replaceAll("\\s+", "+").toLowerCase());
   }
 
   public String getTitle() {

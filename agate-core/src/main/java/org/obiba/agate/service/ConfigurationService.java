@@ -32,7 +32,6 @@ import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.LocalizedString;
 import org.obiba.agate.domain.RealmConfig;
-import org.obiba.agate.event.AgateConfigUpdatedEvent;
 import org.obiba.agate.repository.AgateConfigRepository;
 import org.obiba.agate.repository.RealmConfigRepository;
 import org.obiba.core.translator.JsonTranslator;
@@ -113,7 +112,6 @@ public class ConfigurationService {
         "lastModifiedDate", "secretKey", "agateVersion");
     if(configuration.getAgateVersion() != null) savedConfiguration.setAgateVersion(configuration.getAgateVersion());
     agateConfigRepository.save(savedConfiguration);
-    eventBus.post(new AgateConfigUpdatedEvent(getConfiguration()));
   }
 
   /**

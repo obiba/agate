@@ -1,6 +1,5 @@
 package org.obiba.agate.service;
 
-import org.obiba.agate.domain.Group;
 import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.domain.RealmStatus;
 import org.obiba.agate.domain.User;
@@ -45,7 +44,7 @@ public class RealmConfigService {
     RealmConfig saved = config;
 
     if (saved.isNew()) {
-      saved.setId(RealmConfig.generateId());
+      saved.setNameAsId();
     } else {
       saved = getConfig(config.getName());
       BeanUtils.copyProperties(config, saved, IGNORE_PROPERTIES);

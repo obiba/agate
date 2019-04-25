@@ -29,6 +29,7 @@ public class RealmConfigForm {
         "    \"properties\": {" +
         "      \"name\": {" +
         "        \"type\": \"string\"," +
+        "        \"pattern\": \"[0-9A-Za-z-_\\s]\"" +
         "        \"title\": \"t(realm.name)\"" +
         "      }," +
         "      \"title\": {" +

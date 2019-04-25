@@ -23,7 +23,7 @@
     <tr ng-repeat="realm in $ctrl.realms track by $index">
       <td><a ng-href="#{{'/admin/realm/' + realm.id}}">{{realm.title | translate}}</a></td>
       <td>{{realm.description | translate}}</td>
-      <td>{{realm.type}}</td>
+      <td>{{realm.type | translate}}</td>
     </tr>
     </tbody>
   </table>
