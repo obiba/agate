@@ -1,5 +1,6 @@
 package org.obiba.agate.web.rest.config;
 
+import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.service.RealmConfigService;
 import org.obiba.agate.web.model.Agate;
 import org.obiba.agate.web.model.Dtos;
@@ -35,8 +36,13 @@ public class RealmConfigResource {
 
   @PUT
   public Response update(@PathParam("name") String name, Agate.RealmConfigDto dto) {
-    realmConfigService.getConfig(dto.getName());
-    realmConfigService.save(dtos.fromDto(dto));
+    RealmConfig old = realmConfigService.getConfig(dto.getName());
+    RealmConfig config = dtos.fromDto(dto);
+
+    if (!old.getType().equals(config.getType()) && realmConfigService.getUsernames(name).size() > 0)
+      throw new BadRequestException("Cannot change type if realm has users associated to it.");
+
+    realmConfigService.save(config);
     return Response.noContent().build();
   }
 

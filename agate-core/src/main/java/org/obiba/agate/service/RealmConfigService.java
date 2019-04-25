@@ -47,6 +47,15 @@ public class RealmConfigService {
       saved.setNameAsId();
     } else {
       saved = getConfig(config.getName());
+
+      // only one can be default realm
+      if (config.isDefaultRealm() != saved.isDefaultRealm() && config.isDefaultRealm()) {
+        realmConfigRepository.findAll().stream().filter(realmConfig -> !realmConfig.getName().equals(config.getName())).forEach(realmConfig -> {
+          realmConfig.setDefaultRealm(false);
+          realmConfigRepository.save(realmConfig);
+        });
+      }
+
       BeanUtils.copyProperties(config, saved, IGNORE_PROPERTIES);
     }
 
