@@ -75,7 +75,7 @@ public class AgateRealmFactory {
 
           JndiLdapContextFactory jndiLdapContextFactory = createLdapContextFactory(realmConfig.getName(), ldapConfig);
 
-          if (jndiLdapContextFactory == null) throw new RuntimeException("Realm not configurable");
+          if (jndiLdapContextFactory == null) throw new RuntimeException("Realm [" + realmConfig.getName() + "] not configurable");
 
           ldapRealm.setName(realmConfig.getName());
           ldapRealm.setContextFactory(jndiLdapContextFactory);
@@ -96,7 +96,7 @@ public class AgateRealmFactory {
 
           DataSource dataSource = createDataSource(realmConfig.getName(), jdbcConfig);
 
-          if (dataSource == null) throw new RuntimeException("Realm not configurable");
+          if (dataSource == null) throw new RuntimeException("Realm [" + realmConfig.getName() + "] not configurable");
 
           jdbcRealm.setName(realmConfig.getName());
           jdbcRealm.setDataSource(dataSource);
@@ -128,10 +128,10 @@ public class AgateRealmFactory {
           realm = activeDirectoryRealm;
           break;
         default:
-          throw new RuntimeException("Realm not configurable");
+          throw new RuntimeException("Realm [" + realmConfig.getName() + "] not configurable");
       }
     } catch (JSONException e) {
-      throw new RuntimeException("Realm not configurable");
+      throw new RuntimeException("Realm [" + realmConfig.getName() + "] not configurable");
     }
 
     return realm;
