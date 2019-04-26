@@ -120,11 +120,11 @@ public class UserResource {
   public Response resetPassword(@PathParam("id") String id) throws IOException {
     User user = userService.getUser(id);
 
-    if(user == null) NoSuchUserException.withId(id);
+    if(user == null) throw NoSuchUserException.withId(id);
 
     UserCredentials userCredentials = userService.findUserCredentials(user.getName());
 
-    if(userCredentials == null) new BadRequestException("user has no credentials defined");
+    if(userCredentials == null) throw new BadRequestException("User has no defined credentials.");
 
     userService.resetPassword(user);
 
