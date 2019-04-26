@@ -16,6 +16,8 @@ import java.security.Key;
 import java.util.Iterator;
 
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import javax.inject.Inject;
 import javax.validation.Valid;
 
@@ -238,11 +240,14 @@ public class ConfigurationService {
 
     LinkedList<String> list = new LinkedList<>();
     list.add(AgateRealm.AGATE_USER_REALM.getName());
-    realmConfigRepository.findAll().stream().map(RealmConfig::getName).forEach(list::add);
+    List<RealmConfig> realmConfigs = realmConfigRepository.findAll();
+    realmConfigs.stream().map(RealmConfig::getName).forEach(list::add);
+
+    Optional<RealmConfig> optionalDefaultRealmConfig = realmConfigs.stream().filter(RealmConfig::isDefaultRealm).findFirst();
 
     properties.put("realm", newSchemaProperty("string", "t(user.realm)")
       .put("enum", list)
-      .put("default", AgateRealm.AGATE_USER_REALM.getName()));
+      .put("default", optionalDefaultRealmConfig.isPresent() ? optionalDefaultRealmConfig.get().getName() : AgateRealm.AGATE_USER_REALM.getName()));
     properties.put("firstname", newSchemaProperty("string", "t(user.firstName)"));
     properties.put("lastname", newSchemaProperty("string", "t(user.lastName)"));
 
