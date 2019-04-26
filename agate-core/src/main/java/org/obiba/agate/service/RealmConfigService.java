@@ -4,6 +4,7 @@ import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.domain.RealmStatus;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.repository.RealmConfigRepository;
+import org.obiba.agate.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,16 +25,16 @@ public class RealmConfigService {
 
   private final RealmConfigRepository realmConfigRepository;
 
-  private final UserService userService;
+  private final UserRepository userRepository;
 
   private final GroupService groupService;
 
   @Inject
   public RealmConfigService(RealmConfigRepository realmConfigRepository,
-                            UserService userService,
+                            UserRepository userService,
                             GroupService groupService) {
     this.realmConfigRepository = realmConfigRepository;
-    this.userService = userService;
+    this.userRepository = userService;
     this.groupService = groupService;
   }
 
@@ -69,6 +70,10 @@ public class RealmConfigService {
   public RealmConfig findConfig(@NotNull String name) {
     Assert.notNull(name, "Realm config name cannot be null.");
     return realmConfigRepository.findOneByName(name);
+  }
+
+  public RealmConfig findDefault() {
+    return realmConfigRepository.findOneByDefaultRealmTrue();
   }
 
   public RealmConfig getConfig(@NotNull String name) {
@@ -114,6 +119,6 @@ public class RealmConfigService {
   }
 
   public List<String> getUsernames(String name) {
-    return userService.findUsers().stream().map(User::getRealm).filter(name::equals).collect(Collectors.toList());
+    return userRepository.findAll().stream().map(User::getRealm).filter(name::equals).collect(Collectors.toList());
   }
 }

@@ -1,24 +1,32 @@
 package org.obiba.agate.web.rest.config;
 
-import com.google.common.collect.Maps;
-import org.obiba.agate.domain.AgateRealm;
-import org.obiba.agate.service.support.LdapRealmConfigForm;
-import org.obiba.agate.service.support.RealmConfigForm;
+import org.json.JSONException;
+import org.obiba.agate.service.ConfigurationService;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import java.util.Map;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Response;
 
 @Component
+@Scope("request")
 @Path("/config/realm-form")
 public class RealmConfigFormResource {
 
-  @GET
-  public Map<String, Object> getForm() {
-    Map<String, Object> form = Maps.newHashMap();
-    form.put("form", RealmConfigForm.getForm().toString());
-    form.put(AgateRealm.AGATE_LDAP_REALM.toString(), LdapRealmConfigForm.getForm().toString());
-    return form;
+  private final ConfigurationService configurationService;
+
+  @Inject
+  public RealmConfigFormResource(ConfigurationService configurationService) {
+    this.configurationService = configurationService;
   }
+
+  @GET
+  public Response getForm(@QueryParam("locale") @DefaultValue("en") String locale) throws JSONException {
+    return Response.ok(configurationService.getRealmFormConfiguration(locale).toString()).build();
+  }
+
 }

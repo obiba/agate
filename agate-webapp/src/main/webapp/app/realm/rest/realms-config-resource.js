@@ -16,7 +16,8 @@
       function($resource) {
         return $resource('ws/config/realms', {},
           {
-            'summaries': {url: 'ws/config/realms/summaries', method: 'GET', isArray: true}
+            'create': {url: 'ws/config/realms', method: 'POST', errorHandler: true},
+            'summaries': {url: 'ws/config/realms/summaries', method: 'GET', isArray: true, errorHandler: true}
           });
       }]);
 })();

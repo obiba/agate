@@ -14,10 +14,19 @@
   angular.module('agate.realm')
     .config(['$routeProvider',
       function($routeProvider) {
-        console.log('JJJJ');
         $routeProvider.when('/admin/realms', {
           templateUrl: "app/realm/views/realms.html",
           controller: 'RealmListController'
+        });
+
+        $routeProvider.when('/admin/realm/new', {
+          templateUrl: "app/realm/views/realm-form.html",
+          controller: 'RealmFormController'
+        });
+
+        $routeProvider.when('/admin/realm/:name/edit', {
+          templateUrl: "app/realm/views/realm-form.html",
+          controller: 'RealmFormController'
         });
       }]);
 

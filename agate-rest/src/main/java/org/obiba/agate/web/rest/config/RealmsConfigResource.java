@@ -8,6 +8,7 @@ import org.obiba.agate.web.model.Agate;
 import org.obiba.agate.web.model.Dtos;
 import org.obiba.agate.web.model.RealmConfigDtos;
 import org.obiba.agate.web.rest.user.UserResource;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@Scope("request")
 @Path("/config/realms")
 @RequiresRoles("agate-administrator")
 public class RealmsConfigResource {

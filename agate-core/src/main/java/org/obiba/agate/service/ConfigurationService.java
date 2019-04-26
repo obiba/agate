@@ -35,7 +35,9 @@ import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.LocalizedString;
 import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.repository.AgateConfigRepository;
-import org.obiba.agate.repository.RealmConfigRepository;
+import org.obiba.agate.service.support.JdbcRealmConfigFormBuilder;
+import org.obiba.agate.service.support.LdapRealmConfigFormBuilder;
+import org.obiba.agate.service.support.RealmConfigFormBuilder;
 import org.obiba.core.translator.JsonTranslator;
 import org.obiba.core.translator.PrefixedValueTranslator;
 import org.obiba.core.translator.TranslationUtils;
@@ -69,7 +71,7 @@ public class ConfigurationService {
 
   private final AgateConfigRepository agateConfigRepository;
 
-  private final RealmConfigRepository realmConfigRepository;
+  private final RealmConfigService realmConfigRepository;
 
   private final EventBus eventBus;
 
@@ -84,7 +86,7 @@ public class ConfigurationService {
   @Inject
   public ConfigurationService(
     AgateConfigRepository agateConfigRepository,
-    RealmConfigRepository realmConfigRepository,
+    RealmConfigService realmConfigRepository,
     EventBus eventBus,
     Environment env,
     ApplicationContext applicationContext,
@@ -183,6 +185,25 @@ public class ConfigurationService {
     rval.put("schema", getProfileSchema(config));
     rval.put("definition", getProfileDefinition(config));
     return new TranslationUtils().translate(rval, getTranslator(locale));
+  }
+
+  public JSONObject getRealmFormConfiguration(String locale) throws JSONException {
+    TranslationUtils translationUtils = new TranslationUtils();
+    Translator translator = getTranslator(locale);
+    JSONObject form = new JSONObject();
+    RealmConfig defaultRealm = realmConfigRepository.findDefault();
+
+    form.put("form", translationUtils.translate(RealmConfigFormBuilder.newBuilder(defaultRealm).build(), translator).toString());
+    form.put(
+      AgateRealm.AGATE_LDAP_REALM.getName(),
+      translationUtils.translate(LdapRealmConfigFormBuilder.newBuilder().build(), translator).toString()
+    );
+    form.put(
+      AgateRealm.AGATE_JDBC_REALM.getName(),
+      translationUtils.translate(JdbcRealmConfigFormBuilder.newBuilder().build().toString(), translator)
+    );
+
+    return form;
   }
 
   public JsonNode getUserProfileTranslations(String locale) throws IOException {

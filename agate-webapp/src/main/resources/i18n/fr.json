@@ -8,7 +8,6 @@
     "menu": {
       "admin": "Administration",
       "applications": "Applications",
-      "realms": "Domaines",
       "configuration": "Configuration",
       "groups": "Groupes",
       "requests": "Requêtes en attente",
@@ -25,7 +24,13 @@
     },
     "name": "Nom",
     "type": "Type",
+    "title": "Titre",
     "description": "Description",
+    "status": "Statut",
+    "groups": "Groupes",
+    "realms": "Domaines",
+    "realm":"Domaine",
+    "actions":"Actions",
     "language": {
       "en": "Anglais",
       "fr": "Français",
@@ -471,9 +476,38 @@
     "openid-phone-description": "Permission d'obtenire vtre numéro de téléphone (pas supportée).",
     "openid-address-description": "Permission d'obtenir votre adresse (pas supportée)."
   },
-  "realms": "Domaines",
+  "realms": {
+    "description": "Les domaines énumérés ici fournissent une authentification alternative aux utilisateurs Agate.",
+    "none": "No realms.",
+    "add-realm": "Ajouter un domaine"
+  },
   "realm": {
-  "default": "Le domaine d'Agate",
-  "default-help": "Le domaine d'Agate par défaut pour l'inscriptions et la connexion d'utilisateur."
+    "agate-user-realm": "Le domaine par défaut d'Agate",
+    "agate-ldap-realm": "Le domaine LDAP d'Agate",
+    "agate-jdbc-realm": "Le domaine JDBC d'Agate",
+    "ACTIVE": "Actif",
+    "INACTIVE": "Inactif",
+    "activate": "Activer",
+    "deactivate": "Désactiver",
+    "name-help": "Le nom doit être unique et contenir: des espaces, <code> A-Za-z </ code> <code> 0-9 </ code> <code> -_ </ code>.",
+    "for-signup": "Domaine d'inscription",
+    "default-realm": "Domaine par défaut",
+    "default": "Le domaine d'Agate",
+    "default-help": "Le domaine d'Agate par défaut pour l'inscriptions et la connexion d'utilisateur.",
+    "new-realm": "Nouveau Domaine",
+    "jdbc": {
+      "url": "URL",
+      "username": "Nom d'utilisateur de la base de données",
+      "password": "Mot de passe utilisateur de la base de données",
+      "authentication-query": "Requête d'authentification",
+      "authentication-query-help": "Requête SQL utilisée pour rechercher le mot de passe d'un utilisateur existant."
+    },
+    "ldap": {
+      "url": "URL",
+      "system-username": "Nom de l'utilisateur système",
+      "system-password": "Mot de passe de l'utilisateur système",
+      "user-dn-template": "Le modèle du nom distinctif (DN) de l'utilisateur",
+      "user-dn-template-help": "Ce modèle est utilisé pour rechercher un utilisateur existant sur le serveur LDAP."
+    }
   }
 }

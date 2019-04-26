@@ -64,7 +64,8 @@ public class RealmConfigDtos {
     Agate.RealmConfigSummaryDto.Builder builder = Agate.RealmConfigSummaryDto.newBuilder()
       .setId(config.getId())
       .setName(config.getName())
-      .setType(config.getType().getName());
+      .setType(config.getType().getName())
+      .setStatus(Agate.RealmStatus.valueOf(config.getStatus().toString()));
 
     if(!Strings.isNullOrEmpty(config.getTitle())) builder.setTitle(config.getTitle());
     if(!Strings.isNullOrEmpty(config.getDescription())) builder.setDescription(config.getDescription());

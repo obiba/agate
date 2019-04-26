@@ -12,22 +12,35 @@
 
 (function () {
 
-  function Controller() {
+  function Controller(RealmsConfigResource, RealmConfigResource) {
     var ctrl = this;
 
     function init() {
+      ctrl.realms = RealmsConfigResource.summaries();
     }
 
+    function activateRealm(realm) {
+      (
+        realm.status === 'ACTIVE' ?
+          RealmConfigResource.deactivate({name: realm.name}).$promise :
+          RealmConfigResource.activate({name: realm.name}).$promise
+
+      ).then(init);
+    }
+
+    function deleteRealm(realm) {
+      RealmConfigResource.delete({name: realm.name}).$promise.then(init);
+    }
+
+    ctrl.activateRealm = activateRealm;
+    ctrl.deleteRealm = deleteRealm;
     ctrl.$onInit = init;
   }
 
   angular.module('agate.realm')
     .component('realmsList', {
       transclude: true,
-      bindings: {
-        realms: '<'
-      },
       templateUrl: 'app/realm/components/realms-list/component.html',
-      controller: Controller
+      controller: ['RealmsConfigResource', 'RealmConfigResource', Controller]
     });
 })();

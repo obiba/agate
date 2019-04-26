@@ -8,9 +8,8 @@
     "menu": {
       "admin": "Administration",
       "applications": "Applications",
-      "realms": "Realms",
       "configuration": "Configuration",
-      "groups": "Groups",
+      "groups": "Groupes",
       "requests": "Pending Requests",
       "tickets": "Tickets",
       "users": "Users",
@@ -25,7 +24,13 @@
     },
     "name": "Name",
     "type": "Type",
+    "title": "Title",
     "description": "Description",
+    "status": "Status",
+    "groups": "Groups",
+    "realms": "Realms",
+    "realm":"Realm",
+    "actions":"Actions",
     "language": {
       "en": "English",
       "fr": "French",
@@ -471,9 +476,38 @@
     "openid-phone-description": "Permission to get your phone (not supported).",
     "openid-address-description": "Permission to get your address (not supported)."
   },
-  "realms": "Realms",
+  "realms": {
+    "description": "Realms listed here provide alternative authentication for Agate users.",
+    "none": "No realms.",
+    "add-realm": "Add Realm"
+  },
   "realm": {
+    "agate-user-realm": "Agate Default Realm",
+    "agate-ldap-realm": "Agate LDAP Realm",
+    "agate-jdbc-realm": "Agate JDBC Realm",
+    "ACTIVE": "Active",
+    "INACTIVE": "Inactive",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "name-help": "Name must be unique and contain: spaces, <code>A-Za-z</code> <code>0-9</code> <code>-_</code>.",
+    "for-signup": "Signup Realm",
+    "default-realm": "Default Realm",
     "default": "Agate Realm",
-    "default-help": "The default Agate realm for user sign-up and login."
+    "default-help": "The default Agate realm for user sign-up and login.",
+    "new-realm": "New Realm",
+    "jdbc": {
+      "url": "URL",
+      "username": "DB User Name",
+      "password": "DB User Password",
+      "authentication-query": "Authentication Query",
+      "authentication-query-help": "SQL query used to search an existing user's password."
+    },
+    "ldap": {
+      "url": "URL",
+      "system-username": "System User Name",
+      "system-password": "System User Password",
+      "user-dn-template": "User Distinguished Name (DN) Template",
+      "user-dn-template-help": "This template is used to search an existing user in the LDAP server."
+    }
   }
 }

@@ -196,4 +196,5 @@ message RealmConfigSummaryDto {
   required string type = 3;
   optional string title = 4;
   optional string description = 5;
+  optional RealmStatus status = 6;
 }
