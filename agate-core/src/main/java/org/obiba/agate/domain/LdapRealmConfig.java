@@ -28,8 +28,7 @@ public class LdapRealmConfig {
 
   private String systemPassword;
 
-  private LdapRealmConfig() {
-  }
+  private LdapRealmConfig() { }
 
   public String getUrl() {
     return url;

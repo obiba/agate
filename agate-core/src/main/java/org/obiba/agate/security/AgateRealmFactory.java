@@ -5,12 +5,14 @@ import com.google.common.collect.ImmutableSet;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
+import org.apache.shiro.realm.activedirectory.ActiveDirectoryRealm;
 import org.apache.shiro.realm.jdbc.JdbcRealm;
 import org.apache.shiro.realm.ldap.DefaultLdapRealm;
 import org.apache.shiro.realm.ldap.JndiLdapContextFactory;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.CollectionUtils;
 import org.json.JSONException;
+import org.obiba.agate.domain.ActiveDirectoryRealmConfig;
 import org.obiba.agate.domain.JdbcRealmConfig;
 import org.obiba.agate.domain.LdapRealmConfig;
 import org.obiba.agate.domain.RealmConfig;
@@ -84,9 +86,7 @@ public class AgateRealmFactory {
           realm = ldapRealm;
           break;
         case AGATE_JDBC_REALM:
-          JdbcRealmConfig jdbcConfig =
-            JdbcRealmConfig.newBuilder(configurationService.decrypt(realmConfig.getContent())).build();
-
+          JdbcRealmConfig jdbcConfig = JdbcRealmConfig.newBuilder(configurationService.decrypt(realmConfig.getContent())).build();
           JdbcRealm jdbcRealm = new JdbcRealm() {
             @Override
             protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
@@ -104,6 +104,28 @@ public class AgateRealmFactory {
           jdbcRealm.setPermissionsLookupEnabled(false);
 
           realm = jdbcRealm;
+          break;
+        case AGATE_AD_REALM:
+
+          ActiveDirectoryRealmConfig activeDirectoryRealmConfig = ActiveDirectoryRealmConfig.newBuilder(configurationService.decrypt(realmConfig.getContent())).build();
+          ActiveDirectoryRealm activeDirectoryRealm = new ActiveDirectoryRealm() {
+            @Override
+            protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+              return getUserFromAvailablePrincipal(principals, principals.fromRealm(getName()));
+            }
+          };
+
+          activeDirectoryRealm.setName(realmConfig.getName());
+          activeDirectoryRealm.setUrl(activeDirectoryRealmConfig.getUrl());
+          activeDirectoryRealm.setSystemUsername(activeDirectoryRealmConfig.getSystemUsername());
+          activeDirectoryRealm.setSystemPassword(activeDirectoryRealmConfig.getSystemPassword());
+          activeDirectoryRealm.setSearchFilter(activeDirectoryRealmConfig.getSearchFilter());
+          activeDirectoryRealm.setSearchBase(activeDirectoryRealmConfig.getSearchBase());
+          activeDirectoryRealm.setPrincipalSuffix(activeDirectoryRealmConfig.getPrincipalSuffix());
+          activeDirectoryRealm.setPermissionResolver(new AgatePermissionResolver());
+          activeDirectoryRealm.init();
+
+          realm = activeDirectoryRealm;
           break;
         default:
           throw new RuntimeException("Realm not configurable");

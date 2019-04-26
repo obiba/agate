@@ -28,8 +28,7 @@ public class JdbcRealmConfig {
 
   private String password;
 
-  private JdbcRealmConfig() {
-  }
+  private JdbcRealmConfig() { }
 
   public String getUrl() {
     return url;
