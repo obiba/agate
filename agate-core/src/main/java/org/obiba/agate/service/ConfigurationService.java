@@ -34,6 +34,7 @@ import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.LocalizedString;
 import org.obiba.agate.domain.RealmConfig;
+import org.obiba.agate.domain.RealmStatus;
 import org.obiba.agate.repository.AgateConfigRepository;
 import org.obiba.agate.service.support.JdbcRealmConfigFormBuilder;
 import org.obiba.agate.service.support.LdapRealmConfigFormBuilder;
@@ -262,7 +263,7 @@ public class ConfigurationService {
     LinkedList<String> list = new LinkedList<>();
     list.add(AgateRealm.AGATE_USER_REALM.getName());
     List<RealmConfig> realmConfigs = realmConfigRepository.findAll();
-    realmConfigs.stream().map(RealmConfig::getName).forEach(list::add);
+    realmConfigs.stream().filter(realmConfig -> realmConfig.getStatus().equals(RealmStatus.ACTIVE) && realmConfig.isForSignup()).map(RealmConfig::getName).forEach(list::add);
 
     Optional<RealmConfig> optionalDefaultRealmConfig = realmConfigs.stream().filter(RealmConfig::isDefaultRealm).findFirst();
 
