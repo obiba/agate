@@ -453,7 +453,8 @@
         "not-changed": "Le nouveau mot de passe est le même que le mot de passe actuel"
       },
       "email-already-assigned": "Le courriel '{{arg0}}' est déjà assigné à un autre utilisateur.",
-      "duplicate-key": "L'ID de l'item est en duplicata."
+      "duplicate-key": "L'ID de l'item est en duplicata.",
+      "bad-request": "Requête de serveur incorrecte, veuillez contacter votre administrateur Agate."
     }
   },
   "form-server-error": "Erreur",

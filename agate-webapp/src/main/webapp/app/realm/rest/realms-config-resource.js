@@ -12,12 +12,30 @@
 
 (function() {
   angular.module('agate.realm')
-    .factory('RealmsConfigResource', ['$resource',
-      function($resource) {
+    .factory('RealmsConfigResource', ['$resource', 'LocalizedValues',
+      function($resource, LocalizedValues) {
+
+        function transformRealmForRequest(realm) {
+          delete realm.safeTitle;
+          realm.title = LocalizedValues.objectToArray(realm.title);
+          realm.description = LocalizedValues.objectToArray(realm.description);
+          return JSON.stringify(realm);
+        }
+
         return $resource('ws/config/realms', {},
           {
-            'create': {url: 'ws/config/realms', method: 'POST', errorHandler: true},
-            'summaries': {url: 'ws/config/realms/summaries', method: 'GET', isArray: true, errorHandler: true}
+            'create': {
+              url: 'ws/config/realms',
+              method: 'POST',
+              errorHandler: true,
+              transformRequest: transformRealmForRequest
+            },
+            'summaries': {
+              url: 'ws/config/realms/summaries',
+              method: 'GET',
+              isArray: true,
+              errorHandler: true
+            }
           });
       }]);
 })();

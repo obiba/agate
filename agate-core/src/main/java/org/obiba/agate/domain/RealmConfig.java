@@ -18,9 +18,9 @@ public class RealmConfig extends AbstractAuditableDocument {
   @Indexed(unique = true)
   private String name;
 
-  private String title;
+  private LocalizedString title;
 
-  private String description;
+  private LocalizedString description;
 
   private RealmStatus status = RealmStatus.INACTIVE;
 
@@ -48,19 +48,19 @@ public class RealmConfig extends AbstractAuditableDocument {
     setId(getName().replaceAll("\\s+", "+").toLowerCase());
   }
 
-  public String getTitle() {
+  public LocalizedString getTitle() {
     return title;
   }
 
-  public void setTitle(String title) {
+  public void setTitle(LocalizedString title) {
     this.title = title;
   }
 
-  public String getDescription() {
+  public LocalizedString getDescription() {
     return description;
   }
 
-  public void setDescription(String description) {
+  public void setDescription(LocalizedString description) {
     this.description = description;
   }
 
@@ -93,7 +93,7 @@ public class RealmConfig extends AbstractAuditableDocument {
   }
 
   public boolean isDefaultRealm() {
-    return defaultRealm;
+    return status.equals(RealmStatus.ACTIVE) && defaultRealm;
   }
 
   public void setDefaultRealm(boolean defaultRealm) {
@@ -138,12 +138,12 @@ public class RealmConfig extends AbstractAuditableDocument {
       return this;
     }
 
-    public Builder title(String value) {
+    public Builder title(LocalizedString value) {
       config.setTitle(value);
       return this;
     }
 
-    public Builder description(String value) {
+    public Builder description(LocalizedString value) {
       config.setDescription(value);
       return this;
     }

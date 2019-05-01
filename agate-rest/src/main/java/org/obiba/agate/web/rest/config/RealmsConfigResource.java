@@ -1,13 +1,10 @@
 package org.obiba.agate.web.rest.config;
 
-import java.util.regex.Pattern;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.service.RealmConfigService;
 import org.obiba.agate.web.model.Agate;
 import org.obiba.agate.web.model.Dtos;
-import org.obiba.agate.web.model.RealmConfigDtos;
-import org.obiba.agate.web.rest.user.UserResource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +16,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Component

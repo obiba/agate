@@ -28,7 +28,6 @@
 <p ng-if="loading" class="voffset2 loading">
 </p>
 
-
 <div class="table-responsive">
   <table class="table table-bordered table-striped" obiba-table-sorter="logsHistory">
     <thead>
@@ -42,8 +41,14 @@
     </thead>
     <tbody>
     <tr ng-repeat="realm in $ctrl.realms track by $index">
-      <td><a ng-href="#{{'/admin/realm/' + realm.name +'/edit'}}">{{realm.title || realm.name | translate}}</a></td>
-      <td>{{realm.description | translate}}</td>
+      <td>
+        <a ng-href="#{{'/admin/realm/' + realm.name +'/edit'}}">
+          <localized value="realm.title || realm.name" lang="$ctrl.locale.language" key-lang="lang" key-value="value"></localized>
+        </a>
+      </td>
+      <td>
+        <localized value="realm.description" lang="$ctrl.locale.language" key-lang="lang" key-value="value"></localized>
+      </td>
       <td>{{'realm.' + realm.type | translate}}</td>
       <td>{{'realm.' + realm.status | translate}}</td>
       <td>
@@ -56,6 +61,10 @@
           <li>
             <a href ng-href="#/admin/realm/{{realm.name}}/edit" title="{{'edit' | translate}}"><i
               class="fa fa-pencil"></i></a>
+          </li>
+          <li>
+            <a href ng-href="#/admin/realm/new?from={{realm.name}}" title="{{'edit' | translate}}"><i
+              class="fa fa-copy"></i></a>
           </li>
           <li>
             <a href ng-click="$ctrl.deleteRealm(realm)" title="{{'delete' | translate}}"><i

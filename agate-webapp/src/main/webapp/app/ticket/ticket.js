@@ -13,7 +13,6 @@
 agate.ticket = angular.module('agate.ticket', [
   'agate.config',
   'obiba.form',
-  'agate.localized',
   'obiba.notification',
   'angularMoment',
   'ngResource',

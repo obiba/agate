@@ -12,12 +12,41 @@
 
 (function() {
   angular.module('agate.realm')
-    .factory('RealmConfigResource', ['$resource',
-      function($resource) {
+    .factory('RealmConfigResource', ['$resource', 'LocalizedValues',
+      function($resource, LocalizedValues) {
+
+        function transformRealmFromResponse(response, getResponseHeaderCallBack, status) {
+          if (status < 400) {
+            var realm = JSON.parse(response);
+            realm.title = LocalizedValues.arrayToObject(realm.title);
+            realm.description = LocalizedValues.arrayToObject(realm.description);
+            return realm;
+          }
+
+          return response;
+        }
+
+        function transformRealmForRequest(realm) {
+          delete realm.safeTitle;
+          realm.title = LocalizedValues.objectToArray(realm.title);
+          realm.description = LocalizedValues.objectToArray(realm.description);
+          return JSON.stringify(realm);
+        }
+
         return $resource('ws/config/realm/:name', {},
           {
-            'get': {method: 'GET', params: {name: '@name'}, errorHandler: true},
-            'save': {method: 'PUT', params: {name: '@name'}, errorHandler: true},
+            'get': {
+              method: 'GET',
+              params: {name: '@name'},
+              errorHandler: true,
+              transformResponse: transformRealmFromResponse
+            },
+            'save': {
+              method: 'PUT',
+              params: {name: '@name'},
+              errorHandler: true,
+              transformRequest: transformRealmForRequest
+            },
             'delete': {method: 'DELETE', params: {name: '@name'}, errorHandler: true},
             'activate': {url: 'ws/config/realm/:name/active', method: 'PUT', params: {name: '@name'}, errorHandler: true},
             'deactivate': {url: 'ws/config/realm/:name/active', method: 'DELETE', params: {name: '@name'}, errorHandler: true}

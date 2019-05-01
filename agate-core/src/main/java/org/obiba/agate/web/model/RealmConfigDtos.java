@@ -13,10 +13,12 @@ import javax.validation.constraints.NotNull;
 @Component
 public class RealmConfigDtos {
 
+  private final LocalizedStringDtos localizedStringDtos;
   private final ConfigurationService configurationService;
 
   @Inject
-  public RealmConfigDtos(ConfigurationService configurationService) {
+  public RealmConfigDtos(LocalizedStringDtos localizedStringDtos, ConfigurationService configurationService) {
+    this.localizedStringDtos = localizedStringDtos;
     this.configurationService = configurationService;
   }
 
@@ -32,8 +34,8 @@ public class RealmConfigDtos {
       .addAllGroups(config.getGroups())
       .setContent(ensureSecuredContent(configurationService.decrypt(config.getContent()), config.getType()));
 
-    if(!Strings.isNullOrEmpty(config.getTitle())) builder.setTitle(config.getTitle());
-    if(!Strings.isNullOrEmpty(config.getDescription())) builder.setDescription(config.getDescription());
+    if (config.getTitle() != null) builder.addAllTitle(localizedStringDtos.asDto(config.getTitle()));
+    if (config.getDescription() != null) builder.addAllDescription(localizedStringDtos.asDto(config.getDescription()));
 
     return builder.build();
   }
@@ -52,8 +54,8 @@ public class RealmConfigDtos {
       builder.content(configurationService.encrypt(dto.getContent()));
     }
 
-    if (dto.hasTitle()) builder.title(dto.getTitle());
-    if (dto.hasDescription()) builder.description(dto.getDescription());
+    if (dto.getTitleCount() > 0) builder.title(localizedStringDtos.fromDto(dto.getTitleList()));
+    if (dto.getDescriptionCount() > 0) builder.description(localizedStringDtos.fromDto(dto.getDescriptionList()));
     if (dto.hasStatus()) builder.status(RealmStatus.valueOf(dto.getStatus().name()));
 
     return builder.build();
@@ -67,8 +69,9 @@ public class RealmConfigDtos {
       .setType(config.getType().getName())
       .setStatus(Agate.RealmStatus.valueOf(config.getStatus().toString()));
 
-    if(!Strings.isNullOrEmpty(config.getTitle())) builder.setTitle(config.getTitle());
-    if(!Strings.isNullOrEmpty(config.getDescription())) builder.setDescription(config.getDescription());
+    if (config.getTitle() != null) builder.addAllTitle(localizedStringDtos.asDto(config.getTitle()));
+    if (config.getDescription() != null) builder.addAllDescription(localizedStringDtos.asDto(config.getDescription()));
+
     return builder.build();
   }
 
@@ -78,6 +81,8 @@ public class RealmConfigDtos {
         switch (agateRealm) {
           case AGATE_LDAP_REALM:
             return LdapRealmConfig.newBuilder(content).build().getAsSecuredJSONObject().toString();
+          case AGATE_AD_REALM:
+            return ActiveDirectoryRealmConfig.newBuilder(content).build().getAsSecuredJSONObject().toString();
           case AGATE_JDBC_REALM:
             return JdbcRealmConfig.newBuilder(content).build().getAsSecuredJSONObject().toString();
         }

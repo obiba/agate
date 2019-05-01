@@ -10,7 +10,7 @@ public class LdapRealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
       "      \"type\": \"string\"," +
       "      \"title\": \"t(realm.ldap.url)\"" +
       "    }," +
-      "    \"systemUser\": {" +
+      "    \"systemUsername\": {" +
       "      \"type\": \"string\"," +
       "      \"title\": \"t(realm.ldap.system-username)\"" +
       "    }," +
@@ -38,7 +38,7 @@ public class LdapRealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
       "  \"type\": \"section\"," +
       "  \"items\": [" +
       "      \"url\"," +
-      "      \"systemUser\"," +
+      "      \"systemUsername\"," +
       "      {" +
       "        \"key\": \"systemPassword\"," +
       "        \"type\": \"password\"" +

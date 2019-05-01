@@ -19,6 +19,7 @@ var agate = angular.module('agate', [
   'localytics.directives',
   'agate.config',
   'ngObiba',
+  'agate.localized',
   'agate.admin',
   'agate.application',
   'agate.realm',
@@ -35,16 +36,37 @@ var agate = angular.module('agate', [
   'ui.bootstrap',
   'angularUtils.directives.dirPagination',
   'schemaForm',
+  'sfObibaUiSelect',
+  'sfLocalizedString',
   'obiba.utils',
   'vcRecaptcha',
   'matchMedia'
 ]);
 
 agate
-  .config(['$routeProvider', '$httpProvider', '$translateProvider', '$locationProvider', 'tmhDynamicLocaleProvider', 'USER_ROLES', 'paginationTemplateProvider',
-    function ($routeProvider, $httpProvider, $translateProvider, $locationProvider, tmhDynamicLocaleProvider, USER_ROLES, paginationTemplateProvider) {
+  .config(['$routeProvider',
+    '$httpProvider',
+    '$translateProvider',
+    '$locationProvider',
+    'tmhDynamicLocaleProvider',
+    'USER_ROLES',
+    'paginationTemplateProvider',
+    'AlertBuilderProvider',
+    function ($routeProvider,
+              $httpProvider,
+              $translateProvider,
+              $locationProvider,
+              tmhDynamicLocaleProvider,
+              USER_ROLES,
+              paginationTemplateProvider,
+              AlertBuilderProvider) {
 
       $locationProvider.hashPrefix('');
+
+      AlertBuilderProvider.setMsgKey('global.server-error');
+      AlertBuilderProvider.setAlertId('Application');
+      AlertBuilderProvider.setGrowlId('MainControllerGrowl');
+      AlertBuilderProvider.setModeAlert();
 
       $routeProvider
         .when('/login', {

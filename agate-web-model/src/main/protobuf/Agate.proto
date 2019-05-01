@@ -180,8 +180,8 @@ enum RealmStatus {
 message RealmConfigDto {
   optional string id = 1;
   required string name = 2;
-  optional string title = 3;
-  optional string description = 4;
+  repeated LocalizedStringDto title = 3;
+  repeated LocalizedStringDto description = 4;
   repeated string groups = 5;
   required string type = 6;
   optional bool defaultRealm = 7;
@@ -194,7 +194,7 @@ message RealmConfigSummaryDto {
   optional string id = 1;
   required string name = 2;
   required string type = 3;
-  optional string title = 4;
-  optional string description = 5;
+  repeated LocalizedStringDto title = 4;
+  repeated LocalizedStringDto description = 5;
   optional RealmStatus status = 6;
 }

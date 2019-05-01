@@ -13,7 +13,6 @@
 agate.realm = angular.module('agate.realm', [
   'agate.config',
   'obiba.form',
-  'agate.localized',
   'obiba.notification',
   'ngResource',
   'ngRoute',

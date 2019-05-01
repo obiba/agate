@@ -31,10 +31,10 @@ public class RealmConfigService {
 
   @Inject
   public RealmConfigService(RealmConfigRepository realmConfigRepository,
-                            UserRepository userService,
+                            UserRepository userRepository,
                             GroupService groupService) {
     this.realmConfigRepository = realmConfigRepository;
-    this.userRepository = userService;
+    this.userRepository = userRepository;
     this.groupService = groupService;
   }
 
@@ -42,6 +42,7 @@ public class RealmConfigService {
     assert config != null;
 
     groupService.ensureGroupsByName(config.getGroups());
+    updateConfigForStatus(config);
     RealmConfig saved = config;
 
     if (saved.isNew()) {
@@ -51,10 +52,13 @@ public class RealmConfigService {
 
       // only one can be default realm
       if (config.isDefaultRealm() != saved.isDefaultRealm() && config.isDefaultRealm()) {
-        realmConfigRepository.findAll().stream().filter(realmConfig -> !realmConfig.getName().equals(config.getName())).forEach(realmConfig -> {
-          realmConfig.setDefaultRealm(false);
-          realmConfigRepository.save(realmConfig);
-        });
+        realmConfigRepository.findAll()
+          .stream()
+          .filter(realmConfig -> !realmConfig.getName().equals(config.getName()))
+          .forEach(realmConfig -> {
+            realmConfig.setDefaultRealm(false);
+            realmConfigRepository.save(realmConfig);
+          });
       }
 
       BeanUtils.copyProperties(config, saved, IGNORE_PROPERTIES);
@@ -63,8 +67,22 @@ public class RealmConfigService {
     return realmConfigRepository.save(saved);
   }
 
+  private void updateConfigForStatus(RealmConfig config) {
+    boolean enable = RealmStatus.ACTIVE.equals(config.getStatus());
+    config.setForSignup(enable && config.isForSignup());
+    config.setDefaultRealm(enable && config.isDefaultRealm());
+  }
+
   public List<RealmConfig> findAll() {
     return realmConfigRepository.findAll();
+  }
+
+  public List<RealmConfig> findAllRealmsForSignup() {
+    return realmConfigRepository.findAllByStatusAndForSignupTrue(RealmStatus.ACTIVE);
+  }
+
+  public List<RealmConfig> findAllByStatus(RealmStatus status) {
+    return realmConfigRepository.findAllByStatus(status);
   }
 
   public RealmConfig findConfig(@NotNull String name) {

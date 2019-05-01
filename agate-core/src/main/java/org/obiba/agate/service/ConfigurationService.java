@@ -34,7 +34,6 @@ import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.LocalizedString;
 import org.obiba.agate.domain.RealmConfig;
-import org.obiba.agate.domain.RealmStatus;
 import org.obiba.agate.repository.AgateConfigRepository;
 import org.obiba.agate.service.support.JdbcRealmConfigFormBuilder;
 import org.obiba.agate.service.support.LdapRealmConfigFormBuilder;
@@ -72,7 +71,7 @@ public class ConfigurationService {
 
   private final AgateConfigRepository agateConfigRepository;
 
-  private final RealmConfigService realmConfigRepository;
+  private final RealmConfigService realmConfigService;
 
   private final EventBus eventBus;
 
@@ -87,13 +86,13 @@ public class ConfigurationService {
   @Inject
   public ConfigurationService(
     AgateConfigRepository agateConfigRepository,
-    RealmConfigService realmConfigRepository,
+    RealmConfigService realmConfigService,
     EventBus eventBus,
     Environment env,
     ApplicationContext applicationContext,
     ObjectMapper objectMapper) {
     this.agateConfigRepository = agateConfigRepository;
-    this.realmConfigRepository = realmConfigRepository;
+    this.realmConfigService = realmConfigService;
     this.eventBus = eventBus;
     this.env = env;
     this.applicationContext = applicationContext;
@@ -168,7 +167,7 @@ public class ConfigurationService {
     Configuration config = getConfiguration();
     JSONObject rval = new JSONObject();
     rval.put("schema", getJoinSchema(config));
-    rval.put("definition", getJoinDefinition(config));
+    rval.put("definition", getJoinDefinition(config, locale));
 
     return new TranslationUtils().translate(rval, getTranslator(locale));
   }
@@ -184,7 +183,7 @@ public class ConfigurationService {
     Configuration config = getConfiguration();
     JSONObject rval = new JSONObject();
     rval.put("schema", getProfileSchema(config));
-    rval.put("definition", getProfileDefinition(config));
+    rval.put("definition", getProfileDefinition(config, locale));
     return new TranslationUtils().translate(rval, getTranslator(locale));
   }
 
@@ -192,7 +191,7 @@ public class ConfigurationService {
     TranslationUtils translationUtils = new TranslationUtils();
     Translator translator = getTranslator(locale);
     JSONObject form = new JSONObject();
-    RealmConfig defaultRealm = realmConfigRepository.findDefault();
+    RealmConfig defaultRealm = realmConfigService.findDefault();
 
     form.put("form", translationUtils.translate(RealmConfigFormBuilder.newBuilder(defaultRealm).build(), translator).toString());
     form.put(
@@ -233,8 +232,8 @@ public class ConfigurationService {
     return getUserFormSchema(config, config.isJoinWithUsername());
   }
 
-  private JSONArray getJoinDefinition(Configuration config) throws JSONException, IOException {
-    return getUserFormDefinition(config, applicationContext.getResource("classpath:join/formDefinition.json"),
+  private JSONArray getJoinDefinition(Configuration config, String locale) throws JSONException, IOException {
+    return getUserFormDefinition(config, locale, applicationContext.getResource("classpath:join/formDefinition.json"),
       config.isJoinWithUsername());
   }
 
@@ -242,8 +241,8 @@ public class ConfigurationService {
     return getUserFormSchema(config, false);
   }
 
-  private JSONArray getProfileDefinition(Configuration config) throws JSONException, IOException {
-    return getUserFormDefinition(config, applicationContext.getResource("classpath:profile/formDefinition.json"), false);
+  private JSONArray getProfileDefinition(Configuration config, String locale) throws JSONException, IOException {
+    return getUserFormDefinition(config, locale, applicationContext.getResource("classpath:profile/formDefinition.json"), false);
   }
 
   private JSONObject getUserFormSchema(Configuration config, boolean withUsername) throws JSONException, IOException {
@@ -262,14 +261,13 @@ public class ConfigurationService {
 
     LinkedList<String> list = new LinkedList<>();
     list.add(AgateRealm.AGATE_USER_REALM.getName());
-    List<RealmConfig> realmConfigs = realmConfigRepository.findAll();
-    realmConfigs.stream().filter(realmConfig -> realmConfig.getStatus().equals(RealmStatus.ACTIVE) && realmConfig.isForSignup()).map(RealmConfig::getName).forEach(list::add);
+    realmConfigService.findAllRealmsForSignup().stream().map(RealmConfig::getName).forEach(list::add);
 
-    Optional<RealmConfig> optionalDefaultRealmConfig = realmConfigs.stream().filter(RealmConfig::isDefaultRealm).findFirst();
+    Optional<RealmConfig> defaultRealm = Optional.ofNullable(realmConfigService.findDefault());
 
     properties.put("realm", newSchemaProperty("string", "t(user.realm)")
       .put("enum", list)
-      .put("default", optionalDefaultRealmConfig.isPresent() ? optionalDefaultRealmConfig.get().getName() : AgateRealm.AGATE_USER_REALM.getName()));
+      .put("default", defaultRealm.isPresent() ? defaultRealm.get().getName() : AgateRealm.AGATE_USER_REALM.getName()));
     properties.put("firstname", newSchemaProperty("string", "t(user.firstName)"));
     properties.put("lastname", newSchemaProperty("string", "t(user.lastName)"));
 
@@ -307,7 +305,7 @@ public class ConfigurationService {
     return schema;
   }
 
-  private JSONArray getUserFormDefinition(Configuration config, Resource formDefinitionResource, boolean withUsername)
+  private JSONArray getUserFormDefinition(Configuration config, String locale, Resource formDefinitionResource, boolean withUsername)
     throws JSONException, IOException {
     if(formDefinitionResource != null && formDefinitionResource.exists()) {
       JSONArray def = new JSONArray(IOUtils.toString(formDefinitionResource.getInputStream()));
@@ -337,9 +335,9 @@ public class ConfigurationService {
     JSONObject realmTitleMap = new JSONObject();
     realmTitleMap.put(AgateRealm.AGATE_USER_REALM.getName(), "t(realm.default)");
 
-    realmConfigRepository.findAll().forEach(realmConfig -> {
+    realmConfigService.findAllRealmsForSignup().forEach(realmConfig -> {
       try {
-        realmTitleMap.put(realmConfig.getName(), "t(" + realmConfig.getTitle() + ")");
+        realmTitleMap.put(realmConfig.getName(), realmConfig.getTitle().get(locale));
       } catch (JSONException e) {
         //
       }

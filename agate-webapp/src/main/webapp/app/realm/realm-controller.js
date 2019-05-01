@@ -13,10 +13,13 @@
 (function() {
 
   angular.module('agate.realm')
-    .controller('RealmListController',
-      function() {
+    .controller('RealmListController', ['$rootScope', '$scope',
+      function($rootScope, $scope) {
+        $rootScope.$on('$translateChangeSuccess', function (event, locale) {
+          $scope.locale = locale;
+        });
       }
-    )
+    ])
 
     .controller('RealmFormController',
       ['$rootScope', '$scope', '$routeParams', '$translate', '$location',

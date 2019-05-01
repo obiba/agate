@@ -5,6 +5,7 @@ import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.domain.RealmStatus;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,25 +32,25 @@ public class RealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
       "        \"description\": \"t(realm.name-help)\"" +
       "      }," +
       "      \"title\": {" +
-      "        \"type\": \"string\"," +
+      "        \"type\": \"object\"," +
+      "        \"format\": \"localizedString\"," +
       "        \"title\": \"t(global.title)\"" +
       "      }," +
       "      \"description\": {" +
-      "        \"type\": \"string\"," +
+      "        \"type\": \"object\"," +
+      "        \"format\": \"localizedString\"," +
       "        \"title\": \"t(global.description)\"" +
       "      }," +
       "      \"status\": {" +
       "        \"type\": \"string\"," +
       "        \"title\": \"t(global.status)\"," +
+      "        \"default\": '" + RealmStatus.INACTIVE + "'," +
       "        \"enum\": " + getStatusEnum() +
       "      }," +
       "      \"groups\": {" +
       "        \"title\": \"t(global.groups)\"," +
       "        \"type\": \"array\"," +
-      "        \"items\": {" +
-      "          \"type\": \"string\"," +
-      "          \"title\": \" \"" +
-      "        }" +
+      "        \"format\": \"obibaUiSelect\"" +
       "      }," +
       "      \"type\": {" +
       "        \"type\": \"string\"," +
@@ -73,30 +74,40 @@ public class RealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
       "  }";
 
     formDefinition = "[" +
+      "  \"name\"," +
       "  {" +
-      "      \"type\": \"section\"," +
-      "      \"items\": [" +
-      "        \"name\"" +
-      "      ]" +
-      "    }," +
-      "    \"title\"," +
-      "    \"description\"," +
-      "    \"status\"," +
-      "    {" +
-      "      \"key\": \"type\"," +
-      "      \"type\": \"select\"," +
-      "      \"titleMap\": " + getTypeTitleMap(realmTypes) +
-      "    }," +
-      "    \"defaultRealm\"," +
-      "    \"forSignup\"," +
-      "    {" +
-      "      \"key\": \"groups\"," +
-      "      \"add\": \"t(group.add)\"," +
-      "      \"style\": {" +
-      "        \"add\" : \"btn btn-info btn-sm btn-plus\"" +
-      "      }" +
-      "    }" +
-      "  ]";
+      "    \"key\": \"title\"," +
+      "    \"type\": \"localizedstring\"" +
+      "  }," +
+      "  {" +
+      "    \"key\": \"description\"," +
+      "    \"type\": \"localizedstring\"," +
+      "    \"rows\": 3," +
+      "    \"marked\": true" +
+      "  }," +
+      "  {" +
+      "    \"key\": \"status\"," +
+      "    \"type\": \"select\"" +
+      "  }," +
+      "  {" +
+      "    \"key\": \"type\"," +
+      "    \"type\": \"select\"," +
+      "    \"titleMap\": " + getTypeTitleMap(realmTypes) +
+      "  }," +
+      "  {" +
+      "    \"key\": \"defaultRealm\"," +
+      "    \"condition\": \"model.status === 'ACTIVE'\"" +
+      "  }," +
+      "  {" +
+      "    \"key\": \"forSignup\"," +
+      "    \"condition\": \"model.status === 'ACTIVE'\"" +
+      "  }," +
+      "  {" +
+      "    \"key\": \"groups\"," +
+      "    \"type\": \"obibaUiSelect\"," +
+      "    \"multiple\": \"true\"" +
+      "  }" +
+      "]";
   }
 
   private String getDefaultType(RealmConfig defaultRealm, List<String> realmTypes) {
@@ -118,6 +129,20 @@ public class RealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
         {
           put("value", type);
           put("name", String.format("t(realm.%s)", type));
+        }
+      })
+      .collect(Collectors.toList());
+
+    return new JSONArray(realms).toString();
+  }
+
+  private String getStatusTitleMap(List<String> statusList) {
+    List<Map<String, String>> realms =
+      statusList.stream().map(status ->
+        new HashMap<String, String>() {
+        {
+          put("value", status);
+          put("name", status);
         }
       })
       .collect(Collectors.toList());

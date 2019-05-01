@@ -51,6 +51,18 @@ public class ActiveDirectoryRealmConfig {
     return principalSuffix;
   }
 
+  public JSONObject getAsSecuredJSONObject() throws JSONException {
+    JSONObject jsonObject = new JSONObject();
+    jsonObject.put(URL_FIELD, url);
+    jsonObject.put(SYSTEM_USERNAME_FIELD, systemUsername);
+    jsonObject.put(SYSTEM_PASSWORD_FIELD, "");
+    jsonObject.put(SEARCH_FILTER_FIELD, searchFilter);
+    jsonObject.put(SEARCH_BASE_FIELD, searchBase);
+    jsonObject.put(PRINCIPAL_SUFFIX_FIELD, principalSuffix);
+
+    return jsonObject;
+  }
+
   public static Builder newBuilder(String content) throws JSONException {
     return newBuilder(new JSONObject(content));
   }

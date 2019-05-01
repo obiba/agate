@@ -13,18 +13,16 @@
     <li><a href="#/admin" translate>global.menu.admin</a></li>
     <li><a href="#/admin/realms" translate>global.realms</a></li>
     <li class="active">
-      <span ng-if="$ctrl.model.id">{{$ctrl.model.title || $ctrl.model.name}}</span>
+      <span ng-if="$ctrl.model.id">{{$ctrl.model.title[$ctrl.locale.language] || $ctrl.model.name}}</span>
       <span ng-if="!$ctrl.model.id" translate>realm.new-realm</span>
     </li>
   </ol>
 </h2>
 
-<pre>{{$ctrl.model|json}}</pre>
-
 <div class="row">
   <div class="col-sm-6">
     <form id="main-form" name="$ctrl.form.main">
-      <div sf-model="$ctrl.model" sf-form="$ctrl.main.definition" sf-schema="$ctrl.main.schema"></div>
+      <div sf-model="$ctrl.model" sf-form="$ctrl.main.definition" sf-schema="$ctrl.main.schema" sf-options="$ctrl.sfOptions"></div>
     </form>
   </div>
   <div class="col-sm-6">

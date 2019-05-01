@@ -12,10 +12,11 @@
 
 (function () {
 
-  function Controller(RealmsConfigResource, RealmConfigResource) {
+  function Controller($translate, RealmsConfigResource, RealmConfigResource) {
     var ctrl = this;
 
     function init() {
+      ctrl.realms = RealmsConfigResource.summaries();
       ctrl.realms = RealmsConfigResource.summaries();
     }
 
@@ -40,7 +41,10 @@
   angular.module('agate.realm')
     .component('realmsList', {
       transclude: true,
+      bindings: {
+        locale: '<'
+      },
       templateUrl: 'app/realm/components/realms-list/component.html',
-      controller: ['RealmsConfigResource', 'RealmConfigResource', Controller]
+      controller: ['$translate', 'RealmsConfigResource', 'RealmConfigResource', Controller]
     });
 })();

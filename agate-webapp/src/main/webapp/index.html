@@ -121,6 +121,11 @@
   </div>
 
   <obiba-alert id="Application"></obiba-alert>
+
+  <div class="alert-growl-container">
+    <obiba-alert id="ApplicationGrowl"></obiba-alert>
+  </div>
+
   <div ng-controller="NotificationController"></div>
 
   <div ng-view=""></div>
@@ -188,10 +193,13 @@
 <script src="bower_components/angular-media-queries/match-media.js"></script>
 <script src="bower_components/es6-shim/es6-shim.js"></script>
 <script src="bower_components/obiba-shims/dist/obiba-shims.min.js"></script>
+<script src="bower_components/sf-obiba-ui-select/dist/sf-obiba-ui-select.js"></script>
+<script src="bower_components/sf-localized-string/dist/sf-localized-string.js"></script>
 <!-- endbower -->
 <script src="app/http-auth-interceptor.js"></script>
 <script src="app/app.js"></script>
 <script src="app/controllers.js"></script>
+<script src="app/services.js"></script>
 <script src="app/services.js"></script>
 <script src="app/directives.js"></script>
 <script src="app/admin/admin.js"></script>
@@ -202,6 +210,7 @@
 <script src="app/config/config-controller.js"></script>
 <script src="app/config/config-service.js"></script>
 <script src="app/commons/localized/localized.js"></script>
+<script src="app/commons/localized/localized-service.js"></script>
 <script src="app/commons/localized/localized-directives.js"></script>
 <script src="app/commons/password-modal/password-modal.js"></script>
 <script src="app/commons/password-modal/password-modal-directive.js"></script>

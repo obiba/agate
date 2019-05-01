@@ -30,6 +30,7 @@ import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
 import org.apache.shiro.util.LifecycleUtils;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
+import org.obiba.agate.domain.RealmStatus;
 import org.obiba.agate.service.RealmConfigService;
 import org.obiba.agate.service.UserService;
 import org.obiba.shiro.SessionStorageEvaluator;
@@ -105,7 +106,12 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
   private SessionsSecurityManager doCreateSecurityManager() {
     Builder<Realm> realmsBuilder = ImmutableList.<Realm>builder().addAll(realms);
 
-    List<AuthorizingRealm> authorizingRealms = realmConfigService.findAll().stream().map(agateRealmFactory::build).collect(Collectors.toList());
+    List<AuthorizingRealm> authorizingRealms =
+      realmConfigService.findAllByStatus(RealmStatus.ACTIVE)
+        .stream()
+        .map(agateRealmFactory::build)
+        .collect(Collectors.toList());
+
     if (authorizingRealms.size() > 0) realmsBuilder.addAll(authorizingRealms);
 
     DefaultWebSecurityManager manager = new DefaultWebSecurityManager(realmsBuilder.build());
