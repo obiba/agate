@@ -101,6 +101,14 @@ message UserDto {
   optional string preferredLanguage = 15;
 }
 
+message UserSummaryDto {
+  optional string id = 1;
+  required string name = 2;
+  optional string firstName = 3;
+  optional string lastName = 4;
+  required string email = 5;
+}
+
 message GroupApplicationDto {
   required string group = 1;
   required string application = 2;
@@ -188,6 +196,7 @@ message RealmConfigDto {
   optional bool forSignup = 8;
   optional RealmStatus status = 9;
   required string content = 10;
+  repeated UserSummaryDto users = 11;
 }
 
 message RealmConfigSummaryDto {

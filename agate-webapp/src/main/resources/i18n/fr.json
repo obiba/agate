@@ -7,12 +7,8 @@
     "browsehappy": "Votre navigateur web est <strong>obselète</strong>. S'il-vous-plaît <a href=\"http://browsehappy.com/\">actuliser votre navigateur</a> pour améliorer votre expérience.",
     "menu": {
       "admin": "Administration",
-      "applications": "Applications",
       "configuration": "Configuration",
-      "groups": "Groupes",
       "requests": "Requêtes en attente",
-      "tickets": "Tickets",
-      "users": "Utilisateurs",
       "myProfile": "Mon profil",
       "logout": "Déconnection",
       "account": {
@@ -27,7 +23,10 @@
     "title": "Titre",
     "description": "Description",
     "status": "Statut",
+    "applications": "Applications",
     "groups": "Groupes",
+    "tickets": "Tickets",
+    "users": "Utilisateurs",
     "realms": "Domaines",
     "realm":"Domaine",
     "actions":"Actions",
@@ -49,7 +48,8 @@
     "help": {
       "general": "Configurer les propriétés.",
       "style": "Remplacer le style par défaut avec votre propre style.",
-      "translations": "Gérer les traductions des libellés."
+      "translations": "Gérer les traductions des libellés.",
+      "realms": "Gérer les domaines d'authentification externes."
     }
   },
   "login": {
@@ -496,6 +496,9 @@
     "default": "Le domaine d'Agate",
     "default-help": "Le domaine d'Agate par défaut pour l'inscriptions et la connexion d'utilisateur.",
     "new-realm": "Nouveau Domaine",
+    "users-help": "Liste des utilisateurs authentifiés par ce domaine.",
+    "users-none": "Aucun utilisateur n'est authentifié par ce domaine.",
+    "restart": "Le redémarrage du système est requis pour que les modifications de domaine prennent effet.",
     "jdbc": {
       "url": "URL",
       "username": "Nom d'utilisateur de la base de données",

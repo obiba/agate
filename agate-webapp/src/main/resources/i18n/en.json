@@ -7,12 +7,8 @@
     "browsehappy": "You are using an <strong>outdated</strong> browser. Please <a href=\"http://browsehappy.com/\">upgrade your browser</a> to improve your experience.",
     "menu": {
       "admin": "Administration",
-      "applications": "Applications",
       "configuration": "Configuration",
-      "groups": "Groupes",
       "requests": "Pending Requests",
-      "tickets": "Tickets",
-      "users": "Users",
       "myProfile": "My Profile",
       "logout": "Sign Out",
       "account": {
@@ -27,7 +23,10 @@
     "title": "Title",
     "description": "Description",
     "status": "Status",
+    "applications": "Applications",
     "groups": "Groups",
+    "tickets": "Tickets",
+    "users": "Users",
     "realms": "Realms",
     "realm":"Realm",
     "actions":"Actions",
@@ -49,7 +48,8 @@
     "help": {
       "general": "Configure server properties.",
       "style": "Override the default style with your own stylesheet.",
-      "translations": "Manage labels translations."
+      "translations": "Manage labels translations.",
+      "realms": "Manage external authentication realms."
     }
   },
   "login": {
@@ -497,6 +497,9 @@
     "default": "Agate Realm",
     "default-help": "The default Agate realm for user sign-up and login.",
     "new-realm": "New Realm",
+    "users-help": "List of users authenticated by this realm.",
+    "users-none": "No users are authenticated by this realm.",
+    "restart": "System restart is required for realm changes to take effect.",
     "jdbc": {
       "url": "URL",
       "username": "DB User Name",

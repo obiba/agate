@@ -24,6 +24,11 @@
           controller: 'RealmFormController'
         });
 
+        $routeProvider.when('/admin/realm/:name', {
+          templateUrl: "app/realm/views/realm-view.html",
+          controller: 'RealmViewController'
+        });
+
         $routeProvider.when('/admin/realm/:name/edit', {
           templateUrl: "app/realm/views/realm-form.html",
           controller: 'RealmFormController'

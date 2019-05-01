@@ -66,6 +66,11 @@ public class Dtos {
   }
 
   @NotNull
+  public Agate.UserSummaryDto asSummaryDto(@NotNull User user) {
+    return userDtos.asSummaryDto(user);
+  }
+
+  @NotNull
   public AuthDtos.SubjectDto asDto(@NotNull User user, boolean withAttributes) {
     return userDtos.asDto(user, withAttributes);
   }
@@ -115,8 +120,13 @@ public class Dtos {
   }
 
   @NotNull
+  public Agate.RealmConfigDto.Builder asDtoBuilder(RealmConfig config) {
+    return realmConfigDtos.asDtoBuilder(config);
+  }
+
+  @NotNull
   public Agate.RealmConfigDto asDto(RealmConfig config) {
-    return realmConfigDtos.asDto(config);
+    return realmConfigDtos.asDtoBuilder(config).build();
   }
 
   @NotNull

@@ -23,7 +23,7 @@ public class RealmConfigDtos {
   }
 
   @NotNull
-  RealmConfigDto asDto(RealmConfig config) {
+  RealmConfigDto.Builder asDtoBuilder(RealmConfig config) {
     RealmConfigDto.Builder builder = RealmConfigDto.newBuilder()
       .setId(config.getId())
       .setName(config.getName())
@@ -37,7 +37,7 @@ public class RealmConfigDtos {
     if (config.getTitle() != null) builder.addAllTitle(localizedStringDtos.asDto(config.getTitle()));
     if (config.getDescription() != null) builder.addAllDescription(localizedStringDtos.asDto(config.getDescription()));
 
-    return builder.build();
+    return builder;
   }
 
   @NotNull

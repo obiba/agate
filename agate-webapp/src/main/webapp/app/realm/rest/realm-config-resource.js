@@ -48,6 +48,7 @@
               transformRequest: transformRealmForRequest
             },
             'delete': {method: 'DELETE', params: {name: '@name'}, errorHandler: true},
+            'users': {url: 'ws/config/realm/:name/users', method: 'GET', params: {name: '@name'}, errorHandler: true},
             'activate': {url: 'ws/config/realm/:name/active', method: 'PUT', params: {name: '@name'}, errorHandler: true},
             'deactivate': {url: 'ws/config/realm/:name/active', method: 'DELETE', params: {name: '@name'}, errorHandler: true}
           });

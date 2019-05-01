@@ -42,7 +42,7 @@
     <tbody>
     <tr ng-repeat="realm in $ctrl.realms track by $index">
       <td>
-        <a ng-href="#{{'/admin/realm/' + realm.name +'/edit'}}">
+        <a ng-href="#{{'/admin/realm/' + realm.name}}">
           <localized value="realm.title || realm.name" lang="$ctrl.locale.language" key-lang="lang" key-value="value"></localized>
         </a>
       </td>
@@ -55,8 +55,9 @@
         <ul class="list-inline">
           <li>
             <a href ng-click="$ctrl.activateRealm(realm)"
-               title="{{'realm.' + (realm.status === 'ACTIVE' ? 'activate' : 'deactivate') | translate}}"><i
-              class="fa" ng-class="{'fa-times': realm.status === 'ACTIVE', 'fa-check': realm.status === 'INACTIVE'}"></i></a>
+               title="{{'realm.' + (realm.status === 'ACTIVE' ? 'deactivate' : 'activate') | translate}}"><i
+              class="fa" ng-class="{'fa-times': realm.status === 'ACTIVE', 'fa-check': realm.status === 'INACTIVE'}"></i>
+            </a>
           </li>
           <li>
             <a href ng-href="#/admin/realm/{{realm.name}}/edit" title="{{'edit' | translate}}"><i

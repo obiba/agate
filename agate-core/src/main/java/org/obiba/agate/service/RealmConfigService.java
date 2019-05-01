@@ -136,6 +136,10 @@ public class RealmConfigService {
     realmConfigRepository.save(config);
   }
 
+  public List<User> getUsers(String name) {
+    return userRepository.findAll().stream().filter(user -> user.getRealm().equals(name)).collect(Collectors.toList());
+  }
+
   public List<String> getUsernames(String name) {
     return userRepository.findAll().stream().map(User::getRealm).filter(name::equals).collect(Collectors.toList());
   }

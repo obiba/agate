@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Path("/config/realm/{name}")
 public class RealmConfigResource {
@@ -24,14 +25,17 @@ public class RealmConfigResource {
   }
 
   @GET
-  public Agate.RealmConfigDto get(@PathParam("name") String name) {
-    return dtos.asDto(realmConfigService.getConfig(name));
+  public Agate.RealmConfigDto get(@PathParam("name") String name,
+                                  @QueryParam("includeUsers") @DefaultValue("false") boolean includeUsers) {
+    Agate.RealmConfigDto.Builder builder = dtos.asDtoBuilder(realmConfigService.getConfig(name));
+    if (includeUsers) builder.addAllUsers(getUsers(name));
+    return builder.build();
   }
 
   @GET
-  @Path("/usernames")
-  public List<String> getUsernames(@PathParam("name") String name) {
-    return realmConfigService.getUsernames(name);
+  @Path("/users")
+  public List<Agate.UserSummaryDto> getUsers(@PathParam("name") String name) {
+    return realmConfigService.getUsers(name).stream().map(dtos::asSummaryDto).collect(Collectors.toList());
   }
 
   @PUT

@@ -16,6 +16,7 @@
                       $scope,
                       $filter,
                       $location,
+                      $timeout,
                       ConfigurationResource,
                       RealmConfigFormResource,
                       RealmsConfigResource,
@@ -167,6 +168,7 @@
 
         (ctrl.model.id ? RealmConfigResource.save(ctrl.model).$promise : RealmsConfigResource.create(ctrl.model).$promise)
           .then(function() {
+            AlertBuilder.newBuilder().type('success').trMsg('realm.restart', []).build();
             ctrl.onSave({});
           });
       }
@@ -181,6 +183,7 @@
     '$scope',
     '$filter',
     '$location',
+    '$timeout',
     'ConfigurationResource',
     'RealmConfigFormResource',
     'RealmsConfigResource',
