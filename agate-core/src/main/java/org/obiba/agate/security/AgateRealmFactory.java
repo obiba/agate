@@ -2,6 +2,8 @@ package org.obiba.agate.security;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
@@ -73,7 +75,7 @@ public class AgateRealmFactory {
             }
           };
 
-          JndiLdapContextFactory jndiLdapContextFactory = createLdapContextFactory(realmConfig.getName(), ldapConfig);
+          JndiLdapContextFactory jndiLdapContextFactory = createLdapContextFactory(realmConfig.getName(), ldapConfig.getUrl(), ldapConfig.getSystemUsername(), ldapConfig.getSystemPassword());
 
           if (jndiLdapContextFactory == null) throw new RuntimeException("Realm [" + realmConfig.getName() + "] not configurable");
 
@@ -116,9 +118,10 @@ public class AgateRealmFactory {
           };
 
           activeDirectoryRealm.setName(realmConfig.getName());
-          activeDirectoryRealm.setUrl(activeDirectoryRealmConfig.getUrl());
-          activeDirectoryRealm.setSystemUsername(activeDirectoryRealmConfig.getSystemUsername());
-          activeDirectoryRealm.setSystemPassword(activeDirectoryRealmConfig.getSystemPassword());
+
+          JndiLdapContextFactory ldapContextFactory = createLdapContextFactory(realmConfig.getName(), activeDirectoryRealmConfig.getUrl(), activeDirectoryRealmConfig.getSystemUsername(), activeDirectoryRealmConfig.getSystemPassword());
+
+          activeDirectoryRealm.setLdapContextFactory(ldapContextFactory);
           activeDirectoryRealm.setSearchFilter(activeDirectoryRealmConfig.getSearchFilter());
           activeDirectoryRealm.setSearchBase(activeDirectoryRealmConfig.getSearchBase());
           activeDirectoryRealm.setPrincipalSuffix(activeDirectoryRealmConfig.getPrincipalSuffix());
@@ -137,10 +140,8 @@ public class AgateRealmFactory {
     return realm;
   }
 
-  private JndiLdapContextFactory createLdapContextFactory(String configName, LdapRealmConfig content) {
+  private JndiLdapContextFactory createLdapContextFactory(String configName, String url, String systemUsername, String systemPassword) {
     JndiLdapContextFactory jndiLdapContextFactory = new JndiLdapContextFactory();
-
-    String url = content.getUrl();
 
     if (Strings.isNullOrEmpty(url)) {
       logger.error("Validation failed for {}; No url", configName);
@@ -148,8 +149,16 @@ public class AgateRealmFactory {
     }
 
     jndiLdapContextFactory.setUrl(url);
-    jndiLdapContextFactory.setSystemUsername(content.getSystemUsername());
-    jndiLdapContextFactory.setSystemPassword(content.getSystemPassword());
+    jndiLdapContextFactory.setSystemUsername(systemUsername);
+    jndiLdapContextFactory.setSystemPassword(systemPassword);
+
+    Map environment = jndiLdapContextFactory.getEnvironment();
+    if (environment == null) {
+      environment = new HashMap();
+    }
+
+    environment.put("com.sun.jndi.ldap.connect.timeout", "1000");
+    environment.put("com.sun.jndi.ldap.read.timeout", "1000");
 
     return jndiLdapContextFactory;
   }
