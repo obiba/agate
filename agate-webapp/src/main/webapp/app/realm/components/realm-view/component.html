@@ -41,10 +41,6 @@
             <td><span>{{'realm.' + $ctrl.realm.status | translate}}</span></td>
           </tr>
           <tr>
-            <th translate>global.type</th>
-            <td><span>{{'realm.' + $ctrl.realm.type | translate}}</span></td>
-          </tr>
-          <tr>
             <th translate>realm.default-realm</th>
             <td><span><i class="fa" ng-class="{'fa-check': $ctrl.realm.defaultRealm, 'fa-times': !$ctrl.realm.defaultRealm}"></i></span></td>
           </tr>
@@ -53,6 +49,62 @@
             <td><span><i class="fa" ng-class="{'fa-check': $ctrl.realm.forSignup, 'fa-times': !$ctrl.realm.forSignup}"></i></span></td>
           </tr>
         </tbody>
+      </table>
+
+      <h3 translate>{{'realm.' + $ctrl.realm.type | translate}}</h3>
+      <table class="table table-bordered table-striped">
+
+        <tbody ng-if="$ctrl.realm.type === 'agate-ldap-realm'">
+        <tr>
+          <th translate>realm.ldap.url</th>
+          <td>{{$ctrl.realm.content.url}}</td>
+        </tr>
+        <tr>
+          <th translate>realm.ldap.system-username</th>
+          <td>{{$ctrl.realm.content.systemUsername}}</td>
+        </tr>
+        <tr>
+          <th translate>realm.ldap.user-dn-template</th>
+          <td>{{$ctrl.realm.content.userDnTemplate}}</td>
+        </tr>
+        </tbody>
+        <tbody ng-if="$ctrl.realm.type === 'agate-jdbc-realm'">
+        <tr>
+          <th translate>realm.jdbc.url</th>
+          <td>{{$ctrl.realm.content.url}}</td>
+        </tr>
+        <tr>
+          <th translate>realm.jdbc.username</th>
+          <td>{{$ctrl.realm.content.username}}</td>
+        </tr>
+        <tr>
+          <th translate>realm.jdbc.authentication-query</th>
+          <td>{{$ctrl.realm.content.authenticationQuery}}</td>
+        </tr>
+        </tbody>
+        <tbody ng-if="$ctrl.realm.type === 'agate-ad-realm'">
+        <tr>
+          <th translate>realm.ad.url</th>
+          <td>{{$ctrl.realm.content.url}}</td>
+        </tr>
+        <tr>
+          <th translate>realm.ad.system-username</th>
+          <td>{{$ctrl.realm.content.systemUsername}}</td>
+        </tr>
+        <tr>
+          <th translate>realm.ad.search-filter</th>
+          <td>{{$ctrl.realm.content.searchFilter}}</td>
+        </tr>
+        <tr>
+          <th translate>realm.ad.search-base</th>
+          <td>{{$ctrl.realm.content.searchBase}}</td>
+        </tr>
+        <tr>
+          <th translate>realm.ad.principal-suffix</th>
+          <td>{{$ctrl.realm.content.principalSuffix}}</td>
+        </tr>
+        </tbody>
+
       </table>
 
       <div>

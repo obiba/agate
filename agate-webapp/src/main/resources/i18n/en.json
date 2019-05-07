@@ -28,8 +28,8 @@
     "tickets": "Tickets",
     "users": "Users",
     "realms": "Realms",
-    "realm":"Realm",
-    "actions":"Actions",
+    "realm": "Realm",
+    "actions": "Actions",
     "language": {
       "en": "English",
       "fr": "French",
@@ -221,11 +221,11 @@
       "addAttribute": "Add attribute",
       "editTitle": "Edit attribute",
       "type": "Type",
-      "types":{
-        "STRING":"String",
-        "INTEGER":"Integer",
-        "NUMBER":"Number",
-        "BOOLEAN":"Boolean"
+      "types": {
+        "STRING": "String",
+        "INTEGER": "Integer",
+        "NUMBER": "Number",
+        "BOOLEAN": "Boolean"
       },
       "name": "Name",
       "description": "Description",
@@ -456,13 +456,13 @@
       "email-already-assigned": "Email '{{arg0}}' is already assigned to another user.",
       "duplicate-key": "Duplicate item ID.",
       "bad-request": "Bad server request, please contact your Agate administrator.",
-      "realm":{
+      "realm": {
         "not-orphan": "Cannot delete a realm having associated users."
       },
-      "group":{
+      "group": {
         "not-orphan": "Cannot delete a group having associated users."
       },
-      "application":{
+      "application": {
         "not-orphan": "Cannot delete an application having associated users or groups."
       }
     }
