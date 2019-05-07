@@ -33,7 +33,7 @@
 </div>
 
 
-<a class="btn btn-default" href="#/admin/realms">
+<a class="btn btn-default" ng-href="{{$ctrl.model.id ? '#/admin/realm/' + $ctrl.model.name : '#/admin/realms'}}">
   <span translate>cancel</span>
 </a>
 

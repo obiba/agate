@@ -134,9 +134,9 @@ agate.user
         $scope.usedAttributeNames = AttributesService.getUsedAttributeNames($scope.user.attributes, $scope.attributesConfig);
       });
 
-      RealmsService.getRealms().then(function(realms){
+      RealmsService.getRealmsForLanguage($translate.use()).then(function(realms){
         $scope.realmList = realms;
-        $scope.realm = {selected: RealmsService.getAgateDefaultRealm()};
+        $scope.realm = {selected: realms[0]};
       });
 
       $scope.groupList = [];
@@ -169,7 +169,9 @@ agate.user
           $scope.status.selected = $scope.status.list[UserStatusResource.findIndex(user.status)];
           $scope.attributeConfigPairs = AttributesService.getAttributeConfigPairs($scope.user.attributes, $scope.attributesConfig);
           $scope.usedAttributeNames = AttributesService.getUsedAttributeNames($scope.user.attributes, $scope.attributesConfig);
-          $scope.realm.selected = RealmsService.findRealm(user.realm);
+          $scope.realm.selected = $scope.realmList.filter(function(realm) {
+            return user.realm === realm.name;
+          }).pop();
           $scope.profile = null;
           return user;
         }) : { role: 'agate-user'};
@@ -246,6 +248,10 @@ agate.user
         }
       };
 
+      $rootScope.$on('$translateChangeSuccess', function (event, locale) {
+        $scope.locale = locale;
+      });
+
     }])
 
   .controller('UserViewController',
@@ -254,6 +260,7 @@ agate.user
       '$routeParams',
       '$log',
       '$location',
+      '$translate',
       'UserResource',
       'UserAuthorizationsResource',
       'UserAuthorizationResource',
@@ -267,6 +274,7 @@ agate.user
               $routeParams,
               $log,
               $location,
+              $translate,
               UserResource,
               UserAuthorizationsResource,
               UserAuthorizationResource,
@@ -276,18 +284,23 @@ agate.user
               RealmsService) {
 
 
-      RealmsService.getRealms().then(function(realms){
-        $scope.user = $routeParams.id ?
-          UserResource.get({id: $routeParams.id}, function(user) {
-            ConfigurationResource.get(function(config) {
-              $scope.userConfigAttributes = AttributesService.findConfigAttributes(user.attributes, config.userAttributes);
-              $scope.userNonConfigAttributes = config.userAttributes ? AttributesService.findNonConfigAttributes(user.attributes, config.userAttributes) : user.attributes;
-            });
+      function getRealms() {
+        RealmsService.getRealms().then(function (realms) {
+          $scope.user = $routeParams.id ?
+            UserResource.get({id: $routeParams.id}, function (user) {
+              ConfigurationResource.get(function (config) {
+                $scope.userConfigAttributes = AttributesService.findConfigAttributes(user.attributes, config.userAttributes);
+                $scope.userNonConfigAttributes = config.userAttributes ? AttributesService.findNonConfigAttributes(user.attributes, config.userAttributes) : user.attributes;
+              });
 
-            user.realmTitle = RealmsService.findRealm(user.realm).title;
-            return user;
-          }) : {};
-      });
+              var realm =  realms.filter(function(realm) {
+                return user.realm === realm.name;
+              }).pop();
+              user.realmTitle = realm ? realm.title : realm.name;
+              return user;
+            }) : {};
+        });
+      }
 
       $scope.authorizations = $routeParams.id ?
         UserAuthorizationsResource.query({id: $routeParams.id}) : [];
@@ -302,6 +315,12 @@ agate.user
         AlertService.alert({id: 'UserViewController', type: 'success', msgKey: 'password.success', delay: 5000});
       };
 
+      $scope.locale = {language: $translate.use()};
+      getRealms();
+      $rootScope.$on('$translateChangeSuccess', function (event, locale) {
+        $scope.locale = locale;
+        getRealms();
+      });
     }])
 
   .controller('UserRequestListController', ['$rootScope', '$scope', '$route', '$http', 'UsersResource', 'UserResource', 'NOTIFICATION_EVENTS',

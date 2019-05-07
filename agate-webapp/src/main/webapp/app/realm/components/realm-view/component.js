@@ -21,16 +21,10 @@
     }
 
     function init() {
-      ctrl.realm = RealmConfigResource.get({name: ctrl.name, includeUsers: true}).$promise
+      RealmConfigResource.get({name: ctrl.name, includeUsers: true}).$promise
         .then(function(realm) {
           ctrl.realm = realm;
           ctrl.realm.content = JsonUtils.parseJsonSafely(realm.content);
-          // create user full name
-          (ctrl.realm.users || []).forEach(function(user) {
-            user.fullName = user.firstName && user.lastName ? user.firstName + ' ' + user.lastName : user.name;
-          });
-
-          angular.extend(ctrl, this);
         }).catch(onError);
     }
 

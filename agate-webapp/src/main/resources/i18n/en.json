@@ -455,7 +455,16 @@
       },
       "email-already-assigned": "Email '{{arg0}}' is already assigned to another user.",
       "duplicate-key": "Duplicate item ID.",
-      "bad-request": "Bad server request, please contact your Agate administrator."
+      "bad-request": "Bad server request, please contact your Agate administrator.",
+      "realm":{
+        "not-orphan": "Cannot delete a realm having associated users."
+      },
+      "group":{
+        "not-orphan": "Cannot delete a group having associated users."
+      },
+      "application":{
+        "not-orphan": "Cannot delete an application having associated users or groups."
+      }
     }
   },
   "form-server-error": "Error",
@@ -487,6 +496,7 @@
     "agate-user-realm": "Agate Default Realm",
     "agate-ldap-realm": "Agate LDAP Realm",
     "agate-jdbc-realm": "Agate JDBC Realm",
+    "agate-ad-realm": "Agate Active Directory Realm",
     "ACTIVE": "Active",
     "INACTIVE": "Inactive",
     "activate": "Activate",
@@ -513,6 +523,20 @@
       "system-password": "System User Password",
       "user-dn-template": "User Distinguished Name (DN) Template",
       "user-dn-template-help": "This template is used to search an existing user in the LDAP server."
+    },
+    "ad": {
+      "url": "URL",
+      "system-username": "System User Name",
+      "system-password": "System User Password",
+      "search-filter": "Search Filter",
+      "search-base": "Search Base",
+      "search-base-help": "Search base in the Active Directory hierarchical structure.",
+      "principal-suffix": "User Suffix",
+      "principal-suffix-help": "Suffix used that will be appended to username upon login."
+    },
+    "delete-dialog": {
+      "title": "Delete Realm",
+      "message": "Are you sure you want to delete realm {{arg0}}?"
     }
   }
 }

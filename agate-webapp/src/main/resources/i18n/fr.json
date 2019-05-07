@@ -454,7 +454,16 @@
       },
       "email-already-assigned": "Le courriel '{{arg0}}' est déjà assigné à un autre utilisateur.",
       "duplicate-key": "L'ID de l'item est en duplicata.",
-      "bad-request": "Requête de serveur incorrecte, veuillez contacter votre administrateur Agate."
+      "bad-request": "Requête de serveur incorrecte, veuillez contacter votre administrateur Agate.",
+      "realm":{
+        "not-orphan": "Impossible de supprimer un domaine ayant des utilisateurs."
+      },
+      "group":{
+        "not-orphan": "Impossible de supprimer un groupe ayant des utilisateurs."
+      },
+      "application":{
+        "not-orphan": "Impossible de supprimer une application ayant des utilisateurs ou des groupes."
+      }
     }
   },
   "form-server-error": "Erreur",
@@ -481,11 +490,11 @@
     "description": "Les domaines énumérés ici fournissent une authentification alternative aux utilisateurs Agate.",
     "none": "No realms.",
     "add-realm": "Ajouter un domaine"
-  },
-  "realm": {
+  },"realm": {
     "agate-user-realm": "Le domaine par défaut d'Agate",
     "agate-ldap-realm": "Le domaine LDAP d'Agate",
     "agate-jdbc-realm": "Le domaine JDBC d'Agate",
+    "agate-ad-realm": "Le domaine Active Directory d'Agate",
     "ACTIVE": "Actif",
     "INACTIVE": "Inactif",
     "activate": "Activer",
@@ -512,6 +521,20 @@
       "system-password": "Mot de passe de l'utilisateur système",
       "user-dn-template": "Le modèle du nom distinctif (DN) de l'utilisateur",
       "user-dn-template-help": "Ce modèle est utilisé pour rechercher un utilisateur existant sur le serveur LDAP."
-    }
+    },
+    "ad": {
+      "url": "URL",
+      "system-username": "Nom de l'utilisateur système",
+      "system-password": "Mot de passe de l'utilisateur système",
+      "search-filter": "Filtre de recherche",
+      "search-base": "Base de recherche",
+      "search-base-help": "Base de recherche dans la structure hiérarchique d'Active Directory.",
+      "principal-suffix": "Suffixe d'utilisateur",
+      "principal-suffix-help": "Suffixe utilisé qui sera ajouté au nom d'utilisateur lors de la connexion."
+    },
+  "delete-dialog": {
+    "title": "Supprimer le domaine",
+    "message": "Êtes-vous sûr de vouloir supprimer le domaine {{arg0}}?"
+  }
   }
 }

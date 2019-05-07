@@ -76,8 +76,13 @@ public class Dtos {
   }
 
   @NotNull
+  public Agate.GroupDto.Builder asDtoBuilder(@NotNull Group group) {
+    return groupDtos.asBuilderDto(group);
+  }
+
+  @NotNull
   public Agate.GroupDto asDto(@NotNull Group group) {
-    return groupDtos.asDto(group);
+    return asDtoBuilder(group).build();
   }
 
   @NotNull

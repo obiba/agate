@@ -51,7 +51,7 @@ public class GroupsResource {
 
     if(group != null) throw new BadRequestException("Group already exists: " + group);
 
-    groupService.save(dtos.fromDto(groupDto));
+    group = groupService.save(dtos.fromDto(groupDto));
 
     return Response
         .created(UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(GroupResource.class).build(group.getId()))

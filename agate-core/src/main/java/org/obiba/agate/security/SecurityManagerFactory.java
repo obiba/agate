@@ -76,7 +76,7 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
   }
 
   @Override
-  public SessionsSecurityManager getObject() throws Exception {
+  public SessionsSecurityManager getObject() {
     if(securityManager == null) {
       securityManager = doCreateSecurityManager();
       SecurityUtils.setSecurityManager(securityManager);

@@ -35,6 +35,7 @@ import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.LocalizedString;
 import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.repository.AgateConfigRepository;
+import org.obiba.agate.service.support.ActiveDirectoryRealmConfigFormBuilder;
 import org.obiba.agate.service.support.JdbcRealmConfigFormBuilder;
 import org.obiba.agate.service.support.LdapRealmConfigFormBuilder;
 import org.obiba.agate.service.support.RealmConfigFormBuilder;
@@ -202,6 +203,10 @@ public class ConfigurationService {
       AgateRealm.AGATE_JDBC_REALM.getName(),
       translationUtils.translate(JdbcRealmConfigFormBuilder.newBuilder().build().toString(), translator)
     );
+    form.put(
+      AgateRealm.AGATE_AD_REALM.getName(),
+      translationUtils.translate(ActiveDirectoryRealmConfigFormBuilder.newBuilder().build().toString(), translator)
+    );
 
     return form;
   }
@@ -337,7 +342,8 @@ public class ConfigurationService {
 
     realmConfigService.findAllRealmsForSignup().forEach(realmConfig -> {
       try {
-        realmTitleMap.put(realmConfig.getName(), realmConfig.getTitle().get(locale));
+        LocalizedString title = realmConfig.getTitle();
+        realmTitleMap.put(realmConfig.getName(), title == null ? realmConfig.getName() : title.get(locale));
       } catch (JSONException e) {
         //
       }

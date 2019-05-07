@@ -23,10 +23,7 @@
 
     .controller('RealmViewController',
       ['$rootScope', '$scope', '$routeParams', '$translate',
-        function($rootScope, $scope, $routeParams, $translate, $location) {
-          function onSave() {
-            $location.path('/admin/realms').replace();
-          }
+        function($rootScope, $scope, $routeParams, $translate) {
           $scope.name = $routeParams.name;
           $scope.locale = {language: $translate.use()};
           $rootScope.$on('$translateChangeSuccess', function (event, locale) {

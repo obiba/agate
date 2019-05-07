@@ -39,7 +39,7 @@ agate.localized
           }), lang, keyLang, keyValue);
         }
 
-        return values || '';
+        return values && values.length > 0 ? values : '';
       };
 
       this.forLocale = function (values, lang) {

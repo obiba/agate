@@ -105,9 +105,10 @@
       var search = $location.search();
 
       if (search && search.from) {
-        RealmConfigResource.get({name: search.from}).$promise.then(function(realm) {
-          deferred.resolve(cloneRealm(realm));
-        });
+        RealmConfigResource.get({name: search.from}).$promise
+          .then(function(realm) {
+            deferred.resolve(cloneRealm(realm));
+          });
       } else {
         deferred.resolve({});
       }
@@ -118,7 +119,6 @@
     function onError(response) {
       AlertBuilder.newBuilder().response(response).delay(0).build();
     }
-
 
     function init() {
       ctrl.realm = $q.all(
@@ -149,9 +149,6 @@
             form: extractRealmForm(ctrl.model.type, ctrl.config),
             model: JsonUtils.parseJsonSafely(ctrl.model.content, {})
           };
-
-          // $ctrl.model.title || $ctrl.model.name
-          angular.extend(ctrl, this);
         }).catch(onError);
     }
 
@@ -170,7 +167,8 @@
           .then(function() {
             AlertBuilder.newBuilder().type('success').trMsg('realm.restart', []).build();
             ctrl.onSave({});
-          });
+          })
+          .catch(onError);
       }
     }
 

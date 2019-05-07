@@ -12,12 +12,30 @@
 
 (function () {
 
-  function Controller($translate, RealmsConfigResource, RealmConfigResource) {
+  function Controller(
+    $rootScope,
+    $scope,
+    $translate,
+    RealmsConfigResource,
+    RealmConfigResource,
+    NOTIFICATION_EVENTS,
+    AlertBuilder) {
+
     var ctrl = this;
 
-    function init() {
-      ctrl.realms = RealmsConfigResource.summaries();
-      ctrl.realms = RealmsConfigResource.summaries();
+    function onError(response) {
+      AlertBuilder.newBuilder().response(response).delay(0).build();
+    }
+
+    function onInit() {
+      ctrl.loading = true;
+      RealmsConfigResource.summaries().$promise
+        .then(function(realms) {
+          ctrl.loading = false;
+          ctrl.realms = realms;
+          $scope.$on(NOTIFICATION_EVENTS.confirmDialogAccepted,  onDelete.bind(ctrl));
+        })
+        .catch(onError);
     }
 
     function activateRealm(realm) {
@@ -26,16 +44,28 @@
           RealmConfigResource.deactivate({name: realm.name}).$promise :
           RealmConfigResource.activate({name: realm.name}).$promise
 
-      ).then(init);
+      ).then(onInit).catch(onError);
     }
 
     function deleteRealm(realm) {
-      RealmConfigResource.delete({name: realm.name}).$promise.then(init);
+      $rootScope.$broadcast(NOTIFICATION_EVENTS.showConfirmDialog,
+        {
+          titleKey: 'realm.delete-dialog.title',
+          messageKey: 'realm.delete-dialog.message',
+          messageArgs: [realm.name]
+        }, realm
+      );
+    }
+
+    function onDelete(event, realm) {
+      RealmConfigResource.delete({name: realm.name}).$promise
+        .then(onInit)
+        .catch(onError);
     }
 
     ctrl.activateRealm = activateRealm;
     ctrl.deleteRealm = deleteRealm;
-    ctrl.$onInit = init;
+    ctrl.$onInit = onInit.bind(this);
   }
 
   angular.module('agate.realm')
@@ -45,6 +75,15 @@
         locale: '<'
       },
       templateUrl: 'app/realm/components/realms-list/component.html',
-      controller: ['$translate', 'RealmsConfigResource', 'RealmConfigResource', Controller]
+      controller: [
+        '$rootScope',
+        '$scope',
+        '$translate',
+        'RealmsConfigResource',
+        'RealmConfigResource',
+        'NOTIFICATION_EVENTS',
+        'AlertBuilder',
+        Controller
+      ]
     });
 })();

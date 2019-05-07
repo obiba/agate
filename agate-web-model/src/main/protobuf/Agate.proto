@@ -120,6 +120,7 @@ message GroupDto {
   optional string description = 3;
   optional TimestampsDto timestamps = 4;
   repeated string applications = 5;
+  repeated UserSummaryDto users = 6;
 }
 
 message ApplicationDto {
