@@ -5,7 +5,6 @@ import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.domain.RealmStatus;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +15,7 @@ import java.util.stream.Stream;
 public class RealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
 
 
-  private RealmConfigFormBuilder(RealmConfig defaultRealm) {
+  private RealmConfigFormBuilder(RealmConfig defaultRealm, boolean forEditing) {
     List<String> realmTypes = Stream.of(AgateRealm.values())
       .filter(realm -> realm != AgateRealm.AGATE_USER_REALM && realm != AgateRealm.AGATE_TOKEN_REALM)
       .map(AgateRealm::getName)
@@ -29,7 +28,8 @@ public class RealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
       "        \"type\": \"string\"," +
       "        \"pattern\": \"[0-9A-Za-z-_\\s]\"," +
       "        \"title\": \"t(global.name)\"," +
-      "        \"description\": \"t(realm.name-help)\"" +
+      "        \"description\": \"t(realm.name-help)\"," +
+      "        \"readonly\": \"" + forEditing + "\"" +
       "      }," +
       "      \"title\": {" +
       "        \"type\": \"object\"," +
@@ -114,8 +114,8 @@ public class RealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
     return defaultRealm == null ? realmTypes.get(0) : defaultRealm.getType().getName();
   }
 
-  public static RealmConfigFormBuilder newBuilder(RealmConfig defaultRealm) {
-    return new RealmConfigFormBuilder(defaultRealm);
+  public static RealmConfigFormBuilder newBuilder(RealmConfig defaultRealm, boolean forEditing) {
+    return new RealmConfigFormBuilder(defaultRealm, forEditing);
   }
 
   private String getTypeEnum(List<String> realmTypes) {

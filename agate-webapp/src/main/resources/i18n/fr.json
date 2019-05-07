@@ -489,7 +489,7 @@
   },
   "realms": {
     "description": "Les domaines énumérés ici fournissent une authentification alternative aux utilisateurs Agate.",
-    "none": "No realms.",
+    "none": "Aucun domaine.",
     "add-realm": "Ajouter un domaine"
   },
   "realm": {

@@ -121,10 +121,12 @@
     }
 
     function init() {
+      var forEditing = ctrl.name && ctrl.name.length > 0;
+
       ctrl.realm = $q.all(
         [
           ConfigurationResource.get().$promise,
-          RealmConfigFormResource.get({locale: ctrl.locale.language}).$promise,
+          RealmConfigFormResource.get({locale: ctrl.locale.language, forEditing: forEditing}).$promise,
           invokeRealmConfigResource(),
           GroupsResource.query().$promise
         ])

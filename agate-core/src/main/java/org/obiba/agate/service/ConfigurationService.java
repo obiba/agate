@@ -188,13 +188,16 @@ public class ConfigurationService {
     return new TranslationUtils().translate(rval, getTranslator(locale));
   }
 
-  public JSONObject getRealmFormConfiguration(String locale) throws JSONException {
+  public JSONObject getRealmFormConfiguration(String locale, boolean forEditing) throws JSONException {
     TranslationUtils translationUtils = new TranslationUtils();
     Translator translator = getTranslator(locale);
     JSONObject form = new JSONObject();
     RealmConfig defaultRealm = realmConfigService.findDefault();
 
-    form.put("form", translationUtils.translate(RealmConfigFormBuilder.newBuilder(defaultRealm).build(), translator).toString());
+    form.put(
+  "form",
+      translationUtils.translate(RealmConfigFormBuilder.newBuilder(defaultRealm, forEditing).build(), translator).toString()
+    );
     form.put(
       AgateRealm.AGATE_LDAP_REALM.getName(),
       translationUtils.translate(LdapRealmConfigFormBuilder.newBuilder().build(), translator).toString()

@@ -48,6 +48,10 @@
             <th translate>realm.for-signup</th>
             <td><span><i class="fa" ng-class="{'fa-check': $ctrl.realm.forSignup, 'fa-times': !$ctrl.realm.forSignup}"></i></span></td>
           </tr>
+          <tr>
+            <th translate>global.groups</th>
+            <td><span class="label label-default hoffset-right" ng-repeat="group in $ctrl.realm.groups">{{group}}</span></td>
+          </tr>
         </tbody>
       </table>
 
