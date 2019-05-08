@@ -136,20 +136,6 @@ public class RealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
     return new JSONArray(realms).toString();
   }
 
-  private String getStatusTitleMap(List<String> statusList) {
-    List<Map<String, String>> realms =
-      statusList.stream().map(status ->
-        new HashMap<String, String>() {
-        {
-          put("value", status);
-          put("name", status);
-        }
-      })
-      .collect(Collectors.toList());
-
-    return new JSONArray(realms).toString();
-  }
-
   private String getStatusEnum() {
     List<String> stautsList = Stream.of(RealmStatus.values()).map(RealmStatus::toString).collect(Collectors.toList());
     return new JSONArray(stautsList).toString();

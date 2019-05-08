@@ -346,7 +346,7 @@ public class ConfigurationService {
     realmConfigService.findAllRealmsForSignup().forEach(realmConfig -> {
       try {
         LocalizedString title = realmConfig.getTitle();
-        realmTitleMap.put(realmConfig.getName(), title == null ? realmConfig.getName() : title.get(locale));
+        realmTitleMap.put(realmConfig.getName(), title == null ||  title.get(locale) == null ? realmConfig.getName() : title.get(locale));
       } catch (JSONException e) {
         //
       }
