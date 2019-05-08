@@ -78,7 +78,7 @@
       Object.defineProperty(model, 'status', {
         get: function() { return _status; },
         set: function(value) {
-          if (ctrl.modelvalue === 'INACTIVE' && ctrl.model.userCount > 0) {
+          if (value === 'INACTIVE' && ctrl.model.userCount > 0) {
             AlertBuilder.newBuilder()
               .trMsg('realm.deativate-warning', ctrl.model.safeTitle)
               .type('warning')
