@@ -26,7 +26,7 @@ public class RealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
       "    \"properties\": {" +
       "      \"name\": {" +
       "        \"type\": \"string\"," +
-      "        \"pattern\": \"[0-9A-Za-z-_\\s]\"," +
+      "        \"pattern\": \"^[0-9A-Za-z-_\\\\s]+$\"," +
       "        \"title\": \"t(global.name)\"," +
       "        \"description\": \"t(realm.name-help)\"," +
       "        \"readonly\": " + forEditing +
@@ -44,7 +44,7 @@ public class RealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
       "      \"status\": {" +
       "        \"type\": \"string\"," +
       "        \"title\": \"t(global.status)\"," +
-      "        \"default\": '" + RealmStatus.INACTIVE + "'," +
+      "        \"default\": \"" + RealmStatus.INACTIVE + "\"," +
       "        \"enum\": " + getStatusEnum() +
       "      }," +
       "      \"groups\": {" +
@@ -55,7 +55,7 @@ public class RealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
       "      \"type\": {" +
       "        \"type\": \"string\"," +
       "        \"title\": \"t(global.type)\"," +
-      "        \"default\":" + getDefaultType(defaultRealm, realmTypes) + "," +
+      "        \"default\": \"" + getDefaultType(defaultRealm, realmTypes) + "\"," +
       "        \"enum\": " + getTypeEnum(realmTypes) +
       "      }," +
       "      \"defaultRealm\": {" +
