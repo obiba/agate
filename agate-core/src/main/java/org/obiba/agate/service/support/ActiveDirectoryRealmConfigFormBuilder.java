@@ -56,7 +56,10 @@ public class ActiveDirectoryRealmConfigFormBuilder extends BaseRealmConfigFormBu
       "{" +
       "  \"type\": \"section\"," +
       "  \"items\": [" +
-      "      \"url\"," +
+      "      {" +
+      "        \"key\": \"url\"," +
+      "        \"placeholder\": \"ldap://localhost:389\"" +
+      "      }," +
       "      \"systemUsername\"," +
       "      {" +
       "        \"key\": \"systemPassword\"," +
@@ -64,10 +67,16 @@ public class ActiveDirectoryRealmConfigFormBuilder extends BaseRealmConfigFormBu
       "      }," +
       "      {" +
       "        \"key\": \"searchFilter\"," +
-      "        \"placeholder\": \"uid={0}\"" +
+      "        \"placeholder\": \"(&(objectClass=*)(userPrincipalName={0}))\"" +
       "      }," +
-      "      \"searchBase\"," +
-      "      \"principalSuffix\"" +
+      "      {" +
+      "        \"key\": \"searchBase\"," +
+      "        \"placeholder\": \"dc=example,dc=com\"" +
+      "      }," +
+      "      {" +
+      "        \"key\": \"principalSuffix\"," +
+      "        \"placeholder\": \"@DOMAIN.internal\"" +
+      "      }" +
       "    ]" +
       "  }" +
       "]";

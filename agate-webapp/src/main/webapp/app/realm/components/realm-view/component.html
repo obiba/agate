@@ -14,7 +14,7 @@
       <li><a href="#/admin" translate>global.menu.admin</a></li>
       <li><a href="#/admin/realms" translate>global.realms</a></li>
       <li class="active">
-        <span>{{$ctrl.realm.title[$ctrl.locale.language] || $ctrl.realm.name}}</span>
+        <span>{{$ctrl.realm.safeTitle}}</span>
       </li>
     </ol>
   </h2>

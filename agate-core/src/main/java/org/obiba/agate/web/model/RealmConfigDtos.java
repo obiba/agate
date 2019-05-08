@@ -3,6 +3,7 @@ package org.obiba.agate.web.model;
 import com.google.common.base.Strings;
 import org.json.JSONException;
 import org.obiba.agate.domain.*;
+import org.obiba.agate.repository.UserRepository;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.web.model.Agate.RealmConfigDto;
 import org.springframework.stereotype.Component;
@@ -15,11 +16,13 @@ public class RealmConfigDtos {
 
   private final LocalizedStringDtos localizedStringDtos;
   private final ConfigurationService configurationService;
+  private final UserRepository userRepository;
 
   @Inject
-  public RealmConfigDtos(LocalizedStringDtos localizedStringDtos, ConfigurationService configurationService) {
+  public RealmConfigDtos(LocalizedStringDtos localizedStringDtos, ConfigurationService configurationService, UserRepository userRepository) {
     this.localizedStringDtos = localizedStringDtos;
     this.configurationService = configurationService;
+    this.userRepository = userRepository;
   }
 
   @NotNull
@@ -32,7 +35,8 @@ public class RealmConfigDtos {
       .setForSignup(config.isForSignup())
       .setStatus(Agate.RealmStatus.valueOf(config.getStatus().toString()))
       .addAllGroups(config.getGroups())
-      .setContent(ensureSecuredContent(configurationService.decrypt(config.getContent()), config.getType()));
+      .setContent(ensureSecuredContent(configurationService.decrypt(config.getContent()), config.getType()))
+      .setUserCount(userRepository.countByRealm(config.getName()));
 
     if (config.getTitle() != null) builder.addAllTitle(localizedStringDtos.asDto(config.getTitle()));
     if (config.getDescription() != null) builder.addAllDescription(localizedStringDtos.asDto(config.getDescription()));
@@ -67,7 +71,8 @@ public class RealmConfigDtos {
       .setId(config.getId())
       .setName(config.getName())
       .setType(config.getType().getName())
-      .setStatus(Agate.RealmStatus.valueOf(config.getStatus().toString()));
+      .setStatus(Agate.RealmStatus.valueOf(config.getStatus().toString()))
+      .setUserCount(userRepository.countByRealm(config.getName()));
 
     if (config.getTitle() != null) builder.addAllTitle(localizedStringDtos.asDto(config.getTitle()));
     if (config.getDescription() != null) builder.addAllDescription(localizedStringDtos.asDto(config.getDescription()));

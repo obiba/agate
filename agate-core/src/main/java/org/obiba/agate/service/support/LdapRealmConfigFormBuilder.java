@@ -37,7 +37,10 @@ public class LdapRealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
       "{" +
       "  \"type\": \"section\"," +
       "  \"items\": [" +
-      "      \"url\"," +
+      "      {" +
+      "        \"key\": \"url\"," +
+      "        \"placeholder\": \"ldap://localhost:389\"" +
+      "      }," +
       "      \"systemUsername\"," +
       "      {" +
       "        \"key\": \"systemPassword\"," +

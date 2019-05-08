@@ -21,6 +21,7 @@
                       RealmConfigFormResource,
                       RealmsConfigResource,
                       RealmConfigResource,
+                      RealmsService,
                       GroupsResource,
                       JsonUtils,
                       AlertBuilder) {
@@ -77,6 +78,12 @@
       Object.defineProperty(model, 'status', {
         get: function() { return _status; },
         set: function(value) {
+          if (ctrl.modelvalue === 'INACTIVE' && ctrl.model.userCount > 0) {
+            AlertBuilder.newBuilder()
+              .trMsg('realm.deativate-warning', ctrl.model.safeTitle)
+              .type('warning')
+              .build();
+          }
           _status = value;
           statusChangeCallBack.call(ctrl, _status);
         },
@@ -144,7 +151,7 @@
 
           addTypeGetterSetter(ctrl.model, onTypeChanged);
           addStatusGetterSetter(ctrl.model, onStatusChanged);
-          ctrl.model.safeTitle = ctrl.model.id ? ctrl.model.title || ctrl.model.name : null;
+          ctrl.model.safeTitle = ctrl.model.id ? RealmsService.ensureRealmTitle(ctrl.model) : null;
 
           ctrl.main = JsonUtils.parseJsonSafely(ctrl.config.form, {});
           ctrl.realm = {
@@ -188,6 +195,7 @@
     'RealmConfigFormResource',
     'RealmsConfigResource',
     'RealmConfigResource',
+    'RealmsService',
     'GroupsResource',
     'JsonUtils',
     'AlertBuilder'

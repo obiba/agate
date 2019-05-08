@@ -18,6 +18,7 @@
     $translate,
     RealmsConfigResource,
     RealmConfigResource,
+    RealmsService,
     NOTIFICATION_EVENTS,
     AlertBuilder) {
 
@@ -33,21 +34,24 @@
         .then(function(realms) {
           ctrl.loading = false;
           ctrl.realms = realms;
-          $scope.$on(NOTIFICATION_EVENTS.confirmDialogAccepted,  onDelete.bind(ctrl));
         })
         .catch(onError);
     }
 
-    function activateRealm(realm) {
-      (
-        realm.status === 'ACTIVE' ?
-          RealmConfigResource.deactivate({name: realm.name}).$promise :
-          RealmConfigResource.activate({name: realm.name}).$promise
-
-      ).then(onInit).catch(onError);
+    function toggleActivateRealm(realm) {
+      if (realm.status === 'ACTIVE') {
+        if (realm.userCount > 0) {
+          RealmsService.deactivateRealm(realm, $scope, onInit, onError);
+        } else {
+          RealmConfigResource.deactivate({name: realm.name}).$promise.then(onInit).catch(onError);
+        }
+      } else {
+        RealmConfigResource.activate({name: realm.name}).$promise.then(onInit).catch(onError);
+      }
     }
 
     function deleteRealm(realm) {
+      ctrl.unbindDelete = $scope.$on(NOTIFICATION_EVENTS.confirmDialogAccepted,  onDelete.bind(ctrl));
       $rootScope.$broadcast(NOTIFICATION_EVENTS.showConfirmDialog,
         {
           titleKey: 'realm.delete-dialog.title',
@@ -59,11 +63,14 @@
 
     function onDelete(event, realm) {
       RealmConfigResource.delete({name: realm.name}).$promise
-        .then(onInit)
+        .then(function() {
+          ctrl.unbindDelete();
+          onInit();
+        })
         .catch(onError);
     }
 
-    ctrl.activateRealm = activateRealm;
+    ctrl.toggleActivateRealm = toggleActivateRealm;
     ctrl.deleteRealm = deleteRealm;
     ctrl.$onInit = onInit.bind(this);
   }
@@ -81,6 +88,7 @@
         '$translate',
         'RealmsConfigResource',
         'RealmConfigResource',
+        'RealmsService',
         'NOTIFICATION_EVENTS',
         'AlertBuilder',
         Controller

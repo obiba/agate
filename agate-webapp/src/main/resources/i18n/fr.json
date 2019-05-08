@@ -535,9 +535,14 @@
       "principal-suffix": "Suffixe d'utilisateur",
       "principal-suffix-help": "Suffixe utilisé qui sera ajouté au nom d'utilisateur lors de la connexion."
     },
-  "delete-dialog": {
-    "title": "Supprimer le domaine",
-    "message": "Êtes-vous sûr de vouloir supprimer le domaine {{arg0}}?"
-  }
+    "deativate-warning": "Les utilisateurs associés à ce domaine ne peuvent plus se connecter à Agate et à ses applications enregistrées.",
+    "delete-dialog": {
+      "title": "Supprimer le domaine",
+      "message": "Êtes-vous sûr de vouloir supprimer le domaine {{arg0}}?"
+    },
+    "deactivate-dialog": {
+      "title": "Désactiver le domaine",
+      "message": "Il existe encore des utilisateurs associés au domaine '{{arg0}}'. Êtes-vous sur de vouloir continuer?"
+    }
   }
 }

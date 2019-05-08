@@ -535,9 +535,14 @@
       "principal-suffix": "User Suffix",
       "principal-suffix-help": "Suffix used that will be appended to username upon login."
     },
+    "deativate-warning": "Users associated with this realm can no longer login to Agate and its registered applications.",
     "delete-dialog": {
       "title": "Delete Realm",
       "message": "Are you sure you want to delete realm {{arg0}}?"
+    },
+    "deactivate-dialog": {
+      "title": "Deactivate Realm",
+      "message": "There are still users associated  with realm '{{arg0}}'. Are you sure you want to proceed?"
     }
   }
 }

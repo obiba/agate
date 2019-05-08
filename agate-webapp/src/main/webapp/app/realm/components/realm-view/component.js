@@ -12,7 +12,7 @@
 
 (function () {
 
-  function Controller(RealmConfigResource, JsonUtils, AlertBuilder) {
+  function Controller(RealmConfigResource, RealmsService, JsonUtils, AlertBuilder) {
 
     var ctrl = this;
 
@@ -24,6 +24,7 @@
       RealmConfigResource.get({name: ctrl.name, includeUsers: true}).$promise
         .then(function(realm) {
           ctrl.realm = realm;
+          ctrl.realm.safeTitle = RealmsService.ensureRealmTitle(ctrl.realm);
           ctrl.realm.content = JsonUtils.parseJsonSafely(realm.content);
         }).catch(onError);
     }
@@ -39,6 +40,7 @@
 
   var injections = [
     'RealmConfigResource',
+    'RealmsService',
     'JsonUtils',
     'AlertBuilder'
   ];

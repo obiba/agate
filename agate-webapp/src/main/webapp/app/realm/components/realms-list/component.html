@@ -46,6 +46,7 @@
         <th translate>global.name</th>
         <th translate>global.description</th>
         <th translate>global.type</th>
+        <th translate>global.users</th>
         <th translate>global.status</th>
         <th translate>global.actions</th>
       </tr>
@@ -61,11 +62,12 @@
           <localized value="realm.description" lang="$ctrl.locale.language" key-lang="lang" key-value="value"></localized>
         </td>
         <td>{{'realm.' + realm.type | translate}}</td>
+        <td>{{realm.userCount}}</td>
         <td>{{'realm.' + realm.status | translate}}</td>
         <td>
           <ul class="list-inline">
             <li>
-              <a href ng-click="$ctrl.activateRealm(realm)"
+              <a href ng-click="$ctrl.toggleActivateRealm(realm)"
                  title="{{'realm.' + (realm.status === 'ACTIVE' ? 'deactivate' : 'activate') | translate}}"><i
                 class="fa" ng-class="{'fa-times': realm.status === 'ACTIVE', 'fa-check': realm.status === 'INACTIVE'}"></i>
               </a>

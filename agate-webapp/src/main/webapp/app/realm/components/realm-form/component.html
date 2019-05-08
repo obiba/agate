@@ -13,7 +13,7 @@
     <li><a href="#/admin" translate>global.menu.admin</a></li>
     <li><a href="#/admin/realms" translate>global.realms</a></li>
     <li class="active">
-      <span ng-if="$ctrl.model.id">{{$ctrl.model.title[$ctrl.locale.language] || $ctrl.model.name}}</span>
+      <span ng-if="$ctrl.model.id">{{$ctrl.model.safeTitle}}</span>
       <span ng-if="!$ctrl.model.id" translate>realm.new-realm</span>
     </li>
   </ol>
