@@ -36,7 +36,7 @@
       ['$rootScope', '$scope', '$routeParams', '$translate', '$location',
         function($rootScope, $scope, $routeParams, $translate, $location) {
           function onSave() {
-            $location.path('/admin/realms').replace();
+            $location.path($routeParams.name ? '/admin/realm/'+ $routeParams.name : '/admin/realms').replace();
           }
           $scope.name = $routeParams.name;
           $scope.locale = {language: $translate.use()};

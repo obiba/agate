@@ -26,7 +26,7 @@ public class RealmConfigFormResource {
 
   @GET
   public Response getForm(@QueryParam("locale") @DefaultValue("en") String locale,
-                          @QueryParam("realmName") @DefaultValue("false") boolean forEditing) throws JSONException {
+                          @QueryParam("forEditing") @DefaultValue("false") boolean forEditing) throws JSONException {
     return Response.ok(configurationService.getRealmFormConfiguration(locale, forEditing).toString()).build();
   }
 
