@@ -9,6 +9,16 @@
   -->
 
 <div class="form-group">
+  <label for="user.realm" class="control-label">
+    <span translate>user.realm</span> *
+  </label>
+  <select id="user.realm" name="user.realm" class="form-control" ng-model="realm.selected" ng-options="realm.title for realm in realmList"></select>
+  <p class="help-block">
+    {{realm.selected.description}}
+  </p>
+</div>
+
+<div class="form-group">
   <label for="user.role" class="control-label">
     <span translate>user.role</span> *
   </label>

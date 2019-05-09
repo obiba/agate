@@ -19,16 +19,10 @@ import com.google.common.collect.Sets;
 import org.bson.types.ObjectId;
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.joda.time.DateTime;
-import org.obiba.agate.domain.AttributeConfiguration;
-import org.obiba.agate.domain.User;
-import org.obiba.agate.domain.UserCredentials;
-import org.obiba.agate.domain.UserStatus;
+import org.obiba.agate.domain.*;
 import org.obiba.agate.security.AgateUserRealm;
 import org.obiba.agate.security.Roles;
-import org.obiba.agate.service.ApplicationService;
-import org.obiba.agate.service.ConfigurationService;
-import org.obiba.agate.service.ReCaptchaService;
-import org.obiba.agate.service.UserService;
+import org.obiba.agate.service.*;
 import org.obiba.agate.web.rest.config.JerseyConfiguration;
 import org.obiba.shiro.authc.HttpAuthorizationToken;
 import org.obiba.shiro.realm.ObibaRealm;
@@ -63,20 +57,31 @@ public class UsersPublicResource {
 
   private static final String CURRENT_USER_NAME = "_current";
 
-  private static final String[] BUILTIN_PARAMS = new String[] { "username", "firstname", "lastname", "application", //
-    "email", "locale", "group", "reCaptchaResponse" };
+  private static final String[] BUILTIN_PARAMS =
+    new String[] { "username", "firstname", "lastname", "application", "email", "locale", "group", "reCaptchaResponse", "realm" };
+
+  private final UserService userService;
+
+  private final ApplicationService applicationService;
+
+  private final ConfigurationService configurationService;
+
+  private final RealmConfigService realmConfigService;
+
+  private final ReCaptchaService reCaptchaService;
 
   @Inject
-  private UserService userService;
-
-  @Inject
-  private ApplicationService applicationService;
-
-  @Inject
-  private ConfigurationService configurationService;
-
-  @Inject
-  private ReCaptchaService reCaptchaService;
+  public UsersPublicResource(UserService userService,
+                             ApplicationService applicationService,
+                             ConfigurationService configurationService,
+                             RealmConfigService realmConfigService,
+                             ReCaptchaService reCaptchaService) {
+    this.userService = userService;
+    this.applicationService = applicationService;
+    this.configurationService = configurationService;
+    this.realmConfigService = realmConfigService;
+    this.reCaptchaService = reCaptchaService;
+  }
 
   @GET
   @Path("/i18n/{locale}.json")
@@ -147,7 +152,7 @@ public class UsersPublicResource {
   public Response create(@FormParam("username") String username, @FormParam("firstname") String firstName,
     @FormParam("lastname") String lastName, @FormParam("email") String email, @FormParam("locale") String preferredLanguage,
     @FormParam("application") List<String> applications, @FormParam("group") List<String> groups,
-    @FormParam("password") String password, @FormParam("reCaptchaResponse") String reCaptchaResponse,
+    @FormParam("password") String password, @FormParam("realm") String realm, @FormParam("reCaptchaResponse") String reCaptchaResponse,
     @Context HttpServletRequest request) {
     if(Strings.isNullOrEmpty(email)) throw new BadRequestException("Email cannot be empty");
 
@@ -172,6 +177,10 @@ public class UsersPublicResource {
 
     if(CURRENT_USER_NAME.equals(name)) throw new BadRequestException("Reserved user name: " + CURRENT_USER_NAME);
 
+    String userRealm = Strings.isNullOrEmpty(realm) || AgateRealm.AGATE_USER_REALM.getName().equals(realm)
+      ? AgateRealm.AGATE_USER_REALM.getName()
+      : realmConfigService.getConfig(realm).getName();
+
     User user = userService.findUserByEmail(email);
 
     if(user != null) throw new BadRequestException("Email already in use: " + user.getEmail());
@@ -186,7 +195,7 @@ public class UsersPublicResource {
       i++;
     }
 
-    user = User.newBuilder().name(name).realm(AgateUserRealm.AGATE_REALM).role(Roles.AGATE_USER).pending()
+    user = User.newBuilder().name(name).realm(userRealm).role(Roles.AGATE_USER).pending()
       .firstName(firstName).lastName(lastName).email(email).preferredLanguage(preferredLanguage).build();
     user.setGroups(Sets.newHashSet(groups));
     user.setApplications(Sets.newHashSet(applications));

@@ -13,12 +13,7 @@ package org.obiba.agate.web.model;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
-import org.obiba.agate.domain.Application;
-import org.obiba.agate.domain.Authorization;
-import org.obiba.agate.domain.Configuration;
-import org.obiba.agate.domain.Group;
-import org.obiba.agate.domain.Ticket;
-import org.obiba.agate.domain.User;
+import org.obiba.agate.domain.*;
 import org.obiba.agate.service.TicketService;
 import org.obiba.web.model.AuthDtos;
 import org.springframework.stereotype.Component;
@@ -27,23 +22,33 @@ import org.springframework.stereotype.Component;
 @SuppressWarnings("OverlyCoupledClass")
 public class Dtos {
 
-  @Inject
-  private TicketService ticketService;
+  private final TicketDtos ticketDtos;
+
+  private final UserDtos userDtos;
+
+  private final ApplicationDtos applicationDtos;
+
+  private final GroupDtos groupDtos;
+
+  private final RealmConfigDtos realmConfigDtos;
+
+  private final ConfigurationDtos configurationDtos;
 
   @Inject
-  private TicketDtos ticketDtos;
-
-  @Inject
-  private UserDtos userDtos;
-
-  @Inject
-  private ApplicationDtos applicationDtos;
-
-  @Inject
-  private GroupDtos groupDtos;
-
-  @Inject
-  private ConfigurationDtos configurationDtos;
+  public Dtos(TicketService ticketService,
+              TicketDtos ticketDtos,
+              UserDtos userDtos,
+              ApplicationDtos applicationDtos,
+              GroupDtos groupDtos,
+              RealmConfigDtos realmConfigDtos,
+              ConfigurationDtos configurationDtos) {
+    this.ticketDtos = ticketDtos;
+    this.userDtos = userDtos;
+    this.applicationDtos = applicationDtos;
+    this.groupDtos = groupDtos;
+    this.realmConfigDtos = realmConfigDtos;
+    this.configurationDtos = configurationDtos;
+  }
 
   @NotNull
   public Agate.TicketDto asDto(@NotNull Ticket ticket) {
@@ -61,13 +66,23 @@ public class Dtos {
   }
 
   @NotNull
+  public Agate.UserSummaryDto asSummaryDto(@NotNull User user) {
+    return userDtos.asSummaryDto(user);
+  }
+
+  @NotNull
   public AuthDtos.SubjectDto asDto(@NotNull User user, boolean withAttributes) {
     return userDtos.asDto(user, withAttributes);
   }
 
   @NotNull
+  public Agate.GroupDto.Builder asDtoBuilder(@NotNull Group group) {
+    return groupDtos.asBuilderDto(group);
+  }
+
+  @NotNull
   public Agate.GroupDto asDto(@NotNull Group group) {
-    return groupDtos.asDto(group);
+    return asDtoBuilder(group).build();
   }
 
   @NotNull
@@ -104,4 +119,23 @@ public class Dtos {
     return userDtos.fromDto(dto);
   }
 
+  @NotNull
+  public RealmConfig fromDto(Agate.RealmConfigDto dto) {
+    return realmConfigDtos.fromDto(dto);
+  }
+
+  @NotNull
+  public Agate.RealmConfigDto.Builder asDtoBuilder(RealmConfig config) {
+    return realmConfigDtos.asDtoBuilder(config);
+  }
+
+  @NotNull
+  public Agate.RealmConfigDto asDto(RealmConfig config) {
+    return realmConfigDtos.asDtoBuilder(config).build();
+  }
+
+  @NotNull
+  public Agate.RealmConfigSummaryDto asSummaryDto(RealmConfig config) {
+    return realmConfigDtos.asSummaryDto(config);
+  }
 }

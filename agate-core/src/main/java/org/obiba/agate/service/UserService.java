@@ -1,4 +1,4 @@
-/*
+  /*
  * Copyright (c) 2018 OBiBa. All rights reserved.
  *
  * This program and the accompanying materials
@@ -24,9 +24,9 @@ import org.json.JSONObject;
 import org.obiba.agate.domain.*;
 import org.obiba.agate.event.UserApprovedEvent;
 import org.obiba.agate.event.UserJoinedEvent;
+import org.obiba.agate.repository.RealmConfigRepository;
 import org.obiba.agate.repository.UserCredentialsRepository;
 import org.obiba.agate.repository.UserRepository;
-import org.obiba.agate.security.AgateUserRealm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -77,14 +77,19 @@ public class UserService {
 
   private final ConfigurationService configurationService;
 
+  private final RealmConfigRepository realmConfigRepository;
+
   @Inject
-  public UserService(UserRepository userRepository,
-                     GroupService groupService, UserCredentialsRepository userCredentialsRepository,
-                     Environment env,
-                     EventBus eventBus,
-                     SpringTemplateEngine templateEngine,
-                     MailService mailService,
-                     ConfigurationService configurationService) {
+  public UserService(
+    UserRepository userRepository,
+    GroupService groupService,
+    UserCredentialsRepository userCredentialsRepository,
+    Environment env,
+    EventBus eventBus,
+    SpringTemplateEngine templateEngine,
+    MailService mailService,
+    ConfigurationService configurationService,
+    RealmConfigRepository realmConfigRepository) {
     this.userRepository = userRepository;
     this.groupService = groupService;
     this.userCredentialsRepository = userCredentialsRepository;
@@ -93,6 +98,7 @@ public class UserService {
     this.templateEngine = templateEngine;
     this.mailService = mailService;
     this.configurationService = configurationService;
+    this.realmConfigRepository = realmConfigRepository;
   }
 
   //
@@ -211,7 +217,7 @@ public class UserService {
   public void updateUserPassword(@NotNull User user, @NotNull String password) {
     if(user == null) throw new BadRequestException("Invalid User");
     if(Strings.isNullOrEmpty(password)) throw new BadRequestException("User password cannot be empty");
-    if(!user.getRealm().equals(AgateUserRealm.AGATE_REALM))
+    if(!user.getRealm().equals(AgateRealm.AGATE_USER_REALM))
       throw new BadRequestException("User password cannot be changed");
     if(password.length() < MINIMUM_LEMGTH) throw new PasswordTooShortException(MINIMUM_LEMGTH);
 
@@ -230,6 +236,20 @@ public class UserService {
   }
 
   public User createUser(@NotNull User user, @Nullable String password) {
+    if (Strings.isNullOrEmpty(password)) {
+      if (user.getRealm() == null) user.setRealm(AgateRealm.AGATE_USER_REALM.getName());
+      else {
+        List<RealmConfig> foundConfigs = realmConfigRepository.findAll().stream().filter(realmConfig -> user.getRealm().equals(realmConfig.getName())).collect(Collectors.toList());
+        if (foundConfigs.size() == 1) {
+          RealmConfig realmConfig = foundConfigs.get(0);
+          user.setStatus(UserStatus.ACTIVE);
+          user.setGroups(realmConfig.getGroups());
+        } else {
+          user.setRealm(AgateRealm.AGATE_USER_REALM.getName());
+        }
+      }
+    }
+
     if(!Strings.isNullOrEmpty(password)) {
       updateUserPassword(user, password);
     } else if(user.getStatus() == UserStatus.PENDING) {
@@ -257,6 +277,7 @@ public class UserService {
       if(saved == null) {
         saved = user;
       } else {
+        updateUserCredentials(saved, user);
         BeanUtils.copyProperties(user, saved, "id", "name", "version", "createdBy", "createdDate", "lastModifiedBy",
           "lastModifiedDate");
       }
@@ -278,6 +299,33 @@ public class UserService {
     }
 
     return saved;
+  }
+
+  /**
+   * Remove the user credentials if new realm is other than `agate-user-realm`. Notify user for new password if new realm
+   * is `agate-user-realm` which in turn will create valid user credentials.
+   *
+   * @param saved
+   * @param user
+   */
+  private void updateUserCredentials(User saved, User user) {
+    String savedRealm = saved.getRealm();
+    String newRealm = user.getRealm();
+
+    if (!savedRealm.equals(newRealm)) {
+      String agateUserRealm = AgateRealm.AGATE_USER_REALM.getName();
+
+      if (agateUserRealm.equals(savedRealm)) {
+        // cleanup credentials
+        UserCredentials userCredential = userCredentialsRepository.findOneByName(saved.getName());
+        if (userCredential != null) userCredentialsRepository.delete(userCredential.getId());
+      } else if (agateUserRealm.equals(newRealm)) {
+        // Re-approve the user and send email so user to set a password
+        user.setStatus(UserStatus.APPROVED);
+        eventBus.post(new UserApprovedEvent(user));
+      }
+    }
+
   }
 
   public UserCredentials save(@NotNull UserCredentials userCredentials) {
@@ -530,7 +578,7 @@ public class UserService {
    */
   public UserCredentials getCurrentUserCredentials() {
     User user = getCurrentUser();
-    if(!user.getRealm().equals(AgateUserRealm.AGATE_REALM)) throw NoSuchUserException.withName(user.getName());
+    if(!user.getRealm().equals(AgateRealm.AGATE_USER_REALM)) throw NoSuchUserException.withName(user.getName());
     UserCredentials currentUser = findUserCredentials(user.getName());
     if(currentUser == null) throw NoSuchUserException.withName(user.getName());
     return currentUser;

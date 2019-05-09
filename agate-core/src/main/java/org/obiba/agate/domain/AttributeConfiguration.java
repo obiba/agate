@@ -19,6 +19,7 @@ import javax.validation.constraints.NotNull;
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import org.springframework.data.annotation.Id;
 
 /**
  * Specifications for an attribute.
@@ -36,6 +37,10 @@ public class AttributeConfiguration implements Serializable {
     this.required = required;
     this.values = values;
   }
+
+  @Id
+  private String id;
+
 
   @NotNull
   private String name;

@@ -94,8 +94,9 @@ public class UsersJoinResourceTests {
     ArgumentCaptor<User> user = ArgumentCaptor.forClass(User.class);
 
     resource
-      .create("un", "fn", "ln", "test@localhost.domain", "fr", Lists.newArrayList("app"), Lists.newArrayList("g1", "g2"),
-        "password", "recaptchacode", request);
+      .create("un", "fn", "ln", "test@localhost.domain", "fr",
+        Lists.newArrayList("app"), Lists.newArrayList("g1", "g2"), "password",
+        null, "recaptchacode", request);
     verify(userService).createUser(user.capture(), eq("password"));
     assertEquals("id", user.getValue().getId());
     assertEquals("test@localhost.domain", user.getValue().getEmail());
@@ -117,7 +118,8 @@ public class UsersJoinResourceTests {
     exception.expect(BadRequestException.class);
     exception.expectMessage(Matchers.containsString("att1"));
     resource
-      .create("un", "fn", "ln", "test@localhost.domain", "fr", Lists.newArrayList("app"), Lists.newArrayList("g1", "g2"),
+      .create("un", "fn", "ln", "test@localhost.domain", "fr",
+        Lists.newArrayList("app"), Lists.newArrayList("g1", "g2"), null,
         null, "recaptchacode", request);
   }
 }

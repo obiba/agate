@@ -63,22 +63,22 @@
       <ul class="nav navbar-nav"  ng-if="hasRole('agate-administrator')">
         <li>
           <a href="#/users">
-            <span translate>global.menu.users</span>
+            <span translate>global.users</span>
           </a>
         </li>
         <li>
           <a href="#/groups">
-            <span translate>global.menu.groups</span>
+            <span translate>global.groups</span>
           </a>
         </li>
         <li>
           <a href="#/applications">
-            <span translate>global.menu.applications</span>
+            <span translate>global.applications</span>
           </a>
         </li>
         <li>
           <a href="#/tickets">
-            <span translate>global.menu.tickets</span>
+            <span translate>global.tickets</span>
           </a>
         </li>
       </ul>
@@ -121,6 +121,11 @@
   </div>
 
   <obiba-alert id="Application"></obiba-alert>
+
+  <div class="alert-growl-container">
+    <obiba-alert id="ApplicationGrowl"></obiba-alert>
+  </div>
+
   <div ng-controller="NotificationController"></div>
 
   <div ng-view=""></div>
@@ -181,16 +186,20 @@
 <script src="bower_components/objectpath/lib/ObjectPath.js"></script>
 <script src="bower_components/angular-schema-form/dist/schema-form.js"></script>
 <script src="bower_components/angular-schema-form/dist/bootstrap-decorator.js"></script>
+<script src="bower_components/angular-schema-form-bootstrap/bootstrap-decorator.min.js"></script>
 <script src="bower_components/ace-builds/src-noconflict/ace.js"></script>
 <script src="bower_components/angular-ui-ace/ui-ace.js"></script>
 <script src="bower_components/angular-recaptcha/release/angular-recaptcha.js"></script>
 <script src="bower_components/angular-media-queries/match-media.js"></script>
 <script src="bower_components/es6-shim/es6-shim.js"></script>
 <script src="bower_components/obiba-shims/dist/obiba-shims.min.js"></script>
+<script src="bower_components/sf-obiba-ui-select/dist/sf-obiba-ui-select.js"></script>
+<script src="bower_components/sf-localized-string/dist/sf-localized-string.js"></script>
 <!-- endbower -->
 <script src="app/http-auth-interceptor.js"></script>
 <script src="app/app.js"></script>
 <script src="app/controllers.js"></script>
+<script src="app/services.js"></script>
 <script src="app/services.js"></script>
 <script src="app/directives.js"></script>
 <script src="app/admin/admin.js"></script>
@@ -201,10 +210,23 @@
 <script src="app/config/config-controller.js"></script>
 <script src="app/config/config-service.js"></script>
 <script src="app/commons/localized/localized.js"></script>
+<script src="app/commons/localized/localized-service.js"></script>
 <script src="app/commons/localized/localized-directives.js"></script>
 <script src="app/commons/password-modal/password-modal.js"></script>
 <script src="app/commons/password-modal/password-modal-directive.js"></script>
 <script src="app/commons/password-modal/password-modal-controller.js"></script>
+<script src="app/commons/users-summaries/component.js"></script>
+
+<script src="app/realm/realm.js"></script>
+<script src="app/realm/services/realm-service.js"></script>
+<script src="app/realm/rest/realm-config-form-resource.js"></script>
+<script src="app/realm/rest/realms-config-resource.js"></script>
+<script src="app/realm/rest/realm-config-resource.js"></script>
+<script src="app/realm/components/realms-list/component.js"></script>
+<script src="app/realm/components/realm-view/component.js"></script>
+<script src="app/realm/components/realm-form/component.js"></script>
+<script src="app/realm/realm-router.js"></script>
+<script src="app/realm/realm-controller.js"></script>
 
 <script src="app/application/application.js"></script>
 <script src="app/application/application-router.js"></script>

@@ -1,0 +1,45 @@
+<!--
+  ~ Copyright (c) 2019 OBiBa. All rights reserved.
+  ~
+  ~ This program and the accompanying materials
+  ~ are made available under the terms of the GNU Public License v3.0.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<h2>
+  <ol class="agate-breadcrumb">
+    <li><a href="#/admin" translate>global.menu.admin</a></li>
+    <li><a href="#/admin/realms" translate>global.realms</a></li>
+    <li class="active">
+      <span ng-if="$ctrl.model.id">{{$ctrl.model.safeTitle}}</span>
+      <span ng-if="!$ctrl.model.id" translate>realm.new-realm</span>
+    </li>
+  </ol>
+</h2>
+
+<div class="row">
+  <div class="col-sm-6">
+    <form id="main-form" name="$ctrl.form.main">
+      <div sf-model="$ctrl.model" sf-form="$ctrl.main.definition" sf-schema="$ctrl.main.schema" sf-options="$ctrl.sfOptions"></div>
+    </form>
+  </div>
+  <div class="col-sm-6">
+    <form id="realm-form" name="$ctrl.form.realm">
+      <div sf-model="$ctrl.realm.model" sf-form="$ctrl.realm.form.definition" sf-schema="$ctrl.realm.form.schema"></div>
+    </form>
+  </div>
+</div>
+
+
+<a class="btn btn-default" ng-href="{{$ctrl.model.id ? '#/admin/realm/' + $ctrl.model.name : '#/admin/realms'}}">
+  <span translate>cancel</span>
+</a>
+
+<button type="submit" class="btn btn-info" ng-click="$ctrl.save(form)">
+  <span translate>save</span>
+</button>
+
+
+

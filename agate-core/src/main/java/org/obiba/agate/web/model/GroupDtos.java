@@ -10,17 +10,17 @@
 
 package org.obiba.agate.web.model;
 
-import javax.validation.constraints.NotNull;
-
 import org.obiba.agate.domain.Group;
 import org.springframework.stereotype.Component;
+
+import javax.validation.constraints.NotNull;
 
 @Component
 @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
 class GroupDtos {
 
   @NotNull
-  Agate.GroupDto asDto(@NotNull Group group) {
+  Agate.GroupDto.Builder asBuilderDto(@NotNull Group group) {
     Agate.GroupDto.Builder builder = Agate.GroupDto.newBuilder();
     builder.setId(group.getId()) //
         .setName(group.getName()) //
@@ -30,7 +30,7 @@ class GroupDtos {
 
     builder.addAllApplications(group.getApplications());
 
-    return builder.build();
+    return builder;
   }
 
   @NotNull

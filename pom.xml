@@ -59,6 +59,9 @@
     <protobuf-java-format.version>1.2.1-obiba</protobuf-java-format.version>
     <shiro.version>1.4.0</shiro.version>
     <shiro-extras.version>1.0.3-obiba</shiro-extras.version>
+    <mysql.version>5.1.45</mysql.version>
+    <mariabd.version>1.5.9</mariabd.version>
+    <postgres.version>9.4.1212.jre7</postgres.version>
 
     <!-- maven plugins -->
     <bintray-maven-plugin.version>1.2.20180117184439</bintray-maven-plugin.version>
@@ -190,6 +193,22 @@
         <groupId>io.github.jhipster.loaded</groupId>
         <artifactId>core</artifactId>
         <version>${jhipsterloaded.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>${mysql.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mariadb.jdbc</groupId>
+        <artifactId>mariadb-java-client</artifactId>
+        <version>${mariabd.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <version>${postgres.version}</version>
       </dependency>
 
       <!-- Test dependencies -->

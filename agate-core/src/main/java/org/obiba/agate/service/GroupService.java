@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -55,9 +56,13 @@ public class GroupService {
     return groupRepository.findByApplications(application);
   }
 
-  public void ensureGroups(@NotNull Collection<String> names) {
+  public void ensureGroupsByName(@NotNull Collection<String> names) {
     Assert.notNull(names, "Group names cannot be null.");
     names.forEach(this::getGroup);
+  }
+
+  public List<User> getUsers(String name) {
+    return userRepository.findByGroups(name);
   }
 
   /**

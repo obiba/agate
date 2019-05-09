@@ -12,14 +12,23 @@
 
 agate.localized
 
-  .directive('localized', [function () {
+  .directive('localized', ['LocalizedValues', function (LocalizedValues) {
     return {
       restrict: 'AE',
       scope: {
         value: '=',
-        lang: '='
+        lang: '=',
+        ellipsisSize: '=',
+        markdownIt: '=',
+        keyLang: '@',
+        keyValue: '@'
       },
-      template: '<span ng-repeat="localizedValue in value | filter:{lang:lang}">{{localizedValue.value}}</span>'
+      templateUrl: 'app/commons/localized/localized-template.html',
+      link: function(scope) {
+        scope.keyLang = scope.keyLang || 'lang';
+        scope.keyValue = scope.keyValue || 'value';
+        scope.LocalizedValues = LocalizedValues;
+      }
     };
   }])
 
@@ -58,9 +67,11 @@ agate.localized
         model: '=',
         label: '@',
         required: '@',
+        disabled: '=',
         lang: '=',
         help: '@',
-        rows: '@'
+        rows: '@',
+        customValidator: '='
       },
       templateUrl: 'app/commons/localized/localized-textarea-template.html',
       link: function ($scope, elem, attr, ctrl) {
@@ -69,9 +80,25 @@ agate.localized
             {lang: $scope.lang, value: ''}
           ];
         }
+
+        $scope.$watch('model', function(newModel) {
+          if (angular.isUndefined(newModel) || newModel === null) {
+            $scope.model = [{lang: $scope.lang, value: ''}];
+          }
+
+          var currentLang = $scope.model.filter(function(e) {
+            if (e.lang === $scope.lang) {
+              return e;
+            }
+          });
+
+          if (currentLang.length === 0) {
+            $scope.model.push({lang:$scope.lang, value: ''});
+          }
+        }, true);
+
         $scope.fieldName = $scope.name + '-' + $scope.lang;
         $scope.form = ctrl;
-//        console.log('localizedTextarea', $scope);
       }
     };
   }]);

@@ -9,23 +9,30 @@
  */
 package org.obiba.agate.security;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import net.sf.ehcache.CacheManager;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.pam.FirstSuccessfulStrategy;
 import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
 import org.apache.shiro.authz.ModularRealmAuthorizer;
 import org.apache.shiro.authz.permission.PermissionResolverAware;
 import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.mgt.SessionsSecurityManager;
+import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
 import org.apache.shiro.util.LifecycleUtils;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
+import org.obiba.agate.domain.RealmStatus;
+import org.obiba.agate.service.RealmConfigService;
+import org.obiba.agate.service.UserService;
 import org.obiba.shiro.SessionStorageEvaluator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,17 +55,28 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
 
   private final Set<Realm> realms;
 
+  private final RealmConfigService realmConfigService;
+
+  private final UserService userService;
+
+  private final AgateRealmFactory agateRealmFactory;
+
   @Inject
   @Lazy
   public SecurityManagerFactory(
     CacheManager cacheManager,
-    Set<Realm> realms) {
+    Set<Realm> realms,
+    RealmConfigService realmConfigService,
+    UserService userService, AgateRealmFactory agateRealmFactory) {
     this.cacheManager = cacheManager;
     this.realms = realms;
+    this.realmConfigService = realmConfigService;
+    this.userService = userService;
+    this.agateRealmFactory = agateRealmFactory;
   }
 
   @Override
-  public SessionsSecurityManager getObject() throws Exception {
+  public SessionsSecurityManager getObject() {
     if(securityManager == null) {
       securityManager = doCreateSecurityManager();
       SecurityUtils.setSecurityManager(securityManager);
@@ -86,7 +104,17 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
   }
 
   private SessionsSecurityManager doCreateSecurityManager() {
-    DefaultWebSecurityManager manager = new DefaultWebSecurityManager(realms);
+    Builder<Realm> realmsBuilder = ImmutableList.<Realm>builder().addAll(realms);
+
+    List<AuthorizingRealm> authorizingRealms =
+      realmConfigService.findAllByStatus(RealmStatus.ACTIVE)
+        .stream()
+        .map(agateRealmFactory::build)
+        .collect(Collectors.toList());
+
+    if (authorizingRealms.size() > 0) realmsBuilder.addAll(authorizingRealms);
+
+    DefaultWebSecurityManager manager = new DefaultWebSecurityManager(realmsBuilder.build());
 
     initializeCacheManager(manager);
     initializeSessionManager(manager);
@@ -128,7 +156,7 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
 
   private void initializeAuthenticator(DefaultWebSecurityManager dsm) {
     if(dsm.getAuthenticator() instanceof ModularRealmAuthenticator) {
-      ((ModularRealmAuthenticator) dsm.getAuthenticator()).setAuthenticationStrategy(new FirstSuccessfulStrategy());
+      ((ModularRealmAuthenticator) dsm.getAuthenticator()).setAuthenticationStrategy(new AgateSuccessfulStrategy(userService, realmConfigService));
     }
   }
 }

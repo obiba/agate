@@ -65,8 +65,9 @@
 
         <attributes-view attributes='userNonConfigAttributes'></attributes-view>
 
-        <update-password-button profile="profile" updated="onPasswordUpdated()"
-          user-id="_current"></update-password-button>
+        <span ng-if="settingsAccount.realm === 'agate-user-realm'">
+          <update-password-button profile="profile" updated="onPasswordUpdated()" user-id="_current"></update-password-button>
+        </span>
 
         <a ng-click="edit()" class="btn btn-primary">
           <i class="fa fa-pencil-square-o"></i> <span translate>edit</span>

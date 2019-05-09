@@ -7,12 +7,8 @@
     "browsehappy": "You are using an <strong>outdated</strong> browser. Please <a href=\"http://browsehappy.com/\">upgrade your browser</a> to improve your experience.",
     "menu": {
       "admin": "Administration",
-      "applications": "Applications",
       "configuration": "Configuration",
-      "groups": "Groups",
       "requests": "Pending Requests",
-      "tickets": "Tickets",
-      "users": "Users",
       "myProfile": "My Profile",
       "logout": "Sign Out",
       "account": {
@@ -22,6 +18,19 @@
         "login": "Authenticate"
       }
     },
+    "name": "Name",
+    "type": "Type",
+    "title": "Title",
+    "description": "Description",
+    "status": "Status",
+    "applications": "Applications",
+    "groups": "Groups",
+    "tickets": "Tickets",
+    "users": "Users",
+    "realms": "Realms",
+    "realm": "Realm",
+    "actions": "Actions",
+    "copy": "Copy",
     "language": {
       "en": "English",
       "fr": "French",
@@ -40,7 +49,8 @@
     "help": {
       "general": "Configure server properties.",
       "style": "Override the default style with your own stylesheet.",
-      "translations": "Manage labels translations."
+      "translations": "Manage labels translations.",
+      "realms": "Manage external authentication realms."
     }
   },
   "login": {
@@ -212,11 +222,11 @@
       "addAttribute": "Add attribute",
       "editTitle": "Edit attribute",
       "type": "Type",
-      "types":{
-        "STRING":"String",
-        "INTEGER":"Integer",
-        "NUMBER":"Number",
-        "BOOLEAN":"Boolean"
+      "types": {
+        "STRING": "String",
+        "INTEGER": "Integer",
+        "NUMBER": "Number",
+        "BOOLEAN": "Boolean"
       },
       "name": "Name",
       "description": "Description",
@@ -438,13 +448,24 @@
   "system": "System",
   "server": {
     "error": {
+      "404": "Server rejected your request, please make sure you are logged in and try again.",
       "403": "Server rejected your request, please make sure you are logged in and try again.",
       "password": {
         "too-short": "Password is shorter than the required {{arg0}} characters",
         "not-changed": "New password is identical to the current password"
       },
       "email-already-assigned": "Email '{{arg0}}' is already assigned to another user.",
-      "duplicate-key": "Duplicate item ID."
+      "duplicate-key": "Duplicate item ID.",
+      "bad-request": "Bad server request, please contact your Agate administrator.",
+      "realm": {
+        "not-orphan": "Cannot delete a realm having associated users."
+      },
+      "group": {
+        "not-orphan": "Cannot delete a group having associated users."
+      },
+      "application": {
+        "not-orphan": "Cannot delete an application having associated users or groups."
+      }
     }
   },
   "form-server-error": "Error",
@@ -466,5 +487,62 @@
     "openid-profile-description": "Permission to get your profile information.",
     "openid-phone-description": "Permission to get your phone (not supported).",
     "openid-address-description": "Permission to get your address (not supported)."
+  },
+  "realms": {
+    "description": "Realms listed here provide alternative authentication for Agate users.",
+    "none": "No realms.",
+    "add-realm": "Add Realm"
+  },
+  "realm": {
+    "agate-user-realm": "Agate Default Realm",
+    "agate-ldap-realm": "Agate LDAP Realm",
+    "agate-jdbc-realm": "Agate JDBC Realm",
+    "agate-ad-realm": "Agate Active Directory Realm",
+    "ACTIVE": "Active",
+    "INACTIVE": "Inactive",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "name-help": "Name must be unique and contain: spaces, <code>A-Za-z</code> <code>0-9</code> <code>-_</code>.",
+    "for-signup": "Signup Realm",
+    "default-realm": "Default Realm",
+    "default": "Agate Realm",
+    "default-help": "The default Agate realm for user sign-up and login.",
+    "new-realm": "New Realm",
+    "users-help": "List of users authenticated by this realm.",
+    "users-none": "No users are authenticated by this realm.",
+    "restart": "System restart is required for realm changes to take effect.",
+    "jdbc": {
+      "url": "URL",
+      "username": "DB User Name",
+      "password": "DB User Password",
+      "authentication-query": "Authentication Query",
+      "authentication-query-help": "SQL query used to search an existing user's password."
+    },
+    "ldap": {
+      "url": "URL",
+      "system-username": "System User Name",
+      "system-password": "System User Password",
+      "user-dn-template": "User Distinguished Name (DN) Template",
+      "user-dn-template-help": "This template is used to search an existing user in the LDAP server."
+    },
+    "ad": {
+      "url": "URL",
+      "system-username": "System User Name",
+      "system-password": "System User Password",
+      "search-filter": "Search Filter",
+      "search-base": "Search Base",
+      "search-base-help": "Search base in the Active Directory hierarchical structure.",
+      "principal-suffix": "User Suffix",
+      "principal-suffix-help": "Suffix used that will be appended to username upon login."
+    },
+    "deativate-warning": "Users associated with this realm can no longer login to Agate and its registered applications.",
+    "delete-dialog": {
+      "title": "Delete Realm",
+      "message": "Are you sure you want to delete realm {{arg0}}?"
+    },
+    "deactivate-dialog": {
+      "title": "Deactivate Realm",
+      "message": "There are still users associated  with realm '{{arg0}}'. Are you sure you want to proceed?"
+    }
   }
 }

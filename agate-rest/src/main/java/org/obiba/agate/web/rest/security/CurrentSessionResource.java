@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Path("/auth/session/_current")
-@RequiresRoles("agate-user")
+@RequiresRoles({"agate-user"})
 public class CurrentSessionResource {
 
   @DELETE

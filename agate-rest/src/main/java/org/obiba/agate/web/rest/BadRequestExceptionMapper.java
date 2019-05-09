@@ -31,7 +31,7 @@ public class BadRequestExceptionMapper extends AbstractErrorDtoExceptionMapper<B
   protected GeneratedMessage.ExtendableMessage<?> getErrorDto(BadRequestException e) {
     return ErrorDtos.ClientErrorDto.newBuilder() //
         .setCode(getStatus().getStatusCode()) //
-        .setMessageTemplate("error.badRequest") //
+        .setMessageTemplate("server.error.bad-request") //
         .setMessage(e.getMessage()) //
         .build();
   }

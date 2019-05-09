@@ -22,6 +22,8 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiresRoles("agate-administrator")
@@ -39,9 +41,17 @@ public class GroupResource {
   }
 
   @GET
-  public Agate.GroupDto get(@PathParam("id") String id) {
-    Group group = groupService.getGroup(id);
-    return dtos.asDto(group);
+  public Agate.GroupDto get(@PathParam("id") String id,
+                            @QueryParam("includeUsers") @DefaultValue("false") boolean includeUsers) {
+    Agate.GroupDto.Builder builder = dtos.asDtoBuilder(groupService.getGroup(id));
+    if (includeUsers) builder.addAllUsers(getUsers(id));
+    return builder.build();
+  }
+
+  @GET
+  @Path("/users")
+  public List<Agate.UserSummaryDto> getUsers(@PathParam("id") String id) {
+    return groupService.getUsers(id).stream().map(dtos::asSummaryDto).collect(Collectors.toList());
   }
 
   @PUT

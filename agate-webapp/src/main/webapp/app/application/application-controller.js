@@ -12,16 +12,28 @@
 
 agate.application
 
-  .controller('ApplicationListController', ['$rootScope', '$scope', 'ApplicationsResource', 'ApplicationResource', 'NOTIFICATION_EVENTS',
+  .controller('ApplicationListController',
+    ['$rootScope',
+      '$scope',
+      'ApplicationsResource',
+      'ApplicationResource',
+      'NOTIFICATION_EVENTS',
+      'AlertBuilder',
 
-    function ($rootScope, $scope, ApplicationsResource, ApplicationResource, NOTIFICATION_EVENTS) {
+    function ($rootScope,
+              $scope,
+              ApplicationsResource,
+              ApplicationResource,
+              NOTIFICATION_EVENTS,
+              AlertBuilder) {
       var onSuccess = function(response) {
         $scope.applications = response;
         $scope.loading = false;
       };
 
-      var onError = function() {
+      var onError = function(response) {
         $scope.loading = false;
+        AlertBuilder.newBuilder().response(response).delay(0).build();
       };
 
       $scope.loading = true;
@@ -42,11 +54,12 @@ agate.application
       $scope.$on(NOTIFICATION_EVENTS.confirmDialogAccepted, function (event, id) {
         if ($scope.applicationToDelete === id) {
 
-          ApplicationResource.delete({id: id},
-            function () {
+          ApplicationResource.delete({id: id}).$promise
+            .then(function () {
               $scope.loading = true;
               ApplicationsResource.query({}, onSuccess, onError);
-            });
+            })
+            .catch(onError);
         }
       });
 

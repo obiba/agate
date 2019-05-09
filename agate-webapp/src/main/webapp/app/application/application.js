@@ -13,7 +13,6 @@
 agate.application = angular.module('agate.application', [
   'agate.config',
   'obiba.form',
-  'agate.localized',
   'obiba.notification',
   'ngResource',
   'ngRoute',

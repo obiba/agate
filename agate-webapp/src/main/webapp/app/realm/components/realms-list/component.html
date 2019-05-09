@@ -1,0 +1,93 @@
+<!--
+  ~ Copyright (c) 2019 OBiBa. All rights reserved.
+  ~
+  ~ This program and the accompanying materials
+  ~ are made available under the terms of the GNU Public License v3.0.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<h2>
+  <ol class="agate-breadcrumb">
+    <li><a href="#/admin" translate>global.menu.admin</a></li>
+    <li class="active" translate>global.realms</li>
+  </ol>
+</h2>
+
+<p class="help-block" translate>realms.description</p>
+
+<a ng-href="#/admin/realm/new" class="btn btn-info">
+  <i class="fa fa-plus"></i> <span translate>realms.add-realm</span>
+</a>
+
+<p class="help-block" ng-if="$ctrl.realms.length == 0 && !$ctrl.loading">
+  <span translate>realms.none</span>
+</p>
+
+<p ng-if="$ctrl.loading" class="voffset2 loading"></p>
+
+<div ng-if="$ctrl.realms.length > 0">
+  <div ng-if="$ctrl.realms.length > 10" class="row voffset2">
+    <div class="col-xs-4">
+      <span class="input-group input-group-sm no-padding-top">
+        <span class="input-group-addon" id="application-search"><i class="glyphicon glyphicon-search"></i></span>
+        <input ng-model="$ctrl.searchText" type="text" class="form-control width25" aria-describedby="application-search">
+      </span>
+    </div>
+    <div class="col-xs-8">
+      <dir-pagination-controls class="pull-right"></dir-pagination-controls>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped">
+      <thead>
+      <tr>
+        <th translate>global.name</th>
+        <th translate>global.description</th>
+        <th translate>global.type</th>
+        <th translate>global.users</th>
+        <th translate>global.status</th>
+        <th translate>global.actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr dir-paginate="realm in $ctrl.realms | filter: $ctrl.searchText | itemsPerPage: 10">
+        <td>
+          <a ng-href="#{{'/admin/realm/' + realm.name}}">
+            <localized value="realm.title || realm.name" lang="$ctrl.locale.language" key-lang="lang" key-value="value"></localized>
+          </a>
+        </td>
+        <td>
+          <localized value="realm.description" lang="$ctrl.locale.language" key-lang="lang" key-value="value"></localized>
+        </td>
+        <td>{{'realm.' + realm.type | translate}}</td>
+        <td>{{realm.userCount}}</td>
+        <td>{{'realm.' + realm.status | translate}}</td>
+        <td>
+          <ul class="list-inline">
+            <li>
+              <a href ng-click="$ctrl.toggleActivateRealm(realm)"
+                 title="{{'realm.' + (realm.status === 'ACTIVE' ? 'deactivate' : 'activate') | translate}}"><i
+                class="fa" ng-class="{'fa-times': realm.status === 'ACTIVE', 'fa-check': realm.status === 'INACTIVE'}"></i>
+              </a>
+            </li>
+            <li>
+              <a href ng-href="#/admin/realm/{{realm.name}}/edit" title="{{'edit' | translate}}"><i
+                class="fa fa-pencil"></i></a>
+            </li>
+            <li>
+              <a href ng-href="#/admin/realm/new?from={{realm.name}}" title="{{'global.copy' | translate}}"><i
+                class="fa fa-copy"></i></a>
+            </li>
+            <li>
+              <a href ng-click="$ctrl.deleteRealm(realm)" title="{{'delete' | translate}}"><i
+                class="fa fa-trash-o"></i></a>
+            </li>
+          </ul>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

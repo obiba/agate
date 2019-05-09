@@ -73,6 +73,20 @@ class UserDtos {
     return builder.build();
   }
 
+  @NotNull
+  Agate.UserSummaryDto asSummaryDto(User user) {
+    Agate.UserSummaryDto.Builder builder =
+      Agate.UserSummaryDto.newBuilder()
+        .setId(user.getId())
+        .setName(user.getName());
+
+    if(!Strings.isNullOrEmpty(user.getEmail())) builder.setEmail(user.getEmail());
+    if(!Strings.isNullOrEmpty(user.getFirstName())) builder.setFirstName(user.getFirstName());
+    if(!Strings.isNullOrEmpty(user.getLastName())) builder.setLastName(user.getLastName());
+
+    return builder.build();
+  }
+
   AuthDtos.SubjectDto asDto(@NotNull User user, boolean withAttributes) {
     AuthDtos.SubjectDto.Builder builder = AuthDtos.SubjectDto.newBuilder().setUsername(user.getName());
     if(!user.getGroups().isEmpty()) builder.addAllGroups(user.getGroups());
@@ -113,6 +127,10 @@ class UserDtos {
 
     if (dto.hasLastName()) {
       builder.lastName(dto.getLastName());
+    }
+
+    if (dto.hasRealm()) {
+      builder.realm(dto.getRealm());
     }
 
     if (dto.hasEmail()) {
