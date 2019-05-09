@@ -86,7 +86,7 @@ public class User extends AbstractAuditableDocument {
   }
 
   public String getRealm() {
-    return realm;
+    return Strings.isNullOrEmpty(realm) ? AgateRealm.AGATE_USER_REALM.getName() : realm;
   }
 
   public void setRealm(String realm) {
