@@ -45,11 +45,13 @@ public class RealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
       "        \"type\": \"string\"," +
       "        \"title\": \"t(global.status)\"," +
       "        \"default\": \"" + RealmStatus.INACTIVE + "\"," +
+      "        \"description\": t(realm.status-help)," +
       "        \"enum\": " + getStatusEnum() +
       "      }," +
       "      \"groups\": {" +
       "        \"title\": \"t(global.groups)\"," +
       "        \"type\": \"array\"," +
+      "        \"description\": \"t(realm.groups-help)\"," +
       "        \"format\": \"obibaUiSelect\"" +
       "      }," +
       "      \"type\": {" +
@@ -60,11 +62,13 @@ public class RealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
       "      }," +
       "      \"defaultRealm\": {" +
       "        \"type\": \"boolean\"," +
-      "        \"title\": \"t(realm.default-realm)\"" +
+      "        \"title\": \"t(realm.default-realm)\"," +
+      "        \"description\": t(realm.default-help)" +
       "      }," +
       "      \"forSignup\": {" +
       "        \"type\": \"boolean\"," +
-      "        \"title\": \"t(realm.for-signup)\"" +
+      "        \"title\": \"t(realm.for-signup)\"," +
+      "        \"description\": t(realm.for-signup-help)" +
       "      }" +
       "    }," +
       "    \"required\": [" +
