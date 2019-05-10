@@ -519,7 +519,13 @@
       "username": "Nom d'utilisateur de la base de données",
       "password": "Mot de passe utilisateur de la base de données",
       "authentication-query": "Requête d'authentification",
-      "authentication-query-help": "Requête SQL utilisée pour rechercher le mot de passe d'un utilisateur existant."
+      "authentication-query-help": "Requête SQL utilisée pour rechercher le mot de passe d'un utilisateur existant.",
+      "salt-style": "Style de la clé de hashage utilisée par la base de donnée",
+      "external-salt":  "La clé de hachage",
+      "external-salt-help": "Si laissée vide, le nom de l'utilisateur sera utilisé.",
+      "salt-style-column-help": "Ne pas oublier d'inclure la colonne où trouver la clé de hachage, e.g. <code>select password, password_salt from users where username = ?</code>.",
+      "algorithm-name": "Fonction cryptographique",
+      "algorithm-name-help": "Le nom de l'agorithme utilisé pour encrypté le mot de passe. Laisser le champs vide si aucun n'est utilisé."
     },
     "ldap": {
       "url": "URL",

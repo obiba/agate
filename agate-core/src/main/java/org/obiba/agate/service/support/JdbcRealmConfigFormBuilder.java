@@ -10,6 +10,11 @@
 
 package org.obiba.agate.service.support;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.apache.shiro.realm.jdbc.JdbcRealm.SaltStyle;
+import org.json.JSONArray;
+
 public class JdbcRealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
 
   JdbcRealmConfigFormBuilder() {
@@ -33,6 +38,22 @@ public class JdbcRealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
         "      \"type\": \"string\"," +
         "      \"title\": \"t(realm.jdbc.authentication-query)\"," +
         "      \"description\": \"t(realm.jdbc.authentication-query-help)\"" +
+        "    }," +
+        "    \"saltStyle\": {" +
+        "      \"type\": \"string\"," +
+        "      \"title\": \"t(realm.jdbc.salt-style)\"," +
+        "        \"default\": \"" + SaltStyle.NO_SALT + "\"," +
+        "        \"enum\": " + saltStyleEnum() +
+        "    }," +
+        "    \"externalSalt\": {" +
+        "      \"type\": \"string\"," +
+        "      \"title\": \"t(realm.jdbc.external-salt)\"," +
+        "      \"description\": \"t(realm.jdbc.external-salt-help)\"" +
+        "    }," +
+        "    \"algorithmName\": {" +
+        "      \"type\": \"string\"," +
+        "      \"title\": \"t(realm.jdbc.algorithm-name)\"," +
+        "      \"description\": \"t(realm.jdbc.algorithm-name-help)\"" +
         "    }" +
         "  }," +
         "  \"required\": [" +
@@ -62,12 +83,33 @@ public class JdbcRealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
         "          {" +
         "            \"key\": \"authenticationQuery\"," +
         "            \"placeholder\": \"select password from users where username = ?\"" +
+        "          }," +
+        "          {" +
+        "            \"helpvalue\": \"<div class='help-block'>t(realm.jdbc.salt-style-column-help)</div>\"," +
+        "            \"type\": \"help\"," +
+        "            \"condition\": \"model.saltStyle === '" + SaltStyle.COLUMN + "'\"" +
+        "          }," +
+        "          {" +
+        "            \"key\": \"saltStyle\"," +
+        "            \"type\": \"select\"" +
+        "          }," +
+        "          {" +
+        "            \"key\": \"externalSalt\"," +
+        "            \"condition\": \"model.saltStyle === '" + SaltStyle.EXTERNAL + "'\"" +
+        "          }," +
+        "          {" +
+        "            \"key\": \"algorithmName\"," +
+        "            \"placeholder\": \"SHA-256\"" +
         "          }" +
         "        ]" +
         "      }" +
         "    ]" +
         "  }" +
         "]";
+  }
+
+  private String saltStyleEnum() {
+    return new JSONArray(Stream.of(SaltStyle.values()).map(SaltStyle::toString).collect(Collectors.toList())).toString();
   }
 
   public static JdbcRealmConfigFormBuilder newBuilder() {
