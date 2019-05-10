@@ -519,7 +519,13 @@
       "username": "DB User Name",
       "password": "DB User Password",
       "authentication-query": "Authentication Query",
-      "authentication-query-help": "SQL query used to search an existing user's password."
+      "authentication-query-help": "SQL query used to search an existing user's password.",
+      "salt-style": "Salt Style used by the Database",
+      "external-salt":  "The Specific Salt",
+      "external-salt-help": "If left empty, will use the username as salt.",
+      "salt-style-column-help": "Remember to include the salt in your query, e.g. <code>select password, password_salt from users where username = ?</code>.",
+      "algorithm-name": "The Name of the Algorithm Used to Hash the Password",
+      "algorithm-name-help": "A cryptographic hash function used by the database. Leave blank if none are used."
     },
     "ldap": {
       "url": "URL",

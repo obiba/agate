@@ -4,11 +4,13 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.realm.activedirectory.ActiveDirectoryRealm;
 import org.apache.shiro.realm.jdbc.JdbcRealm;
+import org.apache.shiro.realm.jdbc.JdbcRealm.SaltStyle;
 import org.apache.shiro.realm.ldap.DefaultLdapRealm;
 import org.apache.shiro.realm.ldap.JndiLdapContextFactory;
 import org.apache.shiro.subject.PrincipalCollection;
@@ -94,6 +96,12 @@ public class AgateRealmFactory {
             protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
               return getUserFromAvailablePrincipal(principals, principals.fromRealm(getName()));
             }
+
+            @Override
+            protected String getSaltForUser(String username) {
+              String externalSalt = jdbcConfig.getExternalSalt();
+              return Strings.isNullOrEmpty(externalSalt) ? super.getSaltForUser(username) : externalSalt;
+            }
           };
 
           DataSource dataSource = createDataSource(realmConfig.getName(), jdbcConfig);
@@ -103,6 +111,15 @@ public class AgateRealmFactory {
           jdbcRealm.setName(realmConfig.getName());
           jdbcRealm.setDataSource(dataSource);
           jdbcRealm.setAuthenticationQuery(jdbcConfig.getAuthenticationQuery());
+          jdbcRealm.setSaltStyle(jdbcConfig.getSaltStyle());
+
+          if (jdbcConfig.getSaltStyle() != SaltStyle.NO_SALT) {
+            HashedCredentialsMatcher hashedCredentialsMatcher = new HashedCredentialsMatcher();
+            hashedCredentialsMatcher.setHashAlgorithmName(jdbcConfig.getAlgorithmName());
+
+            jdbcRealm.setCredentialsMatcher(hashedCredentialsMatcher);
+          }
+
           jdbcRealm.setPermissionsLookupEnabled(false);
 
           realm = jdbcRealm;

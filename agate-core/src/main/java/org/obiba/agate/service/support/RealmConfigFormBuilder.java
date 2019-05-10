@@ -141,7 +141,7 @@ public class RealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
   }
 
   private String getStatusEnum() {
-    List<String> stautsList = Stream.of(RealmStatus.values()).map(RealmStatus::toString).collect(Collectors.toList());
-    return new JSONArray(stautsList).toString();
+    List<String> statusList = Stream.of(RealmStatus.values()).map(RealmStatus::toString).collect(Collectors.toList());
+    return new JSONArray(statusList).toString();
   }
 }
