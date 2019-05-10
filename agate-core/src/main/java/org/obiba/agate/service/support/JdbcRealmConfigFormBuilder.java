@@ -99,7 +99,8 @@ public class JdbcRealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
         "          }," +
         "          {" +
         "            \"key\": \"algorithmName\"," +
-        "            \"placeholder\": \"SHA-256\"" +
+        "            \"placeholder\": \"SHA-256\"," +
+        "            \"condition\": \"model.saltStyle === '" + SaltStyle.EXTERNAL + "' || model.saltStyle === '" + SaltStyle.COLUMN + "'\"" +
         "          }" +
         "        ]" +
         "      }" +
