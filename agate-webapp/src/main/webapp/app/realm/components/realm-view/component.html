@@ -85,6 +85,18 @@
           <th translate>realm.jdbc.authentication-query</th>
           <td>{{$ctrl.realm.content.authenticationQuery}}</td>
         </tr>
+        <tr>
+          <th translate>realm.jdbc.salt-style</th>
+          <td>{{$ctrl.realm.content.saltStyle}}</td>
+        </tr>
+        <tr>
+          <th translate>realm.jdbc.external-salt</th>
+          <td>{{$ctrl.realm.content.externalSalt}}</td>
+        </tr>
+        <tr>
+          <th translate>realm.jdbc.algorithm-name</th>
+          <td>{{$ctrl.realm.content.algorithmName}}</td>
+        </tr>
         </tbody>
         <tbody ng-if="$ctrl.realm.type === 'agate-ad-realm'">
         <tr>
