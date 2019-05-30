@@ -116,8 +116,12 @@ public class NotificationsResource extends ApplicationAwareResource {
   private void sendTemplateEmail(String subject, String templateName, Map<String, String[]> context,
     Set<User> recipients) {
     org.thymeleaf.context.Context ctx = new org.thymeleaf.context.Context();
+    final String[] createdBy = {""};
     context.forEach((k, v) -> {
       if(v != null && v.length == 1) {
+        if(k.equals("createdBy")){
+          createdBy[0] = v[0];
+        }
         ctx.setVariable(k, v[0]);
       } else {
         ctx.setVariable(k, v);
@@ -126,10 +130,12 @@ public class NotificationsResource extends ApplicationAwareResource {
     String templateLocation = getApplicationName() + "/" + templateName;
 
     recipients.forEach(rec -> {
-      ctx.setVariable("user", rec);
-      ctx.setLocale(LocaleUtils.toLocale(rec.getPreferredLanguage()));
-      mailService
-        .sendEmail(rec.getEmail(), subject, templateEngine.process(templateLocation, ctx));
+      if(!rec.getName().equals(createdBy[0])){
+        ctx.setVariable("user", rec);
+        ctx.setLocale(LocaleUtils.toLocale(rec.getPreferredLanguage()));
+        mailService
+          .sendEmail(rec.getEmail(), subject, templateEngine.process(templateLocation, ctx));
+      }
     });
   }
 
