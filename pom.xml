@@ -53,7 +53,7 @@
     <metrics-spring.version>3.0.0</metrics-spring.version>
     <mongodb-driver.version>3.8.0</mongodb-driver.version>
     <nosqlunit.version>0.7.9</nosqlunit.version>
-    <obiba-commons.version>1.11.3</obiba-commons.version>
+    <obiba-commons.version>1.12-SNAPSHOT</obiba-commons.version>
     <oltu.version>1.0.1</oltu.version>
     <protobuf.version>2.5.0</protobuf.version>
     <protobuf-java-format.version>1.2.1-obiba</protobuf-java-format.version>
@@ -62,6 +62,10 @@
     <mysql.version>5.1.45</mysql.version>
     <mariabd.version>1.5.9</mariabd.version>
     <postgres.version>9.4.1212.jre7</postgres.version>
+    <lang-tag.version>1.4.4</lang-tag.version>
+    <oauth-oidc-sdk.version>5.45</oauth-oidc-sdk.version>
+    <nimbus-jose-jwt.version>5.4</nimbus-jose-jwt.version>
+    <json-smart.version>2.3</json-smart.version>
 
     <!-- maven plugins -->
     <bintray-maven-plugin.version>1.2.20180117184439</bintray-maven-plugin.version>
@@ -315,6 +319,50 @@
         <artifactId>obiba-password-hasher</artifactId>
         <version>${obiba-commons.version}</version>
         <classifier>cli</classifier>
+      </dependency>
+      <dependency>
+        <groupId>org.obiba.commons</groupId>
+        <artifactId>obiba-oidc</artifactId>
+        <version>${obiba-commons.version}</version>
+      </dependency>
+
+      <!-- oidc dependencies -->
+      <dependency>
+        <groupId>com.nimbusds</groupId>
+        <artifactId>lang-tag</artifactId>
+        <version>${lang-tag.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.nimbusds</groupId>
+        <artifactId>oauth2-oidc-sdk</artifactId>
+        <version>${oauth-oidc-sdk.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.github.stephenc.jcip</groupId>
+            <artifactId>jcip-annotations</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>com.nimbusds</groupId>
+        <artifactId>nimbus-jose-jwt</artifactId>
+        <version>${nimbus-jose-jwt.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>com.github.stephenc.jcip</groupId>
+            <artifactId>jcip-annotations</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>net.minidev</groupId>
+        <artifactId>json-smart</artifactId>
+        <version>${json-smart.version}</version>
+        <scope>runtime</scope>
       </dependency>
 
       <dependency>
