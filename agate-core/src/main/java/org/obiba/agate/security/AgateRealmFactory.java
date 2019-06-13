@@ -147,7 +147,12 @@ public class AgateRealmFactory {
 
         case AGATE_OIDC_REALM:
           OidcRealmConfig oidcRealmConfig = OidcRealmConfig.newBuilder(configurationService.decrypt(realmConfig.getContent())).build();
-          OIDCRealm oidcRealm = new OIDCRealm(oidcRealmConfig);
+          OIDCRealm oidcRealm = new OIDCRealm(oidcRealmConfig) {
+            @Override
+            protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+              return getUserFromAvailablePrincipal(principals, principals.fromRealm(getName()));
+            }
+          };
           realm = oidcRealm;
           break;
 

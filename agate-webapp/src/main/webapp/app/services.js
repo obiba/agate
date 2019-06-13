@@ -179,6 +179,15 @@ agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$log', '$c
           // session has terminated, cleanup
           Session.destroy();
           return false;
+        } else {
+          // TODO for testing only
+          CurrentSession.get(function (data) {
+            Session.create(data.username, data.role, data.realm);
+            $cookieStore.put('agate_subject', JSON.stringify(Session));
+            authService.loginConfirmed(data);
+          });
+
+          return true;
         }
 
         if (!Session.login) {
