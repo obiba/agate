@@ -35,10 +35,7 @@ import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.LocalizedString;
 import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.repository.AgateConfigRepository;
-import org.obiba.agate.service.support.ActiveDirectoryRealmConfigFormBuilder;
-import org.obiba.agate.service.support.JdbcRealmConfigFormBuilder;
-import org.obiba.agate.service.support.LdapRealmConfigFormBuilder;
-import org.obiba.agate.service.support.RealmConfigFormBuilder;
+import org.obiba.agate.service.support.*;
 import org.obiba.core.translator.JsonTranslator;
 import org.obiba.core.translator.PrefixedValueTranslator;
 import org.obiba.core.translator.TranslationUtils;
@@ -209,6 +206,10 @@ public class ConfigurationService {
     form.put(
       AgateRealm.AGATE_AD_REALM.getName(),
       translationUtils.translate(ActiveDirectoryRealmConfigFormBuilder.newBuilder().build().toString(), translator)
+    );
+    form.put(
+      AgateRealm.AGATE_OIDC_REALM.getName(),
+      translationUtils.translate(OidcRealmConfigFormBuilder.newBuilder().build().toString(), translator)
     );
 
     return form;

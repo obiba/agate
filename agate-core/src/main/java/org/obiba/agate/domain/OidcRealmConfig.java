@@ -45,6 +45,20 @@ public class OidcRealmConfig extends OIDCConfiguration {
     this.providerUrl = providerUrl;
   }
 
+  public JSONObject getAsSecuredJSONObject() throws JSONException {
+    JSONObject jsonObject = new JSONObject();
+    jsonObject.put(CLIENT_ID_FIELD, getClientId());
+    jsonObject.put(DISCOVERY_FIELD, getDiscoveryURI());
+    jsonObject.put(PROVIDER_URL_FIELD, getProviderUrl());
+    jsonObject.put(SCOPE_FIELD, getScope());
+    jsonObject.put(USE_NONCE_FIELD, isUseNonce());
+    jsonObject.put(CONNECT_TIMEOUT_FIELD, getConnectTimeout());
+    jsonObject.put(READ_TIMEOUT_FIELD, getReadTimeout());
+    jsonObject.put(READ_TIMEOUT_FIELD, getReadTimeout());
+
+    return jsonObject;
+  }
+
   public static class Builder {
 
     private final OidcRealmConfig config;
