@@ -23,7 +23,7 @@ public class OidcRealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
       "      \"title\": \"t(realm.oidc.client-id)\"," +
       "      \"description\": \"t(realm.oidc.client-id-help)\"" +
       "    }," +
-      "    \"clientSecret\": {" +
+      "    \"secret\": {" +
       "      \"type\": \"string\"," +
       "      \"title\": \"t(realm.oidc.client-secret)\"," +
       "      \"format\": \"password\"," +
@@ -66,7 +66,7 @@ public class OidcRealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
       "  }," +
       "  \"required\": [" +
       "    \"clientId\"," +
-      "    \"clientSecret\"," +
+      "    \"secret\"," +
       "    \"discoveryURI\"" +
       "  ]" +
       "}";
@@ -76,7 +76,7 @@ public class OidcRealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
       "  \"type\": \"section\"," +
       "  \"items\": [" +
       "      \"clientId\"," +
-      "      \"clientSecret\"," +
+      "      \"secret\"," +
       "      \"discoveryURI\"," +
       "      \"providerUrl\"," +
       "      \"scope\"," +
