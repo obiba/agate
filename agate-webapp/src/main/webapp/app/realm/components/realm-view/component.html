@@ -120,6 +120,36 @@
           <td>{{$ctrl.realm.content.principalSuffix}}</td>
         </tr>
         </tbody>
+        <tbody ng-if="$ctrl.realm.type === 'agate-oidc-realm'">
+        <tr>
+          <th translate>realm.oidc.client-id</th>
+          <td>{{$ctrl.realm.content.clientId}}</td>
+        </tr>
+        <tr>
+          <th translate>realm.oidc.discovery-uri</th>
+          <td>{{$ctrl.realm.content.discoveryURI}}</td>
+        </tr>
+        <tr>
+          <th translate>realm.oidc.provider-url</th>
+          <td>{{$ctrl.realm.content.providerUrl}}</td>
+        </tr>
+        <tr>
+          <th translate>realm.oidc.scope</th>
+          <td>{{$ctrl.realm.content.scope}}</td>
+        </tr>
+        <tr>
+          <th translate>realm.oidc.use-nonce</th>
+          <td><span><i class="fa" ng-class="{'fa-check': $ctrl.realm.content.useNonce, 'fa-times': !$ctrl.realm.content.useNonce}"></i></span></td>
+        </tr>
+        <tr>
+          <th translate>realm.oidc.connect-timeout</th>
+          <td>{{$ctrl.realm.content.connectTimeout}}</td>
+        </tr>
+        <tr>
+          <th translate>realm.oidc.read-timeout</th>
+          <td>{{$ctrl.realm.content.readTimeout}}</td>
+        </tr>
+        </tbody>
 
       </table>
 
