@@ -546,6 +546,24 @@
       "principal-suffix": "User Suffix",
       "principal-suffix-help": "Suffix used that will be appended to username upon login."
     },
+    "oidc": {
+      "client-id": "Client ID",
+      "client-id-help": "Identification of the Agate server in the ID provider.",
+      "client-secret": "Client Secret",
+      "client-secret-help": "Secret token of the Agate server in the ID provider.",
+      "discovery-uri": "Discovery URI",
+      "discovery-uri-help": "<a href=\"https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig\" target=\"_blank\">OpenID Connect configuration discovery URI</a> to automatically get connection parameters.",
+      "provider-url": "Account Login",
+      "provider-url-help": "Link to the account login page so that user can manage its credentials.",
+      "scope": "Scope",
+      "scope-help": "List of scope names to be specified to retrieve user information. Usually <code>openid</code> is enough.",
+      "use-nonce": "Use Nonce",
+      "use-nonce-help": "<a href=\"https://openid.net/specs/openid-connect-core-1_0.html#IDToken\" target=\"_blank\">Nonce</a> is a string value used to validate ID Token.",
+      "connect-timeout": "Connect Timeout",
+      "connect-timeout-help": "Maximum time in milliseconds to wait before a connection is established. Zero implies no timeout.",
+      "read-timeout": "Read Timeout",
+      "read-timeout-help": "Maximum time in milliseconds to wait before a response is received. Zero implies no timeout."
+    },
     "deativate-warning": "Users associated with this realm can no longer login to Agate and its registered applications.",
     "delete-dialog": {
       "title": "Delete Realm",
