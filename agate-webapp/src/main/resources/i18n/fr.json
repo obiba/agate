@@ -545,6 +545,24 @@
       "principal-suffix": "Suffixe d'utilisateur",
       "principal-suffix-help": "Suffixe utilisé qui sera ajouté au nom d'utilisateur lors de la connexion."
     },
+    "oidc": {
+      "client-id": "Identité du client",
+      "client-id-help": "Identification du serveur Agate dans le fournisseur d'ID.",
+      "client-secret": "Clé secret du client",
+      "client-secret-help": "Clé secret du serveur Agate dans le fournisseur d'ID.",
+      "discovery-uri": "URI de découverte",
+      "discovery-uri-help": "<a href=\"https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig\" target=\"_blank\">URI de découverte de la configuration de OpenID Connect</a> pour obtenir automatiquement les paramètres de connexion.",
+      "provider-url": "Connexion au compte",
+      "provider-url-help": "Lien vers la page de connexion du compte afin que l'utilisateur puisse gérer ses informations d'identification.",
+      "scope": "Portée",
+      "scope-help": "Liste des noms de portée à spécifier pour récupérer des informations utilisateur. Habituellement, <code>openid</code> suffit.",
+      "use-nonce": "Utilisez Nonce",
+      "use-nonce-help": "<a href=\"https://openid.net/specs/openid-connect-core-1_0.html#IDToken\" target=\"_blank\">Nonce</a> est une chaîne de caractères utilisée pour valider le jeton d'ID.",
+      "connect-timeout": "Délai de connexion",
+      "connect-timeout-help": "Délai d'attente maximal en millisecondes avant l'établissement d'une connexion. Zéro implique pas de délai d'attente.",
+      "read-timeout": "Délai de lecture",
+      "read-timeout-help": "Délai d'attente maximal en millisecondes avant la réception d'une réponse. Zéro implique pas de délai d'attente."
+    },
     "deativate-warning": "Les utilisateurs associés à ce domaine ne peuvent plus se connecter à Agate et à ses applications enregistrées.",
     "delete-dialog": {
       "title": "Supprimer le domaine",
