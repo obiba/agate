@@ -50,7 +50,7 @@ public class AuthConfigurationProvider implements OIDCConfigurationProvider {
   public Collection<OIDCConfiguration> getConfigurations() {
     return realmConfigService.findAllForSignupByStatusAndType(RealmStatus.ACTIVE, AgateRealm.AGATE_OIDC_REALM)
       .stream()
-      .map(realm -> createOIDCConfiguration(realm.getContent()))
+      .map(realm -> createOIDCConfiguration(realm.getName(), realm.getContent()))
       .filter(Objects::nonNull)
       .collect(Collectors.toList());
   }
@@ -61,9 +61,11 @@ public class AuthConfigurationProvider implements OIDCConfigurationProvider {
     return getConfigurations().stream().filter(conf -> name.equals(conf.getName())).findFirst().orElse(null);
   }
 
-  private OIDCConfiguration createOIDCConfiguration(String content) {
+  private OIDCConfiguration createOIDCConfiguration(String name, String content) {
     try {
-      return OidcRealmConfig.newBuilder(configurationService.decrypt(content)).build();
+      OidcRealmConfig oidcRealmConfig = OidcRealmConfig.newBuilder(configurationService.decrypt(content)).build();
+      oidcRealmConfig.setName(name);
+      return oidcRealmConfig;
     } catch (JSONException e) {
       logger.error(e.getMessage());
       return null;
