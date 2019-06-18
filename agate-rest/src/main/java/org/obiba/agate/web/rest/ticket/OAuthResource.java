@@ -47,6 +47,8 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
 import org.joda.time.DateTime;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.obiba.agate.domain.Application;
 import org.obiba.agate.domain.Authorization;
 import org.obiba.agate.domain.Ticket;
@@ -57,6 +59,8 @@ import org.obiba.agate.service.TicketService;
 import org.obiba.agate.service.TokenUtils;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.rest.security.AuthorizationValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -71,6 +75,8 @@ import static java.util.stream.Collectors.toList;
 @Path("/oauth2")
 @Scope("request")
 public class OAuthResource {
+
+  private static final Logger log = LoggerFactory.getLogger(OAuthResource.class);
 
   @Inject
   private AuthorizationService authorizationService;
@@ -105,8 +111,18 @@ public class OAuthResource {
     Subject subject = SecurityUtils.getSubject();
     String username = subject.getPrincipal().toString();
 
-    return tokenUtils.buildClaims(username, getSupportedOpenIdScopes((s) -> subject.hasRole(s)));
+    return tokenUtils.buildClaims(username, getSupportedOpenIdScopes(subject::hasRole));
   }
+
+  @GET
+  @Path("/certs")
+  @Produces("application/json")
+  public Response certs(@Context HttpServletRequest servletRequest) throws JSONException {
+    JSONObject jwks = new JSONObject();
+    jwks.put("keys", new String[]{});
+    return Response.ok(jwks.toString(2)).build();
+  }
+
 
   @POST
   @Path("/authz")

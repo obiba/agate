@@ -35,6 +35,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlets.GzipFilter;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.obiba.agate.oidc.OIDCConfigurationFilter;
 import org.obiba.agate.web.filter.CachingHttpHeadersFilter;
 import org.obiba.agate.web.filter.StaticResourcesProductionFilter;
 import org.obiba.shiro.web.filter.AuthenticationFilter;
@@ -90,16 +91,20 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
 
   private final AuthenticationFilter authenticationFilter;
 
+  private final OIDCConfigurationFilter oidcConfigurationFilter;
+
   private int httpsPort;
 
   @Inject
   public WebConfiguration(
     MetricRegistry metricRegistry,
     org.obiba.ssl.SslContextFactory sslContextFactory,
-    AuthenticationFilter authenticationFilter) {
+    AuthenticationFilter authenticationFilter,
+    OIDCConfigurationFilter oidcConfigurationFilter) {
     this.metricRegistry = metricRegistry;
     this.sslContextFactory = sslContextFactory;
     this.authenticationFilter = authenticationFilter;
+    this.oidcConfigurationFilter = oidcConfigurationFilter;
   }
 
   @Override
@@ -150,6 +155,7 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
 
     initAllowedMethodsFilter(servletContext);
     initAuthenticationFilter(servletContext);
+    initOIDCConfigurationFilter(servletContext);
 
     EnumSet<DispatcherType> disps = EnumSet.of(REQUEST, FORWARD, ASYNC);
     initMetrics(servletContext, disps);
@@ -184,6 +190,21 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
 
     filterRegistration.addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, ASYNC, INCLUDE, ERROR), true,
       WS_ROOT + "/*");
+    filterRegistration.setAsyncSupported(true);
+  }
+
+  private void initOIDCConfigurationFilter(ServletContext servletContext) {
+    log.debug("Registering OIDC Configuration Filter");
+    FilterRegistration.Dynamic filterRegistration = servletContext.addFilter("OIDCConfigurationFilter", oidcConfigurationFilter);
+
+    if (filterRegistration == null) {
+      filterRegistration =
+        (FilterRegistration.Dynamic)servletContext.getFilterRegistration("OIDCConfigurationFilter");
+    }
+
+    log.debug("Adding mapping to OIDC configuration filter registration");
+
+    filterRegistration.addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, ASYNC, INCLUDE, ERROR), true,"/.well-known/openid-configuration");
     filterRegistration.setAsyncSupported(true);
   }
 

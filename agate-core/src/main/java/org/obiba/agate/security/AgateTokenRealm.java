@@ -100,7 +100,7 @@ public class AgateTokenRealm extends AuthorizingRealm {
       username = user.getName();
     }
 
-    if(user == null || !user.isEnabled() || !user.getRealm().equals(AgateRealm.AGATE_USER_REALM)) {
+    if(user == null || !user.isEnabled() || !user.getRealm().equalsIgnoreCase(AgateRealm.AGATE_USER_REALM.getName())) {
       throw new UnknownAccountException("No account found for user [" + username + "]");
     }
 

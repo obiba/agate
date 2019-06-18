@@ -104,6 +104,10 @@ public class TokenUtils {
       .signWith(SignatureAlgorithm.HS256, configurationService.getConfiguration().getSecretKey().getBytes()).compact();
   }
 
+  public String getSignatureAlgorithm() {
+    return SignatureAlgorithm.HS256.name();
+  }
+
   /**
    * Validate Json web token: issuer, jwt ID and signature verification.
    *
@@ -158,14 +162,15 @@ public class TokenUtils {
     return claims;
   }
 
+  public String getIssuerID() {
+    Configuration configuration = configurationService.getConfiguration();
+    return configuration.hasPublicUrl() ? configurationService.getPublicUrl() : "agate:" + configuration.getId();
+  }
+
   //
   // Private methods
   //
 
-  private String getIssuerID() {
-    Configuration configuration = configurationService.getConfiguration();
-    return configuration.hasPublicUrl() ? configurationService.getPublicUrl() : "agate:" + configuration.getId();
-  }
 
   /**
    * The context of the token contains some custom entries about the user and the scope of the authorization (if any).
