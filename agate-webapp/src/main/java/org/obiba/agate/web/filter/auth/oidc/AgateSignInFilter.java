@@ -9,11 +9,17 @@ package org.obiba.agate.web.filter.auth.oidc;/*
  */
 
 
+import com.google.common.collect.Maps;
+import com.nimbusds.openid.connect.sdk.AuthenticationRequest;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.oidc.OIDCConfigurationProvider;
 import org.obiba.oidc.OIDCException;
+import org.obiba.oidc.OIDCSession;
 import org.obiba.oidc.OIDCSessionManager;
+import org.obiba.oidc.web.J2EContext;
 import org.obiba.oidc.web.filter.OIDCLoginFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.DelegatingFilterProxy;
 
@@ -24,9 +30,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
 
 @Component("agateSignInFilter")
 public class AgateSignInFilter extends OIDCLoginFilter {
+
+  private static final Logger log = LoggerFactory.getLogger(AgateSignInFilter.class);
 
   private final ConfigurationService configurationService;
 
@@ -61,6 +71,15 @@ public class AgateSignInFilter extends OIDCLoginFilter {
     } catch (OIDCException e) {
       response.sendRedirect(publicUrl);
     }
+  }
+
+  @Override
+  protected OIDCSession makeSession(J2EContext context, AuthenticationRequest authRequest) {
+    Map<String, String[]> requestParameters = context.getRequestParameters();
+    Map<String, String[]> map = Maps.newHashMap(requestParameters);
+    map.put(FilterParameter.ACTION.value(), new String[] {FilterAction.SIGNIN.name()});
+    OIDCSession oidcSession = new OIDCSession(context.getClientId(), authRequest.getState(), authRequest.getNonce(), Collections.unmodifiableMap(map));
+    return oidcSession;
   }
 
   public static class Wrapper extends DelegatingFilterProxy {
