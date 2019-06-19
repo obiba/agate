@@ -33,6 +33,9 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * This filter is used to redirect clients to an OIDC authentication provider.
+ */
 @Component("agateSignInFilter")
 public class AgateSignInFilter extends OIDCLoginFilter {
 
@@ -73,6 +76,13 @@ public class AgateSignInFilter extends OIDCLoginFilter {
     }
   }
 
+  /**
+   * Creates an OIDC session and adds the <code>action</code> request parameter to be used later by the callback filter.
+   *
+   * @param context
+   * @param authRequest
+   * @return
+   */
   @Override
   protected OIDCSession makeSession(J2EContext context, AuthenticationRequest authRequest) {
     Map<String, String[]> requestParameters = context.getRequestParameters();

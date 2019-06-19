@@ -32,6 +32,7 @@ import org.obiba.shiro.web.filter.AuthenticationExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 import org.springframework.web.filter.DelegatingFilterProxy;
 
 import javax.annotation.PostConstruct;
@@ -39,10 +40,14 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.NewCookie;
-import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
+/**
+ * This filter is used upon a successful OIDC authentication. Clients are signed-in to Agate via a <code>obibasid</code> or
+ * a <code>obibaid</code> cookie.
+ */
 @Component("agateCallbackFilter")
 public class AgateCallbackFilter extends OIDCCallbackFilter {
 
@@ -91,28 +96,29 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     setCallbackURL(callbackUrl);
   }
 
+  /**
+   * Depending on the specified action as part of the request parameters, sign in/up client.
+   *
+   * @param session
+   * @param credentials
+   * @param response
+   */
   @Override
   protected void onAuthenticationSuccess(OIDCSession session, OIDCCredentials credentials, HttpServletResponse response) {
     Map<String, String[]> requestParameters = session.getRequestParameters();
     String[] action = requestParameters.get(FilterParameter.ACTION.value());
-    String redirect = Optional.ofNullable(requestParameters.get(FilterParameter.REDIRECT.value()))
-      .filter(p -> p != null && p.length > 0)
-      .map(p -> p[0])
-      .orElse("");
-
+    String redirect = retrieveRedirectUrl(requestParameters);
     Optional<Application> application = Optional.empty();
 
-    if (!Strings.isNullOrEmpty(redirect)) {
-      setDefaultRedirectURL(redirect);
-    }
+    if (!Strings.isNullOrEmpty(redirect)) setDefaultRedirectURL(redirect);
 
     switch (FilterAction.valueOf(action[0])) {
       case SIGNIN:
         application = findApplication(redirect);
         if (application.isPresent()) {
-          signinWithTicket(credentials, response, application.get());
+          signInWithTicket(credentials, response, application.get());
         } else {
-          signin(credentials, response);
+          signIn(credentials, response);
         }
         break;
       case SIGNUP:
@@ -121,19 +127,24 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     }
   }
 
-  private void signinWithTicket(OIDCCredentials credentials, HttpServletResponse response, Application application) {
+  /**
+   * Sign in a client with a redirect URI matching that of a registered application.
+   *
+   * @see AgateSignInFilter to see how the redirect URI is added to the initial OIDC authentication request.
+   *
+   * @param credentials
+   * @param response
+   * @param application
+   */
+  private void signInWithTicket(OIDCCredentials credentials, HttpServletResponse response, Application application) {
     Subject subject = authenticationExecutor.login(new OIDCAuthenticationToken(credentials));
     if (subject != null) {
-      Session subjectSession = subject.getSession();
-      log.trace("Binding subject {} session {} to executing thread {}", subject.getPrincipal(), subjectSession.getId(), Thread.currentThread().getId());
-      ThreadContext.bind(subject);
-      subjectSession.touch();
+      Session subjectSession = prepareSubjectSession(subject);
       int timeout = (int) (subjectSession.getTimeout() / 1000);
 
       Configuration configuration = configurationService.getConfiguration();
       Ticket ticket = ticketService.create(subject.getPrincipal().toString(), false, false, application.getId());
       String token = tokenUtils.makeAccessToken(ticket);
-
 
       response.addHeader(HttpHeaders.SET_COOKIE,
         new NewCookie(TicketsResource.TICKET_COOKIE_NAME, token, "/", configuration.getDomain(),
@@ -142,25 +153,57 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     }
   }
 
-  private Optional<Application> findApplication(String redirectUri) {
-    return applicationService.findAll()
-      .stream()
-      .filter(application -> application.hasRedirectURI() && application.getRedirectURI().equalsIgnoreCase(redirectUri))
-      .findFirst();
-  }
-
-  private void signin(OIDCCredentials credentials, HttpServletResponse response) {
+  /**
+   * Sign in a client to Agate
+   *
+   * @param credentials
+   * @param response
+   */
+  private void signIn(OIDCCredentials credentials, HttpServletResponse response) {
     Subject subject = authenticationExecutor.login(new OIDCAuthenticationToken(credentials));
     if (subject != null) {
-      Session subjectSession = subject.getSession();
-      log.trace("Binding subject {} session {} to executing thread {}", subject.getPrincipal(), subjectSession.getId(), Thread.currentThread().getId());
-      ThreadContext.bind(subject);
-      subjectSession.touch();
+      Session subjectSession = prepareSubjectSession(subject);
       int timeout = (int) (subjectSession.getTimeout() / 1000);
+
       response.addHeader(HttpHeaders.SET_COOKIE,
         new NewCookie("agatesid", subjectSession.getId().toString(), "/", null, null, timeout, false).toString());
       log.debug("Successfully authenticated subject {}", SecurityUtils.getSubject().getPrincipal());
     }
+  }
+
+  private Session prepareSubjectSession(Subject subject) {
+    Assert.notNull(subject, "Subject cannot be null.");
+    Session subjectSession = subject.getSession();
+    log.trace("Binding subject {} session {} to executing thread {}", subject.getPrincipal(), subjectSession.getId(), Thread.currentThread().getId());
+    ThreadContext.bind(subject);
+    subjectSession.touch();
+
+    return subjectSession;
+  }
+
+  private Optional<Application> findApplication(String redirectUri) {
+    return applicationService.findAll()
+      .stream()
+      .filter(application -> application.hasRedirectURI() && matchRedirectUrl(application.getRedirectURI(), redirectUri))
+      .findFirst();
+  }
+
+  private boolean matchRedirectUrl(String source, String target) {
+    String patternString =
+      source
+        .replaceAll("\\.", "\\\\.")
+        .replaceAll("[\\/\\*]*$", ".*")
+        .replaceAll("/", "\\\\/");
+
+    Pattern compile = Pattern.compile(patternString);
+    return compile.matcher(target).matches();
+  }
+
+  private String retrieveRedirectUrl(Map<String, String[]> requestParameters) {
+    return Optional.ofNullable(requestParameters.get(FilterParameter.REDIRECT.value()))
+      .filter(p -> p != null && p.length > 0)
+      .map(p -> p[0])
+      .orElse("");
   }
 
   public static class Wrapper extends DelegatingFilterProxy {
