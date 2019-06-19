@@ -10,6 +10,7 @@
 
 package org.obiba.agate.domain;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.validation.constraints.NotNull;
@@ -83,6 +84,13 @@ public class Authorization extends AbstractAuditableDocument {
 
   public void setScopes(Set<String> scopes) {
     this.scopes = scopes;
+  }
+
+  public void addScopes(Set<String> scopes) {
+    if (this.scopes == null)
+      setScopes(scopes);
+    else
+      this.scopes.addAll(scopes);
   }
 
   public String getRedirectURI() {

@@ -99,6 +99,35 @@ public class OAuthResource {
   @GET
   @Path("/authorize")
   public Response validateAuthorize(@Context HttpServletRequest servletRequest) {
+    Subject subject = SecurityUtils.getSubject();
+    if (subject.isAuthenticated()) {
+      try {
+        User user = userService.getCurrentUser();
+        OAuthAuthzRequest oAuthRequest = new OAuthAuthzRequest(servletRequest);
+        validateScope(oAuthRequest.getScopes());
+        String clientId = oAuthRequest.getParam(OAuth.OAUTH_CLIENT_ID);
+        String redirectURI = validateClientApplication(clientId, oAuthRequest.getParam(OAuth.OAUTH_REDIRECT_URI));
+        OAuthRequestData data = new OAuthRequestData(clientId, redirectURI, oAuthRequest);
+        Authorization authorization = authorizationService.find(user.getName(), data.getClientId());
+        if (authorization != null && authorization.hasScopes()) {
+          // the client was already authorized
+          boolean allScopesCovered = true;
+          for (String scope : oAuthRequest.getScopes()) {
+            if (!authorization.getScopes().contains(scope)) {
+              allScopesCovered = false;
+              break;
+            }
+          }
+          if (allScopesCovered) {
+            return replyAuthorized(servletRequest, data, authorization);
+          }
+        }
+      } catch (Exception e) {
+
+        // if any problem, continue with authorization page
+      }
+    }
+
     return Response.status(Response.Status.FOUND).location(URI.create(
         String.format("/#/authorize?%s", servletRequest.getQueryString()))).build();
   }
@@ -144,24 +173,29 @@ public class OAuthResource {
         }
 
         authorization.setCode(oAuthIssuer.authorizationCode());
-        authorization.setScopes(data.getRequest().getScopes());
+        authorization.addScopes(data.getRequest().getScopes());
         authorization.setRedirectURI(data.getRedirectUri());
         authorizationService.save(authorization);
 
-        long expiresIn = authorizationService.getExpirationDate(authorization).getMillis() - DateTime.now().getMillis();
-        OAuthASResponse.OAuthAuthorizationResponseBuilder builder = OAuthASResponse
-            .authorizationResponse(servletRequest, HttpServletResponse.SC_FOUND) //
-            .setCode(authorization.getCode()) //
-            .setExpiresIn(expiresIn / 1000) //
-            .location(data.getRedirectUri());
-
-        setState(builder, data.getRequest());
-        OAuthResponse response = builder.buildQueryMessage();
-        return Response.status(response.getResponseStatus()).location(new URI(response.getLocationUri())).build();
+        return replyAuthorized(servletRequest, data, authorization);
       } catch(URISyntaxException | OAuthSystemException e) {
         throw Throwables.propagate(e);
       }
     });
+  }
+
+  private Response replyAuthorized(HttpServletRequest servletRequest, OAuthRequestData data, Authorization authorization) throws OAuthSystemException, URISyntaxException {
+
+    long expiresIn = authorizationService.getExpirationDate(authorization).getMillis() - DateTime.now().getMillis();
+    OAuthASResponse.OAuthAuthorizationResponseBuilder builder = OAuthASResponse
+      .authorizationResponse(servletRequest, HttpServletResponse.SC_FOUND) //
+      .setCode(authorization.getCode()) //
+      .setExpiresIn(expiresIn / 1000) //
+      .location(data.getRedirectUri());
+
+    setState(builder, data.getRequest());
+    OAuthResponse response = builder.buildQueryMessage();
+    return Response.status(response.getResponseStatus()).location(new URI(response.getLocationUri())).build();
   }
 
   @POST
