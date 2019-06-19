@@ -1,5 +1,6 @@
 package org.obiba.agate.service;
 
+import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.domain.RealmStatus;
 import org.obiba.agate.domain.User;
@@ -83,6 +84,10 @@ public class RealmConfigService {
 
   public List<RealmConfig> findAllByStatus(RealmStatus status) {
     return realmConfigRepository.findAllByStatus(status);
+  }
+
+  public List<RealmConfig> findAllForSignupByStatusAndType(RealmStatus status, AgateRealm agateRealm) {
+    return realmConfigRepository.findAllByStatusAndTypeAndForSignupTrue(status, agateRealm.name());
   }
 
   public RealmConfig findConfig(@NotNull String name) {

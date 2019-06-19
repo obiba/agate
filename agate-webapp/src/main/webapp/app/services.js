@@ -151,8 +151,8 @@ agate.factory('Session', ['$cookieStore',
     return this;
   }]);
 
-agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$log', '$cookieStore', 'authService', 'Session', 'CurrentSession',
-  function ($rootScope, $http, $log, $cookieStore, authService, Session, CurrentSession) {
+agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$log', '$cookies', 'authService', 'Session', 'CurrentSession',
+  function ($rootScope, $http, $log, $cookies, authService, Session, CurrentSession) {
     return {
       login: function (param) {
         $rootScope.authenticationError = false;
@@ -166,7 +166,7 @@ agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$log', '$c
         }).then(function () {
           CurrentSession.get(function (data) {
             Session.create(data.username, data.role, data.realm);
-            $cookieStore.put('agate_subject', JSON.stringify(Session));
+            $cookies.put('agate_subject', JSON.stringify(Session));
             authService.loginConfirmed(data);
           });
         }, function (response) {
@@ -194,11 +194,11 @@ agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$log', '$c
 
         if (!Session.login) {
           // check if the user has a cookie
-          if ($cookieStore.get('agate_subject') !== null) {
+          if ($cookies.get('agate_subject')) {
             var account;
 
             try {
-              account = JSON.parse($cookieStore.get('agate_subject'));
+              account = JSON.parse($cookies.get('agate_subject'));
             } catch (e) {
               $log.info('Invalid agate_subject cookie value. Ignoring.');
             }
@@ -207,8 +207,18 @@ agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$log', '$c
               Session.create(account.login, account.role, account.realm);
               $rootScope.account = Session;
             }
+          } else if ($cookies.get('agatesid')) {
+            // Open ID case
+            CurrentSession.get(function (data) {
+              Session.create(data.username, data.role, data.realm);
+              $cookies.put('agate_subject', JSON.stringify(Session));
+              authService.loginConfirmed(data);
+            });
+
+            return true;
           }
         }
+
         return !!Session.login;
       },
       isAuthorized: function (authorizedRoles) {
