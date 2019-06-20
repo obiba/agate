@@ -45,6 +45,17 @@ agate.factory('AccountAuthorization', ['$resource',
     });
   }]);
 
+agate.factory('OAuthAuthorize', ['$http',
+  function ($http) {
+    return {
+      post: function (data) {
+        return $http.post('ws/oauth2/authz', $.param(data), {
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        });
+      }
+    };
+  }]);
+
 agate.factory('Password', ['$resource', '$http',
   function ($resource, $http) {
     return {

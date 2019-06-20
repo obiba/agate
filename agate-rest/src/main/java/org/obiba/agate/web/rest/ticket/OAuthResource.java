@@ -144,11 +144,11 @@ public class OAuthResource {
   @POST
   @Path("/authz")
   @RequiresRoles("agate-user")
-  public Response authorize(@Context HttpServletRequest servletRequest, @FormParam("grant") boolean grant)
+  public Response authorize(@Context HttpServletRequest servletRequest, @FormParam("grant") Boolean grant)
     throws URISyntaxException, OAuthSystemException {
     return tryBuildResponse(servletRequest, (data) -> {
       try {
-        if (!grant) {
+        if (grant != null && !grant) {
           return buildErrorResponse(OAuthProblemException.error("access_denied", "Owner denied authorization."), data.getRequest(), data.getRedirectUri());
         }
 

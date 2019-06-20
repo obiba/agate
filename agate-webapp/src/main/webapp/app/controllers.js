@@ -150,14 +150,37 @@ agate.controller('LogoutController', ['$location', 'AuthenticationSharedService'
     });
   }]);
 
-agate.controller('OAuthController', ['$log', '$scope', '$q', '$location', 'ApplicationSummaryResource',
-  function ($log, $scope, $q, $location, ApplicationSummaryResource) {
+agate.controller('OAuthController', ['$log', '$scope', '$q', '$location', 'AccountAuthorizations', 'ApplicationSummaryResource', 'OAuthAuthorize',
+  function ($log, $scope, $q, $location, AccountAuthorizations, ApplicationSummaryResource, OAuthAuthorize) {
     var OPENID_SCOPES = ['openid', 'profile', 'email', 'address', 'phone', 'offline_access'];
+    // hide the form while we are not sure whether the scopes were already granted
+    $scope.visible = false;
     $scope.auth = $location.search();
     $scope.client = ApplicationSummaryResource.get({ id: $scope.auth.client_id }, function () {
     }, function () {
       $scope.error = 'unknown-client-application';
       $scope.errorArgs = $scope.auth.client_id;
+    });
+    AccountAuthorizations.query().$promise.then(function(authorizations){
+      if (authorizations.length === 0) {
+        $scope.visible = true;
+      } else {
+        authorizations.forEach(function(authorization){
+          if (authorization.application === $scope.auth.client_id) {
+            var allScopesCovered = true;
+            $scope.auth.scope.split(' ').forEach(function(sc) {
+              if (!authorization.scopes.includes(sc)) {
+                allScopesCovered = false;
+              }
+            });
+            if (allScopesCovered) {
+              document.getElementById("oauthForm").submit();
+            } else {
+              $scope.visible = true;
+            }
+          }
+        });
+      }
     });
 
     $scope.scopes = $scope.auth.scope.split(' ').map(function (s) {
