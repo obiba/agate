@@ -10,13 +10,12 @@
 
 package org.obiba.agate.domain;
 
-import java.util.Set;
-
-import javax.validation.constraints.NotNull;
-
 import org.obiba.mongodb.domain.AbstractAuditableDocument;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import javax.validation.constraints.NotNull;
+import java.util.Set;
 
 /**
  * OAuth2 Authorization: specific to a user and an application, has a timeout and can be revoked anytime by the user.
@@ -38,7 +37,8 @@ public class Authorization extends AbstractAuditableDocument {
 
   private String redirectURI;
 
-  public Authorization() {}
+  public Authorization() {
+  }
 
   public Authorization(String username, String application) {
     this.username = username;
@@ -83,6 +83,13 @@ public class Authorization extends AbstractAuditableDocument {
 
   public void setScopes(Set<String> scopes) {
     this.scopes = scopes;
+  }
+
+  public void addScopes(Set<String> scopes) {
+    if (this.scopes == null)
+      setScopes(scopes);
+    else
+      this.scopes.addAll(scopes);
   }
 
   public String getRedirectURI() {
