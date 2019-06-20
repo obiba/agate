@@ -37,6 +37,13 @@ agate.factory('AccountAuthorizations', ['$resource',
     });
   }]);
 
+agate.factory('OidcProvidersResource', ['$resource',
+  function ($resource) {
+    return $resource('ws/auth/providers', {locale: '@locale'}, {
+      'get': { method: 'GET', errorHandler: true, isArray: true }
+    });
+  }]);
+
 agate.factory('AccountAuthorization', ['$resource',
   function ($resource) {
     return $resource('ws/user/_current/authorization/:authz', {}, {

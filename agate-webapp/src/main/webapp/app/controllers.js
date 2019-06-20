@@ -80,8 +80,12 @@ agate.controller('LanguageController', ['$scope', '$translate', 'amMoment', 'Pub
 
 agate.controller('MenuController', [function () { }]);
 
-agate.controller('LoginController', ['$scope', '$location', 'AuthenticationSharedService',
-  function ($scope, $location, AuthenticationSharedService) {
+agate.controller('LoginController', ['$scope', '$location', '$translate', 'AuthenticationSharedService', 'OidcProvidersResource',
+  function ($scope, $location, $translate, AuthenticationSharedService, OidcProvidersResource) {
+    OidcProvidersResource.get({locale: $translate.use()}).$promise.then(function(providers) {
+      $scope.providers = providers;
+    });
+
     $scope.login = function () {
       AuthenticationSharedService.login({
         username: $scope.username,

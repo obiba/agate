@@ -561,7 +561,8 @@
       "connect-timeout": "Connect Timeout",
       "connect-timeout-help": "Maximum time in milliseconds to wait before a connection is established. Zero implies no timeout.",
       "read-timeout": "Read Timeout",
-      "read-timeout-help": "Maximum time in milliseconds to wait before a response is received. Zero implies no timeout."
+      "read-timeout-help": "Maximum time in milliseconds to wait before a response is received. Zero implies no timeout.",
+      "signin-with": "Sign in with"
     },
     "deativate-warning": "Users associated with this realm can no longer login to Agate and its registered applications.",
     "delete-dialog": {
