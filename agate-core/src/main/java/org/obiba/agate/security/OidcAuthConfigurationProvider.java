@@ -10,9 +10,11 @@
 package org.obiba.agate.security;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.obiba.agate.domain.AgateRealm;
+import org.obiba.agate.domain.LocalizedString;
 import org.obiba.agate.domain.OidcRealmConfig;
 import org.obiba.agate.domain.RealmStatus;
 import org.obiba.agate.service.ConfigurationService;
@@ -25,6 +27,7 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -32,7 +35,7 @@ import java.util.stream.Collectors;
  * Get only the "enabled" OpenID Connect configurations.
  */
 @Component
-public class AuthConfigurationProvider implements OIDCConfigurationProvider {
+public class OidcAuthConfigurationProvider implements OIDCConfigurationProvider {
 
   private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -41,7 +44,7 @@ public class AuthConfigurationProvider implements OIDCConfigurationProvider {
   private final RealmConfigService realmConfigService;
 
   @Inject
-  public AuthConfigurationProvider(ConfigurationService configurationService, RealmConfigService realmConfigService) {
+  public OidcAuthConfigurationProvider(ConfigurationService configurationService, RealmConfigService realmConfigService) {
     this.configurationService = configurationService;
     this.realmConfigService = realmConfigService;
   }
@@ -50,7 +53,7 @@ public class AuthConfigurationProvider implements OIDCConfigurationProvider {
   public Collection<OIDCConfiguration> getConfigurations() {
     return realmConfigService.findAllForSignupByStatusAndType(RealmStatus.ACTIVE, AgateRealm.AGATE_OIDC_REALM)
       .stream()
-      .map(realm -> createOIDCConfiguration(realm.getName(), realm.getContent()))
+      .map(realm -> createOIDCConfiguration(realm.getName(), realm.getTitle(), realm.getContent()))
       .filter(Objects::nonNull)
       .collect(Collectors.toList());
   }
@@ -61,14 +64,43 @@ public class AuthConfigurationProvider implements OIDCConfigurationProvider {
     return getConfigurations().stream().filter(conf -> name.equals(conf.getName())).findFirst().orElse(null);
   }
 
-  private OIDCConfiguration createOIDCConfiguration(String name, String content) {
+  /**
+   * Add the Reaml name as the provider name for authentication purposes. Use the Realm title as a custom parameter for
+   * later use by the client applications.
+   *
+   * @param name
+   * @param title
+   * @param content
+   * @return
+   */
+  private OIDCConfiguration createOIDCConfiguration(String name, LocalizedString title, String content) {
     try {
       OidcRealmConfig oidcRealmConfig = OidcRealmConfig.newBuilder(configurationService.decrypt(content)).build();
       oidcRealmConfig.setName(name);
+      Map<String, String> valueMap = Maps.newHashMap();
+
+      // Add localized title as custom parameters
+      Map<String, String> customParametes = Maps.newHashMap();
+      customParametes.put("providerUrl", oidcRealmConfig.getProviderUrl());
+
+      configurationService.getConfiguration()
+        .getLocales()
+        .forEach(locale -> {
+          String language = locale.getLanguage();
+          String value = title.get(language);
+          if (!Strings.isNullOrEmpty(value)) valueMap.put(language, value);
+        });
+
+      if (valueMap.size() > 0) {
+        customParametes.put("title", new JSONObject(valueMap).toString());
+        oidcRealmConfig.setCustomParams(customParametes);
+      }
+
       return oidcRealmConfig;
     } catch (JSONException e) {
       logger.error(e.getMessage());
-      return null;
     }
+
+    return null;
   }
 }

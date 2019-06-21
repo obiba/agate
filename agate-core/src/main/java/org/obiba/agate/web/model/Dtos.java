@@ -10,13 +10,15 @@
 
 package org.obiba.agate.web.model;
 
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-
 import org.obiba.agate.domain.*;
 import org.obiba.agate.service.TicketService;
+import org.obiba.oidc.OIDCConfiguration;
 import org.obiba.web.model.AuthDtos;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 
 @Component
 @SuppressWarnings("OverlyCoupledClass")
@@ -34,6 +36,8 @@ public class Dtos {
 
   private final ConfigurationDtos configurationDtos;
 
+  private final OidcAuthProviderDtos oidcAuthProviderDtos;
+
   @Inject
   public Dtos(TicketService ticketService,
               TicketDtos ticketDtos,
@@ -41,13 +45,14 @@ public class Dtos {
               ApplicationDtos applicationDtos,
               GroupDtos groupDtos,
               RealmConfigDtos realmConfigDtos,
-              ConfigurationDtos configurationDtos) {
+              ConfigurationDtos configurationDtos, OidcAuthProviderDtos oidcAuthProviderDtos) {
     this.ticketDtos = ticketDtos;
     this.userDtos = userDtos;
     this.applicationDtos = applicationDtos;
     this.groupDtos = groupDtos;
     this.realmConfigDtos = realmConfigDtos;
     this.configurationDtos = configurationDtos;
+    this.oidcAuthProviderDtos = oidcAuthProviderDtos;
   }
 
   @NotNull
@@ -137,5 +142,10 @@ public class Dtos {
   @NotNull
   public Agate.RealmConfigSummaryDto asSummaryDto(RealmConfig config) {
     return realmConfigDtos.asSummaryDto(config);
+  }
+
+  @NotNull
+  public Agate.OidcAuthProviderSummaryDto asSummaryDto(@NotNull OIDCConfiguration configuration, @Nullable String locale) {
+    return oidcAuthProviderDtos.asSummaryDto(configuration, locale);
   }
 }
