@@ -90,6 +90,8 @@ public class RealmConfigDtos {
             return ActiveDirectoryRealmConfig.newBuilder(content).build().getAsSecuredJSONObject().toString();
           case AGATE_JDBC_REALM:
             return JdbcRealmConfig.newBuilder(content).build().getAsSecuredJSONObject().toString();
+          case AGATE_OIDC_REALM:
+            return OidcRealmConfig.newBuilder(content).build().getAsSecuredJSONObject().toString();
         }
       } catch (JSONException e) {
         throw new IllegalStateException("Realm config content is not a valid JSON.");

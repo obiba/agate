@@ -210,3 +210,9 @@ message RealmConfigSummaryDto {
   optional RealmStatus status = 6;
   optional int64 userCount = 7;
 }
+
+message OidcAuthProviderSummaryDto {
+  required string name = 1;
+  required string providerUrl = 2;
+  optional string title = 3;
+}

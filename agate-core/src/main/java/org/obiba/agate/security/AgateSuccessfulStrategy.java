@@ -2,6 +2,8 @@ package org.obiba.agate.security;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
+
+import com.google.common.base.Strings;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -54,7 +56,9 @@ public class AgateSuccessfulStrategy extends AbstractAuthenticationStrategy {
     }
 
     if (info != null && info.getPrincipals().fromRealm(realm.getName()).size() > 0 && realmConfigService.findAll().stream().map(RealmConfig::getName).collect(Collectors.toList()).contains(realm.getName())) {
-      String username = info.getPrincipals().toString();
+      String username = info.getPrincipals().getPrimaryPrincipal().toString();
+      if (Strings.isNullOrEmpty(username)) username = info.getPrincipals().toString();
+
       User user = userService.findUser(username);
       if (user == null) throw new RuntimeException("User [" + username + "] does not exist.");
 

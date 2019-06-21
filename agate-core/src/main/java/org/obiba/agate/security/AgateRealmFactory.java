@@ -16,13 +16,10 @@ import org.apache.shiro.realm.ldap.JndiLdapContextFactory;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.CollectionUtils;
 import org.json.JSONException;
-import org.obiba.agate.domain.ActiveDirectoryRealmConfig;
-import org.obiba.agate.domain.JdbcRealmConfig;
-import org.obiba.agate.domain.LdapRealmConfig;
-import org.obiba.agate.domain.RealmConfig;
-import org.obiba.agate.domain.User;
+import org.obiba.agate.domain.*;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.UserService;
+import org.obiba.oidc.shiro.realm.OIDCRealm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
@@ -147,6 +144,18 @@ public class AgateRealmFactory {
 
           realm = activeDirectoryRealm;
           break;
+
+        case AGATE_OIDC_REALM:
+          OidcRealmConfig oidcRealmConfig = OidcRealmConfig.newBuilder(configurationService.decrypt(realmConfig.getContent())).build();
+          OIDCRealm oidcRealm = new OIDCRealm(oidcRealmConfig) {
+            @Override
+            protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+              return getUserFromAvailablePrincipal(principals, principals.fromRealm(getName()));
+            }
+          };
+          realm = oidcRealm;
+          break;
+
         default:
           throw new RuntimeException("Realm [" + realmConfig.getName() + "] not configurable");
       }
