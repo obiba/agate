@@ -150,36 +150,58 @@ agate.controller('LogoutController', ['$location', 'AuthenticationSharedService'
     });
   }]);
 
-agate.controller('OAuthController', ['$log', '$scope', '$q', '$location', 'AccountAuthorizations', 'ApplicationSummaryResource', 'OAuthAuthorize',
-  function ($log, $scope, $q, $location, AccountAuthorizations, ApplicationSummaryResource, OAuthAuthorize) {
+agate.controller('OAuthController', ['$log', '$scope', '$q', '$location', 'Account', 'AccountAuthorizations', 'ApplicationSummaryResource', 'OAuthAuthorize',
+  function ($log, $scope, $q, $location, Account, AccountAuthorizations, ApplicationSummaryResource, OAuthAuthorize) {
     var OPENID_SCOPES = ['openid', 'profile', 'email', 'address', 'phone', 'offline_access'];
     // hide the form while we are not sure whether the scopes were already granted
-    $scope.visible = false;
+    $scope.loading = true;
+    $scope.authRequired = false;
+    $scope.applicationAccess = false;
     $scope.auth = $location.search();
     $scope.client = ApplicationSummaryResource.get({ id: $scope.auth.client_id }, function () {
     }, function () {
       $scope.error = 'unknown-client-application';
       $scope.errorArgs = $scope.auth.client_id;
     });
-    AccountAuthorizations.query().$promise.then(function(authorizations){
-      if (authorizations.length === 0) {
-        $scope.visible = true;
-      } else {
-        authorizations.forEach(function(authorization){
-          if (authorization.application === $scope.auth.client_id) {
-            var allScopesCovered = true;
-            $scope.auth.scope.split(' ').forEach(function(sc) {
-              if (!authorization.scopes.includes(sc)) {
-                allScopesCovered = false;
+    Account.get(function(user) {
+      // check user has access to the app
+      var apps = [];
+      if (user.applications) {
+        apps = user.applications;
+      }
+      if (user.groupApplications) {
+        user.groupApplications.forEach(function(gapp) {
+          apps.push(gapp.application);
+        });
+      }
+      $scope.applicationAccess = apps.includes($scope.auth.client_id);
+      if ($scope.applicationAccess) {
+        // check if the authz was already granted
+        AccountAuthorizations.query().$promise.then(function(authorizations){
+          if (authorizations.length === 0) {
+            $scope.authRequired = true;
+            $scope.loading = false;
+          } else {
+            authorizations.forEach(function(authorization){
+              if (authorization.application === $scope.auth.client_id) {
+                var allScopesCovered = true;
+                $scope.auth.scope.split(' ').forEach(function(sc) {
+                  if (!authorization.scopes.includes(sc)) {
+                    allScopesCovered = false;
+                  }
+                });
+                if (allScopesCovered) {
+                  document.getElementById("oauthForm").submit();
+                } else {
+                  $scope.authRequired = true;
+                  $scope.loading = false;
+                }
               }
             });
-            if (allScopesCovered) {
-              document.getElementById("oauthForm").submit();
-            } else {
-              $scope.visible = true;
-            }
           }
         });
+      } else {
+        $scope.loading = false;
       }
     });
 

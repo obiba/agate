@@ -42,7 +42,7 @@ public class AuthorizationValidator {
   }
 
   public String validateApplication(String appAuthHeader) {
-    if (appAuthHeader == null) throw new ForbiddenException();
+    if (appAuthHeader == null) throw new InvalidApplicationException();
 
     HttpAuthorizationToken token = new HttpAuthorizationToken(ObibaRealm.APPLICATION_AUTH_SCHEMA, appAuthHeader);
     String appName = token.getUsername();
@@ -57,7 +57,7 @@ public class AuthorizationValidator {
     if(!subject.getPrincipals().getRealmNames().contains(user.getRealm())) {
       log.info("Authentication failure of user '{}' at ip: '{}': unexpected realm '{}'", user.getName(),
         servletRequest.getRemoteAddr(), subject.getPrincipals().getRealmNames().iterator().next());
-      throw new ForbiddenException();
+      throw new InvalidRealmException();
     }
   }
 
@@ -72,10 +72,10 @@ public class AuthorizationValidator {
   public void validateUser(ServletRequest servletRequest, String username, User user) {
     if(user == null) {
       log.warn("Not a registered user '{}' at ip: '{}'", username, servletRequest.getRemoteAddr());
-      throw new ForbiddenException();
+      throw new InvalidUserException();
     } else if(user.getStatus() != UserStatus.ACTIVE) {
       log.warn("Not an active user '{}': status is '{}'", username, user.getStatus());
-      throw new ForbiddenException();
+      throw new InvalidUserStatusException();
     }
   }
 
@@ -87,7 +87,7 @@ public class AuthorizationValidator {
     })) {
       log.info("Application '{}' not allowed for user '{}' at ip: '{}'", appName, user.getName(),
         servletRequest.getRemoteAddr());
-      throw new ForbiddenException();
+      throw new InvalidUserApplicationException();
     }
   }
 
@@ -98,7 +98,7 @@ public class AuthorizationValidator {
    * @param key
    */
   public void validateApplicationParameters(String name, String key) {
-    if(!applicationService.isValid(name, key)) throw new ForbiddenException();
+    if(!applicationService.isValid(name, key)) throw new InvalidApplicationKeyException();
   }
 
 }

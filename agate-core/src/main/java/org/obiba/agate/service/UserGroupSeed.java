@@ -12,6 +12,7 @@ package org.obiba.agate.service;
 
 import com.google.common.collect.Lists;
 import org.obiba.agate.config.Profiles;
+import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.Group;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.security.Roles;
@@ -31,17 +32,30 @@ public class UserGroupSeed implements ApplicationListener<ContextRefreshedEvent>
 
   private final Environment env;
 
+  private final ConfigurationService configurationService;
+
   @Inject
-  public UserGroupSeed(UserService userService, GroupService groupService, Environment env) {
+  public UserGroupSeed(UserService userService, GroupService groupService, Environment env, ConfigurationService configurationService) {
     this.userService = userService;
     this.groupService = groupService;
     this.env = env;
+    this.configurationService = configurationService;
   }
 
   @Override
   public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
     seedGroups();
-    if(Lists.newArrayList(env.getActiveProfiles()).contains(Profiles.DEV)) seedUsers();
+    if(Lists.newArrayList(env.getActiveProfiles()).contains(Profiles.DEV)) {
+      seedUsers();
+      seedConfiguration();
+    }
+  }
+
+  private void seedConfiguration() {
+    Configuration config = configurationService.getConfiguration();
+    // convenient setting for having a issuer ID in OAuth responses
+    config.setPublicUrl("http://localhost:8081");
+    configurationService.save(config);
   }
 
   private void seedGroups() {

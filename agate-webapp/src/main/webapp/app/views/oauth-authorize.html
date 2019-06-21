@@ -13,9 +13,20 @@
   <div class="row">
     <div class="col-md-3"></div>
     <div class="col-md-6">
-      <p ng-hide="visible" class="voffset2 loading">
+      <p ng-show="loading" class="voffset2 loading">
       </p>
-      <div ng-show="visible">
+      <div ng-show="!loading && !applicationAccess" class="alert alert-error">
+        <h2 translate>oauth.title</h2>
+
+        <div ng-if="client.name" class="alert alert-danger" translate translate-values="{name: '{{client.name}}'}">
+          oauth.application-access-denied
+        </div>
+        <div ng-if="!client.name" class="alert alert-danger" translate>
+          oauth.unknown-client-application
+        </div>
+
+      </div>
+      <div ng-show="!loading && authRequired">
         <h2 translate>oauth.title</h2>
 
         <div class="alert alert-danger" ng-show="authenticationError" translate="login.messages.error.authentication">
