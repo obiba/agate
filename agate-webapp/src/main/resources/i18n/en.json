@@ -486,7 +486,8 @@
     "openid-email-description": "Permission to get your email address.",
     "openid-profile-description": "Permission to get your profile information.",
     "openid-phone-description": "Permission to get your phone (not supported).",
-    "openid-address-description": "Permission to get your address (not supported)."
+    "openid-address-description": "Permission to get your address (not supported).",
+    "application-access-denied": "You do not have access to the application: {{name}}"
   },
   "realms": {
     "description": "Realms listed here provide alternative authentication for Agate users.",

@@ -478,15 +478,16 @@
     "scope-description": "Description",
     "accept": "Accepter",
     "decline": "Refuser",
-    "unknown-client-application": "L'application client demandant autorisation n'a pas pu être identifiée.",
-    "unknown-resource-application": "L'application ressource n'a pas pu être identifiée.",
+    "unknown-client-application": "L'application demandant l'autorisation n'a pas pu être identifiée.",
+    "unknown-resource-application": "L'application n'a pas pu être identifiée.",
     "unknown-resource-scope": "L'étendue de la ressource n'a pas pu être identifiée.",
     "openid-request": "Fournisseur d'identité.",
     "openid-openid-description": "Permission d'obtenir l'information de base de votre identité (nom d'utilisateur).",
     "openid-email-description": "Permission d'obtenir votre adresse courriel.",
     "openid-profile-description": "Permission d'obtenir de l'information sur votre profil.",
-    "openid-phone-description": "Permission d'obtenire vtre numéro de téléphone (pas supportée).",
-    "openid-address-description": "Permission d'obtenir votre adresse (pas supportée)."
+    "openid-phone-description": "Permission d'obtenire votre numéro de téléphone (pas supportée).",
+    "openid-address-description": "Permission d'obtenir votre adresse (pas supportée).",
+    "application-access-denied": "Vous n'avez pas accès à l'application: {{name}}"
   },
   "realms": {
     "description": "Les domaines énumérés ici fournissent une authentification alternative aux utilisateurs Agate.",

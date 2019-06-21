@@ -84,21 +84,16 @@
             <tr>
               <th translate>authorization.application</th>
               <th translate>authorization.scopes</th>
-              <th translate>actions</th>
+              <th translate>user.actions</th>
             </tr>
             </thead>
             <tbody>
             <tr ng-repeat="authz in authorizations">
               <td>
-                {{authz.application}}
+                {{authz.applicationName}}
               </td>
               <td>
-                <ul class="no-style-list">
-                  <li ng-repeat="scope in authz.scopes">
-                  <span
-                    class="label label-default hoffset-right">{{scope}}</span>
-                  </li>
-                </ul>
+                <code  ng-repeat="scope in authz.scopes" class="hoffset-right">{{scope}}</code>
               </td>
               <td>
                 <a ng-click="deleteAuthorization(authz)" title="{{'delete' | translate}}"><i class="fa fa-trash-o"></i></a>

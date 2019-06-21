@@ -105,7 +105,7 @@
           <tr>
             <th translate>authorization.application</th>
             <th translate>authorization.scopes</th>
-            <th translate>actions</th>
+            <th translate>user.actions</th>
           </tr>
           </thead>
           <tbody>
@@ -114,7 +114,7 @@
               {{authz.applicationName}}
             </td>
             <td>
-              <code  ng-repeat="scope in authz.scopes" class="hoffset-right">{{scope}}</code>
+              <code ng-repeat="scope in authz.scopes" class="hoffset-right">{{scope}}</code>
             </td>
             <td>
               <a href ng-click="deleteAuthorization(authz)" title="{{'delete' | translate}}"><i class="fa fa-trash-o"></i></a>

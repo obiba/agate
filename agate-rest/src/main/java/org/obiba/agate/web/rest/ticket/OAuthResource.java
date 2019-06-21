@@ -86,15 +86,19 @@ public class OAuthResource {
 
   @GET
   @Path("/authorize")
-  public Response validateAuthorize(@Context HttpServletRequest servletRequest) {
+  public Response validateAuthorize(@Context HttpServletRequest servletRequest) throws URISyntaxException, OAuthSystemException {
     Subject subject = SecurityUtils.getSubject();
     if (subject.isAuthenticated()) {
+      OAuthAuthzRequest oAuthRequest = null;
+      String redirectURI = null;
       try {
-        User user = userService.getCurrentUser();
-        OAuthAuthzRequest oAuthRequest = new OAuthAuthzRequest(servletRequest);
-        validateScope(oAuthRequest.getScopes());
+        oAuthRequest = new OAuthAuthzRequest(servletRequest);
         String clientId = oAuthRequest.getParam(OAuth.OAUTH_CLIENT_ID);
-        String redirectURI = validateClientApplication(clientId, oAuthRequest.getParam(OAuth.OAUTH_REDIRECT_URI));
+        User user = userService.getCurrentUser();
+        redirectURI = validateClientApplication(clientId, oAuthRequest.getParam(OAuth.OAUTH_REDIRECT_URI));
+        // check user has access to the application
+        authorizationValidator.validateApplication(servletRequest, user, clientId);
+        validateScope(oAuthRequest.getScopes());
         OAuthRequestData data = new OAuthRequestData(clientId, redirectURI, oAuthRequest);
         Authorization authorization = authorizationService.find(user.getName(), data.getClientId());
         if (authorization != null && authorization.hasScopes()) {
@@ -110,8 +114,9 @@ public class OAuthResource {
             return replyAuthorized(servletRequest, data, authorization);
           }
         }
+      } catch (ForbiddenException e) {
+        return buildErrorResponse(e, oAuthRequest, redirectURI);
       } catch (Exception e) {
-
         // if any problem, continue with authorization page
       }
     }
@@ -229,9 +234,11 @@ public class OAuthResource {
       oAuthRequest = new OAuthAuthzRequest(servletRequest);
       String clientId = oAuthRequest.getParam(OAuth.OAUTH_CLIENT_ID);
       redirectURI = validateClientApplication(clientId, oAuthRequest.getParam(OAuth.OAUTH_REDIRECT_URI));
+      // check user has access to the application
+      authorizationValidator.validateApplication(servletRequest, userService.getCurrentUser(), clientId);
       validateScope(oAuthRequest.getScopes());
       return responseBuilder.apply(new OAuthRequestData(clientId, redirectURI, oAuthRequest));
-    } catch (OAuthProblemException e) {
+    } catch (ForbiddenException | OAuthProblemException e) {
       return buildErrorResponse(e, oAuthRequest, redirectURI);
     } catch (RuntimeException e) {
       if (e.getCause() instanceof OAuthProblemException) {
@@ -244,11 +251,17 @@ public class OAuthResource {
     }
   }
 
-  private Response buildErrorResponse(OAuthProblemException e, OAuthAuthzRequest oAuthRequest, String redirectURI)
+  private Response buildErrorResponse(Exception e, OAuthAuthzRequest oAuthRequest, String redirectURI)
     throws OAuthSystemException, URISyntaxException {
     boolean canRedirect = !Strings.isNullOrEmpty(redirectURI);
     OAuthASResponse.OAuthErrorResponseBuilder builder = OAuthASResponse
-      .errorResponse(canRedirect ? HttpServletResponse.SC_FOUND : HttpServletResponse.SC_BAD_REQUEST).error(e);
+      .errorResponse(canRedirect ? HttpServletResponse.SC_FOUND : HttpServletResponse.SC_BAD_REQUEST);
+    if (e instanceof OAuthProblemException)
+      builder.error((OAuthProblemException) e);
+    else {
+      builder.setError(e.getClass().getSimpleName());
+      builder.setErrorDescription(e.getMessage());
+    }
     setState(builder, oAuthRequest);
     OAuthResponse response;
 
@@ -300,7 +313,7 @@ public class OAuthResource {
   }
 
   private Response accessPasswordGrant(HttpServletRequest servletRequest, OAuthTokenRequest oAuthRequest)
-    throws OAuthSystemException, OAuthProblemException {
+    throws OAuthSystemException {
     validateClient(oAuthRequest);
 
     String clientId = oAuthRequest.getClientId();
