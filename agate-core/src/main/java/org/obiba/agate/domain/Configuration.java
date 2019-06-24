@@ -91,6 +91,9 @@ public class Configuration extends AbstractAuditableDocument {
   }
 
   public String getPublicUrl() {
+    if (!Strings.isNullOrEmpty(publicUrl) && publicUrl.endsWith("/")) {
+      return publicUrl.substring(0, publicUrl.length() -1);
+    }
     return publicUrl;
   }
 

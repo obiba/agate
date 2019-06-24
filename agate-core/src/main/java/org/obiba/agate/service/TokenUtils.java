@@ -10,28 +10,24 @@
 
 package org.obiba.agate.service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-
-import org.joda.time.DateTime;
-import org.obiba.agate.domain.Authorization;
-import org.obiba.agate.domain.Configuration;
-import org.obiba.agate.domain.Ticket;
-import org.obiba.agate.domain.User;
-import org.springframework.stereotype.Component;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
+import org.joda.time.DateTime;
+import org.obiba.agate.domain.Authorization;
+import org.obiba.agate.domain.Ticket;
+import org.obiba.agate.domain.User;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Factory of Json Web Tokens.
@@ -46,12 +42,12 @@ public class TokenUtils {
   public static final String OPENID_PHONE_SCOPE = "phone";
   public static final String OPENID_OFFLINE_ACCESS_SCOPE = "offline_access";
   public static final Set<String> OPENID_SCOPES = Sets.newHashSet(
-      OPENID_SCOPE,
-      OPENID_EMAIL_SCOPE,
-      OPENID_PROFILE_SCOPE,
-      OPENID_PHONE_SCOPE,
-      OPENID_ADDRESS_SCOPE,
-      OPENID_OFFLINE_ACCESS_SCOPE); // http://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims
+    OPENID_SCOPE,
+    OPENID_EMAIL_SCOPE,
+    OPENID_PROFILE_SCOPE,
+    OPENID_PHONE_SCOPE,
+    OPENID_ADDRESS_SCOPE,
+    OPENID_OFFLINE_ACCESS_SCOPE); // http://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims
   public static final String OPENID_TOKEN = "id_token";
 
   /**
@@ -93,7 +89,7 @@ public class TokenUtils {
       .setId(ticket.getId());
 
     Authorization authorization = null;
-    if(ticket.hasAuthorization()) {
+    if (ticket.hasAuthorization()) {
       authorization = authorizationService.get(ticket.getAuthorization());
     }
 
@@ -118,11 +114,11 @@ public class TokenUtils {
     try {
       Claims claims = Jwts.parser().setSigningKey(configurationService.getConfiguration().getSecretKey().getBytes())
         .parseClaimsJws(token).getBody();
-      if(!getIssuerID().equals(claims.getIssuer())) throw new InvalidTokenException("Token issuer is not valid");
-      if(!claims.getAudience().contains(application)) {
+      if (!getIssuerID().equals(claims.getIssuer())) throw new InvalidTokenException("Token issuer is not valid");
+      if (!claims.getAudience().contains(application)) {
         throw new InvalidTokenException("Token is not for '" + application + "'");
       }
-    } catch(SignatureException e) {
+    } catch (SignatureException e) {
       throw new InvalidTokenException("Token signature is not valid");
     }
   }
@@ -134,37 +130,36 @@ public class TokenUtils {
    * @return
    */
   public String makeIDToken(@NotNull Authorization authorization, @NotNull List<String> scopes) {
-    if(!authorization.hasScope(OPENID_SCOPE)) return "";
+    if (!authorization.hasScope(OPENID_SCOPE)) return "";
 
     DateTime expires = authorizationService.getExpirationDate(authorization);
     Claims claims = buildClaims(authorization.getUsername(), scopes);
     claims.setIssuedAt(authorization.getCreatedDate().toDate()) //
-        .setExpiration(expires.toDate());
+      .setExpiration(expires.toDate());
     claims.put(Claims.AUDIENCE, authorization.getApplication());
 
     return Jwts.builder().setClaims(claims)
-        .signWith(SignatureAlgorithm.HS256, configurationService.getConfiguration().getSecretKey().getBytes()).compact();
+      .signWith(SignatureAlgorithm.HS256, configurationService.getConfiguration().getSecretKey().getBytes()).compact();
   }
 
-  public Claims buildClaims(String subject,@NotNull List<String> scopes) {
+  public Claims buildClaims(String subject, @NotNull List<String> scopes) {
     User user = userService.findUser(subject);
     Claims claims = Jwts.claims().setSubject(subject).setIssuer(getIssuerID());
-    if(!scopes.isEmpty()) putUserClaims(claims, user, scopes);
+    if (!scopes.isEmpty()) putUserClaims(claims, user, scopes);
 
     return claims;
   }
 
   public Claims parseClaims(String token) {
     Claims claims = Jwts.parser()
-        .setSigningKey(configurationService.getConfiguration().getSecretKey().getBytes())
-        .parseClaimsJws(token).getBody();
+      .setSigningKey(configurationService.getConfiguration().getSecretKey().getBytes())
+      .parseClaimsJws(token).getBody();
 
     return claims;
   }
 
   public String getIssuerID() {
-    Configuration configuration = configurationService.getConfiguration();
-    return configuration.hasPublicUrl() ? configurationService.getPublicUrl() : "agate:" + configuration.getId();
+    return configurationService.getPublicUrl();
   }
 
   //
@@ -178,28 +173,27 @@ public class TokenUtils {
    * @param claims
    * @param user
    * @param authorization
-   * @param ticket
    */
   private void putContextClaim(Claims claims, User user, Authorization authorization) {
-    if(user == null) return;
+    if (user == null) return;
 
     Map<String, Object> userMap = Maps.newHashMap();
     String name = "";
-    if(user.hasFirstName()) {
+    if (user.hasFirstName()) {
       name = user.getFirstName();
       userMap.put("first_name", user.getFirstName());
     }
-    if(user.hasLastName()) {
-      if(!Strings.isNullOrEmpty(name)) name += " ";
+    if (user.hasLastName()) {
+      if (!Strings.isNullOrEmpty(name)) name += " ";
       name += user.getLastName();
       userMap.put("last_name", user.getLastName());
     }
     userMap.put("locale", user.getPreferredLanguage());
-    if(!Strings.isNullOrEmpty(name)) userMap.put("name", name);
+    if (!Strings.isNullOrEmpty(name)) userMap.put("name", name);
     userMap.put("groups", user.getGroups());
     Map<String, Object> contextMap = Maps.newHashMap();
     contextMap.put("user", userMap);
-    if(authorization != null && authorization.hasScopes()) {
+    if (authorization != null && authorization.hasScopes()) {
       contextMap.put("scopes", authorization.getScopes());
     }
     claims.put("context", contextMap);
@@ -212,11 +206,11 @@ public class TokenUtils {
    * @param user
    */
   private void putUserClaims(Claims claims, User user, List<String> scopes) {
-    if(scopes.contains("profile")) {
+    if (scopes.contains("profile")) {
       putProfileClaims(claims, user);
     }
 
-    if(scopes.contains("email")) {
+    if (scopes.contains("email")) {
       putEmailClaims(claims, user);
     }
 
@@ -232,16 +226,16 @@ public class TokenUtils {
   private void putProfileClaims(Claims claims, User user) {
     String name = "";
 
-    if(user.hasFirstName()) {
+    if (user.hasFirstName()) {
       name = user.getFirstName();
       claims.put("given_name", user.getFirstName());
     }
-    if(user.hasLastName()) {
-      if(!Strings.isNullOrEmpty(name)) name += " ";
+    if (user.hasLastName()) {
+      if (!Strings.isNullOrEmpty(name)) name += " ";
       name += user.getLastName();
       claims.put("family_name", user.getLastName());
     }
-    if(!Strings.isNullOrEmpty(name)) claims.put("name", name);
+    if (!Strings.isNullOrEmpty(name)) claims.put("name", name);
   }
 
   /**
@@ -254,10 +248,10 @@ public class TokenUtils {
    * @param clientId
    */
   private void putAudienceClaim(Claims claims, User user, Authorization authorization, String clientId) {
-    if(user == null) return;
+    if (user == null) return;
 
     Set<String> applications = userService.getUserApplications(user);
-    if(authorization == null) {
+    if (authorization == null) {
       if (clientId == null) {
         claims.put(Claims.AUDIENCE, applications);
       } else {
@@ -267,7 +261,7 @@ public class TokenUtils {
       Set<String> audience = Sets.newTreeSet();
       // authorized application can always validated the access token
       audience.add(authorization.getApplication());
-      if(authorization.hasScopes()) {
+      if (authorization.hasScopes()) {
         authorization.getScopes().stream().map(this::scopeToApplication).filter(applications::contains)
           .forEach(audience::add);
       }
@@ -282,7 +276,7 @@ public class TokenUtils {
    * @return
    */
   private String scopeToApplication(String scope) {
-    if(Strings.isNullOrEmpty(scope)) return scope;
+    if (Strings.isNullOrEmpty(scope)) return scope;
     return scope.split(SCOPE_DELIMITER)[0];
   }
 
