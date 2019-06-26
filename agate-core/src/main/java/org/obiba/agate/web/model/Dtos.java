@@ -14,6 +14,7 @@ import org.obiba.agate.domain.*;
 import org.obiba.agate.service.TicketService;
 import org.obiba.oidc.OIDCConfiguration;
 import org.obiba.web.model.AuthDtos;
+import org.obiba.web.model.OIDCDtos;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -145,7 +146,7 @@ public class Dtos {
   }
 
   @NotNull
-  public Agate.OidcAuthProviderSummaryDto asSummaryDto(@NotNull OIDCConfiguration configuration, @Nullable String locale) {
+  public OIDCDtos.OIDCAuthProviderSummaryDto asSummaryDto(@NotNull OIDCConfiguration configuration, @Nullable String locale) {
     return oidcAuthProviderDtos.asSummaryDto(configuration, locale);
   }
 }

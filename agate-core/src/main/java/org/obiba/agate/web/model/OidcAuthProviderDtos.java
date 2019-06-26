@@ -13,6 +13,7 @@ package org.obiba.agate.web.model;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.obiba.oidc.OIDCConfiguration;
+import org.obiba.web.model.OIDCDtos;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -23,11 +24,11 @@ import java.util.Map;
 public class OidcAuthProviderDtos {
 
   @NotNull
-  Agate.OidcAuthProviderSummaryDto asSummaryDto(@NotNull OIDCConfiguration configuration, @Nullable String locale) {
+  OIDCDtos.OIDCAuthProviderSummaryDto asSummaryDto(@NotNull OIDCConfiguration configuration, @Nullable String locale) {
     String name = configuration.getName();
     Map<String, String> customParams = configuration.getCustomParams();
 
-    Agate.OidcAuthProviderSummaryDto.Builder builder = Agate.OidcAuthProviderSummaryDto.newBuilder()
+    OIDCDtos.OIDCAuthProviderSummaryDto.Builder builder = OIDCDtos.OIDCAuthProviderSummaryDto.newBuilder()
       .setName(name)
       .setProviderUrl(customParams.get("providerUrl"))
       .setTitle(name);

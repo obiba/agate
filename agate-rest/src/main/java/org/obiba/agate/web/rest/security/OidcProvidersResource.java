@@ -11,8 +11,8 @@
 package org.obiba.agate.web.rest.security;
 
 import org.obiba.agate.security.OidcAuthConfigurationProvider;
-import org.obiba.agate.web.model.Agate;
 import org.obiba.agate.web.model.Dtos;
+import org.obiba.web.model.OIDCDtos;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -39,7 +39,7 @@ public class OidcProvidersResource {
   }
 
   @GET
-  public List<Agate.OidcAuthProviderSummaryDto> getProviders(@QueryParam("locale") @DefaultValue("en") String locale) {
+  public List<OIDCDtos.OIDCAuthProviderSummaryDto> getProviders(@QueryParam("locale") @DefaultValue("en") String locale) {
     return oidcAuthConfigurationProvider.getConfigurations()
       .stream()
       .map(configuration -> dtos.asSummaryDto(configuration, locale))
