@@ -24,6 +24,7 @@ import org.obiba.agate.service.TokenUtils;
 import org.obiba.agate.web.rest.ticket.TicketsResource;
 import org.obiba.oidc.OIDCConfigurationProvider;
 import org.obiba.oidc.OIDCCredentials;
+import org.obiba.oidc.OIDCException;
 import org.obiba.oidc.OIDCSession;
 import org.obiba.oidc.OIDCSessionManager;
 import org.obiba.oidc.shiro.authc.OIDCAuthenticationToken;
@@ -37,9 +38,13 @@ import org.springframework.web.filter.DelegatingFilterProxy;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.NewCookie;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -96,6 +101,38 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     setCallbackURL(callbackUrl);
   }
 
+  @Override
+  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    try {
+      super.doFilterInternal(request, response, filterChain);
+    } catch (OIDCException e) {
+      response.sendRedirect(publicUrl);
+    }
+  }
+
+  @Override
+  protected void onRedirect(OIDCSession session, HttpServletResponse response) throws IOException {
+    Map<String, String[]> requestParameters = session.getRequestParameters();
+    String redirect = retrieveFilterParams(requestParameters, FilterParameter.REDIRECT);
+    response.sendRedirect(Strings.isNullOrEmpty(redirect) ? getDefaultRedirectURL() : redirect);
+  }
+
+  @Override
+  protected void onAuthenticationError(OIDCSession session, String error, HttpServletResponse response) {
+    try {
+      if (session != null) {
+        String errorUrl = retrieveFilterParams(session.getRequestParameters(), FilterParameter.ERROR);
+        if (!Strings.isNullOrEmpty(errorUrl)) {
+          response.sendRedirect(errorUrl);
+          return;
+        }
+      }
+    } catch (IOException ignore) {
+    }
+
+    super.onAuthenticationError(session, error, response);
+  }
+
   /**
    * Depending on the specified action as part of the request parameters, sign in/up client.
    *
@@ -107,10 +144,8 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
   protected void onAuthenticationSuccess(OIDCSession session, OIDCCredentials credentials, HttpServletResponse response) {
     Map<String, String[]> requestParameters = session.getRequestParameters();
     String[] action = requestParameters.get(FilterParameter.ACTION.value());
-    String redirect = retrieveRedirectUrl(requestParameters);
+    String redirect = retrieveFilterParams(requestParameters, FilterParameter.REDIRECT);
     Optional<Application> application = Optional.empty();
-
-    if (!Strings.isNullOrEmpty(redirect)) setDefaultRedirectURL(redirect);
 
     switch (FilterAction.valueOf(action[0])) {
       case SIGNIN:
@@ -199,8 +234,8 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     return compile.matcher(target).matches();
   }
 
-  private String retrieveRedirectUrl(Map<String, String[]> requestParameters) {
-    return Optional.ofNullable(requestParameters.get(FilterParameter.REDIRECT.value()))
+  private String retrieveFilterParams(Map<String, String[]> requestParameters, FilterParameter parameter) {
+    return Optional.ofNullable(requestParameters.get(parameter.value()))
       .filter(p -> p != null && p.length > 0)
       .map(p -> p[0])
       .orElse("");
