@@ -563,7 +563,8 @@
       "connect-timeout-help": "Délai d'attente maximal en millisecondes avant l'établissement d'une connexion. Zéro implique pas de délai d'attente.",
       "read-timeout": "Délai de lecture",
       "read-timeout-help": "Délai d'attente maximal en millisecondes avant la réception d'une réponse. Zéro implique pas de délai d'attente.",
-      "signin-with": "Connectez-vous avec"
+      "signin-with": "Connectez-vous avec",
+      "signup-with": "S'inscrire avec"
     },
     "deativate-warning": "Les utilisateurs associés à ce domaine ne peuvent plus se connecter à Agate et à ses applications enregistrées.",
     "delete-dialog": {

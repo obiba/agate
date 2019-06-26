@@ -97,15 +97,26 @@ agate.controller('LoginController', ['$scope', '$location', '$translate', 'Authe
     };
   }]);
 
-agate.controller('JoinController', ['$rootScope', '$scope', '$location', '$translate', 'JoinConfigResource', 'JoinResource', 'ClientConfig',
-  'NOTIFICATION_EVENTS', 'ServerErrorUtils', 'AlertService', 'vcRecaptchaService',
-  function ($rootScope, $scope, $location, $translate, JoinConfigResource, JoinResource, ClientConfig, NOTIFICATION_EVENTS, ServerErrorUtils, AlertService, vcRecaptchaService) {
+agate.controller('JoinController', ['$rootScope', '$scope', '$location', '$cookies', '$translate', 'JoinConfigResource', 'JoinResource', 'ClientConfig',
+  'NOTIFICATION_EVENTS', 'ServerErrorUtils', 'AlertService', 'vcRecaptchaService', 'OidcProvidersResource',
+  function ($rootScope, $scope, $location, $cookies, $translate, JoinConfigResource, JoinResource, ClientConfig,
+    NOTIFICATION_EVENTS, ServerErrorUtils, AlertService, vcRecaptchaService, OidcProvidersResource) {
+
+    OidcProvidersResource.get({locale: $translate.use()}).$promise.then(function(providers) {
+      $scope.providers = providers;
+    });
 
     $scope.joinConfig = JoinConfigResource.get();
     $scope.model = {};
     $scope.response = null;
     $scope.widgetId = null;
     $scope.config = ClientConfig;
+
+    var userCookie = $cookies.get('u_auth');
+
+    if (userCookie) {
+      $scope.model = JSON.parse(userCookie.replace(/\\"/g, "\""));
+    }
 
     $scope.setResponse = function (response) {
       $scope.response = response;
@@ -141,6 +152,8 @@ agate.controller('JoinController', ['$rootScope', '$scope', '$location', '$trans
             vcRecaptchaService.reload($scope.widgetId);
           });
       }
+
+      $cookies.remove('u_auth');
     };
 
   }]);
@@ -289,7 +302,7 @@ agate.controller('ProfileController', ['$scope', '$location', '$uibModal', 'Acco
 
         return user;
       });
-    }
+    };
 
     getConfigAttributes();
     getSettingsAccount();

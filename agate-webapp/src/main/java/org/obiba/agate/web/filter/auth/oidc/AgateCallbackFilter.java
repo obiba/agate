@@ -9,18 +9,30 @@
  */
 package org.obiba.agate.web.filter.auth.oidc;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Iterator;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.obiba.agate.domain.Application;
 import org.obiba.agate.domain.Configuration;
+import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.domain.Ticket;
+import org.obiba.agate.domain.User;
 import org.obiba.agate.service.ApplicationService;
 import org.obiba.agate.service.ConfigurationService;
+import org.obiba.agate.service.RealmConfigService;
 import org.obiba.agate.service.TicketService;
 import org.obiba.agate.service.TokenUtils;
+import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.rest.ticket.TicketsResource;
 import org.obiba.oidc.OIDCConfigurationProvider;
 import org.obiba.oidc.OIDCCredentials;
@@ -63,27 +75,40 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
 
   private final ApplicationService applicationService;
 
+  private final RealmConfigService realmConfigService;
+
+  private final UserService userService;
+
   private final TicketService ticketService;
 
   private final TokenUtils tokenUtils;
 
+  private final ObjectMapper objectMapper;
+
   private String publicUrl;
 
   @Inject
-  public AgateCallbackFilter(OIDCConfigurationProvider oidcConfigurationProvider,
-                             OIDCSessionManager oidcSessionManager,
-                             AuthenticationExecutor authenticationExecutor,
-                             ConfigurationService configurationService,
-                             ApplicationService applicationService,
-                             TicketService ticketService,
-                             TokenUtils tokenUtils) {
+  public AgateCallbackFilter(
+    OIDCConfigurationProvider oidcConfigurationProvider,
+    OIDCSessionManager oidcSessionManager,
+    AuthenticationExecutor authenticationExecutor,
+    ConfigurationService configurationService,
+    ApplicationService applicationService,
+    RealmConfigService realmConfigService, UserService userService,
+    TicketService ticketService,
+    TokenUtils tokenUtils) {
     this.oidcConfigurationProvider = oidcConfigurationProvider;
     this.oidcSessionManager = oidcSessionManager;
     this.authenticationExecutor = authenticationExecutor;
     this.configurationService = configurationService;
     this.applicationService = applicationService;
+    this.realmConfigService = realmConfigService;
+    this.userService = userService;
     this.ticketService = ticketService;
     this.tokenUtils = tokenUtils;
+
+    objectMapper = new ObjectMapper();
+
   }
 
   @PostConstruct
@@ -108,6 +133,8 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     Map<String, String[]> requestParameters = session.getRequestParameters();
     String[] action = requestParameters.get(FilterParameter.ACTION.value());
     String redirect = retrieveRedirectUrl(requestParameters);
+    String provider = retrieveRequestParameter(FilterParameter.OIDC_PROVIDER_ID.value(), requestParameters);
+
     Optional<Application> application = Optional.empty();
 
     if (!Strings.isNullOrEmpty(redirect)) setDefaultRedirectURL(redirect);
@@ -122,7 +149,11 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
         }
         break;
       case SIGNUP:
-        // TODO
+        try {
+          signUp(provider, credentials, response);
+        } catch (JSONException | IOException e) {
+          // error
+        }
       default:
     }
   }
@@ -137,19 +168,24 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
    * @param application
    */
   private void signInWithTicket(OIDCCredentials credentials, HttpServletResponse response, Application application) {
-    Subject subject = authenticationExecutor.login(new OIDCAuthenticationToken(credentials));
-    if (subject != null) {
-      Session subjectSession = prepareSubjectSession(subject);
-      int timeout = (int) (subjectSession.getTimeout() / 1000);
+    OIDCAuthenticationToken oidcAuthenticationToken = new OIDCAuthenticationToken(credentials);
+    User user = userService.findUser(oidcAuthenticationToken.getUsername());
 
-      Configuration configuration = configurationService.getConfiguration();
-      Ticket ticket = ticketService.create(subject.getPrincipal().toString(), false, false, application.getId());
-      String token = tokenUtils.makeAccessToken(ticket);
+    if (user != null) {
+      Subject subject = authenticationExecutor.login(oidcAuthenticationToken);
+      if (subject != null) {
+        Session subjectSession = prepareSubjectSession(subject);
+        int timeout = (int) (subjectSession.getTimeout() / 1000);
 
-      response.addHeader(HttpHeaders.SET_COOKIE,
-        new NewCookie(TicketsResource.TICKET_COOKIE_NAME, token, "/", configuration.getDomain(),
-          "Obiba session deleted", timeout, configuration.hasDomain()).toString());
-      log.debug("Successfully authenticated subject {}", SecurityUtils.getSubject().getPrincipal());
+        Configuration configuration = configurationService.getConfiguration();
+        Ticket ticket = ticketService.create(subject.getPrincipal().toString(), false, false, application.getId());
+        String token = tokenUtils.makeAccessToken(ticket);
+
+        response.addHeader(HttpHeaders.SET_COOKIE,
+          new NewCookie(TicketsResource.TICKET_COOKIE_NAME, token, "/", configuration.getDomain(),
+            "Obiba session deleted", timeout, configuration.hasDomain()).toString());
+        log.debug("Successfully authenticated subject {}", SecurityUtils.getSubject().getPrincipal());
+      }
     }
   }
 
@@ -160,15 +196,57 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
    * @param response
    */
   private void signIn(OIDCCredentials credentials, HttpServletResponse response) {
-    Subject subject = authenticationExecutor.login(new OIDCAuthenticationToken(credentials));
-    if (subject != null) {
-      Session subjectSession = prepareSubjectSession(subject);
-      int timeout = (int) (subjectSession.getTimeout() / 1000);
+    OIDCAuthenticationToken oidcAuthenticationToken = new OIDCAuthenticationToken(credentials);
+    User user = userService.findUser(oidcAuthenticationToken.getUsername());
 
-      response.addHeader(HttpHeaders.SET_COOKIE,
-        new NewCookie("agatesid", subjectSession.getId().toString(), "/", null, null, timeout, false).toString());
-      log.debug("Successfully authenticated subject {}", SecurityUtils.getSubject().getPrincipal());
+    if (user != null) {
+      Subject subject = authenticationExecutor.login(oidcAuthenticationToken);
+      if (subject != null) {
+        Session subjectSession = prepareSubjectSession(subject);
+        int timeout = (int) (subjectSession.getTimeout() / 1000);
+
+        response.addHeader(HttpHeaders.SET_COOKIE,
+          new NewCookie("agatesid", subjectSession.getId().toString(), "/", null, null, timeout, false).toString());
+        log.debug("Successfully authenticated subject {}", SecurityUtils.getSubject().getPrincipal());
+      }
+    } else {
+      // throw error?
     }
+  }
+
+  private void signUp(String provider, OIDCCredentials credentials, HttpServletResponse response) throws IOException, JSONException {
+    // User profile response should be either in a cookie or the response body
+    OIDCAuthenticationToken oidcAuthenticationToken = new OIDCAuthenticationToken(credentials);
+    User user = userService.findUser(oidcAuthenticationToken.getUsername());
+
+    if (user == null) {
+      RealmConfig config = realmConfigService.findConfig(provider);
+
+      if (config != null) {
+        JSONArray names = configurationService.getJoinConfiguration("en").getJSONObject("schema").getJSONObject("properties").names();
+
+        JSONObject userVals = new JSONObject();
+        config.getUserInfoMapping().forEach((key, value) -> {
+          try {
+            userVals.put(key, credentials.getUserInfo(value));
+          } catch (JSONException e) {
+            //
+          }
+        });
+
+        userVals.put("username", credentials.getUserInfo("preferred_username"));
+        userVals.put("realm", config.getName());
+
+        // map other fields, use config and join's schema?
+
+        response.addHeader(HttpHeaders.SET_COOKIE,
+          new NewCookie("u_auth", userVals.toString(), "/", null, null, 20000, false).toString());
+      }
+    } else {
+      // user already exists error
+    }
+
+    response.sendRedirect(publicUrl + (publicUrl.endsWith("/") ? "" : "/") + "#/join");
   }
 
   private Session prepareSubjectSession(Subject subject) {
@@ -199,11 +277,15 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     return compile.matcher(target).matches();
   }
 
-  private String retrieveRedirectUrl(Map<String, String[]> requestParameters) {
-    return Optional.ofNullable(requestParameters.get(FilterParameter.REDIRECT.value()))
+  private String retrieveRequestParameter(String key, Map<String, String[]> requestParameters) {
+    return Optional.ofNullable(requestParameters.get(key))
       .filter(p -> p != null && p.length > 0)
       .map(p -> p[0])
       .orElse("");
+  }
+
+  private String retrieveRedirectUrl(Map<String, String[]> requestParameters) {
+    return retrieveRequestParameter(FilterParameter.REDIRECT.value(), requestParameters);
   }
 
   public static class Wrapper extends DelegatingFilterProxy {

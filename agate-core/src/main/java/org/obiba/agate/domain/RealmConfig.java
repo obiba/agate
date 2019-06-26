@@ -1,6 +1,8 @@
 package org.obiba.agate.domain;
 
 import com.google.common.collect.Sets;
+import java.util.HashMap;
+import java.util.Map;
 import org.obiba.mongodb.domain.AbstractAuditableDocument;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -35,6 +37,8 @@ public class RealmConfig extends AbstractAuditableDocument {
   // security concerns: might need to be a hashed string? password field would need to be hashed?
   // might have to use configurationService.encrypt
   private String content;
+
+  private Map<String, String> userInfoMapping = new HashMap<>();
 
   public String getName() {
     return name;
@@ -116,6 +120,14 @@ public class RealmConfig extends AbstractAuditableDocument {
     this.content = content;
   }
 
+  public Map<String, String> getUserInfoMapping() {
+    return userInfoMapping;
+  }
+
+  public void setUserInfoMapping(Map<String, String> userInfoMapping) {
+    this.userInfoMapping = userInfoMapping;
+  }
+
   public static Builder newBuilder() {
     return new Builder();
   }
@@ -175,6 +187,13 @@ public class RealmConfig extends AbstractAuditableDocument {
 
     public Builder content(String value) {
       config.setContent(value);
+      return this;
+    }
+
+    public Builder mapping(Map<String, String> mapping) {
+      if (mapping != null) {
+        config.setUserInfoMapping(mapping);
+      }
       return this;
     }
 

@@ -39,6 +39,7 @@ import org.obiba.agate.web.filter.CachingHttpHeadersFilter;
 import org.obiba.agate.web.filter.StaticResourcesProductionFilter;
 import org.obiba.agate.web.filter.auth.oidc.AgateCallbackFilter;
 import org.obiba.agate.web.filter.auth.oidc.AgateSignInFilter;
+import org.obiba.agate.web.filter.auth.oidc.AgateSignUpFilter;
 import org.obiba.shiro.web.filter.AuthenticationFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,6 +95,8 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
 
   private final AgateSignInFilter agateSignInFilter;
 
+  private final AgateSignUpFilter agateSignUpFilter;
+
   private final AgateCallbackFilter agateCallbackFilter;
 
   private final OIDCConfigurationFilter oidcConfigurationFilter;
@@ -106,12 +109,14 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
     org.obiba.ssl.SslContextFactory sslContextFactory,
     AuthenticationFilter authenticationFilter,
     AgateSignInFilter agateSignInFilter,
+    AgateSignUpFilter agateSignUpFilter,
     AgateCallbackFilter agateCallbackFilter,
     OIDCConfigurationFilter oidcConfigurationFilter) {
 
     this.metricRegistry = metricRegistry;
     this.sslContextFactory = sslContextFactory;
     this.authenticationFilter = authenticationFilter;
+    this.agateSignUpFilter = agateSignUpFilter;
     this.oidcConfigurationFilter = oidcConfigurationFilter;
     this.agateSignInFilter = agateSignInFilter;
     this.agateCallbackFilter = agateCallbackFilter;
@@ -223,6 +228,10 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
     log.debug("Registering OIDC Authentication Filter");
     FilterRegistration.Dynamic signInFilterRegistration = servletContext.addFilter("agateSignInFilter", agateSignInFilter);
     signInFilterRegistration.addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE, ERROR), true, "/auth/signin/*");
+
+    FilterRegistration.Dynamic signUpFilterRegistration = servletContext.addFilter("agateSignUpFilter", agateSignUpFilter);
+    signUpFilterRegistration.addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE, ERROR), true, "/auth/signup/*");
+
     FilterRegistration.Dynamic callbackFilterRegistration = servletContext.addFilter("agateCallbackFilter", agateCallbackFilter);
     callbackFilterRegistration.addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE, ERROR), true, "/auth/callback/*");
   }
