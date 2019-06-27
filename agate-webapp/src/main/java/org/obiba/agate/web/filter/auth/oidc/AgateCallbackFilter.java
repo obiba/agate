@@ -230,6 +230,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
           new NewCookie("u_auth", userMappedInfo.toString(), "/", null, null, 600, false).toString());
       }
     } else {
+      throw new RuntimeException("User already exists");
       // user already exists error
     }
 

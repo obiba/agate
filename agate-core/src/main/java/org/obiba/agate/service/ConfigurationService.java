@@ -270,7 +270,7 @@ public class ConfigurationService {
 
     LinkedList<String> list = new LinkedList<>();
     list.add(AgateRealm.AGATE_USER_REALM.getName());
-    realmConfigService.findAllRealmsForSignup().stream().filter(realmConfig -> !AgateRealm.AGATE_OIDC_REALM.equals(realmConfig.getType())).map(RealmConfig::getName).forEach(list::add);
+    realmConfigService.findAllRealmsForSignup().stream().map(RealmConfig::getName).forEach(list::add);
 
     Optional<RealmConfig> defaultRealm = Optional.ofNullable(realmConfigService.findDefault());
 
@@ -344,7 +344,7 @@ public class ConfigurationService {
     JSONObject realmTitleMap = new JSONObject();
     realmTitleMap.put(AgateRealm.AGATE_USER_REALM.getName(), "t(realm.default)");
 
-    realmConfigService.findAllRealmsForSignup().stream().filter(realmConfig -> !AgateRealm.AGATE_OIDC_REALM.equals(realmConfig.getType())).forEach(realmConfig -> {
+    realmConfigService.findAllRealmsForSignup().stream().forEach(realmConfig -> {
       try {
         LocalizedString title = realmConfig.getTitle();
         realmTitleMap.put(realmConfig.getName(), title == null ||  title.get(locale) == null ? realmConfig.getName() : title.get(locale));
