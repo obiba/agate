@@ -9,12 +9,8 @@
  */
 package org.obiba.agate.web.filter.auth.oidc;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Iterator;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
@@ -83,8 +79,6 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
 
   private final TokenUtils tokenUtils;
 
-  private final ObjectMapper objectMapper;
-
   private String publicUrl;
 
   @Inject
@@ -106,9 +100,6 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     this.userService = userService;
     this.ticketService = ticketService;
     this.tokenUtils = tokenUtils;
-
-    objectMapper = new ObjectMapper();
-
   }
 
   @PostConstruct
@@ -209,8 +200,6 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
           new NewCookie("agatesid", subjectSession.getId().toString(), "/", null, null, timeout, false).toString());
         log.debug("Successfully authenticated subject {}", SecurityUtils.getSubject().getPrincipal());
       }
-    } else {
-      // throw error?
     }
   }
 
@@ -224,23 +213,21 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
 
       if (config != null) {
         JSONArray names = configurationService.getJoinConfiguration("en").getJSONObject("schema").getJSONObject("properties").names();
+        Map<String, String> userInfoMapping = config.getUserInfoMapping();
 
-        JSONObject userVals = new JSONObject();
-        config.getUserInfoMapping().forEach((key, value) -> {
-          try {
-            userVals.put(key, credentials.getUserInfo(value));
-          } catch (JSONException e) {
-            //
-          }
-        });
-
-        userVals.put("username", credentials.getUserInfo("preferred_username"));
-        userVals.put("realm", config.getName());
+        JSONObject userMappedInfo = new JSONObject();
 
         // map other fields, use config and join's schema?
+        for (int i = 0; i < names.length(); i++) {
+          String name = names.getString(i);
+          userMappedInfo.put(name, credentials.getUserInfo(userInfoMapping.get(name)));
+        }
+
+        userMappedInfo.put("username", oidcAuthenticationToken.getUsername());
+        userMappedInfo.put("realm", config.getName());
 
         response.addHeader(HttpHeaders.SET_COOKIE,
-          new NewCookie("u_auth", userVals.toString(), "/", null, null, 20000, false).toString());
+          new NewCookie("u_auth", userMappedInfo.toString(), "/", null, null, 600, false).toString());
       }
     } else {
       // user already exists error
