@@ -49,18 +49,6 @@ public abstract class AbstractAgateAuthenticationFilter extends OIDCLoginFilter 
     setCallbackURL(callbackUrl);
   }
 
-  public ConfigurationService getConfigurationService() {
-    return configurationService;
-  }
-
-  public OIDCConfigurationProvider getOidcConfigurationProvider() {
-    return oidcConfigurationProvider;
-  }
-
-  public OIDCSessionManager getOidcSessionManager() {
-    return oidcSessionManager;
-  }
-
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
     try {

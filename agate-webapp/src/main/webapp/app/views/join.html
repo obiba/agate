@@ -8,15 +8,15 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<div class="row">
+<div class="row" ng-controller="JoinController">
   <div class="col-md-2"></div>
-  <div class="col-md-6">
 
+  <div class="col-md-6">
     <obiba-alert id="JoinController"></obiba-alert>
 
     <div class="well">
       <h4 translate>join.title</h4>
-      <div ng-controller="JoinController">
+      <div>
         <form name="joinForm" ng-submit="submit(form)">
 
           <div sf-schema="joinConfig.schema" sf-form="joinConfig.definition" sf-model="model"></div>
@@ -39,7 +39,7 @@
       </div>
     </div>
 
-    <div ng-if="providers">
+    <div ng-if="providers && !hasCookie">
       <hr>
       <div ng-repeat="provider in providers">
         <a class="btn btn-info btn-block text-center voffset2" href="/auth/signup/{{provider.name}}">{{'realm.oidc.signup-with' | translate}} {{provider.title}}</a>

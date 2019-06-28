@@ -101,6 +101,7 @@ agate.controller('JoinController', ['$rootScope', '$scope', '$location', '$cooki
   'NOTIFICATION_EVENTS', 'ServerErrorUtils', 'AlertService', 'vcRecaptchaService', 'OidcProvidersResource',
   function ($rootScope, $scope, $location, $cookies, $translate, JoinConfigResource, JoinResource, ClientConfig,
     NOTIFICATION_EVENTS, ServerErrorUtils, AlertService, vcRecaptchaService, OidcProvidersResource) {
+    var userCookie = $cookies.get('u_auth');
 
     OidcProvidersResource.get({locale: $translate.use()}).$promise.then(function(providers) {
       $scope.providers = providers;
@@ -112,7 +113,7 @@ agate.controller('JoinController', ['$rootScope', '$scope', '$location', '$cooki
     $scope.widgetId = null;
     $scope.config = ClientConfig;
 
-    var userCookie = $cookies.get('u_auth');
+    $scope.hasCookie = !!userCookie;
 
     if (userCookie) {
       $scope.model = JSON.parse(userCookie.replace(/\\"/g, "\""));
@@ -153,9 +154,11 @@ agate.controller('JoinController', ['$rootScope', '$scope', '$location', '$cooki
           });
       }
 
-      $cookies.remove('u_auth');
     };
 
+    $scope.$on('$destroy', function () {
+      $cookies.remove('u_auth');
+    });
   }]);
 
 agate.controller('LogoutController', ['$location', 'AuthenticationSharedService',
