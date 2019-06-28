@@ -130,12 +130,11 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     try {
       if (session != null) {
         String errorUrl = retrieveRequestParameter(FilterParameter.ERROR.value(), session.getRequestParameters());
-        if (!Strings.isNullOrEmpty(errorUrl)) {
-          response.sendRedirect(errorUrl);
-          return;
-        }
+        if (!Strings.isNullOrEmpty(errorUrl)) response.sendRedirect(errorUrl);
+        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, error);
       }
     } catch (IOException ignore) {
+      // ignore
     }
 
     super.onAuthenticationError(session, error, response);
@@ -171,22 +170,22 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
 
     Optional<Application> application = Optional.empty();
 
-    switch (FilterAction.valueOf(action[0])) {
-      case SIGNIN:
-        application = findApplication(redirect);
-        if (application.isPresent()) {
-          signInWithTicket(credentials, response, application.get());
-        } else {
-          signIn(credentials, response);
-        }
-        break;
-      case SIGNUP:
-        try {
-          signUp(provider, credentials, response);
-        } catch (JSONException | IOException e) {
-          // error
-        }
-      default:
+    try {
+      switch (FilterAction.valueOf(action[0])) {
+        case SIGNIN:
+          application = findApplication(redirect);
+          if (application.isPresent()) {
+            signInWithTicket(credentials, response, application.get());
+          } else {
+            signIn(credentials, response);
+          }
+          break;
+        case SIGNUP:
+            signUp(provider, credentials, response);
+        default:
+      }
+    } catch (JSONException | IOException e) {
+      // ignore
     }
   }
 
@@ -199,7 +198,8 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
    * @param response
    * @param application
    */
-  private void signInWithTicket(OIDCCredentials credentials, HttpServletResponse response, Application application) {
+  private void signInWithTicket(OIDCCredentials credentials, HttpServletResponse response, Application application)
+    throws IOException {
     OIDCAuthenticationToken oidcAuthenticationToken = new OIDCAuthenticationToken(credentials);
     User user = userService.findUser(oidcAuthenticationToken.getUsername());
 
@@ -218,6 +218,9 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
             "Obiba session deleted", timeout, configuration.hasDomain()).toString());
         log.debug("Successfully authenticated subject {}", SecurityUtils.getSubject().getPrincipal());
       }
+    } else {
+      log.info("Agate Authentication failure for '{}', user does not exist in Agate", oidcAuthenticationToken.getUsername());
+      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not authorized in Agate.");
     }
   }
 
@@ -227,7 +230,8 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
    * @param credentials
    * @param response
    */
-  private void signIn(OIDCCredentials credentials, HttpServletResponse response) {
+  private void signIn(OIDCCredentials credentials, HttpServletResponse response)
+    throws IOException {
     OIDCAuthenticationToken oidcAuthenticationToken = new OIDCAuthenticationToken(credentials);
     User user = userService.findUser(oidcAuthenticationToken.getUsername());
 
@@ -243,6 +247,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
       }
     } else {
       log.info("Agate Authentication failure for '{}', user does not exist in Agate", oidcAuthenticationToken.getUsername());
+      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not authorized in Agate.");
     }
   }
 
@@ -274,6 +279,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
       }
     } else {
       log.info("SignUp failure for '{}' with provider '{}', user already exists in Agate", oidcAuthenticationToken.getUsername(), provider);
+      response.sendError(HttpServletResponse.SC_CONFLICT, "Can't sign up with these credentials.");
     }
   }
 
