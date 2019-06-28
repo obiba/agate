@@ -11,6 +11,9 @@ package org.obiba.agate.web.filter.auth.oidc;
 
 import com.google.common.base.Strings;
 import java.io.IOException;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
@@ -32,6 +35,7 @@ import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.rest.ticket.TicketsResource;
 import org.obiba.oidc.OIDCConfigurationProvider;
 import org.obiba.oidc.OIDCCredentials;
+import org.obiba.oidc.OIDCException;
 import org.obiba.oidc.OIDCSession;
 import org.obiba.oidc.OIDCSessionManager;
 import org.obiba.oidc.shiro.authc.OIDCAuthenticationToken;
@@ -112,6 +116,45 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     setCallbackURL(callbackUrl);
   }
 
+  @Override
+  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    try {
+      super.doFilterInternal(request, response, filterChain);
+    } catch (OIDCException e) {
+      response.sendRedirect(publicUrl);
+    }
+  }
+
+  @Override
+  protected void onAuthenticationError(OIDCSession session, String error, HttpServletResponse response) {
+    try {
+      if (session != null) {
+        String errorUrl = retrieveRequestParameter(FilterParameter.ERROR.value(), session.getRequestParameters());
+        if (!Strings.isNullOrEmpty(errorUrl)) {
+          response.sendRedirect(errorUrl);
+          return;
+        }
+      }
+    } catch (IOException ignore) {
+    }
+
+    super.onAuthenticationError(session, error, response);
+  }
+
+  @Override
+  protected void onRedirect(OIDCSession session, HttpServletResponse response) throws IOException {
+    Map<String, String[]> requestParameters = session.getRequestParameters();
+    String redirectUrl = retrieveRedirectUrl(requestParameters);
+    String action = retrieveRequestParameter(FilterParameter.ACTION.value(), requestParameters);
+    String signupRedirectUrl = retrieveSignupRedirectUrl(requestParameters);
+
+    if (FilterAction.SIGNIN.equals(FilterAction.valueOf(action))) {
+      response.sendRedirect(redirectUrl);
+    } else {
+      response.sendRedirect(signupRedirectUrl);
+    }
+  }
+
   /**
    * Depending on the specified action as part of the request parameters, sign in/up client.
    *
@@ -127,8 +170,6 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     String provider = retrieveRequestParameter(FilterParameter.OIDC_PROVIDER_ID.value(), requestParameters);
 
     Optional<Application> application = Optional.empty();
-
-    if (!Strings.isNullOrEmpty(redirect)) setDefaultRedirectURL(redirect);
 
     switch (FilterAction.valueOf(action[0])) {
       case SIGNIN:
@@ -200,6 +241,8 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
           new NewCookie("agatesid", subjectSession.getId().toString(), "/", null, null, timeout, false).toString());
         log.debug("Successfully authenticated subject {}", SecurityUtils.getSubject().getPrincipal());
       }
+    } else {
+      log.info("Agate Authentication failure for '{}', user does not exist in Agate", oidcAuthenticationToken.getUsername());
     }
   }
 
@@ -230,11 +273,8 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
           new NewCookie("u_auth", userMappedInfo.toString(), "/", null, null, 600, false).toString());
       }
     } else {
-      throw new RuntimeException("User already exists");
-      // user already exists error
+      log.info("SignUp failure for '{}' with provider '{}', user already exists in Agate", oidcAuthenticationToken.getUsername(), provider);
     }
-
-    response.sendRedirect(publicUrl + (publicUrl.endsWith("/") ? "" : "/") + "#/join");
   }
 
   private Session prepareSubjectSession(Subject subject) {
@@ -273,7 +313,13 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
   }
 
   private String retrieveRedirectUrl(Map<String, String[]> requestParameters) {
-    return retrieveRequestParameter(FilterParameter.REDIRECT.value(), requestParameters);
+    String redirectUrl = retrieveRequestParameter(FilterParameter.REDIRECT.value(), requestParameters);
+    return Strings.isNullOrEmpty(redirectUrl) ? getDefaultRedirectURL() : redirectUrl;
+  }
+
+  private String retrieveSignupRedirectUrl(Map<String, String[]> requestParameters) {
+    String signupRedirectUrl = retrieveRequestParameter(FilterParameter.REDIRECT.value(), requestParameters);
+    return Strings.isNullOrEmpty(signupRedirectUrl) ? (publicUrl + (publicUrl.endsWith("/") ? "" : "/") + "#/join") : signupRedirectUrl;
   }
 
   public static class Wrapper extends DelegatingFilterProxy {
