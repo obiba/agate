@@ -115,6 +115,8 @@ agate.controller('JoinController', ['$rootScope', '$scope', '$location', '$cooki
 
     $scope.hasCookie = !!userCookie;
 
+    $scope.urlOrigin = new URL($location.absUrl()).origin;
+
     if (userCookie) {
       $scope.model = JSON.parse(userCookie.replace(/\\"/g, "\""));
     }

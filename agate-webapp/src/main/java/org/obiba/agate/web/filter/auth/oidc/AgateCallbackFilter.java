@@ -143,14 +143,21 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
   @Override
   protected void onRedirect(OIDCSession session, HttpServletResponse response) throws IOException {
     Map<String, String[]> requestParameters = session.getRequestParameters();
-    String redirectUrl = retrieveRedirectUrl(requestParameters);
     String action = retrieveRequestParameter(FilterParameter.ACTION.value(), requestParameters);
-    String signupRedirectUrl = retrieveSignupRedirectUrl(requestParameters);
 
-    if (FilterAction.SIGNIN.equals(FilterAction.valueOf(action))) {
-      response.sendRedirect(redirectUrl);
+    String redirect = retrieveRequestParameter(FilterParameter.REDIRECT.value(), requestParameters);
+
+    if (Strings.isNullOrEmpty(redirect)) {
+      if (FilterAction.SIGNIN.equals(FilterAction.valueOf(action))) {
+        response.sendRedirect(retrieveRedirectUrl(requestParameters));
+      } else {
+        response.sendRedirect(retrieveSignupRedirectUrl(requestParameters));
+      }
     } else {
-      response.sendRedirect(signupRedirectUrl);
+      String redirectHash = retrieveRequestParameter(FilterParameter.REDIRECT_HASH.value(), requestParameters);
+
+      String redirectUrlWithHash = !Strings.isNullOrEmpty(redirectHash) ? (redirect + (redirect.endsWith("/") ? "" : "/") + "#" + (redirectHash.startsWith("/") ? "" : "/") + redirectHash) : redirect;
+      response.sendRedirect(redirectUrlWithHash);
     }
   }
 
