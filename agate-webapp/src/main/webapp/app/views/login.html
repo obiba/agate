@@ -32,11 +32,12 @@
           </button>
           <span class="pull-right voffset2"><a href="#/forgotten" translate>login.form.forgot-login</a></span>
         </form>
-      </div>
-      <div ng-if="providers">
-        <hr>
-        <div ng-repeat="provider in providers">
-          <a class="btn btn-info btn-block text-center voffset2" href="/auth/signin/{{provider.name}}">{{'realm.oidc.signin-with' | translate}} {{provider.title}}</a>
+
+        <div ng-if="providers">
+          <hr>
+          <div ng-repeat="provider in providers">
+            <a class="btn btn-info btn-block text-center voffset2" href="/auth/signin/{{provider.name}}">{{'realm.oidc.signin-with' | translate}} {{provider.title}}</a>
+          </div>
         </div>
       </div>
       </div>
