@@ -10,8 +10,6 @@
 
 package org.obiba.agate.service.support;
 
-import org.obiba.agate.domain.RealmStatus;
-
 public class OidcRealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
   private OidcRealmConfigFormBuilder() {
 
@@ -72,7 +70,7 @@ public class OidcRealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
       "}";
 
     formDefinition = "[" +
-      "{" +
+      "  {" +
       "  \"type\": \"section\"," +
       "  \"items\": [" +
       "      \"clientId\"," +

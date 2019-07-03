@@ -12,26 +12,9 @@
 
 (function() {
   angular.module('agate.realm')
-    .factory('RealmConfigResource', ['$resource', 'LocalizedValues',
-      function($resource, LocalizedValues) {
+    .factory('RealmConfigResource', ['$resource', 'RealmTransformer',
+      function($resource, RealmTransformer) {
 
-        function transformRealmFromResponse(response, getResponseHeaderCallBack, status) {
-          if (status < 400) {
-            var realm = JSON.parse(response);
-            realm.title = LocalizedValues.arrayToObject(realm.title);
-            realm.description = LocalizedValues.arrayToObject(realm.description);
-            return realm;
-          }
-
-          return response;
-        }
-
-        function transformRealmForRequest(realm) {
-          delete realm.safeTitle;
-          realm.title = LocalizedValues.objectToArray(realm.title);
-          realm.description = LocalizedValues.objectToArray(realm.description);
-          return JSON.stringify(realm);
-        }
 
         return $resource('ws/config/realm/:name', {},
           {
@@ -39,13 +22,13 @@
               method: 'GET',
               params: {name: '@name'},
               errorHandler: true,
-              transformResponse: transformRealmFromResponse
+              transformResponse: RealmTransformer.transformForResponse
             },
             'save': {
               method: 'PUT',
               params: {name: '@name'},
               errorHandler: true,
-              transformRequest: transformRealmForRequest
+              transformRequest: RealmTransformer.transformForRequest
             },
             'delete': {method: 'DELETE', params: {name: '@name'}, errorHandler: true},
             'users': {url: 'ws/config/realm/:name/users', method: 'GET', params: {name: '@name'}, errorHandler: true},

@@ -12,15 +12,8 @@
 
 (function() {
   angular.module('agate.realm')
-    .factory('RealmsConfigResource', ['$resource', 'LocalizedValues',
-      function($resource, LocalizedValues) {
-
-        function transformRealmForRequest(realm) {
-          delete realm.safeTitle;
-          realm.title = LocalizedValues.objectToArray(realm.title);
-          realm.description = LocalizedValues.objectToArray(realm.description);
-          return JSON.stringify(realm);
-        }
+    .factory('RealmsConfigResource', ['$resource', 'RealmTransformer',
+      function($resource, RealmTransformer) {
 
         return $resource('ws/config/realms', {},
           {
@@ -28,7 +21,7 @@
               url: 'ws/config/realms',
               method: 'POST',
               errorHandler: true,
-              transformRequest: transformRealmForRequest
+              transformRequest: RealmTransformer.transformForRequest
             },
             'summaries': {
               url: 'ws/config/realms/summaries',

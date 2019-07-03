@@ -34,8 +34,6 @@ public class RealmConfig extends AbstractAuditableDocument {
 
   private boolean forSignup = false;
 
-  // security concerns: might need to be a hashed string? password field would need to be hashed?
-  // might have to use configurationService.encrypt
   private String content;
 
   private Map<String, String> userInfoMapping = new HashMap<>();

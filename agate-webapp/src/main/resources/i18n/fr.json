@@ -202,7 +202,7 @@
     "create": "Créer",
     "import": "Importer",
     "user-attributes": "Attributs d'utilisateur",
-    "user-attributes-help": "Les champs de description d'utilisateur peuvent être étendues à l'aide d'attributs déclarés. Cela s'applique aussi aux requêtes d'inscription.",
+    "user-attributes-help": "Les attributs étendent les champs de description de l'utilisateur ainsi que les demandes d'inscription. Traduisez chaque attribut en créant une clé pour chaque paramètre régional préfixé par <code>user-info.</code> dans la section des <a href='#/admin/translations/edit'>traductions</a>.",
     "keys": {
       "titleCreate": "Créer un certificat",
       "titleImport": "Importer un certificat",
@@ -341,6 +341,14 @@
   },
   "users": "Utilisateurs",
   "users-description": "Les utilisateurs peuvent s'identifier auprès des applications qui leurs sont associées (soit directement, soit par l'intermédiaire des groupes). Un utilisateur peut également autoriser une application à accéder à ses données d'une autre application (voir la documentation de <a href='http://agatedoc.obiba.org/en/latest/oauth2-api/' target='_blank'>OAuth2</a>)",
+  "user-info": {
+    "username": "Nom d'utilisateur",
+    "email": "Courriel",
+    "firstname": "Prénom",
+    "lastname": "Nom de famille",
+    "locale": "Langue préférée",
+    "realm": "Domaine"
+  },
   "user": {
     "none": "Aucun utilisateur.",
     "details": "Détails d'utilisateur",
@@ -500,6 +508,10 @@
     "agate-jdbc-realm": "Domaine de la base de données SQL",
     "agate-ad-realm": "Le domaine Active Directory",
     "agate-oidc-realm": "Le domaine d'Open ID Connect",
+    "general-information": "Propriétés générales",
+    "specific-information": "Propriétés du domaine",
+    "user-info-mapping": "Correspondance des informations de l'utilisateur",
+    "user-info-mapping-help": "Mettre en correspondance chaque champ de profil d'utilisateur Agate avec celui du domaine.",
     "ACTIVE": "Actif",
     "INACTIVE": "Inactif",
     "activate": "Activer",

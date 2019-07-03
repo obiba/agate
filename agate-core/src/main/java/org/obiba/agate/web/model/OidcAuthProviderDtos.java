@@ -30,8 +30,12 @@ public class OidcAuthProviderDtos {
 
     OIDCDtos.OIDCAuthProviderSummaryDto.Builder builder = OIDCDtos.OIDCAuthProviderSummaryDto.newBuilder()
       .setName(name)
-      .setProviderUrl(customParams.get("providerUrl"))
       .setTitle(name);
+
+    // Default value
+    if (customParams.containsKey("providerUrl")) {
+      builder.setProviderUrl(customParams.get("providerUrl"));
+    }
 
     // Set localized title if present
     try {

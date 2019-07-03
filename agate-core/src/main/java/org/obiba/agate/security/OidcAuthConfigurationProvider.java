@@ -80,8 +80,7 @@ public class OidcAuthConfigurationProvider implements OIDCConfigurationProvider 
       Map<String, String> valueMap = Maps.newHashMap();
 
       // Add localized title as custom parameters
-      Map<String, String> customParametes = Maps.newHashMap();
-      customParametes.put("providerUrl", oidcRealmConfig.getProviderUrl());
+      Map<String, String> customParameters = oidcRealmConfig.getCustomParams();
 
       configurationService.getConfiguration()
         .getLocales()
@@ -92,8 +91,8 @@ public class OidcAuthConfigurationProvider implements OIDCConfigurationProvider 
         });
 
       if (valueMap.size() > 0) {
-        customParametes.put("title", new JSONObject(valueMap).toString());
-        oidcRealmConfig.setCustomParams(customParametes);
+        customParameters.put("title", new JSONObject(valueMap).toString());
+        oidcRealmConfig.setCustomParams(customParameters);
       }
 
       return oidcRealmConfig;

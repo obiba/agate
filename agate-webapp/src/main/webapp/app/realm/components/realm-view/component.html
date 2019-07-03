@@ -55,6 +55,18 @@
         </tbody>
       </table>
 
+      <div ng-if="$ctrl.realm.userInfoMapping">
+        <h3 translate>{{'realm.user-info-mapping'}}</h3>
+        <table class="table table-bordered table-striped">
+          <tbody>
+            <tr ng-repeat="(key, value) in $ctrl.realm.userInfoMapping">
+              <th>{{'user-info.' + key | translate}}</th>
+              <th>{{value}}</th>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
       <h3 translate>{{'realm.' + $ctrl.realm.type | translate}}</h3>
       <table class="table table-bordered table-striped">
 

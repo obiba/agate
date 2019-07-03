@@ -1,8 +1,16 @@
 package org.obiba.agate.web.model;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.json.JSONException;
-import org.obiba.agate.domain.*;
+import org.obiba.agate.domain.ActiveDirectoryRealmConfig;
+import org.obiba.agate.domain.AgateRealm;
+import org.obiba.agate.domain.JdbcRealmConfig;
+import org.obiba.agate.domain.LdapRealmConfig;
+import org.obiba.agate.domain.OidcRealmConfig;
+import org.obiba.agate.domain.RealmConfig;
+import org.obiba.agate.domain.RealmStatus;
 import org.obiba.agate.repository.UserRepository;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.web.model.Agate.RealmConfigDto;
@@ -10,6 +18,10 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class RealmConfigDtos {
@@ -41,6 +53,19 @@ public class RealmConfigDtos {
     if (config.getTitle() != null) builder.addAllTitle(localizedStringDtos.asDto(config.getTitle()));
     if (config.getDescription() != null) builder.addAllDescription(localizedStringDtos.asDto(config.getDescription()));
 
+    Optional.ofNullable(config.getUserInfoMapping()).ifPresent(map -> {
+      List<RealmConfigDto.UserInfoMappingDto> userInfoMappings = map.entrySet()
+        .stream()
+        .map(entry -> RealmConfigDto.UserInfoMappingDto
+          .newBuilder()
+          .setKey(entry.getKey())
+          .setValue(entry.getValue()).build()
+        )
+        .collect(Collectors.toList());
+
+      builder.addAllUserInfoMappings(userInfoMappings);
+    });
+
     return builder;
   }
 
@@ -61,6 +86,16 @@ public class RealmConfigDtos {
     if (dto.getTitleCount() > 0) builder.title(localizedStringDtos.fromDto(dto.getTitleList()));
     if (dto.getDescriptionCount() > 0) builder.description(localizedStringDtos.fromDto(dto.getDescriptionList()));
     if (dto.hasStatus()) builder.status(RealmStatus.valueOf(dto.getStatus().name()));
+    if (dto.getUserInfoMappingsCount() > 0) {
+      builder.mapping(
+        dto.getUserInfoMappingsList()
+          .stream()
+          .collect(Collectors.toMap(
+            RealmConfigDto.UserInfoMappingDto::getKey,
+            RealmConfigDto.UserInfoMappingDto::getValue)
+          )
+      );
+    }
 
     return builder.build();
   }
