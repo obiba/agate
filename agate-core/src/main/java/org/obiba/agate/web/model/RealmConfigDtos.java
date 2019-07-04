@@ -1,8 +1,6 @@
 package org.obiba.agate.web.model;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import org.json.JSONException;
 import org.obiba.agate.domain.ActiveDirectoryRealmConfig;
 import org.obiba.agate.domain.AgateRealm;
@@ -13,13 +11,13 @@ import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.domain.RealmStatus;
 import org.obiba.agate.repository.UserRepository;
 import org.obiba.agate.service.ConfigurationService;
+import org.obiba.agate.service.support.UserInfoFieldsComparator;
 import org.obiba.agate.web.model.Agate.RealmConfigDto;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -56,6 +54,7 @@ public class RealmConfigDtos {
     Optional.ofNullable(config.getUserInfoMapping()).ifPresent(map -> {
       List<RealmConfigDto.UserInfoMappingDto> userInfoMappings = map.entrySet()
         .stream()
+        .sorted(UserInfoFieldsComparator::compare)
         .map(entry -> RealmConfigDto.UserInfoMappingDto
           .newBuilder()
           .setKey(entry.getKey())

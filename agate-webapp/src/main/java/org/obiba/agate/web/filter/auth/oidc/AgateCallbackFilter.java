@@ -278,7 +278,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
           userMappedInfo.put(name, credentials.getUserInfo(userInfoMapping.get(name)));
         }
 
-        userMappedInfo.put("username", oidcAuthenticationToken.getUsername());
+        if (!userMappedInfo.has("username")) userMappedInfo.put("username", oidcAuthenticationToken.getUsername());
         userMappedInfo.put("realm", config.getName());
 
         response.addHeader(HttpHeaders.SET_COOKIE,
