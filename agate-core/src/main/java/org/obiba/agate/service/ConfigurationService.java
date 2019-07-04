@@ -37,6 +37,7 @@ import org.obiba.agate.service.support.LdapRealmConfigFormBuilder;
 import org.obiba.agate.service.support.OidcRealmConfigFormBuilder;
 import org.obiba.agate.service.support.RealmConfigFormBuilder;
 import org.obiba.agate.service.support.RealmUserInfoFormBuilder;
+import org.obiba.agate.service.support.UserInfoFieldsComparator;
 import org.obiba.core.translator.JsonTranslator;
 import org.obiba.core.translator.PrefixedValueTranslator;
 import org.obiba.core.translator.TranslationUtils;
@@ -224,7 +225,6 @@ public class ConfigurationService {
 
   private List<String> extractUserInfoFieldsToMap() throws IOException, JSONException {
     List<String> exclusions = Lists.newArrayList("realm", "locale");
-    List<String> orderedFields = Lists.newArrayList("username", "email", "firstname", "lastname");
     JSONArray names = getJoinConfiguration("en").getJSONObject("schema").getJSONObject("properties").names();
     List<String> fields = Lists.newArrayList();
     for (int i = 0; i < names.length(); i++) {
@@ -234,22 +234,7 @@ public class ConfigurationService {
       }
     }
 
-    // Sort so the ordered fields are placed first
-    fields.sort((s1, s2) -> {
-      Integer index1 = orderedFields.indexOf(s1);
-      Integer index2 = orderedFields.indexOf(s2);
-
-      if (index1 > -1 && index2 > -1) {
-        return index1.compareTo(index2);
-      }
-
-      if (index1 < 0) {
-        return 1;
-      }
-
-      return -1;
-
-    });
+    fields.sort(UserInfoFieldsComparator::compare);
 
     return fields;
   }
