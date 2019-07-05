@@ -76,7 +76,7 @@ public class OidcRealmConfig extends OIDCConfiguration {
       config.setMaxClockSkew(content.optInt(MAX_CLOCK_SKEW_FIELD, 30));
 
       if (content.has(PROVIDER_URL_FIELD)) {
-        customParameters.put(PROVIDER_URL_FIELD, config.PROVIDER_URL_FIELD);
+        customParameters.put(PROVIDER_URL_FIELD, content.optString(PROVIDER_URL_FIELD));
       }
     }
 
