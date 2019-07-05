@@ -49,6 +49,7 @@
           <th translate>user.role</th>
           <th translate>user.groups</th>
           <th translate>user.applications</th>
+          <th translate>user.realm</th>
           <th translate>user.actions</th>
         </tr>
         </thead>
@@ -79,6 +80,7 @@
               </li>
             </ul>
           </td>
+          <td>{{realms[user.realm]}}</td>
           <td class="action-column">
             <ul class="list-inline">
               <li>
@@ -88,7 +90,7 @@
                 <a href ng-click="delete(user)" title="{{'delete' | translate}}"><i class="fa fa-trash-o"></i></a>
               </li>
               <li>
-                <a href="" ng-click="resetPassword(user)" title="{{'user.resetPassword' | translate}}"><i
+                <a ng-if="user.realm === 'agate-user-realm'" href="" ng-click="resetPassword(user)" title="{{'user.resetPassword' | translate}}"><i
                   class="fa fa-bolt"></i></a>
               </li>
             </ul>
