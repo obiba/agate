@@ -16,8 +16,26 @@ agate.user
     studyUpdated: 'event:study-updated'
   })
 
-  .controller('UserListController', ['$rootScope', '$scope', '$translate', 'UsersResource', 'UserResource', 'UserResetPasswordResource', 'NOTIFICATION_EVENTS', 'LocaleStringUtils',
-    function ($rootScope, $scope, $translate, UsersResource, UserResource, UserResetPasswordResource, NOTIFICATION_EVENTS, LocaleStringUtils) {
+  .controller('UserListController',
+    [
+      '$rootScope',
+      '$scope',
+      '$translate',
+      'UsersResource',
+      'UserResource',
+      'UserResetPasswordResource',
+      'NOTIFICATION_EVENTS',
+      'LocaleStringUtils',
+      'RealmsService',
+    function ($rootScope,
+              $scope,
+              $translate,
+              UsersResource,
+              UserResource,
+              UserResetPasswordResource,
+              NOTIFICATION_EVENTS,
+              LocaleStringUtils,
+              RealmsService) {
       var onSuccess = function(response) {
         $scope.users = response;
         response.forEach(function(u) {
@@ -41,6 +59,14 @@ agate.user
 
       $scope.loading = true;
       $scope.users = UsersResource.query({}, onSuccess, onError);
+
+      RealmsService.getRealmsForLanguage($translate.use()).then(function(realms){
+        $scope.realms = realms.reduce(function(acc, realm) {
+          acc[realm.name] = realm.title;
+          return acc;
+        }, {});
+      });
+
 
       /**
        * Deletes a user
