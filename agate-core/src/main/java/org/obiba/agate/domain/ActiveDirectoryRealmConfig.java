@@ -12,7 +12,6 @@ public class ActiveDirectoryRealmConfig {
   private static final String SEARCH_BASE_FIELD = "searchBase";
   private static final String PRINCIPAL_SUFFIX_FIELD = "principalSuffix";
 
-
   private ActiveDirectoryRealmConfig() { }
 
   private String url;

@@ -529,7 +529,6 @@
     "new-realm": "New Realm",
     "users-help": "List of users authenticated by this realm.",
     "users-none": "No users are authenticated by this realm.",
-    "restart": "System restart is required for realm changes to take effect.",
     "jdbc": {
       "url": "URL",
       "username": "DB User Name",

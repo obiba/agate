@@ -9,8 +9,9 @@
  */
 package org.obiba.agate.security;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -30,7 +31,10 @@ import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
 import org.apache.shiro.util.LifecycleUtils;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
+import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.domain.RealmStatus;
+import org.obiba.agate.event.RealmConfigActivatedOrUpdatedEvent;
+import org.obiba.agate.event.RealmConfigDeactivatedEvent;
 import org.obiba.agate.service.RealmConfigService;
 import org.obiba.agate.service.UserService;
 import org.obiba.shiro.SessionStorageEvaluator;
@@ -39,6 +43,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Persistable;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -61,18 +66,22 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
 
   private final AgateRealmFactory agateRealmFactory;
 
+  private final EventBus eventBus;
+
   @Inject
   @Lazy
   public SecurityManagerFactory(
     CacheManager cacheManager,
     Set<Realm> realms,
     RealmConfigService realmConfigService,
-    UserService userService, AgateRealmFactory agateRealmFactory) {
+    UserService userService, AgateRealmFactory agateRealmFactory,
+    EventBus eventBus) {
     this.cacheManager = cacheManager;
     this.realms = realms;
     this.realmConfigService = realmConfigService;
     this.userService = userService;
     this.agateRealmFactory = agateRealmFactory;
+    this.eventBus = eventBus;
   }
 
   @Override
@@ -103,8 +112,32 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
     securityManager = null;
   }
 
+  @Subscribe
+  public void onRealmConfigActivatedOrUpdatedEvent(RealmConfigActivatedOrUpdatedEvent event) {
+    RealmConfig persistable = (RealmConfig) event.getPersistable();
+    removeRealm(persistable.getName());
+    getObject().getRealms().add(agateRealmFactory.build(persistable));
+
+    log.info("Adding realm '{}' to session manager.", persistable.getName());
+  }
+
+  @Subscribe
+  public void onRealmConfigDeletedEvent(RealmConfigDeactivatedEvent event) {
+    RealmConfig persistable = (RealmConfig) event.getPersistable();
+    removeRealm(persistable.getName());
+
+    log.info("Removing realm '{}' from session manager.", persistable.getName());
+  }
+
+  private void removeRealm(String name) {
+    getObject().getRealms().stream()
+      .filter(realm -> realm.getName().equals(name))
+      .findFirst().ifPresent(realm -> getObject().getRealms().remove(realm));
+  }
+
   private SessionsSecurityManager doCreateSecurityManager() {
-    Builder<Realm> realmsBuilder = ImmutableList.<Realm>builder().addAll(realms);
+    List<Realm> realmsList = new ArrayList<>();
+    realmsList.addAll(realms);
 
     List<AuthorizingRealm> authorizingRealms =
       realmConfigService.findAllByStatus(RealmStatus.ACTIVE)
@@ -112,9 +145,9 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
         .map(agateRealmFactory::build)
         .collect(Collectors.toList());
 
-    if (authorizingRealms.size() > 0) realmsBuilder.addAll(authorizingRealms);
+    if (authorizingRealms.size() > 0) realmsList.addAll(authorizingRealms);
 
-    DefaultWebSecurityManager manager = new DefaultWebSecurityManager(realmsBuilder.build());
+    DefaultWebSecurityManager manager = new DefaultWebSecurityManager(realmsList);
 
     initializeCacheManager(manager);
     initializeSessionManager(manager);
