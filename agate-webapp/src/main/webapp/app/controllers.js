@@ -97,15 +97,29 @@ agate.controller('LoginController', ['$scope', '$location', '$translate', 'Authe
     };
   }]);
 
-agate.controller('JoinController', ['$rootScope', '$scope', '$location', '$translate', 'JoinConfigResource', 'JoinResource', 'ClientConfig',
-  'NOTIFICATION_EVENTS', 'ServerErrorUtils', 'AlertService', 'vcRecaptchaService',
-  function ($rootScope, $scope, $location, $translate, JoinConfigResource, JoinResource, ClientConfig, NOTIFICATION_EVENTS, ServerErrorUtils, AlertService, vcRecaptchaService) {
+agate.controller('JoinController', ['$rootScope', '$scope', '$location', '$cookies', '$translate', 'JoinConfigResource', 'JoinResource', 'ClientConfig',
+  'NOTIFICATION_EVENTS', 'ServerErrorUtils', 'AlertService', 'vcRecaptchaService', 'OidcProvidersResource',
+  function ($rootScope, $scope, $location, $cookies, $translate, JoinConfigResource, JoinResource, ClientConfig,
+    NOTIFICATION_EVENTS, ServerErrorUtils, AlertService, vcRecaptchaService, OidcProvidersResource) {
+    var userCookie = $cookies.get('u_auth');
+
+    OidcProvidersResource.get({locale: $translate.use()}).$promise.then(function(providers) {
+      $scope.providers = providers;
+    });
 
     $scope.joinConfig = JoinConfigResource.get();
     $scope.model = {};
     $scope.response = null;
     $scope.widgetId = null;
     $scope.config = ClientConfig;
+
+    $scope.hasCookie = !!userCookie;
+
+    $scope.urlOrigin = new URL($location.absUrl()).origin;
+
+    if (userCookie) {
+      $scope.model = JSON.parse(userCookie.replace(/\\"/g, "\""));
+    }
 
     $scope.setResponse = function (response) {
       $scope.response = response;
@@ -141,8 +155,12 @@ agate.controller('JoinController', ['$rootScope', '$scope', '$location', '$trans
             vcRecaptchaService.reload($scope.widgetId);
           });
       }
+
     };
 
+    $scope.$on('$destroy', function () {
+      $cookies.remove('u_auth');
+    });
   }]);
 
 agate.controller('LogoutController', ['$location', 'AuthenticationSharedService',
@@ -289,7 +307,7 @@ agate.controller('ProfileController', ['$scope', '$location', '$uibModal', 'Acco
 
         return user;
       });
-    }
+    };
 
     getConfigAttributes();
     getSettingsAccount();

@@ -87,7 +87,9 @@
         </tbody>
       </table>
 
-      <update-password-button profile="profile" updated="onPasswordUpdated()" user-id="{{user.id}}"></update-password-button>
+      <span ng-if="settingsAccount.realm === 'agate-user-realm'">
+        <update-password-button profile="profile" updated="onPasswordUpdated()" user-id="{{user.id}}"></update-password-button>
+      </span>
 
       <a ng-href="#/user/{{user.id}}/edit" class="btn btn-primary">
         <i class="fa fa-pencil-square-o"></i> <span translate>edit</span>

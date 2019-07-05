@@ -10,18 +10,14 @@
 
 package org.obiba.agate.service;
 
-import java.io.File;
-import java.io.IOException;
-import java.security.Key;
-import java.util.Iterator;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import javax.inject.Inject;
-import javax.validation.Valid;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.eventbus.EventBus;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.io.IOUtils;
 import org.apache.shiro.codec.CodecSupport;
 import org.apache.shiro.codec.Hex;
@@ -35,7 +31,13 @@ import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.LocalizedString;
 import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.repository.AgateConfigRepository;
-import org.obiba.agate.service.support.*;
+import org.obiba.agate.service.support.ActiveDirectoryRealmConfigFormBuilder;
+import org.obiba.agate.service.support.JdbcRealmConfigFormBuilder;
+import org.obiba.agate.service.support.LdapRealmConfigFormBuilder;
+import org.obiba.agate.service.support.OidcRealmConfigFormBuilder;
+import org.obiba.agate.service.support.RealmConfigFormBuilder;
+import org.obiba.agate.service.support.RealmUserInfoFormBuilder;
+import org.obiba.agate.service.support.UserInfoFieldsComparator;
 import org.obiba.core.translator.JsonTranslator;
 import org.obiba.core.translator.PrefixedValueTranslator;
 import org.obiba.core.translator.TranslationUtils;
@@ -50,13 +52,15 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.eventbus.EventBus;
-import com.jayway.jsonpath.DocumentContext;
-import com.jayway.jsonpath.JsonPath;
+import javax.inject.Inject;
+import javax.validation.Valid;
+import java.io.File;
+import java.io.IOException;
+import java.security.Key;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 
 import static com.jayway.jsonpath.Configuration.defaultConfiguration;
 
@@ -185,7 +189,7 @@ public class ConfigurationService {
     return new TranslationUtils().translate(rval, getTranslator(locale));
   }
 
-  public JSONObject getRealmFormConfiguration(String locale, boolean forEditing) throws JSONException {
+  public JSONObject getRealmFormConfiguration(String locale, boolean forEditing) throws JSONException, IOException {
     TranslationUtils translationUtils = new TranslationUtils();
     Translator translator = getTranslator(locale);
     JSONObject form = new JSONObject();
@@ -194,6 +198,10 @@ public class ConfigurationService {
     form.put(
   "form",
       translationUtils.translate(RealmConfigFormBuilder.newBuilder(defaultRealm, forEditing).build(), translator).toString()
+    );
+    form.put(
+  "userInfoMapping",
+      translationUtils.translate(RealmUserInfoFormBuilder.newBuilder(extractUserInfoFieldsToMap()).build(), translator).toString()
     );
     form.put(
       AgateRealm.AGATE_LDAP_REALM.getName(),
@@ -213,6 +221,22 @@ public class ConfigurationService {
     );
 
     return form;
+  }
+
+  private List<String> extractUserInfoFieldsToMap() throws IOException, JSONException {
+    List<String> exclusions = Lists.newArrayList("realm", "locale");
+    JSONArray names = getJoinConfiguration("en").getJSONObject("schema").getJSONObject("properties").names();
+    List<String> fields = Lists.newArrayList();
+    for (int i = 0; i < names.length(); i++) {
+      String name = names.optString(i);
+      if (!Strings.isNullOrEmpty(name) && !exclusions.contains(name.toLowerCase())) {
+          fields.add(name);
+      }
+    }
+
+    fields.sort(UserInfoFieldsComparator::compare);
+
+    return fields;
   }
 
   public JsonNode getUserProfileTranslations(String locale) throws IOException {
@@ -258,13 +282,13 @@ public class ConfigurationService {
     JSONObject schema = new JSONObject();
     schema.putOnce("type", "object");
     JSONObject properties = new JSONObject();
-    properties.put("email", newSchemaProperty("string", "t(user.email)") //
+    properties.put("email", newSchemaProperty("string", "t(user-info.email)") //
       .put("pattern", "^\\S+@\\S+$") //
-      .put("validationMessage", "t(user.email-invalid)") //
+      .put("validationMessage", "t(user-info.email-invalid)") //
     );
     JSONArray required = new JSONArray();
     if(withUsername) {
-      properties.put("username", newSchemaProperty("string", "t(user.name)").put("minLength", 3));
+      properties.put("username", newSchemaProperty("string", "t(user-info.username)").put("minLength", 3));
       required.put("username");
     }
 
@@ -274,13 +298,13 @@ public class ConfigurationService {
 
     Optional<RealmConfig> defaultRealm = Optional.ofNullable(realmConfigService.findDefault());
 
-    properties.put("realm", newSchemaProperty("string", "t(user.realm)")
+    properties.put("realm", newSchemaProperty("string", "t(user-info.realm)")
       .put("enum", list)
       .put("default", defaultRealm.isPresent() ? defaultRealm.get().getName() : AgateRealm.AGATE_USER_REALM.getName()));
-    properties.put("firstname", newSchemaProperty("string", "t(user.firstName)"));
-    properties.put("lastname", newSchemaProperty("string", "t(user.lastName)"));
+    properties.put("firstname", newSchemaProperty("string", "t(user-info.firstname)"));
+    properties.put("lastname", newSchemaProperty("string", "t(user-info.lastname)"));
 
-    properties.put("locale", newSchemaProperty("string", "t(user.preferredLanguage)")
+    properties.put("locale", newSchemaProperty("string", "t(user-info.locale)")
       .put("enum", config.getLocalesAsString()).put("default", Configuration.DEFAULT_LOCALE.getLanguage()));
 
     Lists.newArrayList("email", "firstname", "lastname", "locale").forEach(required::put);
@@ -339,12 +363,12 @@ public class ConfigurationService {
     JSONArray definition = new JSONArray();
 
     if(withUsername) {
-      definition.put(newDefinitionProperty("username","t(user.name)", ""));
+      definition.put(newDefinitionProperty("username","t(user-info.username)", ""));
     }
     JSONObject realmTitleMap = new JSONObject();
     realmTitleMap.put(AgateRealm.AGATE_USER_REALM.getName(), "t(realm.default)");
 
-    realmConfigService.findAllRealmsForSignup().forEach(realmConfig -> {
+    realmConfigService.findAllRealmsForSignup().stream().forEach(realmConfig -> {
       try {
         LocalizedString title = realmConfig.getTitle();
         realmTitleMap.put(realmConfig.getName(), title == null ||  title.get(locale) == null ? realmConfig.getName() : title.get(locale));
@@ -353,10 +377,10 @@ public class ConfigurationService {
       }
     });
 
-    definition.put(newDefinitionProperty("realm","t(user.realm)", "").put("titleMap", realmTitleMap));
-    definition.put(newDefinitionProperty("email","t(user.email)", ""));
-    definition.put(newDefinitionProperty("firstname","t(user.firstName)", ""));
-    definition.put(newDefinitionProperty("lastname","t(user.lastName)", ""));
+    definition.put(newDefinitionProperty("realm","t(user-info.realm)", "").put("titleMap", realmTitleMap));
+    definition.put(newDefinitionProperty("email","t(user-info.email)", ""));
+    definition.put(newDefinitionProperty("firstname","t(user-info.firstname)", ""));
+    definition.put(newDefinitionProperty("lastname","t(user-info.lastname)", ""));
 
     JSONObject localeTitleMap = new JSONObject();
     config.getLocalesAsString().forEach(l -> {
@@ -367,7 +391,7 @@ public class ConfigurationService {
       }
     });
 
-    definition.put(newDefinitionProperty("locale", "t(user.preferredLanguage)", "")
+    definition.put(newDefinitionProperty("locale", "t(user-info.locale)", "")
       .put("titleMap", localeTitleMap));
 
     if(config.hasUserAttributes()) {

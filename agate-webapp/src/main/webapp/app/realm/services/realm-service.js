@@ -147,6 +147,20 @@ angular.module('agate.realm')
         }
       }
 
+      function deserialize(realmData) {
+        var realm = angular.fromJson(realmData);
+        if (realm.userInfoMappings && realm.userInfoMappings.length > 0) {
+          realm.userInfoMapping = {};
+          realm.userInfoMappings.forEach(function(userInfoMapping) {
+            if (realm.userInfoMapping.key) {
+              realm.userInfoMapping[realm.userInfoMapping.key] = userInfoMapping.value;
+            }
+          });
+        }
+
+        return realm;
+      }
+
       this.ensureRealmTitle = ensureRealmTitle;
       this.getRealms = getRealms;
       this.getRealmsForLanguage = getRealmsForLanguage;
@@ -154,6 +168,7 @@ angular.module('agate.realm')
       this.findRealmForLanguage = findRealmForLanguage;
       this.getAgateDefaultRealm = getAgateDefaultRealm;
       this.deactivateRealm = deactivateRealm;
+      this.deserialize = deserialize;
 
       return this;
     }]);

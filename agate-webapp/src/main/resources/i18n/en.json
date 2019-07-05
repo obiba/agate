@@ -202,7 +202,7 @@
     "create": "Create",
     "import": "Import",
     "user-attributes": "User Attributes",
-    "user-attributes-help": "User description fields can be extended with some declared attributes. Apply also to join requests.",
+    "user-attributes-help": "Attributes extend user description fields as wel as join requests. Localize each attribute by creating a key for each locale prefixed by <code>user-info.</code> in the <a href='#/admin/translations/edit'>translations</a> section.",
     "keys": {
       "titleCreate": "Create Certificate",
       "titleImport": "Import Certificate",
@@ -341,6 +341,16 @@
   },
   "users": "Users",
   "users-description": "Users can sign in their associated applications (this association can be direct or through a group). A user can also authorize an application to access its data in another application (see <a href='http://agatedoc.obiba.org/en/latest/oauth2-api/' target='_blank'>OAuth2</a> documentation).",
+  "user-info": {
+    "username": "User Name",
+    "email": "Email",
+    "email-help": "Email must be unique.",
+    "email-invalid": "Not a valid email.",
+    "firstname": "First Name",
+    "lastname": "Last Name",
+    "locale": "Preferred Language",
+    "realm": "Realm"
+  },
   "user": {
     "none": "No users.",
     "details": "User Details",
@@ -500,6 +510,10 @@
     "agate-jdbc-realm": "SQL Database Realm",
     "agate-ad-realm": "Active Directory Realm",
     "agate-oidc-realm": "Open ID Connect Realm",
+    "general-information": "General Properties",
+    "specific-information": "Realm Properties",
+    "user-info-mapping": "User Information Mapping",
+    "user-info-mapping-help": "Map each Agate user profile field with that of the realm's.",
     "ACTIVE": "Active",
     "INACTIVE": "Inactive",
     "activate": "Activate",
@@ -563,7 +577,8 @@
       "connect-timeout-help": "Maximum time in milliseconds to wait before a connection is established. Zero implies no timeout.",
       "read-timeout": "Read Timeout",
       "read-timeout-help": "Maximum time in milliseconds to wait before a response is received. Zero implies no timeout.",
-      "signin-with": "Sign in with"
+      "signin-with": "Sign in with",
+      "signup-with": "Sign up with"
     },
     "deativate-warning": "Users associated with this realm can no longer login to Agate and its registered applications.",
     "delete-dialog": {

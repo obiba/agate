@@ -11,6 +11,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
 
 @Component
 @Scope("request")
@@ -26,7 +27,7 @@ public class RealmConfigFormResource {
 
   @GET
   public Response getForm(@QueryParam("locale") @DefaultValue("en") String locale,
-                          @QueryParam("forEditing") @DefaultValue("false") boolean forEditing) throws JSONException {
+                          @QueryParam("forEditing") @DefaultValue("false") boolean forEditing) throws JSONException, IOException {
     return Response.ok(configurationService.getRealmFormConfiguration(locale, forEditing).toString()).build();
   }
 

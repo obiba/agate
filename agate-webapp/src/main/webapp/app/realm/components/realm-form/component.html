@@ -21,11 +21,20 @@
 
 <div class="row">
   <div class="col-sm-6">
+    <h3 translate>realm.general-information</h3>
     <form id="main-form" name="$ctrl.form.main">
       <div sf-model="$ctrl.model" sf-form="$ctrl.main.definition" sf-schema="$ctrl.main.schema" sf-options="$ctrl.sfOptions"></div>
     </form>
+
+    <h3 translate>realm.user-info-mapping</h3>
+    <p class="help-block" translate>realm.user-info-mapping-help</p>
+    <form id="mapping-form" name="$ctrl.form.mapping">
+      <div sf-model="$ctrl.model" sf-form="$ctrl.mapping.form.definition" sf-schema="$ctrl.mapping.form.schema"></div>
+    </form>
   </div>
+
   <div class="col-sm-6">
+    <h3 translate>realm.specific-information</h3>
     <form id="realm-form" name="$ctrl.form.realm">
       <div sf-model="$ctrl.realm.model" sf-form="$ctrl.realm.form.definition" sf-schema="$ctrl.realm.form.schema"></div>
     </form>

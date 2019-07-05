@@ -34,7 +34,7 @@ public class LdapRealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
       "}";
 
     formDefinition = "[" +
-      "{" +
+      "  {" +
       "  \"type\": \"section\"," +
       "  \"items\": [" +
       "      {" +

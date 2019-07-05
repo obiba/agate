@@ -158,6 +158,11 @@
             form: extractRealmForm(ctrl.model.type, ctrl.config),
             model: JsonUtils.parseJsonSafely(ctrl.model.content, {})
           };
+
+          ctrl.mapping = {
+            form: JsonUtils.parseJsonSafely(ctrl.config.userInfoMapping, {}),
+          };
+
         }).catch(onError);
     }
 
