@@ -139,11 +139,15 @@
         </tr>
         <tr>
           <th translate>realm.oidc.discovery-uri</th>
-          <td>{{$ctrl.realm.content.discoveryURI}}</td>
+          <td>
+            <a class="btn btn-xs btn-default" ng-if="$ctrl.realm.content.discoveryURI" href="{{$ctrl.realm.content.discoveryURI}}" target="_blank">{{'realm.oidc.discovery-uri' | translate}}</a>
+          </td>
         </tr>
         <tr>
           <th translate>realm.oidc.provider-url</th>
-          <td>{{$ctrl.realm.content.providerUrl}}</td>
+          <td>
+            <a class="btn btn-xs btn-default" ng-if="$ctrl.realm.content.providerUrl" href="{{$ctrl.realm.content.providerUrl}}" target="_blank">{{'realm.oidc.provider-url' | translate}}</a>
+          </td>
         </tr>
         <tr>
           <th translate>realm.oidc.scope</th>
