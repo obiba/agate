@@ -38,6 +38,7 @@ import org.obiba.agate.service.support.OidcRealmConfigFormBuilder;
 import org.obiba.agate.service.support.RealmConfigFormBuilder;
 import org.obiba.agate.service.support.RealmUserInfoFormBuilder;
 import org.obiba.agate.service.support.UserInfoFieldsComparator;
+import org.obiba.agate.service.support.UserInfoFieldsMappingDefaultsFactory;
 import org.obiba.core.translator.JsonTranslator;
 import org.obiba.core.translator.PrefixedValueTranslator;
 import org.obiba.core.translator.TranslationUtils;
@@ -202,6 +203,10 @@ public class ConfigurationService {
     form.put(
   "userInfoMapping",
       translationUtils.translate(RealmUserInfoFormBuilder.newBuilder(extractUserInfoFieldsToMap()).build(), translator).toString()
+    );
+    form.put(
+  "userInfoMappingDefaults",
+      UserInfoFieldsMappingDefaultsFactory.create()
     );
     form.put(
       AgateRealm.AGATE_LDAP_REALM.getName(),

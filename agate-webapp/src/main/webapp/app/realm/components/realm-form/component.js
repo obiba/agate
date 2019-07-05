@@ -34,6 +34,12 @@
 
     function onTypeChanged(/*type*/) {
       ctrl.realm.form = extractRealmForm(ctrl.model.type, ctrl.config);
+
+      if (ctrl.config.userInfoMappingDefaults && ctrl.config.userInfoMappingDefaults[ctrl.model.type]) {
+        ctrl.model.userInfoMapping = ctrl.config.userInfoMappingDefaults[ctrl.model.type];
+      } else {
+        delete ctrl.model.userInfoMapping;
+      }
     }
 
     function onStatusChanged(status) {
