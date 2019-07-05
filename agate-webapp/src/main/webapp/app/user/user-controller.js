@@ -60,13 +60,18 @@ agate.user
       $scope.loading = true;
       $scope.users = UsersResource.query({}, onSuccess, onError);
 
-      RealmsService.getRealmsForLanguage($translate.use()).then(function(realms){
-        $scope.realms = realms.reduce(function(acc, realm) {
-          acc[realm.name] = realm.title;
-          return acc;
-        }, {});
-      });
+      function getRealms() {
+        RealmsService.getRealmsForLanguage($translate.use()).then(function (realms) {
+          $scope.realms = realms.reduce(function (acc, realm) {
+            acc[realm.name] = realm.title;
+            return acc;
+          }, {});
+        });
+      }
 
+      $rootScope.$on('$translateChangeSuccess', function () {
+        getRealms();
+      });
 
       /**
        * Deletes a user
@@ -114,6 +119,8 @@ agate.user
           UserResetPasswordResource.resetPassword({id: id});
         }
       });
+
+      getRealms();
     }])
 
   .controller('UserEditController',
