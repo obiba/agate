@@ -79,7 +79,7 @@ public class RealmConfigService {
 
     if (RealmStatus.ACTIVE.equals(savedRealmConfig.getStatus())) {
       eventBus.post(new RealmConfigActivatedOrUpdatedEvent(savedRealmConfig));
-    } else if (!savedRealmConfig.getStatus().equals(config.getStatus()) && RealmStatus.INACTIVE.equals(savedRealmConfig.getStatus())) {
+    } else if (RealmStatus.INACTIVE.equals(savedRealmConfig.getStatus())) {
       eventBus.post(new RealmConfigDeactivatedEvent(config));
     }
 
