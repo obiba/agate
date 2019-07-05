@@ -115,6 +115,7 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
   @Subscribe
   public void onRealmConfigActivatedOrUpdatedEvent(RealmConfigActivatedOrUpdatedEvent event) {
     RealmConfig persistable = (RealmConfig) event.getPersistable();
+    removeRealm(persistable.getName());
     getObject().getRealms().add(agateRealmFactory.build(persistable));
 
     log.info("Adding realm '{}' to session manager.", persistable.getName());
