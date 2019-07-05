@@ -527,7 +527,6 @@
     "new-realm": "Nouveau Domaine",
     "users-help": "Liste des utilisateurs authentifiés par ce domaine.",
     "users-none": "Aucun utilisateur n'est authentifié par ce domaine.",
-    "restart": "Le redémarrage du système est requis pour que les modifications de domaine prennent effet.",
     "jdbc": {
       "url": "URL",
       "username": "Nom d'utilisateur de la base de données",

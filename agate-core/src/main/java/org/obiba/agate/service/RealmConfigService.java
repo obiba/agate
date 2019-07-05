@@ -1,9 +1,12 @@
 package org.obiba.agate.service;
 
+import com.google.common.eventbus.EventBus;
 import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.domain.RealmStatus;
 import org.obiba.agate.domain.User;
+import org.obiba.agate.event.RealmConfigActivatedOrUpdatedEvent;
+import org.obiba.agate.event.RealmConfigDeactivatedEvent;
 import org.obiba.agate.repository.RealmConfigRepository;
 import org.obiba.agate.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
@@ -30,13 +33,18 @@ public class RealmConfigService {
 
   private final GroupService groupService;
 
+  private final EventBus eventBus;
+
   @Inject
-  public RealmConfigService(RealmConfigRepository realmConfigRepository,
-                            UserRepository userRepository,
-                            GroupService groupService) {
+  public RealmConfigService(
+    RealmConfigRepository realmConfigRepository,
+    UserRepository userRepository,
+    GroupService groupService,
+    EventBus eventBus) {
     this.realmConfigRepository = realmConfigRepository;
     this.userRepository = userRepository;
     this.groupService = groupService;
+    this.eventBus = eventBus;
   }
 
   public RealmConfig save(@NotNull RealmConfig config) {
@@ -46,7 +54,9 @@ public class RealmConfigService {
     updateConfigForStatus(config);
     RealmConfig saved = config;
 
-    if (saved.isNew()) {
+    boolean aNew = saved.isNew();
+
+    if (aNew) {
       saved.setNameAsId();
     } else {
       saved = getConfig(config.getName());
@@ -65,7 +75,15 @@ public class RealmConfigService {
       BeanUtils.copyProperties(config, saved, IGNORE_PROPERTIES);
     }
 
-    return realmConfigRepository.save(saved);
+    RealmConfig savedRealmConfig = realmConfigRepository.save(saved);
+
+    if (RealmStatus.ACTIVE.equals(savedRealmConfig.getStatus())) {
+      eventBus.post(new RealmConfigActivatedOrUpdatedEvent(savedRealmConfig));
+    } else if (!savedRealmConfig.getStatus().equals(config.getStatus()) && RealmStatus.INACTIVE.equals(savedRealmConfig.getStatus())) {
+      eventBus.post(new RealmConfigDeactivatedEvent(config));
+    }
+
+    return savedRealmConfig;
   }
 
   private void updateConfigForStatus(RealmConfig config) {
@@ -115,7 +133,10 @@ public class RealmConfigService {
     }
 
     RealmConfig config = findConfig(name);
-    if (config != null) realmConfigRepository.delete(config);
+    if (config != null)  {
+      realmConfigRepository.delete(config);
+      eventBus.post(new RealmConfigDeactivatedEvent(config));
+    }
   }
 
   public void activate(@NotNull String name) {
@@ -131,6 +152,12 @@ public class RealmConfigService {
     RealmConfig config = getConfig(name);
     config.setStatus(status);
     realmConfigRepository.save(config);
+
+    if (RealmStatus.ACTIVE.equals(status)) {
+      eventBus.post(new RealmConfigActivatedOrUpdatedEvent(config));
+    } else {
+      eventBus.post(new RealmConfigDeactivatedEvent(config));
+    }
   }
 
   public void updateGroups(@NotNull String name, @NotNull Collection<String> groups) {
