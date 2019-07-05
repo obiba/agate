@@ -42,11 +42,11 @@ public class OidcRealmConfig extends OIDCConfiguration {
   public JSONObject getAsSecuredJSONObject() throws JSONException {
     JSONObject jsonObject = new JSONObject();
     jsonObject.put(CLIENT_ID_FIELD, getClientId());
+    jsonObject.put(SECRET_ID_FIELD, getSecret());
     jsonObject.put(DISCOVERY_FIELD, getDiscoveryURI());
     jsonObject.put(SCOPE_FIELD, getScope());
     jsonObject.put(USE_NONCE_FIELD, isUseNonce());
     jsonObject.put(CONNECT_TIMEOUT_FIELD, getConnectTimeout());
-    jsonObject.put(READ_TIMEOUT_FIELD, getReadTimeout());
     jsonObject.put(READ_TIMEOUT_FIELD, getReadTimeout());
 
     if (getCustomParams().containsKey(PROVIDER_URL_FIELD)) {
