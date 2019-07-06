@@ -52,6 +52,17 @@
               ng-repeat="app in settingsAccount.applications">{{app}}</span></td>
           </tr>
 
+          <tr>
+            <th translate>user.realm</th>
+            <td>{{realms[settingsAccount.realm]}}</td>
+          </tr>
+
+          <tr ng-if="settingsAccount.accountUrl">
+            <th translate>realm.oidc.provider-url</th>
+            <td><a class="btn btn-xs btn-default ng-binding ng-scope" href="{{settingsAccount.accountUrl}}" target="_blank"><span translate>realm.oidc.provider-login</span></a></td>
+            <td></td>
+          </tr>
+
           <tr ng-repeat="userConfigAttribute in userConfigAttributes">
             <th translate>{{userConfigAttribute.name}}</th>
             <td>

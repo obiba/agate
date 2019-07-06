@@ -61,11 +61,8 @@ agate.user
       $scope.users = UsersResource.query({}, onSuccess, onError);
 
       function getRealms() {
-        RealmsService.getRealmsForLanguage($translate.use()).then(function (realms) {
-          $scope.realms = realms.reduce(function (acc, realm) {
-            acc[realm.name] = realm.title;
-            return acc;
-          }, {});
+        RealmsService.getRealmsNameTitleMap($translate.use()).then(function (realms) {
+          $scope.realms = realms;
         });
       }
 

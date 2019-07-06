@@ -17,16 +17,20 @@ angular.module('agate.realm')
     ['$rootScope',
       '$q',
       '$translate',
+      'Session',
       'RealmsConfigResource',
       'RealmConfigResource',
+      'RealmsResource',
       'LocalizedValues',
       'NOTIFICATION_EVENTS',
 
     function($rootScope,
              $q,
              $translate,
+             Session,
              RealmsConfigResource,
              RealmConfigResource,
+             RealmsResource,
              LocalizedValues,
              NOTIFICATION_EVENTS) {
       var DEFAULT_AGATE_REALM = null;
@@ -67,12 +71,13 @@ angular.module('agate.realm')
       }
 
       function getRealms() {
+        var realmResource = "agate-administrator" === Session.role ? RealmsConfigResource.summaries() : RealmsResource.query();
         var deferred = $q.defer();
 
         if (REALMS !== null) {
           deferred.resolve(REALMS);
         } else {
-          $q.all([createDefaultRealm(), RealmsConfigResource.summaries().$promise])
+          $q.all([createDefaultRealm(), realmResource.$promise])
             .then(function (realms) {
               REALMS = [].concat(realms[0], realms[1]);
               deferred.resolve(REALMS);
@@ -94,6 +99,21 @@ angular.module('agate.realm')
                 description: LocalizedValues.forLang(realm.description, language)
               };
             })
+          );
+        });
+
+        return deferred.promise;
+      }
+
+      function getRealmsNameTitleMap(language, config) {
+        var deferred = $q.defer();
+
+        getRealmsForLanguage(language, config).then(function (realms) {
+          deferred.resolve(
+            realms.reduce(function (acc, realm) {
+              acc[realm.name] = realm.  title;
+              return acc;
+            }, {})
           );
         });
 
@@ -164,6 +184,7 @@ angular.module('agate.realm')
       this.ensureRealmTitle = ensureRealmTitle;
       this.getRealms = getRealms;
       this.getRealmsForLanguage = getRealmsForLanguage;
+      this.getRealmsNameTitleMap = getRealmsNameTitleMap;
       this.findRealm = findRealm;
       this.findRealmForLanguage = findRealmForLanguage;
       this.getAgateDefaultRealm = getAgateDefaultRealm;
