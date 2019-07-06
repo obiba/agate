@@ -285,48 +285,72 @@ agate.controller('OAuthController', ['$log', '$scope', '$q', '$location', 'Accou
     });
   }]);
 
-agate.controller('ProfileController', ['$scope', '$location', '$uibModal', 'Account', 'AccountAuthorizations', 'AccountAuthorization', 'ConfigurationResource', 'AttributesService', 'AlertService',
-  function ($scope, $location, $uibModal, Account, AccountAuthorizations, AccountAuthorization, ConfigurationResource, AttributesService, AlertService) {
-    var getConfigAttributes = function () {
-      ConfigurationResource.get(function (config) {
-        $scope.attributesConfig = config.userAttributes || [];
-        $scope.languages = config.languages || [];
-        $scope.attributeConfigPairs = AttributesService.getAttributeConfigPairs($scope.settingsAccount.attributes, $scope.attributesConfig);
-        $scope.usedAttributeNames = AttributesService.getUsedAttributeNames($scope.settingsAccount.attributes, $scope.attributesConfig);
+agate.controller('ProfileController',
+  ['$rootScope',
+    '$scope',
+    '$location',
+    '$uibModal',
+    '$q',
+    '$translate',
+    'Account',
+    'AccountAuthorizations',
+    'AccountAuthorization',
+    'ConfigurationResource',
+    'AttributesService',
+    'AlertService',
+    'RealmsService',
+  function ($rootScope,
+            $scope,
+            $location,
+            $uibModal,
+            $q,
+            $translate,
+            Account,
+            AccountAuthorizations,
+            AccountAuthorization,
+            ConfigurationResource,
+            AttributesService,
+            AlertService,
+            RealmsService) {
+
+
+    function getRealms() {
+      RealmsService.getRealmsNameTitleMap($translate.use()).then(function (realms) {
+        $scope.realms = realms;
       });
-    };
+    }
 
-    var getSettingsAccount = function () {
-      $scope.settingsAccount = Account.get(function (user) {
-        $scope.authorizations = AccountAuthorizations.query();
-        ConfigurationResource.get(function (config) {
-          $scope.userConfigAttributes = AttributesService.findConfigAttributes(user.attributes, config.userAttributes);
-          $scope.userNonConfigAttributes = config.userAttributes ? AttributesService.findNonConfigAttributes(user.attributes, config.userAttributes) : user.attributes;
-          $scope.usedAttributeNames = AttributesService.getUsedAttributeNames($scope.settingsAccount.attributes, $scope.attributesConfig);
-        });
+    function initConfigAttributes() {
+      var config = $scope.config;
+      var userAttributes = $scope.settingsAccount.attributes;
+      $scope.attributesConfig = config.userAttributes || [];
+      $scope.languages = config.languages || [];
+      $scope.attributeConfigPairs = AttributesService.getAttributeConfigPairs(userAttributes, $scope.attributesConfig);
+      $scope.usedAttributeNames = AttributesService.getUsedAttributeNames(userAttributes, $scope.attributesConfig);
+      $scope.userConfigAttributes = AttributesService.findConfigAttributes(userAttributes, config.userAttributes);
+      $scope.userNonConfigAttributes = config.userAttributes ? AttributesService.findNonConfigAttributes(userAttributes , config.userAttributes) : userAttributes;
+    }
 
-        return user;
-      });
-    };
+    function initialize() {
+      $q.all([
+        ConfigurationResource.get().$promise,
+        Account.get().$promise,
+        AccountAuthorizations.query(),
+        RealmsService.getRealmsNameTitleMap($translate.use())
+      ]).then(function(responses) {
+        $scope.config = responses[0];
+        $scope.settingsAccount = responses[1];
+        $scope.authorizations = responses[2];
+        $scope.realms = responses[3];
+        initConfigAttributes();
+      })
+    }
 
-    getConfigAttributes();
-    getSettingsAccount();
-
-    $scope.deleteAuthorization = function (authz) {
-      AccountAuthorization.delete({ authz: authz.id }, function () {
-        $scope.authorizations = AccountAuthorizations.query();
-      });
-    };
-
-    $scope.onPasswordUpdated = function () {
-      AlertService.alert({ id: 'ProfileController', type: 'success', msgKey: 'profile.success.updated', delay: 5000 });
-    };
-
-    $scope.cancel = function () {
+    function cancel() {
       $location.path('/profile');
-    };
+    }
 
-    $scope.edit = function () {
+    function edit() {
       var settingsAccountClone = $.extend(true, {}, $scope.settingsAccount);
       var attributeConfigPairs =
         AttributesService.getAttributeConfigPairs(settingsAccountClone.attributes, $scope.attributesConfig);
@@ -355,18 +379,44 @@ agate.controller('ProfileController', ['$scope', '$location', '$uibModal', 'Acco
           }
         })
         .result.then(function () {
-          AlertService.alert({
-            id: 'ProfileController',
-            type: 'success',
-            msgKey: 'profile.success.updated',
-            delay: 5000
-          });
-          getSettingsAccount();
-        }, function () {
+        AlertService.alert({
+          id: 'ProfileController',
+          type: 'success',
+          msgKey: 'profile.success.updated',
+          delay: 5000
         });
-    };
 
+        // update account settings
+        Account.get().$promise.then(function(user) {
+          $scope.settingsAccount = user;
+          initConfigAttributes($scope.config);
+        });
 
+      }, function () {
+      });
+    }
+
+    function onLocaleChanged() {
+      getRealms();
+    }
+
+    function deleteAuthorization(authz) {
+      AccountAuthorization.delete({ authz: authz.id }, function () {
+        $scope.authorizations = AccountAuthorizations.query();
+      });
+    }
+
+    function onPasswordUpdated() {
+      AlertService.alert({ id: 'ProfileController', type: 'success', msgKey: 'profile.success.updated', delay: 5000 });
+    }
+
+    $rootScope.$on('$translateChangeSuccess', onLocaleChanged);
+    $scope.deleteAuthorization = deleteAuthorization;
+    $scope.onPasswordUpdated = onPasswordUpdated;
+    $scope.cancel = cancel;
+    $scope.edit = edit;
+
+    initialize();
   }]);
 
 agate.controller('ProfileModalController', ['$scope', '$uibModalInstance', '$filter', '$translate', 'Account', 'settingsAccount', 'attributeConfigPairs', 'attributesConfig', 'usedAttributeNames', 'configLanguages', 'AttributesService', 'AlertService',

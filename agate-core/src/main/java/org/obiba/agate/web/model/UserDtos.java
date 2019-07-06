@@ -10,19 +10,20 @@
 
 package org.obiba.agate.web.model;
 
-import java.util.Optional;
-
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-
+import com.google.common.base.Strings;
 import org.joda.time.DateTime;
 import org.obiba.agate.domain.User;
+import org.obiba.agate.security.OidcAuthConfigurationProvider;
 import org.obiba.agate.service.GroupService;
+import org.obiba.agate.service.RealmConfigService;
 import org.obiba.agate.service.UserService;
+import org.obiba.oidc.OIDCConfiguration;
 import org.obiba.web.model.AuthDtos;
 import org.springframework.stereotype.Component;
 
-import com.google.common.base.Strings;
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import java.util.Optional;
 
 @Component
 @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
@@ -32,10 +33,13 @@ class UserDtos {
 
   final GroupService groupService;
 
+  final OidcAuthConfigurationProvider oidcAuthConfigurationProvider;
+
   @Inject
-  public UserDtos(UserService userService, GroupService groupService) {
+  public UserDtos(UserService userService, GroupService groupService, RealmConfigService realmConfigService, OidcAuthConfigurationProvider oidcAuthConfigurationProvider) {
     this.userService = userService;
     this.groupService = groupService;
+    this.oidcAuthConfigurationProvider = oidcAuthConfigurationProvider;
   }
 
   @NotNull
@@ -69,6 +73,15 @@ class UserDtos {
     if(user.hasApplications()) builder.addAllApplications(user.getApplications());
 
     if (user.getLastLogin() != null) builder.setLastLogin(user.getLastLogin().toString());
+
+    // do it only when the realm is OIDC
+    OIDCConfiguration configuration = oidcAuthConfigurationProvider.getConfiguration(user.getRealm());
+    if (configuration != null) {
+      String providerUrl = configuration.getCustomParam("providerUrl");
+      if (!Strings.isNullOrEmpty(providerUrl)) {
+        builder.setAccountUrl(providerUrl);
+      }
+    }
 
     return builder.build();
   }

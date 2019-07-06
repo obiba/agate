@@ -99,6 +99,7 @@ message UserDto {
   repeated GroupApplicationDto groupApplications = 13;
   optional string lastLogin = 14;
   optional string preferredLanguage = 15;
+  optional string accountUrl = 16;
 }
 
 message UserSummaryDto {
