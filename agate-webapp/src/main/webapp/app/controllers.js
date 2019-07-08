@@ -97,9 +97,9 @@ agate.controller('LoginController', ['$scope', '$location', '$translate', 'Authe
     };
   }]);
 
-agate.controller('JoinController', ['$rootScope', '$scope', '$location', '$cookies', '$translate', 'JoinConfigResource', 'JoinResource', 'ClientConfig',
+agate.controller('JoinController', ['$rootScope', '$scope', '$location', '$cookies', '$translate', '$uibModal', 'JoinConfigResource', 'JoinResource', 'ClientConfig',
   'NOTIFICATION_EVENTS', 'ServerErrorUtils', 'AlertService', 'vcRecaptchaService', 'OidcProvidersResource',
-  function ($rootScope, $scope, $location, $cookies, $translate, JoinConfigResource, JoinResource, ClientConfig,
+  function ($rootScope, $scope, $location, $cookies, $translate, $uibModal, JoinConfigResource, JoinResource, ClientConfig,
     NOTIFICATION_EVENTS, ServerErrorUtils, AlertService, vcRecaptchaService, OidcProvidersResource) {
     var userCookie = $cookies.get('u_auth');
 
@@ -161,6 +161,56 @@ agate.controller('JoinController', ['$rootScope', '$scope', '$location', '$cooki
     $scope.$on('$destroy', function () {
       $cookies.remove('u_auth');
     });
+
+    $scope.credentialsValidated = function() {
+      var realmHasToBeValidated = $scope.model.realm !== 'agate-user-realm' && providerNames.indexOf(newVal) === -1;
+      return !realmHasToBeValidated || $scope.accredited;
+    };
+
+    $scope.$watch('model.realm', function (newVal) {
+      var providerNames = ($scope.providers || []).map(function (provider) {
+        return provider.name;
+      });
+
+      if (newVal && newVal !== 'agate-user-realm' && providerNames.indexOf(newVal) === -1) {
+        $scope.accredited = false;
+
+        $uibModal.open({
+          backdrop: 'static',
+          templateUrl: 'app/views/join-test-modal.html',
+          controller: 'CredentialsTestModalController',
+          resolve: {
+            provider: function () {
+              return newVal;
+            }
+          }
+        }).result.then(function (value) {
+          $scope.model.username = value.username;
+          $scope.model.realm = value.provider;
+
+          $scope.accredited = true;
+        }, function (reason) {
+          console.log(reason);
+          $scope.accredited = false;
+        });
+      }
+
+    });
+  }]);
+
+agate.controller('CredentialsTestModalController', ['$scope', '$uibModalInstance', '$resource', 'provider',
+  function ($scope, $uibModalInstance, $resource, provider) {
+    $scope.provider = provider;
+
+    $scope.test = function () {
+      $resource('ws/users/_test', {}, {'test': {method: 'POST', errorHandler: true}})
+      .test({provider: provider, username: $scope.username, password: $scope.password})
+      .$promise.then(function (value) {
+        $uibModalInstance.close({provider: provider, username: $scope.username});
+      }, function (reason) {
+        console.log('error', reason);
+      });
+    }
   }]);
 
 agate.controller('LogoutController', ['$location', 'AuthenticationSharedService',

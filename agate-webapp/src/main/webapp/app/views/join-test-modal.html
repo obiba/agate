@@ -1,0 +1,27 @@
+<div class="modal-content">
+
+  <div class="modal-header">
+    <h4 class="modal-title">
+      <span translate>{{provider}}</span>
+    </h4>
+  </div>
+
+  <div class="modal-body">
+    <div class="form-group">
+      <label for="username"><span translate>login.form.username</span></label>
+      <input type="text" class="form-control" id="username" ng-model="username">
+    </div>
+
+    <div class="form-group">
+      <label for="password" translate="login.form.password">Password</label>
+      <input type="password" class="form-control" id="password" ng-model="password">
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" ng-click="test()">
+      <span translate>test</span>
+    </button>
+  </div>
+
+</div>

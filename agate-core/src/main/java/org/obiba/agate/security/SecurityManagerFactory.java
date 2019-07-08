@@ -74,7 +74,8 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
     CacheManager cacheManager,
     Set<Realm> realms,
     RealmConfigService realmConfigService,
-    UserService userService, AgateRealmFactory agateRealmFactory,
+    UserService userService,
+    AgateRealmFactory agateRealmFactory,
     EventBus eventBus) {
     this.cacheManager = cacheManager;
     this.realms = realms;

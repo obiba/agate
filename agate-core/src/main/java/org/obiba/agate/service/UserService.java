@@ -17,7 +17,11 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import org.apache.commons.lang.LocaleUtils;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.crypto.hash.Sha512Hash;
+import org.apache.shiro.mgt.SessionsSecurityManager;
+import org.apache.shiro.realm.Realm;
 import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -326,6 +330,17 @@ public class UserService {
       }
     }
 
+  }
+
+  public AuthenticationInfo test(String provider, UsernamePasswordToken token) {
+    SessionsSecurityManager securityManager = (SessionsSecurityManager) SecurityUtils.getSecurityManager();
+    Optional<Realm> optionalRealm = securityManager.getRealms().stream().filter(realm -> realm.getName().equals(provider)).findFirst();
+
+    if (optionalRealm.isPresent()) {
+      return optionalRealm.get().getAuthenticationInfo(token);
+    }
+
+    return null;
   }
 
   public UserCredentials save(@NotNull UserCredentials userCredentials) {
