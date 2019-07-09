@@ -519,7 +519,7 @@
     "INACTIVE": "Inactive",
     "activate": "Activate",
     "deactivate": "Deactivate",
-    "name-help": "Name must be unique and contain: spaces, <code>A-Za-z</code> <code>0-9</code> <code>-_</code>.",
+    "name-help": "Name must be unique and contain: <code>A-Za-z</code> <code>0-9</code> <code>-_</code>.",
     "groups-help": "Groups that will be automatically assigned to users signing up with this realm.",
     "for-signup": "Signup Realm",
     "for-signup-help": "Realm can be used for user signup.",

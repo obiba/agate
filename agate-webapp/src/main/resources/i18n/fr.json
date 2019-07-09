@@ -519,7 +519,7 @@
     "INACTIVE": "Inactif",
     "activate": "Activer",
     "deactivate": "Désactiver",
-    "name-help": "Le nom doit être unique et contenir: des espaces, <code> A-Za-z </ code> <code> 0-9 </ code> <code> -_ </ code>.",
+    "name-help": "Le nom doit être unique et contenir: <code> A-Za-z </ code> <code> 0-9 </ code> <code> -_ </ code>.",
     "groups-help": "Groupes qui seront automatiquement attribués aux utilisateurs qui se connectent avec ce domaine.",
     "for-signup": "Domaine d'inscription",
     "for-signup-help": "Le domaine peut être utilisé pour l'inscription de l'utilisateur.",

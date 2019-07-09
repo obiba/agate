@@ -26,7 +26,7 @@ public class RealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
       "    \"properties\": {" +
       "      \"name\": {" +
       "        \"type\": \"string\"," +
-      "        \"pattern\": \"^[0-9A-Za-z-_\\\\s]+$\"," +
+      "        \"pattern\": \"^[0-9A-Za-z-_]+$\"," +
       "        \"title\": \"t(global.name)\"," +
       "        \"description\": \"t(realm.name-help)\"," +
       "        \"readonly\": " + forEditing +
