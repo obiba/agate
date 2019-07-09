@@ -97,9 +97,9 @@ agate.controller('LoginController', ['$scope', '$location', '$translate', 'Authe
     };
   }]);
 
-agate.controller('JoinController', ['$rootScope', '$scope', '$location', '$cookies', '$translate', '$uibModal', 'JoinConfigResource', 'JoinResource', 'ClientConfig',
+agate.controller('JoinController', ['$rootScope', '$scope', '$q', '$location', '$cookies', '$translate', '$uibModal', 'JoinConfigResource', 'JoinResource', 'ClientConfig',
   'NOTIFICATION_EVENTS', 'ServerErrorUtils', 'AlertService', 'vcRecaptchaService', 'OidcProvidersResource',
-  function ($rootScope, $scope, $location, $cookies, $translate, $uibModal, JoinConfigResource, JoinResource, ClientConfig,
+  function ($rootScope, $scope, $q, $location, $cookies, $translate, $uibModal, JoinConfigResource, JoinResource, ClientConfig,
     NOTIFICATION_EVENTS, ServerErrorUtils, AlertService, vcRecaptchaService, OidcProvidersResource) {
     var AGATE_USER_REALM = 'agate-user-realm';
 
@@ -143,13 +143,20 @@ agate.controller('JoinController', ['$rootScope', '$scope', '$location', '$cooki
       });
     }
 
-    OidcProvidersResource.get({locale: $translate.use()}).$promise.then(function(providers) {
-      $scope.providers = providers;
+    $q.all([OidcProvidersResource.get({locale: $translate.use()}).$promise, JoinConfigResource.get().$promise]).then(function (values) {
+      $scope.providers = values[0];
+      $scope.joinConfig = values[1];
+
+      if (userCookie) {
+        $scope.model = JSON.parse(userCookie.replace(/\\"/g, "\""));
+
+        $scope.joinConfig.schema.properties.username.readonly = true;
+        $scope.joinConfig.schema.properties.realm.readonly = true;
+      }
     });
 
     $scope.outsideRealmValidated = true;
 
-    $scope.joinConfig = JoinConfigResource.get();
     $scope.model = {};
     $scope.response = null;
     $scope.widgetId = null;
@@ -158,10 +165,6 @@ agate.controller('JoinController', ['$rootScope', '$scope', '$location', '$cooki
     $scope.hasCookie = !!userCookie;
 
     $scope.urlOrigin = new URL($location.absUrl()).origin;
-
-    if (userCookie) {
-      $scope.model = JSON.parse(userCookie.replace(/\\"/g, "\""));
-    }
 
     $scope.setResponse = function (response) {
       $scope.response = response;
@@ -223,7 +226,7 @@ agate.controller('CredentialsTestModalController', ['$scope', '$uibModalInstance
     $scope.provider = provider;
     $scope.username = username;
 
-    $scope.cameWithUsername = username;
+    $scope.cameWithUsername = username && username.length;
 
     $scope.cancel = function () {
       $uibModalInstance.dismiss({});
