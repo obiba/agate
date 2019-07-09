@@ -105,12 +105,16 @@ agate.controller('JoinController', ['$rootScope', '$scope', '$q', '$location', '
 
     var userCookie = $cookies.get('u_auth');
 
-    function joinHasTobeValidated(selectedRealm) {
+    function isAnExternalProvider(selectedRealm) {
       var providerNames = ($scope.providers || []).map(function (provider) {
         return provider.name;
       });
 
-      return selectedRealm !== AGATE_USER_REALM && providerNames.indexOf(selectedRealm) === -1;
+      return providerNames.indexOf(selectedRealm) !== -1;
+    }
+
+    function joinHasTobeValidated(selectedRealm) {
+      return selectedRealm !== AGATE_USER_REALM && !isAnExternalProvider(selectedRealm);
     }
 
     function openCredentialsTester(providerName, username) {
@@ -212,9 +216,12 @@ agate.controller('JoinController', ['$rootScope', '$scope', '$q', '$location', '
     $scope.$watch('model.realm', function (newVal) {
       if (newVal && joinHasTobeValidated(newVal)) {
         $scope.outsideRealmValidated = false;
-
         openCredentialsTester(newVal, $scope.model.username);
-      } else if (newVal && !joinHasTobeValidated(newVal)) {
+      } else if (newVal && isAnExternalProvider(newVal)) {
+        var found = angular.element(document).find('#' + newVal);
+        if (found && found[0]) {
+          found.get(0).click();
+        }
         $scope.outsideRealmValidated = true;
       }
 
