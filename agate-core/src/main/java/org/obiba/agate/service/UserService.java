@@ -337,7 +337,9 @@ public class UserService {
     Optional<Realm> optionalRealm = securityManager.getRealms().stream().filter(realm -> realm.getName().equals(provider)).findFirst();
 
     if (optionalRealm.isPresent()) {
-      return optionalRealm.get().getAuthenticationInfo(token);
+      Realm realm = optionalRealm.get();
+      RealmConfig realmConfig = realmConfigRepository.findOne(realm.getName());
+      return realm.getAuthenticationInfo(token);
     }
 
     return null;

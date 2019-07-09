@@ -101,11 +101,53 @@ agate.controller('JoinController', ['$rootScope', '$scope', '$location', '$cooki
   'NOTIFICATION_EVENTS', 'ServerErrorUtils', 'AlertService', 'vcRecaptchaService', 'OidcProvidersResource',
   function ($rootScope, $scope, $location, $cookies, $translate, $uibModal, JoinConfigResource, JoinResource, ClientConfig,
     NOTIFICATION_EVENTS, ServerErrorUtils, AlertService, vcRecaptchaService, OidcProvidersResource) {
+    var AGATE_USER_REALM = 'agate-user-realm';
+
     var userCookie = $cookies.get('u_auth');
+
+    function joinHasTobeValidated(selectedRealm) {
+      var providerNames = ($scope.providers || []).map(function (provider) {
+        return provider.name;
+      });
+
+      return selectedRealm !== AGATE_USER_REALM && providerNames.indexOf(selectedRealm) === -1;
+    }
+
+    function openCredentialsTester(providerName, username) {
+      $uibModal.open({
+        backdrop: 'static',
+        templateUrl: 'app/views/join-test-modal.html',
+        controller: 'CredentialsTestModalController',
+        resolve: {
+          provider: function () {
+            return providerName;
+          },
+          username: function () {
+            return username;
+          }
+        }
+      }).result.then(function (value) {
+        $scope.model.username = value.username;
+        $scope.model.realm = value.provider;
+
+        $scope.outsideRealmValidated = true;
+      }, function (reason) {
+        $scope.outsideRealmValidated = false;
+        $scope.model.realm = AGATE_USER_REALM;
+
+        if (reason.error) {
+          $rootScope.$broadcast(NOTIFICATION_EVENTS.showNotificationDialog, {
+            message: ServerErrorUtils.buildMessage(reason.error)
+          });
+        }
+      });
+    }
 
     OidcProvidersResource.get({locale: $translate.use()}).$promise.then(function(providers) {
       $scope.providers = providers;
     });
+
+    $scope.outsideRealmValidated = true;
 
     $scope.joinConfig = JoinConfigResource.get();
     $scope.model = {};
@@ -138,7 +180,7 @@ agate.controller('JoinController', ['$rootScope', '$scope', '$location', '$cooki
         return;
       }
 
-      if (form.$valid) {
+      if (form.$valid && $scope.outsideRealmValidated) {
         var model = $scope.model;
         if (!model.locale) {
           model.locale = $translate.use();
@@ -154,6 +196,8 @@ agate.controller('JoinController', ['$rootScope', '$scope', '$location', '$cooki
 
             vcRecaptchaService.reload($scope.widgetId);
           });
+      } else if (!$scope.outsideRealmValidated) {
+        openCredentialsTester($scope.model.realm, $scope.model.username);
       }
 
     };
@@ -162,45 +206,28 @@ agate.controller('JoinController', ['$rootScope', '$scope', '$location', '$cooki
       $cookies.remove('u_auth');
     });
 
-    $scope.credentialsValidated = function() {
-      var realmHasToBeValidated = $scope.model.realm !== 'agate-user-realm' && providerNames.indexOf(newVal) === -1;
-      return !realmHasToBeValidated || $scope.accredited;
-    };
-
     $scope.$watch('model.realm', function (newVal) {
-      var providerNames = ($scope.providers || []).map(function (provider) {
-        return provider.name;
-      });
+      if (newVal && joinHasTobeValidated(newVal)) {
+        $scope.outsideRealmValidated = false;
 
-      if (newVal && newVal !== 'agate-user-realm' && providerNames.indexOf(newVal) === -1) {
-        $scope.accredited = false;
-
-        $uibModal.open({
-          backdrop: 'static',
-          templateUrl: 'app/views/join-test-modal.html',
-          controller: 'CredentialsTestModalController',
-          resolve: {
-            provider: function () {
-              return newVal;
-            }
-          }
-        }).result.then(function (value) {
-          $scope.model.username = value.username;
-          $scope.model.realm = value.provider;
-
-          $scope.accredited = true;
-        }, function (reason) {
-          console.log(reason);
-          $scope.accredited = false;
-        });
+        openCredentialsTester(newVal, $scope.model.username);
+      } else if (newVal && !joinHasTobeValidated(newVal)) {
+        $scope.outsideRealmValidated = true;
       }
 
     });
   }]);
 
-agate.controller('CredentialsTestModalController', ['$scope', '$uibModalInstance', '$resource', 'provider',
-  function ($scope, $uibModalInstance, $resource, provider) {
+agate.controller('CredentialsTestModalController', ['$scope', '$uibModalInstance', '$resource', 'provider', 'username',
+  function ($scope, $uibModalInstance, $resource, provider, username) {
     $scope.provider = provider;
+    $scope.username = username;
+
+    $scope.cameWithUsername = username;
+
+    $scope.cancel = function () {
+      $uibModalInstance.dismiss({});
+    };
 
     $scope.test = function () {
       $resource('ws/users/_test', {}, {'test': {method: 'POST', errorHandler: true}})
@@ -208,7 +235,7 @@ agate.controller('CredentialsTestModalController', ['$scope', '$uibModalInstance
       .$promise.then(function (value) {
         $uibModalInstance.close({provider: provider, username: $scope.username});
       }, function (reason) {
-        console.log('error', reason);
+        $uibModalInstance.dismiss({error: reason, provider: provider, username: $scope.username});
       });
     }
   }]);
