@@ -61,16 +61,12 @@ public class RealmConfigService {
     } else {
       saved = getConfig(config.getName());
 
-      // only one can be default realm
-      if (config.isDefaultRealm() != saved.isDefaultRealm() && config.isDefaultRealm()) {
-        realmConfigRepository.findAll()
-          .stream()
-          .filter(realmConfig -> !realmConfig.getName().equals(config.getName()))
-          .forEach(realmConfig -> {
-            realmConfig.setDefaultRealm(false);
-            realmConfigRepository.save(realmConfig);
-          });
-      }
+      realmConfigRepository.findAll()
+        .stream()
+        .filter(realmConfig -> !realmConfig.getName().equals(config.getName()))
+        .forEach(realmConfig -> {
+          realmConfigRepository.save(realmConfig);
+        });
 
       BeanUtils.copyProperties(config, saved, IGNORE_PROPERTIES);
     }
@@ -89,7 +85,6 @@ public class RealmConfigService {
   private void updateConfigForStatus(RealmConfig config) {
     boolean enable = RealmStatus.ACTIVE.equals(config.getStatus());
     config.setForSignup(enable && config.isForSignup());
-    config.setDefaultRealm(enable && config.isDefaultRealm());
   }
 
   public List<RealmConfig> findAll() {
@@ -111,10 +106,6 @@ public class RealmConfigService {
   public RealmConfig findConfig(@NotNull String name) {
     Assert.notNull(name, "Realm config name cannot be null.");
     return realmConfigRepository.findOneByName(name);
-  }
-
-  public RealmConfig findDefault() {
-    return realmConfigRepository.findOneByDefaultRealmTrue();
   }
 
   public RealmConfig getConfig(@NotNull String name) {

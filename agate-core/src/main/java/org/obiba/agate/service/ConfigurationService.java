@@ -194,11 +194,10 @@ public class ConfigurationService {
     TranslationUtils translationUtils = new TranslationUtils();
     Translator translator = getTranslator(locale);
     JSONObject form = new JSONObject();
-    RealmConfig defaultRealm = realmConfigService.findDefault();
 
     form.put(
   "form",
-      translationUtils.translate(RealmConfigFormBuilder.newBuilder(defaultRealm, forEditing).build(), translator).toString()
+      translationUtils.translate(RealmConfigFormBuilder.newBuilder(forEditing).build(), translator).toString()
     );
     form.put(
   "userInfoMapping",
@@ -301,11 +300,9 @@ public class ConfigurationService {
     list.add(AgateRealm.AGATE_USER_REALM.getName());
     realmConfigService.findAllRealmsForSignup().stream().map(RealmConfig::getName).forEach(list::add);
 
-    Optional<RealmConfig> defaultRealm = Optional.ofNullable(realmConfigService.findDefault());
-
     properties.put("realm", newSchemaProperty("string", "t(user-info.realm)")
       .put("enum", list)
-      .put("default", defaultRealm.isPresent() ? defaultRealm.get().getName() : AgateRealm.AGATE_USER_REALM.getName()));
+      .put("default", AgateRealm.AGATE_USER_REALM.getName()));
     properties.put("firstname", newSchemaProperty("string", "t(user-info.firstname)"));
     properties.put("lastname", newSchemaProperty("string", "t(user-info.lastname)"));
 

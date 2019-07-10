@@ -523,7 +523,6 @@
     "groups-help": "Groups that will be automatically assigned to users signing up with this realm.",
     "for-signup": "Signup Realm",
     "for-signup-help": "Realm can be used for user signup.",
-    "default-realm": "Default Realm",
     "default": "Agate Realm",
     "default-help": "The default selected realm for user signup.",
     "status-help": "Status describing whether or not this realm can be used for authentication.",

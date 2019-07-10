@@ -13,5 +13,4 @@ public interface RealmConfigRepository extends MongoRepository<RealmConfig, Stri
   List<RealmConfig> findAllByStatusAndTypeAndForSignupTrue(RealmStatus status, String type);
   List<RealmConfig> findByType(String realm);
   List<RealmConfig> findByForSignupTrue();
-  RealmConfig findOneByDefaultRealmTrue();
 }

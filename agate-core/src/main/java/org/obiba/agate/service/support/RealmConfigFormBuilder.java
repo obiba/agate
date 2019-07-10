@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 public class RealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
 
 
-  private RealmConfigFormBuilder(RealmConfig defaultRealm, boolean forEditing) {
+  private RealmConfigFormBuilder(boolean forEditing) {
     List<String> realmTypes = Stream.of(AgateRealm.values())
       .filter(realm -> realm != AgateRealm.AGATE_USER_REALM && realm != AgateRealm.AGATE_TOKEN_REALM)
       .map(AgateRealm::getName)
@@ -57,13 +57,8 @@ public class RealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
       "      \"type\": {" +
       "        \"type\": \"string\"," +
       "        \"title\": \"t(global.type)\"," +
-      "        \"default\": \"" + getDefaultType(defaultRealm, realmTypes) + "\"," +
+      "        \"default\": \"" + AgateRealm.AGATE_USER_REALM.getName() + "\"," +
       "        \"enum\": " + getTypeEnum(realmTypes) +
-      "      }," +
-      "      \"defaultRealm\": {" +
-      "        \"type\": \"boolean\"," +
-      "        \"title\": \"t(realm.default-realm)\"," +
-      "        \"description\": t(realm.default-help)" +
       "      }," +
       "      \"forSignup\": {" +
       "        \"type\": \"boolean\"," +
@@ -99,10 +94,6 @@ public class RealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
       "    \"titleMap\": " + getTypeTitleMap(realmTypes) +
       "  }," +
       "  {" +
-      "    \"key\": \"defaultRealm\"," +
-      "    \"condition\": \"model.status === 'ACTIVE'\"" +
-      "  }," +
-      "  {" +
       "    \"key\": \"forSignup\"," +
       "    \"condition\": \"model.status === 'ACTIVE'\"" +
       "  }," +
@@ -114,12 +105,8 @@ public class RealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
       "]";
   }
 
-  private String getDefaultType(RealmConfig defaultRealm, List<String> realmTypes) {
-    return defaultRealm == null ? realmTypes.get(0) : defaultRealm.getType().getName();
-  }
-
-  public static RealmConfigFormBuilder newBuilder(RealmConfig defaultRealm, boolean forEditing) {
-    return new RealmConfigFormBuilder(defaultRealm, forEditing);
+  public static RealmConfigFormBuilder newBuilder(boolean forEditing) {
+    return new RealmConfigFormBuilder(forEditing);
   }
 
   private String getTypeEnum(List<String> realmTypes) {

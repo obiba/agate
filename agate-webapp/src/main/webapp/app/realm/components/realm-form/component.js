@@ -44,7 +44,6 @@
 
     function onStatusChanged(status) {
       if ('INACTIVE' === status) {
-        ctrl.model.defaultRealm = false;
         ctrl.model.forSignup = false;
       }
     }
@@ -103,7 +102,6 @@
       delete clone.name;
       delete clone.title;
       clone.status = 'INACTIVE';
-      clone.defaultRealm = false;
       clone.forSignup = false;
       return clone;
     }

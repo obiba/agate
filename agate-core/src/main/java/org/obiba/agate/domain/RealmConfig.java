@@ -30,8 +30,6 @@ public class RealmConfig extends AbstractAuditableDocument {
 
   private AgateRealm type = AgateRealm.AGATE_USER_REALM;
 
-  private boolean defaultRealm = false;
-
   private boolean forSignup = false;
 
   private String content;
@@ -94,14 +92,6 @@ public class RealmConfig extends AbstractAuditableDocument {
     this.type = type;
   }
 
-  public boolean isDefaultRealm() {
-    return status.equals(RealmStatus.ACTIVE) && defaultRealm;
-  }
-
-  public void setDefaultRealm(boolean defaultRealm) {
-    this.defaultRealm = defaultRealm;
-  }
-
   public boolean isForSignup() {
     return forSignup;
   }
@@ -160,11 +150,6 @@ public class RealmConfig extends AbstractAuditableDocument {
 
     public Builder type(AgateRealm value) {
       config.setType(value);
-      return this;
-    }
-
-    public Builder defaultRealm(boolean value) {
-      config.setDefaultRealm(value);
       return this;
     }
 
