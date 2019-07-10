@@ -182,13 +182,13 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
         case SIGNIN:
           application = findApplication(redirect);
           if (application.isPresent()) {
-            signInWithTicket(credentials, response, application.get());
+            signInWithTicket(credentials, response, provider, application.get());
           } else {
-            signIn(credentials, response);
+            signIn(credentials, response, provider);
           }
           break;
         case SIGNUP:
-            signUp(provider, credentials, response);
+            signUp(credentials, response, provider);
         default:
       }
     } catch (JSONException | IOException e) {
@@ -204,26 +204,31 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
    * @param credentials
    * @param response
    * @param application
+   * @param provider
    */
-  private void signInWithTicket(OIDCCredentials credentials, HttpServletResponse response, Application application)
+  private void signInWithTicket(OIDCCredentials credentials, HttpServletResponse response, String provider, Application application)
     throws IOException {
     OIDCAuthenticationToken oidcAuthenticationToken = new OIDCAuthenticationToken(credentials);
     User user = userService.findUser(oidcAuthenticationToken.getUsername());
 
     if (user != null) {
-      Subject subject = authenticationExecutor.login(oidcAuthenticationToken);
-      if (subject != null) {
-        Session subjectSession = prepareSubjectSession(subject);
-        int timeout = (int) (subjectSession.getTimeout() / 1000);
+      if (!user.getRealm().equals(provider)) {
+        response.sendError(HttpServletResponse.SC_FORBIDDEN, "User already registered with another realm.");
+      } else {
+        Subject subject = authenticationExecutor.login(oidcAuthenticationToken);
+        if (subject != null) {
+          Session subjectSession = prepareSubjectSession(subject);
+          int timeout = (int) (subjectSession.getTimeout() / 1000);
 
-        Configuration configuration = configurationService.getConfiguration();
-        Ticket ticket = ticketService.create(subject.getPrincipal().toString(), false, false, application.getId());
-        String token = tokenUtils.makeAccessToken(ticket);
+          Configuration configuration = configurationService.getConfiguration();
+          Ticket ticket = ticketService.create(subject.getPrincipal().toString(), false, false, application.getId());
+          String token = tokenUtils.makeAccessToken(ticket);
 
-        response.addHeader(HttpHeaders.SET_COOKIE,
-          new NewCookie(TicketsResource.TICKET_COOKIE_NAME, token, "/", configuration.getDomain(),
-            "Obiba session deleted", timeout, configuration.hasDomain()).toString());
-        log.debug("Successfully authenticated subject {}", SecurityUtils.getSubject().getPrincipal());
+          response.addHeader(HttpHeaders.SET_COOKIE,
+            new NewCookie(TicketsResource.TICKET_COOKIE_NAME, token, "/", configuration.getDomain(),
+              "Obiba session deleted", timeout, configuration.hasDomain()).toString());
+          log.debug("Successfully authenticated subject {}", SecurityUtils.getSubject().getPrincipal());
+        }
       }
     } else {
       log.info("Agate Authentication failure for '{}', user does not exist in Agate", oidcAuthenticationToken.getUsername());
@@ -236,21 +241,26 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
    *
    * @param credentials
    * @param response
+   * @param provider
    */
-  private void signIn(OIDCCredentials credentials, HttpServletResponse response)
+  private void signIn(OIDCCredentials credentials, HttpServletResponse response, String provider)
     throws IOException {
     OIDCAuthenticationToken oidcAuthenticationToken = new OIDCAuthenticationToken(credentials);
     User user = userService.findUser(oidcAuthenticationToken.getUsername());
 
     if (user != null) {
-      Subject subject = authenticationExecutor.login(oidcAuthenticationToken);
-      if (subject != null) {
-        Session subjectSession = prepareSubjectSession(subject);
-        int timeout = (int) (subjectSession.getTimeout() / 1000);
+      if (!user.getRealm().equals(provider)) {
+        response.sendError(HttpServletResponse.SC_FORBIDDEN, "User already registered with another realm.");
+      } else {
+        Subject subject = authenticationExecutor.login(oidcAuthenticationToken);
+        if (subject != null) {
+          Session subjectSession = prepareSubjectSession(subject);
+          int timeout = (int) (subjectSession.getTimeout() / 1000);
 
-        response.addHeader(HttpHeaders.SET_COOKIE,
-          new NewCookie("agatesid", subjectSession.getId().toString(), "/", null, null, timeout, false).toString());
-        log.debug("Successfully authenticated subject {}", SecurityUtils.getSubject().getPrincipal());
+          response.addHeader(HttpHeaders.SET_COOKIE,
+            new NewCookie("agatesid", subjectSession.getId().toString(), "/", null, null, timeout, false).toString());
+          log.debug("Successfully authenticated subject {}", SecurityUtils.getSubject().getPrincipal());
+        }
       }
     } else {
       log.info("Agate Authentication failure for '{}', user does not exist in Agate", oidcAuthenticationToken.getUsername());
@@ -258,7 +268,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     }
   }
 
-  private void signUp(String provider, OIDCCredentials credentials, HttpServletResponse response) throws IOException, JSONException {
+  private void signUp(OIDCCredentials credentials, HttpServletResponse response, String provider) throws IOException, JSONException {
     // User profile response should be either in a cookie or the response body
     OIDCAuthenticationToken oidcAuthenticationToken = new OIDCAuthenticationToken(credentials);
     User user = userService.findUser(oidcAuthenticationToken.getUsername());
