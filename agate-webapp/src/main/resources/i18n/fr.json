@@ -523,7 +523,6 @@
     "groups-help": "Groupes qui seront automatiquement attribués aux utilisateurs qui se connectent avec ce domaine.",
     "for-signup": "Domaine d'inscription",
     "for-signup-help": "Le domaine peut être utilisé pour l'inscription de l'utilisateur.",
-    "default-realm": "Domaine par défaut",
     "default": "Le domaine d'Agate",
     "default-help": "Le domaine sélectionné par défaut pour l'inscription de l'utilisateur",
     "status-help": "Statut décrivant si oui ou non ce domaine peut être utilisé pour l'authentification.",

@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -93,7 +94,7 @@ public class ConfigurationResource {
   @Path("/join")
   @Produces(APPLICATION_JSON)
   @Timed
-  public Response getJoinConfiguration(@QueryParam("locale") String locale) throws JSONException, IOException {
+  public Response getJoinConfiguration(@QueryParam("locale") @DefaultValue("en") String locale) throws JSONException, IOException {
     return Response.ok(configurationService.getJoinConfiguration(locale).toString()).build();
   }
 

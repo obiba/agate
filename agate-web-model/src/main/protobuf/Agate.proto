@@ -200,13 +200,12 @@ message RealmConfigDto {
   repeated LocalizedStringDto description = 4;
   repeated string groups = 5;
   required string type = 6;
-  optional bool defaultRealm = 7;
-  optional bool forSignup = 8;
-  optional RealmStatus status = 9;
-  required string content = 10;
-  repeated UserSummaryDto users = 11;
-  optional int64 userCount = 12;
-  repeated UserInfoMappingDto userInfoMappings = 13;
+  optional bool forSignup = 7;
+  optional RealmStatus status = 8;
+  required string content = 9;
+  repeated UserSummaryDto users = 10;
+  optional int64 userCount = 11;
+  repeated UserInfoMappingDto userInfoMappings = 12;
 }
 
 message RealmConfigSummaryDto {
