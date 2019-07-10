@@ -16,6 +16,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import javax.ws.rs.core.Response.Status;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.UsernamePasswordToken;
 import org.bson.types.ObjectId;
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.joda.time.DateTime;
@@ -47,6 +50,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * Public resource for user join requests. Default realm is {@link AgateUserRealm}.
@@ -145,6 +149,18 @@ public class UsersPublicResource {
     userService.save(userCredentials);
 
     return Response.noContent().build();
+  }
+
+  @POST
+  @Path("/_test")
+  public Response test(@RequestBody Map<String, String> values) {
+    AuthenticationInfo authenticationInfo = userService.test(values.get("provider"), new UsernamePasswordToken(values.get("username"), values.get("password"))); // will throw AuthenticationException
+
+    if (authenticationInfo == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    return Response.ok().build();
   }
 
   @POST

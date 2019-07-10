@@ -50,7 +50,7 @@ public class RealmsConfigResource {
     RealmConfig config = realmConfigService.findConfig(dto.getName());
 
     if(config != null) throw new BadRequestException("Config already exists: " + dto.getName());
-    if(Pattern.compile("[^0-9A-Za-z-_\\s]").matcher(dto.getName()).find()) throw new BadRequestException("Name should avoid special characters. Use alphanumerical characters instead (hyphens and underscores are allowed).");
+    if(Pattern.compile("[^0-9A-Za-z-_]").matcher(dto.getName()).find()) throw new BadRequestException("Name should avoid special characters. Use alphanumerical characters instead (hyphens and underscores are allowed).");
 
     RealmConfig saved = realmConfigService.save(dtos.fromDto(dto));
 
