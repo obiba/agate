@@ -12,19 +12,20 @@
 
 (function () {
 
-  function Controller($q,
-                      $scope,
-                      $filter,
-                      $location,
-                      $timeout,
-                      ConfigurationResource,
-                      RealmConfigFormResource,
-                      RealmsConfigResource,
-                      RealmConfigResource,
-                      RealmsService,
-                      GroupsResource,
-                      JsonUtils,
-                      AlertBuilder) {
+  function Controller(
+    $q,
+    $scope,
+    $filter,
+    $location,
+    $timeout,
+    ConfigurationResource,
+    RealmConfigFormResource,
+    RealmsConfigResource,
+    RealmConfigResource,
+    RealmsService,
+    GroupsResource,
+    JsonUtils,
+    AlertBuilder) {
 
     var ctrl = this;
 
@@ -40,6 +41,9 @@
       } else {
         delete ctrl.model.userInfoMapping;
       }
+
+      ctrl.noMapping = ctrl.model.type !== 'agate-oidc-realm';
+
     }
 
     function onStatusChanged(status) {
@@ -169,6 +173,7 @@
             form: JsonUtils.parseJsonSafely(ctrl.config.userInfoMapping, {}),
           };
 
+          ctrl.noMapping = ctrl.model.type !== 'agate-oidc-realm';
         }).catch(onError);
     }
 
