@@ -229,7 +229,13 @@ public class AgateRealmFactory {
 
   private SimpleAuthorizationInfo getUserFromAvailablePrincipal(PrincipalCollection principals, Collection principalsFromRealm) {
     if(principalsFromRealm != null && !principalsFromRealm.isEmpty()) {
-      User user = userService.findUser((String) (!CollectionUtils.isEmpty(principalsFromRealm) ? principalsFromRealm.iterator().next() : principals.getPrimaryPrincipal()));
+      String principal = (String) (!CollectionUtils.isEmpty(principalsFromRealm) ? principalsFromRealm.iterator().next() : principals.getPrimaryPrincipal());
+
+      User user = userService.findUser(principal);
+      if (user == null) {
+        user = userService.findActiveUserByEmail(principal);
+      }
+
       return new SimpleAuthorizationInfo(user == null
         ? Collections.emptySet()
         : ImmutableSet.<String>builder().add(user.getRole(), Roles.AGATE_USER.toString()).build());

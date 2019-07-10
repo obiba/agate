@@ -60,6 +60,8 @@ public class AgateSuccessfulStrategy extends AbstractAuthenticationStrategy {
       if (Strings.isNullOrEmpty(username)) username = info.getPrincipals().toString();
 
       User user = userService.findUser(username);
+      if (user == null) user = userService.findUserByEmail(username);
+
       if (user == null) throw new RuntimeException("User [" + username + "] does not exist.");
 
       if (!user.getRealm().equals(realm.getName())) {
