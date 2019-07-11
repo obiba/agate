@@ -21,7 +21,7 @@
 
           <div sf-schema="joinConfig.schema" sf-form="joinConfig.definition" sf-model="model"></div>
 
-          <div class="form-group"
+          <div class="form-group" ng-if="config"
             vc-recaptcha
             theme="'light'"
             key="config.reCaptchaKey"

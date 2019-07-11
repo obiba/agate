@@ -147,9 +147,10 @@ agate.controller('JoinController', ['$rootScope', '$scope', '$q', '$location', '
       });
     }
 
-    $q.all([OidcProvidersResource.get({locale: $translate.use()}).$promise, JoinConfigResource.get().$promise]).then(function (values) {
+    $q.all([OidcProvidersResource.get({locale: $translate.use()}).$promise, JoinConfigResource.get().$promise, ClientConfig.$promise]).then(function (values) {
       $scope.providers = values[0];
       $scope.joinConfig = values[1];
+      $scope.config = values[2];
 
       if (userCookie) {
         $scope.model = JSON.parse(userCookie.replace(/\\"/g, "\""));
@@ -164,7 +165,6 @@ agate.controller('JoinController', ['$rootScope', '$scope', '$q', '$location', '
     $scope.model = {};
     $scope.response = null;
     $scope.widgetId = null;
-    $scope.config = ClientConfig;
 
     $scope.hasCookie = !!userCookie;
 
