@@ -586,8 +586,12 @@ agate.controller('ForgotLoginDetailsController', ['$scope', 'AlertService', 'For
         form.$setPristine();
       };
 
-      var errorHandler = function () {
-        AlertService.alert({ id: 'ForgotLoginDetailsController', type: 'danger', msgKey: 'error', delay: 5000 });
+      var errorHandler = function (response) {
+        var alert = { id: 'ForgotLoginDetailsController', type: 'danger', msgKey: 'error', delay: 5000 };
+        if(response.data && response.data.message){
+          alert = { id: 'ForgotLoginDetailsController', type: 'danger', msg: response.data.message, delay: 5000 };
+        }
+        AlertService.alert(alert);
       };
 
       ForgotPasswordResource.post({ username: $scope.username }).then(successHandler, errorHandler);
