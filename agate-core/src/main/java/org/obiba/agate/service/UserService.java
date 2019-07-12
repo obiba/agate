@@ -509,6 +509,7 @@ public class UserService {
     profile.put("firstname", user.getFirstName());
     profile.put("lastname", user.getLastName());
     profile.put("locale", user.getPreferredLanguage());
+    profile.put("realm", user.getRealm());
 
     if(user.hasAttributes()) {
       user.getAttributes().forEach((k, v) -> {

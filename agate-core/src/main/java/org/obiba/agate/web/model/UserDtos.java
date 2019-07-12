@@ -110,6 +110,7 @@ class UserDtos {
       addAttribute(builder, "email", user.getEmail());
       addAttribute(builder, "locale", user.getPreferredLanguage());
       addAttribute(builder, "createdDate", user.getCreatedDate().toString());
+      addAttribute(builder, "realm", user.getRealm());
       DateTime lastLogin = user.getLastLogin();
       if (lastLogin != null) addAttribute(builder, "lastLogin", lastLogin.toString());
       user.getAttributes().forEach((n, v) -> addAttribute(builder, n, v));
