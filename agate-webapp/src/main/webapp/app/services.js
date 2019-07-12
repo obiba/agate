@@ -124,7 +124,8 @@ agate.factory('ForgotPasswordResource', ['$http',
     return {
       post: function (data) {
         return $http.post('ws/users/_forgot_password', $.param(data), {
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          errorHandler: true
         });
       }
     };

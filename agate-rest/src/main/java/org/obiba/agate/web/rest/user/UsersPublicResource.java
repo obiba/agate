@@ -121,6 +121,8 @@ public class UsersPublicResource {
 
     if(user != null && userCredentials != null) userService.resetPassword(user);
 
+    if(user == null || userCredentials == null) throw new BadRequestException("User not found");
+
     return Response.ok().build();
   }
 
