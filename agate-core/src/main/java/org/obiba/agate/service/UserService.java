@@ -247,7 +247,13 @@ public class UserService {
         if (foundConfigs.size() == 1) {
           RealmConfig realmConfig = foundConfigs.get(0);
           user.setStatus(UserStatus.ACTIVE);
-          user.setGroups(realmConfig.getGroups());
+
+          if (user.getGroups() != null) {
+            user.getGroups().addAll(realmConfig.getGroups());
+          } else {
+            user.setGroups(realmConfig.getGroups());
+          }
+
         } else {
           user.setRealm(AgateRealm.AGATE_USER_REALM.getName());
         }
