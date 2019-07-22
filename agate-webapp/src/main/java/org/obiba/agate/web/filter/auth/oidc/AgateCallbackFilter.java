@@ -12,11 +12,8 @@ package org.obiba.agate.web.filter.auth.oidc;
 import com.google.common.base.Strings;
 import java.io.IOException;
 import javax.servlet.FilterChain;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponseWrapper;
 import javax.ws.rs.core.UriBuilder;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
@@ -30,7 +27,6 @@ import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
-import org.obiba.agate.service.AgateCallbackFilterException;
 import org.obiba.agate.service.ApplicationService;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.RealmConfigService;
@@ -125,18 +121,8 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
     try {
       super.doFilterInternal(request, response, filterChain);
-    } catch (OIDCException | AgateCallbackFilterException e) {
-      if (e instanceof AgateCallbackFilterException) {
-        String redirect = ((AgateCallbackFilterException) e).getRedirectUrl();
-        if (Strings.isNullOrEmpty(redirect)) response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ((AgateCallbackFilterException) e).getMessage());
-        else response.sendRedirect(
-          UriBuilder.fromUri(redirect)
-            .queryParam("error", HttpServletResponse.SC_INTERNAL_SERVER_ERROR)
-            .queryParam("message", ((AgateCallbackFilterException) e).getMessage()).build().toString());
-
-      } else {
-        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ((OIDCException) e).getMessage());
-      }
+    } catch (OIDCException e) {
+      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
     }
   }
 
@@ -148,7 +134,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
         session.setCallbackError(error);
         if (!Strings.isNullOrEmpty(errorUrl)) response.sendRedirect(errorUrl);
       } else {
-        throw new AgateCallbackFilterException(error, publicUrl + (publicUrl.endsWith("/") ? "" : "/") + "error");
+        sendRedirectOrSendError(publicUrl + (publicUrl.endsWith("/") ? "" : "/") + "error", error, response);
       }
     } catch (IOException ignore) {
       // ignore
@@ -229,7 +215,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
 
     if (user != null) {
       if (!user.getRealm().equals(provider)) {
-        throw new AgateCallbackFilterException("User already registered with another realm.", errorUrl);
+        sendRedirectOrSendError(errorUrl, "User already registered with another realm.", response);
       } else {
         Subject subject = authenticationExecutor.login(oidcAuthenticationToken);
         if (subject != null) {
@@ -248,7 +234,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
       }
     } else {
       log.info("Agate Authentication failure for '{}', user does not exist in Agate", oidcAuthenticationToken.getUsername());
-      throw new AgateCallbackFilterException("User not authorized in Agate.", errorUrl);
+      sendRedirectOrSendError(errorUrl, "User not authorized in Agate.", response);
     }
   }
 
@@ -265,7 +251,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
 
     if (user != null) {
       if (!user.getRealm().equals(provider)) {
-        throw new AgateCallbackFilterException("User already registered with another realm.", errorUrl);
+        sendRedirectOrSendError(errorUrl, "User already registered with another realm.", response);
       } else {
         Subject subject = authenticationExecutor.login(oidcAuthenticationToken);
         if (subject != null) {
@@ -279,7 +265,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
       }
     } else {
       log.info("Agate Authentication failure for '{}', user does not exist in Agate", oidcAuthenticationToken.getUsername());
-      throw new AgateCallbackFilterException("User not authorized in Agate.", errorUrl);
+      sendRedirectOrSendError(errorUrl, "User not authorized in Agate.", response);
     }
   }
 
@@ -311,7 +297,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
       }
     } else {
       log.info("SignUp failure for '{}' with provider '{}', user already exists in Agate", oidcAuthenticationToken.getUsername(), provider);
-      throw new AgateCallbackFilterException("Can't sign up with these credentials.", errorUrl);
+      sendRedirectOrSendError(errorUrl, "Can't sign up with these credentials.", response);
     }
   }
 
@@ -363,6 +349,17 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
   public static class Wrapper extends DelegatingFilterProxy {
     public Wrapper() {
       super("agateCallbackFilter");
+    }
+  }
+
+  private void sendRedirectOrSendError(String redirect, String message, HttpServletResponse response) throws IOException {
+    if (Strings.isNullOrEmpty(redirect)) {
+      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
+    } else {
+      response.sendRedirect(
+        UriBuilder.fromUri(redirect)
+          .queryParam("error", HttpServletResponse.SC_INTERNAL_SERVER_ERROR)
+          .queryParam("message", message).build().toString());
     }
   }
 
