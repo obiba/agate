@@ -42,13 +42,15 @@
 
     body {
       max-width: 500px;
-      _width: 500px;
       padding: 30px 20px 50px;
-      border: 1px solid #b3b3b3;
-      border-radius: 4px;
       margin: 0 auto;
+      font-family: "Lato","Helvetica Neue",Helvetica,Arial,sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+      border: 1px solid #b3b3b3;
       box-shadow: 0 1px 10px #a7a7a7, inset 0 1px 0 #fff;
-      background: #fcfcfc;
+      color: #2c3e50;
+      background-color: #ffffff;
     }
 
     h1 {
@@ -86,6 +88,11 @@
       list-style: none;
       padding: 0;
       margin: 0;
+      font-family: "Lato","Helvetica Neue",Helvetica,Arial,sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+      color: #2c3e50;
+      background-color: #ffffff;
     }
 
     #goog-fixurl form {
@@ -152,14 +159,17 @@
 </head>
 <body>
 <div class="container">
-  <h1 th:text="#{title}">Your request cannot be processed <span>:(</span></h1>
+  <h2 th:text="#{title}">Your request cannot be processed <span>:(</span></h2>
 
   <p th:text="#{subtitle}">Sorry, an error has occurred.</p>
 
-  <span th:text="#{status}">Status:</span>&nbsp;<span th:text="${status}"></span>&nbsp;(<span th:text="${error}"></span>)<br/>
-    <span th:if="${!#strings.isEmpty(message)}">
-        <span th:text="#{message}">Message:</span>&nbsp;<span th:text="${message}"></span><br/>
-    </span>
+  <p>
+    <span th:text="#{status}">Status:</span>&nbsp;<span th:text="${status}"></span>&nbsp;(<span th:text="${error}"></span>)
+  </p>
+
+  <span th:if="${!#strings.isEmpty(message)}">
+      <span th:text="#{message}">Message:</span>&nbsp;<b style="font-size: 1.25em;" th:text="${message}"></b><br/>
+  </span>
 
   <script th:inline="text">
     /*<![CDATA[*/
