@@ -57,7 +57,7 @@ public class RealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
       "      \"type\": {" +
       "        \"type\": \"string\"," +
       "        \"title\": \"t(global.type)\"," +
-      "        \"default\": \"" + AgateRealm.AGATE_USER_REALM.getName() + "\"," +
+      "        \"default\": \"" + realmTypes.get(0) + "\"," +
       "        \"enum\": " + getTypeEnum(realmTypes) +
       "      }," +
       "      \"forSignup\": {" +

@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -29,6 +30,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.google.common.base.Strings;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.json.JSONException;
@@ -40,23 +42,36 @@ import org.obiba.agate.web.model.Agate;
 import org.obiba.agate.web.model.Dtos;
 
 import com.codahale.metrics.annotation.Timed;
+import org.obiba.agate.web.rest.security.AuthorizationValidator;
+import org.obiba.shiro.realm.ObibaRealm;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 @Path("/config")
 public class ConfigurationResource {
 
-  @Inject
-  private ConfigurationService configurationService;
+  private final ConfigurationService configurationService;
+
+  private final KeyStoreService keyStoreService;
+
+  private final Dtos dtos;
+
+  private final ClientConfiguration clientConfiguration;
+
+  private final AuthorizationValidator authorizationValidator;
 
   @Inject
-  private KeyStoreService keyStoreService;
-
-  @Inject
-  private Dtos dtos;
-
-  @Inject
-  private ClientConfiguration clientConfiguration;
+  public ConfigurationResource(ConfigurationService configurationService,
+                               KeyStoreService keyStoreService,
+                               Dtos dtos,
+                               ClientConfiguration clientConfiguration,
+                               AuthorizationValidator authorizationValidator) {
+    this.configurationService = configurationService;
+    this.keyStoreService = keyStoreService;
+    this.dtos = dtos;
+    this.clientConfiguration = clientConfiguration;
+    this.authorizationValidator = authorizationValidator;
+  }
 
   @GET
   @Timed
@@ -94,8 +109,11 @@ public class ConfigurationResource {
   @Path("/join")
   @Produces(APPLICATION_JSON)
   @Timed
-  public Response getJoinConfiguration(@QueryParam("locale") @DefaultValue("en") String locale) throws JSONException, IOException {
-    return Response.ok(configurationService.getJoinConfiguration(locale).toString()).build();
+  public Response getJoinConfiguration(@QueryParam("locale") @DefaultValue("en") String locale,
+                                       @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) throws JSONException, IOException {
+
+    String application = Strings.isNullOrEmpty(authHeader) ? null : authorizationValidator.validateApplication(authHeader);
+    return Response.ok(configurationService.getJoinConfiguration(locale, application).toString()).build();
   }
 
   /**

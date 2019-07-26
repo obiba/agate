@@ -99,6 +99,19 @@ public class RealmConfigService {
     return realmConfigRepository.findAllByStatusAndForSignupTrue(RealmStatus.ACTIVE);
   }
 
+  public List<RealmConfig> findAllRealmsForSignupAndApplication(String application) {
+    if (Strings.isNullOrEmpty(application)) return Lists.newArrayList();
+    List<String> groupsForAppication = groupService.findByApplication(application)
+      .stream()
+      .map(Group::getName)
+      .collect(Collectors.toList());
+
+    return realmConfigRepository.findAllByStatusAndForSignupTrue(RealmStatus.ACTIVE)
+      .stream()
+      .filter(realmConfig -> realmConfig.getGroups().stream().anyMatch(groupsForAppication::contains))
+      .collect(Collectors.toList());
+  }
+
   public List<RealmConfig> findAllByStatus(RealmStatus status) {
     return realmConfigRepository.findAllByStatus(status);
   }

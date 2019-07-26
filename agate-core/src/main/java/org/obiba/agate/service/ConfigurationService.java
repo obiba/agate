@@ -18,7 +18,6 @@ import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
-import org.apache.commons.io.IOUtils;
 import org.apache.shiro.codec.CodecSupport;
 import org.apache.shiro.codec.Hex;
 import org.apache.shiro.crypto.AesCipherService;
@@ -37,6 +36,7 @@ import org.obiba.agate.service.support.LdapRealmConfigFormBuilder;
 import org.obiba.agate.service.support.OidcRealmConfigFormBuilder;
 import org.obiba.agate.service.support.RealmConfigFormBuilder;
 import org.obiba.agate.service.support.RealmUserInfoFormBuilder;
+import org.obiba.agate.service.support.UserFormBuilder;
 import org.obiba.agate.service.support.UserInfoFieldsComparator;
 import org.obiba.agate.service.support.UserInfoFieldsMappingDefaultsFactory;
 import org.obiba.core.translator.JsonTranslator;
@@ -52,8 +52,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.support.RequestContext;
-import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -61,9 +59,7 @@ import java.io.File;
 import java.io.IOException;
 import java.security.Key;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 import static com.jayway.jsonpath.Configuration.defaultConfiguration;
 
@@ -168,13 +164,19 @@ public class ConfigurationService {
    * @return
    * @throws JSONException
    */
-  public JSONObject getJoinConfiguration(String locale) throws JSONException, IOException {
+  public JSONObject getJoinConfiguration(String locale, String application) throws JSONException, IOException {
     Configuration config = getConfiguration();
-    JSONObject rval = new JSONObject();
-    rval.put("schema", getJoinSchema(config));
-    rval.put("definition", getJoinDefinition(config, locale));
+    List<RealmConfig> realms = Strings.isNullOrEmpty(application)
+      ? realmConfigService.findAllRealmsForSignup()
+      : realmConfigService.findAllRealmsForSignupAndApplication(application);
 
-    return new TranslationUtils().translate(rval, getTranslator(locale));
+    JSONObject form = UserFormBuilder.newBuilder(config, locale, applicationContext.getResource("classpath:join/formDefinition.json"))
+      .realms(realms)
+      .attributes(config.getUserAttributes())
+      .addUsername(config.isJoinWithUsername())
+      .build();
+
+    return new TranslationUtils().translate(form, getTranslator(locale));
   }
 
   /**
@@ -186,10 +188,14 @@ public class ConfigurationService {
    */
   public JSONObject getProfileConfiguration(String locale) throws JSONException, IOException {
     Configuration config = getConfiguration();
-    JSONObject rval = new JSONObject();
-    rval.put("schema", getProfileSchema(config));
-    rval.put("definition", getProfileDefinition(config, locale));
-    return new TranslationUtils().translate(rval, getTranslator(locale));
+    List<RealmConfig> realms = realmConfigService.findAllRealmsForSignup();
+
+    JSONObject form = UserFormBuilder.newBuilder(config, locale, applicationContext.getResource("classpath:join/formDefinition.json"))
+      .realms(realms)
+      .attributes(config.getUserAttributes())
+      .build();
+
+    return new TranslationUtils().translate(form, getTranslator(locale));
   }
 
   public JSONObject getRealmFormConfiguration(String locale, boolean forEditing) throws JSONException, IOException {
@@ -231,7 +237,7 @@ public class ConfigurationService {
 
   private List<String> extractUserInfoFieldsToMap() throws IOException, JSONException {
     List<String> exclusions = Lists.newArrayList("realm", "locale");
-    JSONArray names = getJoinConfiguration("en").getJSONObject("schema").getJSONObject("properties").names();
+    JSONArray names = getJoinConfiguration("en", null).getJSONObject("schema").getJSONObject("properties").names();
     List<String> fields = Lists.newArrayList();
     for (int i = 0; i < names.length(); i++) {
       String name = names.optString(i);
@@ -266,182 +272,6 @@ public class ConfigurationService {
   //
   // Private methods
   //
-
-  private JSONObject getJoinSchema(Configuration config) throws JSONException, IOException {
-    return getUserFormSchema(config, config.isJoinWithUsername());
-  }
-
-  private JSONArray getJoinDefinition(Configuration config, String locale) throws JSONException, IOException {
-    return getUserFormDefinition(config, locale, applicationContext.getResource("classpath:join/formDefinition.json"),
-      config.isJoinWithUsername());
-  }
-
-  private JSONObject getProfileSchema(Configuration config) throws JSONException, IOException {
-    return getUserFormSchema(config, false);
-  }
-
-  private JSONArray getProfileDefinition(Configuration config, String locale) throws JSONException, IOException {
-    return getUserFormDefinition(config, locale, applicationContext.getResource("classpath:profile/formDefinition.json"), false);
-  }
-
-  private JSONObject getUserFormSchema(Configuration config, boolean withUsername) throws JSONException, IOException {
-    JSONObject schema = new JSONObject();
-    schema.putOnce("type", "object");
-    JSONObject properties = new JSONObject();
-    properties.put("email", newSchemaProperty("string", "t(user-info.email)") //
-      .put("pattern", "^\\S+@\\S+$") //
-      .put("validationMessage", "t(user-info.email-invalid)") //
-    );
-    JSONArray required = new JSONArray();
-    if(withUsername) {
-      properties.put("username", newSchemaProperty("string", "t(user-info.username)").put("minLength", 3));
-      required.put("username");
-    }
-
-    LinkedList<String> list = new LinkedList<>();
-    list.add(AgateRealm.AGATE_USER_REALM.getName());
-    realmConfigService.findAllRealmsForSignup().stream().map(RealmConfig::getName).forEach(list::add);
-
-    properties.put("realm", newSchemaProperty("string", "t(user-info.realm)")
-      .put("enum", list)
-      .put("default", AgateRealm.AGATE_USER_REALM.getName()));
-    properties.put("firstname", newSchemaProperty("string", "t(user-info.firstname)"));
-    properties.put("lastname", newSchemaProperty("string", "t(user-info.lastname)"));
-
-    properties.put("locale", newSchemaProperty("string", "t(user-info.locale)")
-      .put("enum", config.getLocalesAsString()).put("default", Configuration.DEFAULT_LOCALE.getLanguage()));
-
-    Lists.newArrayList("email", "firstname", "lastname", "locale").forEach(required::put);
-
-    if(config.hasUserAttributes()) {
-      config.getUserAttributes().forEach(a -> {
-        try {
-          String type = a.getType().name().toLowerCase();
-          JSONObject property = newSchemaProperty(type, "t(" + a.getName() + ")");
-          if(a.hasValues()) {
-            //noinspection ConstantConditions
-            a.getValues().forEach(e -> {
-              try {
-                property.append("enum", e);
-              } catch(JSONException e1) {
-                // ignored
-              }
-            });
-          }
-          properties.put(a.getName(), property);
-          if(a.isRequired()) required.put(a.getName());
-        } catch(JSONException e) {
-          // ignored
-        }
-      });
-    }
-
-    schema.put("properties", properties);
-    schema.put("required", required);
-
-    return schema;
-  }
-
-  private JSONArray getUserFormDefinition(Configuration config, String locale, Resource formDefinitionResource, boolean withUsername)
-    throws JSONException, IOException {
-    if(formDefinitionResource != null && formDefinitionResource.exists()) {
-      JSONArray def = new JSONArray(IOUtils.toString(formDefinitionResource.getInputStream()));
-
-      if(!withUsername) {
-        // look for username and remove it
-        // note that only works with a simple schema form definition
-        JSONArray ndef = new JSONArray();
-        for(int i = 0; i < def.length(); i++) {
-          Object obj = def.get(i);
-          if(!(obj instanceof JSONObject) || !((JSONObject) obj).has("key") ||
-            !"username".equals(((JSONObject) obj).get("key"))) {
-            ndef.put(obj);
-          }
-        }
-        def = ndef;
-      }
-
-      return def;
-    }
-
-    JSONArray definition = new JSONArray();
-
-    if(withUsername) {
-      definition.put(newDefinitionProperty("username","t(user-info.username)", ""));
-    }
-    JSONObject realmTitleMap = new JSONObject();
-    realmTitleMap.put(AgateRealm.AGATE_USER_REALM.getName(), "t(realm.default)");
-
-    realmConfigService.findAllRealmsForSignup().stream().forEach(realmConfig -> {
-      try {
-        LocalizedString title = realmConfig.getTitle();
-        realmTitleMap.put(realmConfig.getName(), title == null ||  title.get(locale) == null ? realmConfig.getName() : title.get(locale));
-      } catch (JSONException e) {
-        //
-      }
-    });
-
-    definition.put(newDefinitionProperty("realm","t(user-info.realm)", "").put("titleMap", realmTitleMap));
-    definition.put(newDefinitionProperty("email","t(user-info.email)", ""));
-    definition.put(newDefinitionProperty("firstname","t(user-info.firstname)", ""));
-    definition.put(newDefinitionProperty("lastname","t(user-info.lastname)", ""));
-
-    JSONObject localeTitleMap = new JSONObject();
-    config.getLocalesAsString().forEach(l -> {
-      try {
-        localeTitleMap.put(l, "t(language." + l + ")");
-      } catch (JSONException e) {
-        // ignored
-      }
-    });
-
-    definition.put(newDefinitionProperty("locale", "t(user-info.locale)", "")
-      .put("titleMap", localeTitleMap));
-
-    if(config.hasUserAttributes()) {
-      config.getUserAttributes().forEach(a -> {
-        try {
-          JSONObject property = newDefinitionProperty(a.getName(), "t(" + a.getName() + ")", a.hasDescription() ? "t(" + a.getDescription() + ")" : "");
-          if(a.hasValues()) {
-            JSONObject titleMap = new JSONObject();
-            //noinspection ConstantConditions
-            a.getValues().forEach(e -> {
-              try {
-                titleMap.put(e, "t(" + e + ")");
-              } catch(JSONException e1) {
-                // ignored
-              }
-            });
-            property.put("titleMap", titleMap);
-          }
-          definition.put(property);
-        } catch(JSONException e) {
-          // ignore
-        }
-      });
-    }
-
-    return definition;
-  }
-
-  private JSONObject newSchemaProperty(String type, String title) throws JSONException {
-    JSONObject property = new JSONObject();
-    property.put("type", type);
-    property.put("title", title);
-    return property;
-  }
-
-  private JSONObject newDefinitionProperty(String key, String title, String description) throws JSONException {
-    JSONObject property = new JSONObject();
-    property.put("key", key);
-    if(!Strings.isNullOrEmpty(title)) {
-      property.put("title", title);
-    }
-    if(!Strings.isNullOrEmpty(description)) {
-      property.put("description", description);
-    }
-    return property;
-  }
 
   private String generateSecretKey() {
     Key key = cipherService.generateNewKey();

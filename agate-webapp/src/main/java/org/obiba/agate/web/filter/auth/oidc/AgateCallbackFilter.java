@@ -278,7 +278,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
       RealmConfig config = realmConfigService.findConfig(provider);
 
       if (config != null) {
-        JSONArray names = configurationService.getJoinConfiguration("en").getJSONObject("schema").getJSONObject("properties").names();
+        JSONArray names = configurationService.getJoinConfiguration("en", null).getJSONObject("schema").getJSONObject("properties").names();
         Map<String, String> userInfoMapping = config.getUserInfoMapping();
 
         JSONObject userMappedInfo = new JSONObject();
