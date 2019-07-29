@@ -58,6 +58,15 @@ public class OidcAuthConfigurationProvider implements OIDCConfigurationProvider 
       .collect(Collectors.toList());
   }
 
+  public Collection<OIDCConfiguration> getConfigurationsForApplication(String application) {
+    return realmConfigService
+      .findAllForSignupByStatusAndTypeAndApplication(RealmStatus.ACTIVE, AgateRealm.AGATE_OIDC_REALM, application)
+        .stream()
+        .map(realm -> createOIDCConfiguration(realm.getName(), realm.getTitle(), realm.getContent()))
+        .filter(Objects::nonNull)
+        .collect(Collectors.toList());
+  }
+
   @Override
   public OIDCConfiguration getConfiguration(String name) {
     if (Strings.isNullOrEmpty(name)) return null;
