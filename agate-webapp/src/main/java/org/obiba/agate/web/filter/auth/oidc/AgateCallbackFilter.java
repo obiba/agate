@@ -291,9 +291,17 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
 
         if (!userMappedInfo.has("username")) userMappedInfo.put("username", oidcAuthenticationToken.getUsername());
         userMappedInfo.put("realm", config.getName());
-
+        Configuration configuration =  configurationService.getConfiguration();
         response.addHeader(HttpHeaders.SET_COOKIE,
-          new NewCookie("u_auth", userMappedInfo.toString(), "/", null, null, 600, false).toString());
+          new NewCookie(
+            "u_auth",
+            userMappedInfo.toString(),
+            "/",
+            configuration.getDomain(),
+            null,
+            600,
+            configuration.hasDomain()
+          ).toString());
       }
     } else {
       log.info("SignUp failure for '{}' with provider '{}', user already exists in Agate", oidcAuthenticationToken.getUsername(), provider);
