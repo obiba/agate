@@ -164,11 +164,11 @@
   <p th:text="#{subtitle}">Sorry, an error has occurred.</p>
 
   <p>
-    <span th:text="#{status}">Status:</span>&nbsp;<span th:text="${status}"></span>&nbsp;(<span th:text="${error}"></span>)
+    <span th:text="#{status}">Status:</span>&nbsp;<span id="status" th:text="${status}"></span>&nbsp;(<span th:text="${error}"></span>)
   </p>
 
   <span th:if="${!#strings.isEmpty(message)}">
-      <span th:text="#{message}">Message:</span>&nbsp;<b style="font-size: 1.25em;" th:text="${message}"></b><br/>
+      <span th:text="#{message}">Message:</span>&nbsp;<b id="message" style="font-size: 1.25em;" th:text="${message}"></b><br/>
   </span>
 
   <script th:inline="text">
@@ -177,6 +177,23 @@
     /*]]>*/
   </script>
   <script src="http://linkhelp.clients.google.com/tbproxy/lh/wm/fixurl.js"></script>
+  <script type="application/javascript">
+    (function () {
+      if (window.location) {
+        var urlSearchParams = new URL(window.location.href).searchParams;
+        var error = urlSearchParams.get("error");
+        var message = urlSearchParams.get("message");
+
+        if (error) {
+          document.getElementById("status").innerText = error;
+        }
+
+        if (message) {
+          document.getElementById("message").innerText = message;
+        }
+      }
+    })();
+  </script>
 </div>
 </body>
 </html>
