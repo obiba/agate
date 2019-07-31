@@ -15,6 +15,8 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.UriBuilder;
+
+import com.google.common.eventbus.Subscribe;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
@@ -27,6 +29,7 @@ import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
+import org.obiba.agate.event.AgateConfigUpdatedEvent;
 import org.obiba.agate.service.ApplicationService;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.RealmConfigService;
@@ -115,6 +118,11 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     setDefaultRedirectURL(publicUrl);
     String callbackUrl = publicUrl + (publicUrl.endsWith("/") ? "" : "/") + "auth/callback/";
     setCallbackURL(callbackUrl);
+  }
+
+  @Subscribe
+  public void agateConfigUpdated(AgateConfigUpdatedEvent event) {
+    publicUrl = configurationService.getPublicUrl();
   }
 
   @Override

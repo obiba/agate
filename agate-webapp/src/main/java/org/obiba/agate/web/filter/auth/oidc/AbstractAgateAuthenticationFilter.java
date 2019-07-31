@@ -1,6 +1,7 @@
 package org.obiba.agate.web.filter.auth.oidc;
 
 import com.google.common.collect.Maps;
+import com.google.common.eventbus.Subscribe;
 import com.nimbusds.openid.connect.sdk.AuthenticationRequest;
 import java.io.IOException;
 import java.util.Collections;
@@ -9,6 +10,8 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.obiba.agate.event.AgateConfigUpdatedEvent;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.oidc.OIDCConfigurationProvider;
 import org.obiba.oidc.OIDCException;
@@ -47,6 +50,11 @@ public abstract class AbstractAgateAuthenticationFilter extends OIDCLoginFilter 
     setOIDCSessionManager(oidcSessionManager);
     String callbackUrl = getPublicUrl() + (getPublicUrl().endsWith("/") ? "" : "/") + "auth/callback/";
     setCallbackURL(callbackUrl);
+  }
+
+  @Subscribe
+  public void agateConfigUpdated(AgateConfigUpdatedEvent event) {
+    setPublicUrl(configurationService.getPublicUrl());
   }
 
   @Override
