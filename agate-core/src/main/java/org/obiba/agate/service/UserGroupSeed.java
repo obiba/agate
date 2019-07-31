@@ -54,7 +54,7 @@ public class UserGroupSeed implements ApplicationListener<ContextRefreshedEvent>
   private void seedConfiguration() {
     Configuration config = configurationService.getConfiguration();
     // convenient setting for having a issuer ID in OAuth responses
-    config.setPublicUrl(config.hasPublicUrl() ? config.getPublicUrl() : "http://localhost:8081");
+    if (!config.hasPublicUrl()) config.setPublicUrl("http://localhost:8081");
     configurationService.save(config);
   }
 
