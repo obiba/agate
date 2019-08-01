@@ -514,7 +514,7 @@
     "specific-information": "Propriétés du domaine",
     "user-info-mapping": "Correspondance des informations de l'utilisateur",
     "user-info-mapping-help": "Mettre en correspondance chaque champ de profil d'utilisateur Agate avec celui du domaine.",
-    "test": "Test",
+    "test": "Valider",
     "ACTIVE": "Actif",
     "INACTIVE": "Inactif",
     "activate": "Activer",
