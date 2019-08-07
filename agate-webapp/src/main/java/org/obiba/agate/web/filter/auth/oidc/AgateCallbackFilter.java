@@ -242,7 +242,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
       }
     } else {
       log.info("Agate Authentication failure for '{}', user does not exist in Agate", oidcAuthenticationToken.getUsername());
-      sendRedirectOrSendError(errorUrl, "User not authorized in Agate.", response);
+      sendRedirectOrSendError(errorUrl, "User does not exist in Agate. Sign up first.", response);
     }
   }
 
@@ -273,7 +273,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
       }
     } else {
       log.info("Agate Authentication failure for '{}', user does not exist in Agate", oidcAuthenticationToken.getUsername());
-      sendRedirectOrSendError(errorUrl, "User not authorized in Agate.", response);
+      sendRedirectOrSendError(errorUrl, "User does not exist in Agate. Sign up first.", response);
     }
   }
 
