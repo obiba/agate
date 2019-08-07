@@ -11,6 +11,7 @@
 package org.obiba.agate.web.rest.security;
 
 import com.google.common.base.Strings;
+import org.obiba.agate.domain.RealmUsage;
 import org.obiba.agate.security.OidcAuthConfigurationProvider;
 import org.obiba.agate.web.model.Dtos;
 import org.obiba.shiro.realm.ObibaRealm;
@@ -49,18 +50,19 @@ public class OidcProvidersResource {
 
   @GET
   public List<OIDCDtos.OIDCAuthProviderSummaryDto> getProviders(@QueryParam("locale") @DefaultValue("en") String locale,
+                                                                @QueryParam("usage") @DefaultValue("ALL") RealmUsage usage,
                                                                 @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) {
 
     if (Strings.isNullOrEmpty(authHeader)) {
       // Agate application
-      return oidcAuthConfigurationProvider.getConfigurations()
+      return oidcAuthConfigurationProvider.getConfigurations(usage)
         .stream()
         .map(configuration -> dtos.asSummaryDto(configuration, locale))
         .collect(Collectors.toList());
     }
 
     String application = authorizationValidator.validateApplication(authHeader);
-    return oidcAuthConfigurationProvider.getConfigurationsForApplication(application)
+    return oidcAuthConfigurationProvider.getConfigurationsForApplication(usage, application)
       .stream()
       .map(configuration -> dtos.asSummaryDto(configuration, locale))
       .collect(Collectors.toList());
