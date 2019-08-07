@@ -82,11 +82,8 @@ agate.controller('MenuController', [function () { }]);
 
 agate.controller('LoginController', ['$scope', '$location', '$translate', 'AuthenticationSharedService', 'OidcProvidersResource',
   function ($scope, $location, $translate, AuthenticationSharedService, OidcProvidersResource) {
-    OidcProvidersResource.get({locale: $translate.use()}).$promise.then(function(providers) {
-      $scope.providers = providers;
-    });
 
-    $scope.login = function () {
+    function login() {
       AuthenticationSharedService.login({
         username: $scope.username,
         password: $scope.password,
@@ -94,7 +91,32 @@ agate.controller('LoginController', ['$scope', '$location', '$translate', 'Authe
           $location.path('');
         }
       });
-    };
+    }
+
+    function getRedirectUrl() {
+      var search = $location.search();
+      var redirectUrl;
+
+      if (search.redirect_uri) {
+        try {
+          redirectUrl = '?redirect=' + new URL(search.redirect_uri).origin;
+        } catch (e) {
+          redirectUrl = null;
+        }
+      }
+
+      return redirectUrl;
+    }
+    function init() {
+      OidcProvidersResource.get({locale: $translate.use()}).$promise.then(function(providers) {
+        $scope.redirectUrl = getRedirectUrl();
+        $scope.providers = providers;
+      });
+    }
+
+    $scope.login = login;
+
+    init();
   }]);
 
 agate.controller('JoinController', ['$rootScope', '$scope', '$q', '$location', '$cookies', '$translate', '$uibModal', 'JoinConfigResource', 'JoinResource', 'ClientConfig',
