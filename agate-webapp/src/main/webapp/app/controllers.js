@@ -169,7 +169,7 @@ agate.controller('JoinController', ['$rootScope', '$scope', '$q', '$location', '
       });
     }
 
-    $q.all([OidcProvidersResource.get({locale: $translate.use()}).$promise, JoinConfigResource.get().$promise, ClientConfig.$promise]).then(function (values) {
+    $q.all([OidcProvidersResource.get({usage: 'SIGNUP', locale: $translate.use()}).$promise, JoinConfigResource.get().$promise, ClientConfig.$promise]).then(function (values) {
       $scope.providers = values[0];
       $scope.joinConfig = values[1];
       $scope.config = values[2];

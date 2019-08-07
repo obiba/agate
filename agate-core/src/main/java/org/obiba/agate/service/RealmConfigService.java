@@ -7,6 +7,7 @@ import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.Group;
 import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.domain.RealmStatus;
+import org.obiba.agate.domain.RealmUsage;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.event.RealmConfigActivatedOrUpdatedEvent;
 import org.obiba.agate.event.RealmConfigDeactivatedEvent;
@@ -20,7 +21,6 @@ import org.springframework.util.Assert;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -120,9 +120,17 @@ public class RealmConfigService {
     return realmConfigRepository.findAllByStatusAndTypeAndForSignupTrue(status, agateRealm.name());
   }
 
-  public List<RealmConfig> findAllForSignupByStatusAndTypeAndApplication(RealmStatus status,
-                                                                         AgateRealm agateRealm,
-                                                                         String application) {
+  public List<RealmConfig> findAllForUsageByStatusAndType(RealmUsage usage, RealmStatus status, AgateRealm agateRealm) {
+    return RealmUsage.SIGNUP.equals(usage)
+      ? realmConfigRepository.findAllByStatusAndTypeAndForSignupTrue(status, agateRealm.name())
+      : realmConfigRepository.findAllByStatusAndType(status, agateRealm.name());
+  }
+
+
+  public List<RealmConfig> findAllForUsageByStatusAndTypeAndApplication(RealmUsage usage,
+                                                                        RealmStatus status,
+                                                                        AgateRealm agateRealm,
+                                                                        String application) {
 
     if (Strings.isNullOrEmpty(application)) return Lists.newArrayList();
     List<String> groupsForAppication = groupService.findByApplication(application)
@@ -130,8 +138,11 @@ public class RealmConfigService {
       .map(Group::getName)
       .collect(Collectors.toList());
 
-    return realmConfigRepository.findAllByStatusAndTypeAndForSignupTrue(status, agateRealm.name())
-      .stream()
+    List<RealmConfig> realmConfigs = RealmUsage.ALL == usage
+      ? realmConfigRepository.findAllByStatusAndType(status, agateRealm.name())
+      : realmConfigRepository.findAllByStatusAndTypeAndForSignupTrue(status, agateRealm.name());
+
+    return realmConfigs.stream()
       .filter(realmConfig -> realmConfig.getGroups().stream().anyMatch(groupsForAppication::contains))
       .collect(Collectors.toList());
   }
