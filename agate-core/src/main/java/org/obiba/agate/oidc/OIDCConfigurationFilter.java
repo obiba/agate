@@ -37,7 +37,6 @@ public class OIDCConfigurationFilter extends OncePerRequestFilter {
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-    log.info(request.getRequestURI());
     try {
       JSONObject oidcConfig = getOIDCConfiguration(request);
       response.setStatus(HttpServletResponse.SC_OK);
