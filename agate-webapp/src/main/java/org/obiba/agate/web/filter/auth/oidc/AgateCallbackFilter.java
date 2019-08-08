@@ -59,6 +59,7 @@ import javax.ws.rs.core.NewCookie;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * This filter is used upon a successful OIDC authentication. Clients are signed-in to Agate via a <code>obibasid</code> or
@@ -154,7 +155,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     Map<String, String[]> requestParameters = session.getRequestParameters();
     String action = retrieveRequestParameter(FilterParameter.ACTION.value(), requestParameters);
 
-    String redirect = retrieveRequestParameter(FilterParameter.REDIRECT.value(), requestParameters);
+    String redirect = createOidcRedirectUri(requestParameters);
 
     if (Strings.isNullOrEmpty(redirect)) {
       if (FilterAction.SIGNIN.equals(FilterAction.valueOf(action))) {
@@ -163,11 +164,34 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
         response.sendRedirect(retrieveSignupRedirectUrl(requestParameters));
       }
     } else {
-      String redirectHash = retrieveRequestParameter(FilterParameter.REDIRECT_HASH.value(), requestParameters);
+      String redirectUrlWithHash =
+        hashifyUrl(redirect, retrieveRequestParameter(FilterParameter.REDIRECT_HASH.value(), requestParameters));
 
-      String redirectUrlWithHash = !Strings.isNullOrEmpty(redirectHash) ? (redirect + (redirect.endsWith("/") ? "" : "/") + "#" + (redirectHash.startsWith("/") ? "" : "/") + redirectHash) : redirect;
       response.sendRedirect(redirectUrlWithHash);
     }
+  }
+
+  private String hashifyUrl(String redirect, String redirectHash) {
+    return Strings.isNullOrEmpty(redirectHash)
+      ? redirect
+      : redirect + (redirect.endsWith("/") ? "" : "/") + "#" + (redirectHash.startsWith("/") ? "" : "/") + redirectHash;
+  }
+
+  private String createOidcRedirectUri(Map<String, String[]> requestParameters) {
+    String state = retrieveRequestParameter(FilterParameter.STATE.value(), requestParameters);
+
+    if (Strings.isNullOrEmpty(state)) {
+      return retrieveRequestParameter(FilterParameter.REDIRECT.value(), requestParameters);
+    }
+
+    String redirect = hashifyUrl(publicUrl, "authorize");
+    String params = requestParameters.entrySet()
+      .stream()
+      .filter(entry -> !"redirect".equals(entry.getKey()))
+      .map(entry -> String.format("%s=%s", entry.getKey(), entry.getValue()[0]))
+      .collect(Collectors.joining("&"));
+
+    return redirect + (Strings.isNullOrEmpty(params) ? "" : "?" + params);
   }
 
   /**

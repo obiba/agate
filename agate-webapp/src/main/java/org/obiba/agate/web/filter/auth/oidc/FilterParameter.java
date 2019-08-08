@@ -16,7 +16,8 @@ public enum FilterParameter {
   REDIRECT_HASH("redirect_hash"),
   ERROR("error"),
   ERROR_HASH("error_hash"),
-  OIDC_PROVIDER_ID("provider");
+  OIDC_PROVIDER_ID("provider"),
+  STATE("state");
 
 
   private final String param;

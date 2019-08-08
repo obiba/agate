@@ -97,9 +97,14 @@ agate.controller('LoginController', ['$scope', '$location', '$translate', 'Authe
       var search = $location.search();
       var redirectUrl;
 
-      if (search.redirect_uri) {
+      if (search) {
         try {
-          redirectUrl = '?redirect=' + new URL(search.redirect_uri).origin;
+          var url = $location.url();
+          var index = url.indexOf('?');
+          if (index > -1) {
+            redirectUrl = url.substring(index);
+            console.log("#####", redirectUrl, url);
+          }
         } catch (e) {
           redirectUrl = null;
         }
