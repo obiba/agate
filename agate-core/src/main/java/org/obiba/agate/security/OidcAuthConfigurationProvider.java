@@ -17,6 +17,7 @@ import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.LocalizedString;
 import org.obiba.agate.domain.OidcRealmConfig;
 import org.obiba.agate.domain.RealmStatus;
+import org.obiba.agate.domain.RealmUsage;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.RealmConfigService;
 import org.obiba.oidc.OIDCConfiguration;
@@ -51,16 +52,20 @@ public class OidcAuthConfigurationProvider implements OIDCConfigurationProvider 
 
   @Override
   public Collection<OIDCConfiguration> getConfigurations() {
-    return realmConfigService.findAllForSignupByStatusAndType(RealmStatus.ACTIVE, AgateRealm.AGATE_OIDC_REALM)
+    return getConfigurations(RealmUsage.ALL);
+  }
+
+  public Collection<OIDCConfiguration> getConfigurations(RealmUsage usage) {
+    return realmConfigService.findAllForUsageByStatusAndType(usage, RealmStatus.ACTIVE, AgateRealm.AGATE_OIDC_REALM)
       .stream()
       .map(realm -> createOIDCConfiguration(realm.getName(), realm.getTitle(), realm.getContent()))
       .filter(Objects::nonNull)
       .collect(Collectors.toList());
   }
 
-  public Collection<OIDCConfiguration> getConfigurationsForApplication(String application) {
+  public Collection<OIDCConfiguration> getConfigurationsForApplication(RealmUsage usage, String application) {
     return realmConfigService
-      .findAllForSignupByStatusAndTypeAndApplication(RealmStatus.ACTIVE, AgateRealm.AGATE_OIDC_REALM, application)
+      .findAllForUsageByStatusAndTypeAndApplication(usage, RealmStatus.ACTIVE, AgateRealm.AGATE_OIDC_REALM, application)
         .stream()
         .map(realm -> createOIDCConfiguration(realm.getName(), realm.getTitle(), realm.getContent()))
         .filter(Objects::nonNull)
@@ -70,7 +75,7 @@ public class OidcAuthConfigurationProvider implements OIDCConfigurationProvider 
   @Override
   public OIDCConfiguration getConfiguration(String name) {
     if (Strings.isNullOrEmpty(name)) return null;
-    return getConfigurations().stream().filter(conf -> name.equals(conf.getName())).findFirst().orElse(null);
+    return getConfigurations(RealmUsage.ALL).stream().filter(conf -> name.equals(conf.getName())).findFirst().orElse(null);
   }
 
   /**
