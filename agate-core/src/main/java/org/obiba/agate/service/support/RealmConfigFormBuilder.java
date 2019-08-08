@@ -2,7 +2,6 @@ package org.obiba.agate.service.support;
 
 import org.json.JSONArray;
 import org.obiba.agate.domain.AgateRealm;
-import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.domain.RealmStatus;
 
 import java.util.HashMap;
@@ -86,12 +85,13 @@ public class RealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
       "  }," +
       "  {" +
       "    \"key\": \"status\"," +
-      "    \"type\": \"select\"" +
+      "    \"type\": \"select\"," +
+      "    \"titleMap\": " + getTitleMap(getStatusNames()) +
       "  }," +
       "  {" +
       "    \"key\": \"type\"," +
       "    \"type\": \"select\"," +
-      "    \"titleMap\": " + getTypeTitleMap(realmTypes) +
+      "    \"titleMap\": " + getTitleMap(realmTypes) +
       "  }," +
       "  {" +
       "    \"key\": \"forSignup\"," +
@@ -113,13 +113,13 @@ public class RealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
     return new JSONArray(realmTypes).toString();
   }
 
-  private String getTypeTitleMap(List<String> realmTypes) {
+  private String getTitleMap(List<String> items) {
     List<Map<String, String>> realms =
-      realmTypes.stream().map(type ->
+      items.stream().map(item ->
         new HashMap<String, String>() {
         {
-          put("value", type);
-          put("name", String.format("t(realm.%s)", type));
+          put("value", item);
+          put("name", String.format("t(realm.%s)", item));
         }
       })
       .collect(Collectors.toList());
@@ -127,8 +127,11 @@ public class RealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
     return new JSONArray(realms).toString();
   }
 
+  private List<String> getStatusNames() {
+    return Stream.of(RealmStatus.values()).map(RealmStatus::name).collect(Collectors.toList());
+  }
+
   private String getStatusEnum() {
-    List<String> statusList = Stream.of(RealmStatus.values()).map(RealmStatus::toString).collect(Collectors.toList());
-    return new JSONArray(statusList).toString();
+    return new JSONArray(getStatusNames()).toString();
   }
 }
