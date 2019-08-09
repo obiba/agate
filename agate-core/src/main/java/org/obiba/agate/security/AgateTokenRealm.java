@@ -9,14 +9,11 @@
  */
 package org.obiba.agate.security;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.MalformedJwtException;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.AllowAllCredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -28,7 +25,6 @@ import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
-import org.obiba.agate.domain.UserCredentials;
 import org.obiba.agate.service.NoSuchTicketException;
 import org.obiba.agate.service.TicketService;
 import org.obiba.agate.service.TokenUtils;
@@ -36,12 +32,12 @@ import org.obiba.agate.service.UserService;
 import org.obiba.shiro.authc.TicketAuthenticationToken;
 import org.springframework.stereotype.Component;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.MalformedJwtException;
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Realm for users defined in Agate's database accessing using an OAuth2 token (ticket).
@@ -89,26 +85,23 @@ public class AgateTokenRealm extends AuthorizingRealm {
     }
 
     // Null username is invalid
-    if(username == null) {
+    if (username == null) {
       throw new AccountException("Null usernames are not allowed by this realm.");
     }
 
     User user = userService.findActiveUser(username);
 
-    if(user == null) {
+    if (user == null) {
       user = userService.findActiveUserByEmail(username);
       username = user.getName();
     }
 
-    if(user == null || !user.isEnabled() || !user.getRealm().equalsIgnoreCase(AgateRealm.AGATE_USER_REALM.getName())) {
+    if (user == null || !user.isEnabled()) {
       throw new UnknownAccountException("No account found for user [" + username + "]");
     }
 
-    UserCredentials userCredentials = userService.findUserCredentials(username);
-    if(userCredentials == null) throw new UnknownAccountException("No account found for user [" + username + "]");
-
     List<String> principals = Lists.newArrayList(username);
-    if(!Strings.isNullOrEmpty(ticketId)) principals.add(ticketId);
+    if (!Strings.isNullOrEmpty(ticketId)) principals.add(ticketId);
     return new SimpleAuthenticationInfo(new SimplePrincipalCollection(principals, getName()), token.getCredentials());
   }
 
@@ -116,11 +109,11 @@ public class AgateTokenRealm extends AuthorizingRealm {
   protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
     Collection<?> thisPrincipals = principals.fromRealm(getName());
 
-    if(thisPrincipals != null && !thisPrincipals.isEmpty()) {
+    if (thisPrincipals != null && !thisPrincipals.isEmpty()) {
       Optional<List<String>> scopes = thisPrincipals.stream().map(p -> {
         try {
-          if(p.toString().split("\\.").length == 3) return getScopesFromToken(p.toString());
-        } catch(MalformedJwtException e) {
+          if (p.toString().split("\\.").length == 3) return getScopesFromToken(p.toString());
+        } catch (MalformedJwtException e) {
           //ignore
         }
 
@@ -136,6 +129,6 @@ public class AgateTokenRealm extends AuthorizingRealm {
   private List<String> getScopesFromToken(String token) {
     Claims claims = tokenUtils.parseClaims(token);
 
-    return (List<String>)claims.get("context", Map.class).getOrDefault("scopes", Lists.newArrayList());
+    return (List<String>) claims.get("context", Map.class).getOrDefault("scopes", Lists.newArrayList());
   }
 }

@@ -10,6 +10,7 @@
 
 package org.obiba.agate.service;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -214,6 +215,8 @@ public class TokenUtils {
       putEmailClaims(claims, user);
     }
 
+    if (user.hasGroups())
+      claims.put("groups", Joiner.on(" ").join(user.getGroups()));
     claims.put("locale", user.getPreferredLanguage());
   }
 
