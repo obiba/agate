@@ -99,7 +99,8 @@ agate.controller('LoginController', ['$scope', '$location', '$translate', 'Authe
 
       if (search.redirect_uri) {
         try {
-          redirectUrl = '?redirect=' + new URL(search.redirect_uri).origin;
+          redirectUrl = '?redirect=' + encodeURIComponent('/#/authorize?response_type=' + search.response_type + '&client_id='
+            + search.client_id + '&redirect_uri=' + search.redirect_uri + '&scope='  + search.scope + '&state=' + search.state);
         } catch (e) {
           redirectUrl = null;
         }
