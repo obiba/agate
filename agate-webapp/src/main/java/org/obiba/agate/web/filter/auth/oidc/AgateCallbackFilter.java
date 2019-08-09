@@ -242,7 +242,12 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
       }
     } else {
       log.info("Agate Authentication failure for '{}', user does not exist in Agate", oidcAuthenticationToken.getUsername());
-      sendRedirectOrSendError(errorUrl, "User does not exist in Agate. Sign up first.", response);
+      try {
+        setUserAuthCookieForSignUp(credentials, oidcAuthenticationToken, response, provider);
+      } catch (JSONException e) {
+        // ignore
+      }
+      response.sendRedirect(publicUrl + (publicUrl.endsWith("/") ? "#/join" : "/#/join"));
     }
   }
 
@@ -273,7 +278,12 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
       }
     } else {
       log.info("Agate Authentication failure for '{}', user does not exist in Agate", oidcAuthenticationToken.getUsername());
-      sendRedirectOrSendError(errorUrl, "User does not exist in Agate. Sign up first.", response);
+      try {
+        setUserAuthCookieForSignUp(credentials, oidcAuthenticationToken, response, provider);
+      } catch (JSONException e) {
+        // ignore
+      }
+      response.sendRedirect(publicUrl + (publicUrl.endsWith("/") ? "#/join" : "/#/join"));
     }
   }
 
@@ -283,37 +293,43 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     User user = userService.findUser(oidcAuthenticationToken.getUsername());
 
     if (user == null) {
-      RealmConfig config = realmConfigService.findConfig(provider);
-
-      if (config != null) {
-        JSONArray names = configurationService.getJoinConfiguration("en", null).getJSONObject("schema").getJSONObject("properties").names();
-        Map<String, String> userInfoMapping = config.getUserInfoMapping();
-
-        JSONObject userMappedInfo = new JSONObject();
-
-        // map other fields, use config and join's schema?
-        for (int i = 0; i < names.length(); i++) {
-          String name = names.getString(i);
-          userMappedInfo.put(name, credentials.getUserInfo(userInfoMapping.get(name)));
-        }
-
-        if (!userMappedInfo.has("username")) userMappedInfo.put("username", oidcAuthenticationToken.getUsername());
-        userMappedInfo.put("realm", config.getName());
-        Configuration configuration =  configurationService.getConfiguration();
-        response.addHeader(HttpHeaders.SET_COOKIE,
-          new NewCookie(
-            "u_auth",
-            userMappedInfo.toString(),
-            "/",
-            configuration.getDomain(),
-            null,
-            600,
-            configuration.hasDomain()
-          ).toString());
-      }
+      setUserAuthCookieForSignUp(credentials, oidcAuthenticationToken, response, provider);
     } else {
       log.info("SignUp failure for '{}' with provider '{}', user already exists in Agate", oidcAuthenticationToken.getUsername(), provider);
       sendRedirectOrSendError(errorUrl, "Can't sign up with these credentials.", response);
+    }
+  }
+
+  private void setUserAuthCookieForSignUp(OIDCCredentials credentials, OIDCAuthenticationToken oidcAuthenticationToken, HttpServletResponse response, String provider) throws IOException, JSONException {
+    RealmConfig config = realmConfigService.findConfig(provider);
+
+    if (config != null && config.isForSignup()) {
+      JSONArray names = configurationService.getJoinConfiguration("en", null).getJSONObject("schema").getJSONObject("properties").names();
+      Map<String, String> userInfoMapping = config.getUserInfoMapping();
+
+      JSONObject userMappedInfo = new JSONObject();
+
+      // map other fields, use config and join's schema?
+      for (int i = 0; i < names.length(); i++) {
+        String name = names.getString(i);
+        userMappedInfo.put(name, credentials.getUserInfo(userInfoMapping.get(name)));
+      }
+
+      if (!userMappedInfo.has("username")) userMappedInfo.put("username", oidcAuthenticationToken.getUsername());
+      userMappedInfo.put("realm", config.getName());
+      Configuration configuration =  configurationService.getConfiguration();
+      response.addHeader(HttpHeaders.SET_COOKIE,
+        new NewCookie(
+          "u_auth",
+          userMappedInfo.toString(),
+          "/",
+          configuration.getDomain(),
+          null,
+          600,
+          configuration.hasDomain()
+        ).toString());
+    } else {
+      sendRedirectOrSendError(null, "Realm '" + provider + "' not set up for sign up.", response);
     }
   }
 
