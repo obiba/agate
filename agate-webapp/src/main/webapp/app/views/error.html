@@ -16,5 +16,9 @@
         translate="{{errorMessage}}" translate-values="{username: '{{subject.login}}'}">
       You are logged in as user "Admin".
     </div>
+
+    <div class="alert alert-warning" ng-switch-when="false" translate="{{errorMessage}}">
+      An error has occurred.
+    </div>
   </div>
 </div>

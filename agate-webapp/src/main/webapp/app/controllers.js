@@ -120,6 +120,12 @@ agate.controller('LoginController', ['$scope', '$location', '$translate', 'Authe
     init();
   }]);
 
+agate.controller('ErrorController', ['$scope', '$location', function ($scope, $location) {
+  var search = $location.search();
+  $scope.errorMessage = search.message;
+  $scope.error = search.error;
+}]);
+
 agate.controller('JoinController', ['$rootScope', '$scope', '$q', '$location', '$cookies', '$translate', '$uibModal', 'JoinConfigResource', 'JoinResource', 'ClientConfig',
   'NOTIFICATION_EVENTS', 'ServerErrorUtils', 'AlertService', 'vcRecaptchaService', 'OidcProvidersResource',
   function ($rootScope, $scope, $q, $location, $cookies, $translate, $uibModal, JoinConfigResource, JoinResource, ClientConfig,
