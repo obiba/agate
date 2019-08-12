@@ -225,8 +225,6 @@ agate.controller('JoinController', ['$rootScope', '$scope', '$q', '$location', '
                 hash = hash.replace('/authorize', 'redirect=/authorize');
               }
 
-              console.log(hash);
-
               $location.url(hash);
               $location.path('/login');
             } else {
