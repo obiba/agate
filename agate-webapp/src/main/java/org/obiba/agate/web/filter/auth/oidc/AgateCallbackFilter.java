@@ -14,7 +14,6 @@ import java.io.IOException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.UriBuilder;
 
 import com.google.common.eventbus.Subscribe;
 import org.apache.shiro.SecurityUtils;
@@ -134,7 +133,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     try {
       super.doFilterInternal(request, response, filterChain);
     } catch (OIDCException e) {
-      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+      sendRedirectOrSendError(makeErrorUrl(null), e.getMessage(), response);
     }
   }
 
@@ -146,7 +145,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
         session.setCallbackError(error);
         if (!Strings.isNullOrEmpty(errorUrl)) response.sendRedirect(errorUrl);
       } else {
-        sendRedirectOrSendError(publicUrl + (publicUrl.endsWith("/") ? "" : "/") + "error", error, response);
+        sendRedirectOrSendError(publicUrl + (publicUrl.endsWith("/") ? "" : "/") + "#/error", error, response);
       }
     } catch (IOException ignore) {
       // ignore
@@ -391,12 +390,9 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
 
   private void sendRedirectOrSendError(String redirect, String message, HttpServletResponse response) throws IOException {
     if (Strings.isNullOrEmpty(redirect)) {
-      response.sendError(HttpServletResponse.SC_CONFLICT, message);
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
     } else {
-      response.sendRedirect(
-        UriBuilder.fromUri(redirect)
-          .queryParam("error", HttpServletResponse.SC_BAD_REQUEST)
-          .queryParam("message", message).build().toString());
+      response.sendRedirect(redirect + (redirect.contains("?") ? "&" : "?") + "error=" + HttpServletResponse.SC_BAD_REQUEST + "&message=" + message);
     }
   }
 
@@ -407,7 +403,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
    * @return
    */
   private String makeErrorUrl(OIDCSession session) {
-    String errorUrl = Strings.emptyToNull(retrieveRequestParameter(FilterParameter.ERROR.value(), session.getRequestParameters()));
+    String errorUrl = session != null ? Strings.emptyToNull(retrieveRequestParameter(FilterParameter.ERROR.value(), session.getRequestParameters())) : null;
     if (Strings.isNullOrEmpty(errorUrl)) {
       errorUrl = publicUrl + (publicUrl.endsWith("/") ? "" : "/") + "#/error";
     }
