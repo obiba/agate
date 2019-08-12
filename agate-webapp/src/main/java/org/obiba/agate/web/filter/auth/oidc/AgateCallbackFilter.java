@@ -112,17 +112,21 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
 
   @PostConstruct
   public void init() {
-    publicUrl = configurationService.getPublicUrl();
     setOIDCConfigurationProvider(oidcConfigurationProvider);
     setOIDCSessionManager(oidcSessionManager);
+    initFilterUrls();
     setDefaultRedirectURL(publicUrl);
+  }
+
+  protected void initFilterUrls() {
+    publicUrl = configurationService.getPublicUrl();
     String callbackUrl = publicUrl + (publicUrl.endsWith("/") ? "" : "/") + "auth/callback/";
     setCallbackURL(callbackUrl);
   }
 
   @Subscribe
   public void agateConfigUpdated(AgateConfigUpdatedEvent event) {
-    publicUrl = configurationService.getPublicUrl();
+    initFilterUrls();
   }
 
   @Override

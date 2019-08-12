@@ -48,13 +48,18 @@ public abstract class AbstractAgateAuthenticationFilter extends OIDCLoginFilter 
     setPublicUrl(configurationService.getPublicUrl());
     setOIDCConfigurationProvider(oidcConfigurationProvider);
     setOIDCSessionManager(oidcSessionManager);
+    initFilterUrls();
+  }
+
+  protected void initFilterUrls() {
+    setPublicUrl(configurationService.getPublicUrl());
     String callbackUrl = getPublicUrl() + (getPublicUrl().endsWith("/") ? "" : "/") + "auth/callback/";
     setCallbackURL(callbackUrl);
   }
 
   @Subscribe
   public void agateConfigUpdated(AgateConfigUpdatedEvent event) {
-    setPublicUrl(configurationService.getPublicUrl());
+    initFilterUrls();
   }
 
   @Override
@@ -82,4 +87,5 @@ public abstract class AbstractAgateAuthenticationFilter extends OIDCLoginFilter 
 
     return new OIDCSession(context.getClientId(), authRequest.getState(), authRequest.getNonce(), Collections.unmodifiableMap(map));
   }
+
 }
