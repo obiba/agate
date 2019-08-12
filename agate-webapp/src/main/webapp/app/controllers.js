@@ -217,8 +217,20 @@ agate.controller('JoinController', ['$rootScope', '$scope', '$q', '$location', '
         }
         JoinResource.post(angular.extend({}, model, { reCaptchaResponse: $scope.response }))
           .then(function () {
-            $location.url($location.path());
-            $location.path('/');
+            var href = window.location.href;
+
+            if (href.indexOf('?redirect=') > -1) {
+              var hash = $location.hash();
+              if (hash) {
+                hash = hash.replace('/authorize', 'redirect=/authorize');
+              }
+
+              $location.url(hash);
+              $location.path('/login');
+            } else {
+              $location.url($location.path());
+              $location.path('/');
+            }
           }, function (data) {
             $rootScope.$broadcast(NOTIFICATION_EVENTS.showNotificationDialog, {
               message: ServerErrorUtils.buildMessage(data)

@@ -184,6 +184,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     String redirect = retrieveRedirectUrl(requestParameters);
     String provider = retrieveRequestParameter(FilterParameter.OIDC_PROVIDER_ID.value(), requestParameters);
     String errorUrl = makeErrorUrl(session);
+    String signInErrorUrl = makeSignInErrorUrl(session);
 
     Optional<Application> application = Optional.empty();
 
@@ -192,9 +193,9 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
         case SIGNIN:
           application = findApplication(redirect);
           if (application.isPresent()) {
-            signInWithTicket(credentials, response, provider, application.get(), errorUrl);
+            signInWithTicket(credentials, response, provider, application.get(), errorUrl, signInErrorUrl);
           } else {
-            signIn(credentials, response, provider, errorUrl);
+            signIn(credentials, response, provider, errorUrl, signInErrorUrl);
           }
           break;
         case SIGNUP:
@@ -216,7 +217,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
    * @param application
    * @param errorUrl
    */
-  private void signInWithTicket(OIDCCredentials credentials, HttpServletResponse response, String provider, Application application, String errorUrl)
+  private void signInWithTicket(OIDCCredentials credentials, HttpServletResponse response, String provider, Application application, String errorUrl, String signInErrorUrl)
     throws IOException {
     OIDCAuthenticationToken oidcAuthenticationToken = new OIDCAuthenticationToken(credentials);
     User user = userService.findUser(oidcAuthenticationToken.getUsername());
@@ -247,7 +248,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
       } catch (JSONException e) {
         // ignore
       }
-      response.sendRedirect(publicUrl + (publicUrl.endsWith("/") ? "#/join" : "/#/join"));
+      response.sendRedirect(signInErrorUrl);
     }
   }
 
@@ -257,7 +258,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
    * @param response
    * @param provider
    */
-  private void signIn(OIDCCredentials credentials, HttpServletResponse response, String provider, String errorUrl)
+  private void signIn(OIDCCredentials credentials, HttpServletResponse response, String provider, String errorUrl, String signInErrorUrl)
     throws IOException {
     OIDCAuthenticationToken oidcAuthenticationToken = new OIDCAuthenticationToken(credentials);
     User user = userService.findUser(oidcAuthenticationToken.getUsername());
@@ -283,7 +284,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
       } catch (JSONException e) {
         // ignore
       }
-      response.sendRedirect(publicUrl + (publicUrl.endsWith("/") ? "#/join" : "/#/join"));
+      response.sendRedirect(signInErrorUrl);
     }
   }
 
@@ -386,7 +387,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
 
   private void sendRedirectOrSendError(String redirect, String message, HttpServletResponse response) throws IOException {
     if (Strings.isNullOrEmpty(redirect)) {
-      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
+      response.sendError(HttpServletResponse.SC_CONFLICT, message);
     } else {
       response.sendRedirect(
         UriBuilder.fromUri(redirect)
@@ -407,6 +408,19 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
       errorUrl = publicUrl + (publicUrl.endsWith("/") ? "" : "/") + "#/error";
     }
     return errorUrl;
+  }
+
+  private String makeSignInErrorUrl(OIDCSession session) {
+    String url = publicUrl + (publicUrl.endsWith("/") ? "#/join" : "/#/join");
+
+    Map<String, String[]> requestParameters = session.getRequestParameters();
+    String redirect = retrieveRedirectUrl(requestParameters);
+
+    if (!Strings.isNullOrEmpty(redirect) && redirect.contains("redirect_uri")) {
+      url = url + "?redirect=" + redirect;
+    }
+
+    return url;
   }
 
 }
