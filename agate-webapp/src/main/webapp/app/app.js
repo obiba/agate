@@ -85,6 +85,7 @@ agate
         })
         .when('/error', {
           templateUrl: 'app/views/error.html',
+          controller: 'ErrorController',
           access: {
             authorizedRoles: [USER_ROLES.all]
           }
@@ -207,7 +208,7 @@ agate
             search.redirect = path;
             $location.search(search);
           }
-          if (['/confirm', '/forgotten', '/join', '/reset_password'].indexOf(path) === -1) {
+          if (['/confirm', '/forgotten', '/join', '/reset_password', '/error'].indexOf(path) === -1) {
             $rootScope.$broadcast('event:auth-loginRequired');
           }
         } else if (!AuthenticationSharedService.isAuthorized(next.access ? next.access.authorizedRoles : '*')) {
