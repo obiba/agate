@@ -138,7 +138,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
   protected void onAuthenticationError(OIDCSession session, String error, HttpServletResponse response) {
     try {
       if (session != null) {
-        String errorUrl = retrieveRequestParameter(FilterParameter.ERROR.value(), session.getRequestParameters());
+        String errorUrl = makeErrorUrl(session);
         session.setCallbackError(error);
         if (!Strings.isNullOrEmpty(errorUrl)) response.sendRedirect(errorUrl);
       } else {
@@ -183,7 +183,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     String[] action = requestParameters.get(FilterParameter.ACTION.value());
     String redirect = retrieveRedirectUrl(requestParameters);
     String provider = retrieveRequestParameter(FilterParameter.OIDC_PROVIDER_ID.value(), requestParameters);
-    String errorUrl = Strings.emptyToNull(retrieveRequestParameter(FilterParameter.ERROR.value(), session.getRequestParameters()));
+    String errorUrl = makeErrorUrl(session);
 
     Optional<Application> application = Optional.empty();
 
@@ -243,7 +243,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     } else {
       log.info("Agate Authentication failure for '{}', user does not exist in Agate", oidcAuthenticationToken.getUsername());
       try {
-        setUserAuthCookieForSignUp(credentials, oidcAuthenticationToken, response, provider);
+        setUserAuthCookieForSignUp(credentials, oidcAuthenticationToken, response, provider, errorUrl);
       } catch (JSONException e) {
         // ignore
       }
@@ -279,7 +279,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     } else {
       log.info("Agate Authentication failure for '{}', user does not exist in Agate", oidcAuthenticationToken.getUsername());
       try {
-        setUserAuthCookieForSignUp(credentials, oidcAuthenticationToken, response, provider);
+        setUserAuthCookieForSignUp(credentials, oidcAuthenticationToken, response, provider, errorUrl);
       } catch (JSONException e) {
         // ignore
       }
@@ -293,14 +293,14 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     User user = userService.findUser(oidcAuthenticationToken.getUsername());
 
     if (user == null) {
-      setUserAuthCookieForSignUp(credentials, oidcAuthenticationToken, response, provider);
+      setUserAuthCookieForSignUp(credentials, oidcAuthenticationToken, response, provider, errorUrl);
     } else {
       log.info("SignUp failure for '{}' with provider '{}', user already exists in Agate", oidcAuthenticationToken.getUsername(), provider);
       sendRedirectOrSendError(errorUrl, "Can't sign up with these credentials.", response);
     }
   }
 
-  private void setUserAuthCookieForSignUp(OIDCCredentials credentials, OIDCAuthenticationToken oidcAuthenticationToken, HttpServletResponse response, String provider) throws IOException, JSONException {
+  private void setUserAuthCookieForSignUp(OIDCCredentials credentials, OIDCAuthenticationToken oidcAuthenticationToken, HttpServletResponse response, String provider, String errorUrl) throws IOException, JSONException {
     RealmConfig config = realmConfigService.findConfig(provider);
 
     if (config != null && config.isForSignup()) {
@@ -329,7 +329,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
           configuration.hasDomain()
         ).toString());
     } else {
-      sendRedirectOrSendError(null, "Realm '" + provider + "' not set up for sign up.", response);
+      sendRedirectOrSendError(errorUrl, "Realm '" + provider + "' not set up for sign up.", response);
     }
   }
 
@@ -390,9 +390,23 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     } else {
       response.sendRedirect(
         UriBuilder.fromUri(redirect)
-          .queryParam("error", HttpServletResponse.SC_INTERNAL_SERVER_ERROR)
+          .queryParam("error", HttpServletResponse.SC_BAD_REQUEST)
           .queryParam("message", message).build().toString());
     }
+  }
+
+  /**
+   * If not specified in the request parameter, the error redirect goes to agate's error page.
+   * 
+   * @param session
+   * @return
+   */
+  private String makeErrorUrl(OIDCSession session) {
+    String errorUrl = Strings.emptyToNull(retrieveRequestParameter(FilterParameter.ERROR.value(), session.getRequestParameters()));
+    if (Strings.isNullOrEmpty(errorUrl)) {
+      errorUrl = publicUrl + (publicUrl.endsWith("/") ? "" : "/") + "#/error";
+    }
+    return errorUrl;
   }
 
 }
