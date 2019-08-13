@@ -202,7 +202,7 @@ agate.controller('JoinController', ['$rootScope', '$scope', '$q', '$location', '
 
     $scope.hasCookie = !!userCookie;
 
-    $scope.urlOrigin = new URL($location.absUrl()).origin;
+    $scope.urlOrigin = encodeURIComponent(new URL($location.absUrl()).origin + "/#/join");
 
     $scope.setResponse = function (response) {
       $scope.response = response;
