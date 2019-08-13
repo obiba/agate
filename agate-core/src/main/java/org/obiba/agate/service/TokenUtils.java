@@ -216,7 +216,7 @@ public class TokenUtils {
     }
 
     if (user.hasGroups())
-      claims.put("groups", Joiner.on(" ").join(user.getGroups()));
+      claims.put("groups", user.getGroups());
     claims.put("locale", user.getPreferredLanguage());
   }
 

@@ -350,7 +350,7 @@ public class OAuthResource {
 
     if (authorization != null && authorization.hasScope(TokenUtils.OPENID_SCOPE)) {
       responseBuilder.setParam(TokenUtils.OPENID_TOKEN, tokenUtils.makeIDToken(authorization,
-        getSupportedOpenIdScopes((s) -> authorization.hasScope(s))));
+        getSupportedOpenIdScopes(authorization::hasScope)));
     }
 
     OAuthResponse response = responseBuilder.buildJSONMessage();
@@ -359,7 +359,7 @@ public class OAuthResource {
 
   private List<String> getSupportedOpenIdScopes(Function<String, Boolean> filter) {
     String[] supported = {TokenUtils.OPENID_EMAIL_SCOPE, TokenUtils.OPENID_PROFILE_SCOPE};
-    return Arrays.stream(supported).filter(s -> filter.apply(s)).collect(toList());
+    return Arrays.stream(supported).filter(filter::apply).collect(toList());
   }
 
   /**
