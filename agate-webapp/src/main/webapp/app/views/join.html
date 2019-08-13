@@ -41,7 +41,7 @@
       <div ng-if="providers && !hasCookie">
         <hr>
         <div ng-repeat="provider in providers">
-          <a id="{{provider.name}}" class="btn btn-info btn-block text-center voffset2" href="/auth/signup/{{provider.name}}?redirect={{urlOrigin}}&redirect_hash=join">{{'realm.oidc.signup-with' | translate}} {{provider.title}}</a>
+          <a id="{{provider.name}}" class="btn btn-info btn-block text-center voffset2" href="/auth/signup/{{provider.name}}?redirect={{urlOrigin}}">{{'realm.oidc.signup-with' | translate}} {{provider.title}}</a>
         </div>
       </div>
     </div>
