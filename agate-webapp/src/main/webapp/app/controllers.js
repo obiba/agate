@@ -108,6 +108,7 @@ agate.controller('LoginController', ['$scope', '$location', '$translate', 'Authe
 
       return redirectUrl;
     }
+
     function init() {
       OidcProvidersResource.get({locale: $translate.use()}).$promise.then(function(providers) {
         $scope.redirectUrl = getRedirectUrl();
@@ -116,6 +117,10 @@ agate.controller('LoginController', ['$scope', '$location', '$translate', 'Authe
     }
 
     $scope.login = login;
+
+    if (AuthenticationSharedService.isAuthenticated()) {
+      $location.path('');
+    }
 
     init();
   }]);
@@ -127,9 +132,9 @@ agate.controller('ErrorController', ['$scope', '$location', function ($scope, $l
 }]);
 
 agate.controller('JoinController', ['$rootScope', '$scope', '$q', '$location', '$cookies', '$translate', '$uibModal', 'JoinConfigResource', 'JoinResource', 'ClientConfig',
-  'NOTIFICATION_EVENTS', 'ServerErrorUtils', 'AlertService', 'vcRecaptchaService', 'OidcProvidersResource',
+  'NOTIFICATION_EVENTS', 'ServerErrorUtils', 'AlertService', 'AuthenticationSharedService', 'vcRecaptchaService', 'OidcProvidersResource',
   function ($rootScope, $scope, $q, $location, $cookies, $translate, $uibModal, JoinConfigResource, JoinResource, ClientConfig,
-    NOTIFICATION_EVENTS, ServerErrorUtils, AlertService, vcRecaptchaService, OidcProvidersResource) {
+    NOTIFICATION_EVENTS, ServerErrorUtils, AlertService, AuthenticationSharedService, vcRecaptchaService, OidcProvidersResource) {
     var AGATE_USER_REALM = 'agate-user-realm';
 
     var userCookie = $cookies.get('u_auth');
@@ -267,6 +272,10 @@ agate.controller('JoinController', ['$rootScope', '$scope', '$q', '$location', '
       }
 
     });
+
+    if (AuthenticationSharedService.isAuthenticated()) {
+      $location.path('');
+    }
   }]);
 
 agate.controller('CredentialsTestModalController', ['$scope', '$uibModalInstance', '$resource', 'provider', 'username',
