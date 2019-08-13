@@ -27,6 +27,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.obiba.agate.domain.*;
 import org.obiba.agate.event.UserApprovedEvent;
+import org.obiba.agate.event.UserDeletedEvent;
 import org.obiba.agate.event.UserJoinedEvent;
 import org.obiba.agate.repository.RealmConfigRepository;
 import org.obiba.agate.repository.UserCredentialsRepository;
@@ -486,6 +487,8 @@ public class UserService {
     UserCredentials userCredentials = findUserCredentials(user.getName());
     if(userCredentials != null) userCredentialsRepository.delete(userCredentials);
     userRepository.delete(user);
+
+    eventBus.post(new UserDeletedEvent(user));
   }
 
   /**
