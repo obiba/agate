@@ -328,13 +328,14 @@ agate.controller('OAuthController', ['$log', '$scope', '$q', '$location', 'Accou
       if ($scope.applicationAccess) {
         // check if the authz was already granted
         AccountAuthorizations.query().$promise.then(function(authorizations){
-          if (authorizations) {
+          if (authorizations.length>0) {
             authorizations.forEach(function(authorization){
               if (authorization.application === $scope.auth.client_id) {
                 var allScopesCovered = true;
                 $scope.auth.scope.split(' ').forEach(function(sc) {
                   if (!authorization.scopes.includes(sc)) {
                     allScopesCovered = false;
+                    $scope.authRequired = true;
                   }
                 });
                 if (allScopesCovered) {
@@ -342,8 +343,9 @@ agate.controller('OAuthController', ['$log', '$scope', '$q', '$location', 'Accou
                 }
               }
             });
+          } else {
+            $scope.authRequired = true;
           }
-          $scope.authRequired = true;
           $scope.loading = false;
         });
       } else {
