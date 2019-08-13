@@ -166,10 +166,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
         response.sendRedirect(retrieveSignupRedirectUrl(requestParameters));
       }
     } else {
-      String redirectHash = retrieveRequestParameter(FilterParameter.REDIRECT_HASH.value(), requestParameters);
-
-      String redirectUrlWithHash = !Strings.isNullOrEmpty(redirectHash) ? (redirect + (redirect.endsWith("/") ? "" : "/") + "#" + (redirectHash.startsWith("/") ? "" : "/") + redirectHash) : redirect;
-      response.sendRedirect(redirectUrlWithHash);
+      response.sendRedirect(redirect);
     }
   }
 
@@ -411,9 +408,11 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
   }
 
   private String makeSignInErrorUrl(OIDCSession session) {
-    String url = publicUrl + (publicUrl.endsWith("/") ? "#/join" : "/#/join");
-
     Map<String, String[]> requestParameters = session.getRequestParameters();
+
+    String errorUrl = retrieveRequestParameter(FilterParameter.SIGNIN_ERROR_URI.value(), requestParameters);
+    String url = Strings.isNullOrEmpty(errorUrl) ? (publicUrl + (publicUrl.endsWith("/") ? "#/join" : "/#/join")) : errorUrl;
+
     String redirect = retrieveRedirectUrl(requestParameters);
 
     if (!Strings.isNullOrEmpty(redirect) && redirect.contains("redirect_uri")) {

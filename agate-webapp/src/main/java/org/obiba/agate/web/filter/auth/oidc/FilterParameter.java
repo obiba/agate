@@ -13,11 +13,9 @@ package org.obiba.agate.web.filter.auth.oidc;
 public enum FilterParameter {
   ACTION("action"),
   REDIRECT("redirect"),
-  REDIRECT_HASH("redirect_hash"),
   ERROR("error"),
-  ERROR_HASH("error_hash"),
+  SIGNIN_ERROR_URI("signin_error"),
   OIDC_PROVIDER_ID("provider");
-
 
   private final String param;
 
