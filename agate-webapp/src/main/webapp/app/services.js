@@ -170,6 +170,7 @@ agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$log', '$c
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
           },
+          errorHandler: true,
           ignoreAuthModule: 'ignoreAuthModule'
         }).then(function () {
           CurrentSession.get(function (data) {
