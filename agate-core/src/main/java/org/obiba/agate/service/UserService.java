@@ -261,12 +261,14 @@ public class UserService {
       }
     }
 
-    if(!Strings.isNullOrEmpty(password)) {
-      updateUserPassword(user, password);
-    } else if(user.getStatus() == UserStatus.PENDING) {
-      eventBus.post(new UserJoinedEvent(user));
-    } else if(user.getStatus() == UserStatus.APPROVED) {
-      eventBus.post(new UserApprovedEvent(user));
+    if (AgateRealm.AGATE_USER_REALM.getName().equals(user.getRealm())) {
+      if(!Strings.isNullOrEmpty(password)) {
+        updateUserPassword(user, password);
+      } else if(user.getStatus() == UserStatus.PENDING) {
+        eventBus.post(new UserJoinedEvent(user));
+      } else if(user.getStatus() == UserStatus.APPROVED) {
+        eventBus.post(new UserApprovedEvent(user));
+      }
     }
 
     return save(user);
