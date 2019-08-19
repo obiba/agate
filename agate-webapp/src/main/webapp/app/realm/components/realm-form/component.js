@@ -186,7 +186,8 @@
       if (ctrl.form.main.$valid && ctrl.form.realm.$valid) {
         ctrl.model.content = JSON.stringify(ctrl.realm.model);
 
-        (ctrl.model.id ? RealmConfigResource.save(ctrl.model).$promise : RealmsConfigResource.create(ctrl.model).$promise)
+        var copy = angular.copy(ctrl.model);
+        (copy.id ? RealmConfigResource.save(copy).$promise : RealmsConfigResource.create(copy).$promise)
           .then(function() {
             ctrl.onSave({});
           })
