@@ -64,7 +64,7 @@
     <postgres.version>9.4.1212.jre7</postgres.version>
     <lang-tag.version>1.4.4</lang-tag.version>
     <oauth-oidc-sdk.version>5.45</oauth-oidc-sdk.version>
-    <nimbus-jose-jwt.version>5.4</nimbus-jose-jwt.version>
+    <nimbus-jose-jwt.version>7.9</nimbus-jose-jwt.version>
     <json-smart.version>2.3</json-smart.version>
 
     <!-- maven plugins -->
