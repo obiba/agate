@@ -87,7 +87,7 @@
         </tbody>
       </table>
 
-      <span ng-if="settingsAccount.realm === 'agate-user-realm'">
+      <span ng-if="user.realm === 'agate-user-realm'">
         <update-password-button profile="profile" updated="onPasswordUpdated()" user-id="{{user.id}}"></update-password-button>
       </span>
 
