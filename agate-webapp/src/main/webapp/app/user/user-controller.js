@@ -59,6 +59,8 @@ agate.user
 
       $scope.loading = true;
       $scope.users = UsersResource.query({}, onSuccess, onError);
+      // To keep ng-if instead of using ng-show, declare search filter as an object
+      $scope.search = {text: ""};
 
       function getRealms() {
         RealmsService.getRealmsNameTitleMap($translate.use()).then(function (realms) {
@@ -160,8 +162,23 @@ agate.user
       ConfigurationResource.get(function(config) {
         $scope.languages = config.languages;
         $scope.attributesConfig = config.userAttributes || [];
-        $scope.attributeConfigPairs = AttributesService.getAttributeConfigPairs($scope.user.attributes, $scope.attributesConfig);
-        $scope.usedAttributeNames = AttributesService.getUsedAttributeNames($scope.user.attributes, $scope.attributesConfig);
+        if ($routeParams.id) {
+          UserResource.get({id: $routeParams.id}).$promise.then(function(user) {
+            $scope.status.selected = $scope.status.list[UserStatusResource.findIndex(user.status)];
+            $scope.attributeConfigPairs = AttributesService.getAttributeConfigPairs(user.attributes, $scope.attributesConfig);
+            $scope.usedAttributeNames = AttributesService.getUsedAttributeNames(user.attributes, $scope.attributesConfig);
+            $scope.realm.selected = $scope.realmList.filter(function(realm) {
+              return user.realm === realm.name;
+            }).pop();
+            $scope.user = user;
+          });
+        } else {
+          $scope.user = { role: 'agate-user'};
+          $scope.profile = {
+            password: null,
+            confirmPassword: null
+          };
+        }
       });
 
       RealmsService.getRealmsForLanguage($translate.use()).then(function(realms){
@@ -184,27 +201,12 @@ agate.user
       });
 
       var statusValueList = UserStatusResource.listAsNameValue();
+
+      $scope.profile = null;
       $scope.status = {
         list: statusValueList,
         selected: statusValueList[UserStatusResource.activeIndex()]
       };
-
-      $scope.profile = {
-        password: null,
-        confirmPassword: null
-      };
-
-      $scope.user = $routeParams.id ?
-        UserResource.get({id: $routeParams.id}, function(user) {
-          $scope.status.selected = $scope.status.list[UserStatusResource.findIndex(user.status)];
-          $scope.attributeConfigPairs = AttributesService.getAttributeConfigPairs($scope.user.attributes, $scope.attributesConfig);
-          $scope.usedAttributeNames = AttributesService.getUsedAttributeNames($scope.user.attributes, $scope.attributesConfig);
-          $scope.realm.selected = $scope.realmList.filter(function(realm) {
-            return user.realm === realm.name;
-          }).pop();
-          $scope.profile = null;
-          return user;
-        }) : { role: 'agate-user'};
 
       /**
        * Updated an existing user properties and attributes
