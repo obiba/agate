@@ -129,6 +129,7 @@ agate.user
       '$log',
       '$location',
       '$translate',
+      '$q',
       'UsersResource',
       'UserResource',
       'FormServerValidation',
@@ -146,6 +147,7 @@ agate.user
               $log,
               $location,
               $translate,
+              $q,
               UsersResource,
               UserResource,
               FormServerValidation,
@@ -181,22 +183,21 @@ agate.user
         }
       });
 
-      RealmsService.getRealmsForLanguage($translate.use()).then(function(realms){
+      $scope.groupList = [];
+      $scope.applicationList = [];
+      $q.all([RealmsService.getRealmsForLanguage($translate.use()), GroupsResource.query().$promise, ApplicationsResource.query().$promise]).then(function (resolves) {
+        var realms = resolves[0];
         $scope.realmList = realms;
         $scope.realm = {selected: realms[0]};
-      });
 
-      $scope.groupList = [];
-      GroupsResource.query().$promise.then(function(groups){
-        groups.forEach(function(group){
-          $scope.groupList.push(group.name);
+        var groups = resolves[1];
+        $scope.groupList = groups.map(function (group) {
+          return group.name;
         });
-      });
 
-      $scope.applicationList = [];
-      ApplicationsResource.query().$promise.then(function(applications){
-        applications.forEach(function(application){
-          $scope.applicationList.push(application.id);
+        var applications = resolves[2];
+        $scope.applicationList = applications.map(function (application) {
+          return application.id;
         });
       });
 
@@ -206,6 +207,12 @@ agate.user
       $scope.status = {
         list: statusValueList,
         selected: statusValueList[UserStatusResource.activeIndex()]
+      };
+
+      var saveErrorHandler = function (response) {
+        $scope.form.saveAttempted = true;
+        AlertService.alert({id: 'UserEditController', type: 'danger', msgKey: 'fix-error'});
+        FormServerValidation.error(response, $scope.form);
       };
 
       /**
@@ -234,7 +241,7 @@ agate.user
         }
 
         $scope.profile.user = $scope.user;
-        $scope.user.attributes = $scope.attributeConfigPairs.map(function(attributeConfigPair){
+        $scope.user.attributes = ($scope.attributeConfigPairs || []).map(function(attributeConfigPair){
           return attributeConfigPair.attribute;
         });
 
@@ -244,12 +251,6 @@ agate.user
             $location.path('/user/' + parts[parts.length - 1]).replace();
           },
           saveErrorHandler);
-      };
-
-      var saveErrorHandler = function (response) {
-        $scope.form.saveAttempted = true;
-        AlertService.alert({id: 'UserEditController', type: 'danger', msgKey: 'fix-error'});
-        FormServerValidation.error(response, $scope.form);
       };
 
       $scope.save = function () {
