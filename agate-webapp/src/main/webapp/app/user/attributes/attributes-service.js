@@ -140,7 +140,7 @@ agate.user
         },
 
         'mergeConfigPairAttributes': function(attributes, attributeConfigPairs) {
-          var pairedAttributes = attributeConfigPairs.map(function(attributeConfigPair){
+          var pairedAttributes = (attributeConfigPairs || []).map(function(attributeConfigPair){
             return attributeConfigPair.attribute;
           });
 
