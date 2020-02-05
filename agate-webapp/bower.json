@@ -34,8 +34,8 @@
     "angular-ui-ace": "0.2.3",
     "angular-recaptcha": "3.0.3",
     "angular-media-queries": "0.6.1",
-    "obiba-shims": "https://github.com/obiba/obiba-shims.git#master",
-    "sf-obiba-ui-select": "https://github.com/obiba/sf-obiba-ui-select.git#rhaeri-dev",
+    "obiba-shims": "https://github.com/obiba/obiba-shims.git#1.0.0",
+    "sf-obiba-ui-select": "https://github.com/obiba/sf-obiba-ui-select.git#master",
     "sf-localized-string": "https://github.com/obiba/sf-localized-string.git#1.3.3"
   },
   "devDependencies": {
