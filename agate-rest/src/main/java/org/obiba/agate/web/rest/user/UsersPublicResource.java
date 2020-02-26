@@ -219,8 +219,13 @@ public class UsersPublicResource {
     user.setApplications(Sets.newHashSet(applications));
     user.setAttributes(extractAttributes(request));
 
-    if(isRequestedByApplication(request)) {
-      user.setStatus(UserStatus.APPROVED);
+    String applicationName = getRequestingApplication(request);
+    if(!Strings.isNullOrEmpty(applicationName)) {
+      user.getApplications().add(applicationName);
+      if (!Strings.isNullOrEmpty(password))
+        user.setStatus(UserStatus.ACTIVE);
+      else
+        user.setStatus(UserStatus.APPROVED);
     }
 
     userService.createUser(user, password);
@@ -289,11 +294,11 @@ public class UsersPublicResource {
     return parsedValue;
   }
 
-  protected boolean isRequestedByApplication(HttpServletRequest servletRequest) {
+  protected String getRequestingApplication(HttpServletRequest servletRequest) {
     String appAuthHeader = servletRequest.getHeader(ObibaRealm.APPLICATION_AUTH_HEADER);
-    if(appAuthHeader == null) return false;
+    if(appAuthHeader == null) return null;
 
     HttpAuthorizationToken token = new HttpAuthorizationToken(ObibaRealm.APPLICATION_AUTH_SCHEMA, appAuthHeader);
-    return applicationService.isValid(token.getUsername(), new String(token.getPassword()));
+    return applicationService.isValid(token.getUsername(), new String(token.getPassword())) ? token.getUsername() : null;
   }
 }

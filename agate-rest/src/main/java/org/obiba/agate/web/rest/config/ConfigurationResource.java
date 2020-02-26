@@ -85,10 +85,16 @@ public class ConfigurationResource {
   public Agate.PublicConfigurationDto getPublic() {
     Configuration configuration = configurationService.getConfiguration();
 
-    return Agate.PublicConfigurationDto.newBuilder()
+    Agate.PublicConfigurationDto.Builder builder = Agate.PublicConfigurationDto.newBuilder()
       .setName(configuration.getName())
-      .addAllLanguages(configuration.getLocalesAsString())
-      .build();
+      .setJoinWithUsername(configuration.isJoinWithUsername())
+      .addAllLanguages(configuration.getLocalesAsString());
+
+    if (configuration.hasUserAttributes()) {
+      configuration.getUserAttributes().forEach(attr -> builder.addUserAttributes(dtos.asDto(attr)));
+    }
+
+    return builder.build();
   }
 
   @GET
@@ -125,7 +131,7 @@ public class ConfigurationResource {
   @Path("/profile")
   @Produces(APPLICATION_JSON)
   @Timed
-  public Response getProfileConfiguration(@QueryParam("locale") String locale) throws JSONException, IOException {
+  public Response getProfileConfiguration(@QueryParam("locale") @DefaultValue("en") String locale) throws JSONException, IOException {
     return Response.ok(configurationService.getProfileConfiguration(locale).toString()).build();
   }
 

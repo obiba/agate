@@ -70,6 +70,8 @@ message ConfigurationDto {
 message PublicConfigurationDto {
   required string name = 1;
   repeated string languages = 2;
+  required bool joinWithUsername = 3;
+  repeated AttributeConfigurationDto userAttributes = 4;
 }
 
 message AttributeDto {

@@ -107,6 +107,11 @@ public class Dtos {
   }
 
   @NotNull
+  public Agate.AttributeConfigurationDto asDto(@NotNull AttributeConfiguration attributeConfiguration) {
+    return configurationDtos.asDto(attributeConfiguration).build();
+  }
+
+  @NotNull
   public Configuration fromDto(@NotNull Agate.ConfigurationDtoOrBuilder dto) {
     return configurationDtos.fromDto(dto);
   }

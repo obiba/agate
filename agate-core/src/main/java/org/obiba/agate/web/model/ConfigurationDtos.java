@@ -69,7 +69,7 @@ class ConfigurationDtos {
   }
 
   @NotNull
-  private Agate.AttributeConfigurationDto.Builder asDto(AttributeConfiguration config) {
+  Agate.AttributeConfigurationDto.Builder asDto(AttributeConfiguration config) {
     Agate.AttributeConfigurationDto.Builder builder = Agate.AttributeConfigurationDto.newBuilder()
       .setName(config.getName()).setRequired(config.isRequired()).setType(config.getType().toString())
       .addAllValues(config.getValues());

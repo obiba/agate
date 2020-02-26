@@ -64,7 +64,7 @@ public class UserService {
 
   private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
-  private static final int MINIMUM_LEMGTH = 8;
+  private static final int MINIMUM_LENGTH = 8;
 
   private final UserRepository userRepository;
 
@@ -224,7 +224,7 @@ public class UserService {
     if(Strings.isNullOrEmpty(password)) throw new BadRequestException("User password cannot be empty");
     if(!user.getRealm().equals(AgateRealm.AGATE_USER_REALM.getName()))
       throw new BadRequestException("User password cannot be changed");
-    if(password.length() < MINIMUM_LEMGTH) throw new PasswordTooShortException(MINIMUM_LEMGTH);
+    if(password.length() < MINIMUM_LENGTH) throw new PasswordTooShortException(MINIMUM_LENGTH);
 
     UserCredentials userCredentials = findUserCredentials(user.getName());
     String hashedPassword = hashPassword(password);

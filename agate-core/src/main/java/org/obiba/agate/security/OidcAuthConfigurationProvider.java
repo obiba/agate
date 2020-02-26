@@ -100,7 +100,7 @@ public class OidcAuthConfigurationProvider implements OIDCConfigurationProvider 
         .getLocales()
         .forEach(locale -> {
           String language = locale.getLanguage();
-          String value = title.get(language);
+          String value = title == null ? name : title.get(language);
           if (!Strings.isNullOrEmpty(value)) valueMap.put(language, value);
         });
 
