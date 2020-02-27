@@ -90,9 +90,11 @@ public class ConfigurationResource {
       .setJoinWithUsername(configuration.isJoinWithUsername())
       .addAllLanguages(configuration.getLocalesAsString());
 
-    if (configuration.hasUserAttributes()) {
+    if (configuration.hasPublicUrl())
+      builder.setPublicUrl(configuration.getPublicUrl());
+
+    if (configuration.hasUserAttributes())
       configuration.getUserAttributes().forEach(attr -> builder.addUserAttributes(dtos.asDto(attr)));
-    }
 
     return builder.build();
   }

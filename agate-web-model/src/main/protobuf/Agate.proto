@@ -72,6 +72,7 @@ message PublicConfigurationDto {
   repeated string languages = 2;
   required bool joinWithUsername = 3;
   repeated AttributeConfigurationDto userAttributes = 4;
+  optional string publicUrl = 5;
 }
 
 message AttributeDto {
