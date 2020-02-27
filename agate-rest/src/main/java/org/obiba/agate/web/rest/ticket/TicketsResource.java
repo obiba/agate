@@ -143,6 +143,7 @@ public class TicketsResource extends ApplicationAwareResource {
     validateApplication(authHeader);
 
     User user = userService.findActiveUser(username);
+    if(user == null) user = userService.findActiveUserByEmail(username);
     AuthDtos.SubjectDto subject;
     if(user != null) {
       subject = dtos.asDto(user, true);
