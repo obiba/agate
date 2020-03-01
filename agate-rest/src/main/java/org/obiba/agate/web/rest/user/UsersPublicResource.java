@@ -263,6 +263,7 @@ public class UsersPublicResource {
       }
     }
 
+    res.remove("password");
     return res;
   }
 
