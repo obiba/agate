@@ -12,6 +12,7 @@ package org.obiba.agate.web.rest.ticket;
 
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
 import io.jsonwebtoken.Claims;
 import org.apache.oltu.oauth2.as.issuer.MD5Generator;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
@@ -66,6 +67,8 @@ public class OAuthResource {
 
   private static final Logger log = LoggerFactory.getLogger(OAuthResource.class);
 
+  private final List<String> AGATE_SCOPES = Lists.newArrayList("openid", "email", "profile");
+
   @Inject
   private ConfigurationService configurationService;
 
@@ -104,28 +107,28 @@ public class OAuthResource {
         validateScope(oAuthRequest.getScopes());
         OAuthRequestData data = new OAuthRequestData(clientId, redirectURI, oAuthRequest);
         Authorization authorization = authorizationService.find(user.getName(), data.getClientId());
-        if (authorization != null && authorization.hasScopes()) {
-          // the client was already authorized
-          boolean allScopesCovered = true;
-          for (String scope : oAuthRequest.getScopes()) {
-            if (!authorization.getScopes().contains(scope)) {
-              allScopesCovered = false;
-              break;
-            }
+        // check client previous authorizations
+        boolean allScopesCovered = true;
+        for (String scope : oAuthRequest.getScopes()) {
+          // agate scopes do not need to be approved by user as all applications are trusted
+          if (!AGATE_SCOPES.contains(scope) && authorization != null && !authorization.hasScope(scope)) {
+            allScopesCovered = false;
+            break;
           }
-          if (allScopesCovered) {
-            return replyAuthorized(servletRequest, data, authorization);
-          }
+        }
+        if (allScopesCovered) {
+          return replyAuthorized(servletRequest, data, authorization);
         }
       } catch (ForbiddenException e) {
         return buildErrorResponse(e, oAuthRequest, redirectURI);
       } catch (Exception e) {
         // if any problem, continue with authorization page
+        log.warn("Error when validating authorization", e);
       }
     }
-    
+
     return Response.status(Response.Status.FOUND).location(URI.create(
-      String.format("%s/#/authorize?%s", getPublicUrl(), servletRequest.getQueryString()))).build();
+      String.format("%s/authorize?%s", getPublicUrl(), servletRequest.getQueryString()))).build();
   }
 
   @GET
@@ -159,33 +162,43 @@ public class OAuthResource {
         if (grant != null && !grant) {
           return buildErrorResponse(OAuthProblemException.error("access_denied", "Owner denied authorization."), data.getRequest(), data.getRedirectUri());
         }
-
-        OAuthIssuer oAuthIssuer = new OAuthIssuerImpl(new MD5Generator());
-        User user = userService.getCurrentUser();
-        Authorization authorization = authorizationService.find(user.getName(), data.getClientId());
-
-        if (authorization == null) {
-          authorization = new Authorization(user.getName(), data.getClientId());
-        }
-
-        authorization.setCode(oAuthIssuer.authorizationCode());
-        authorization.addScopes(data.getRequest().getScopes());
-        authorization.setRedirectURI(data.getRedirectUri());
-        authorizationService.save(authorization);
-
+        Authorization authorization = doAuthorization(data);
         return replyAuthorized(servletRequest, data, authorization);
-      } catch (URISyntaxException | OAuthSystemException e) {
+      } catch (URISyntaxException | OAuthSystemException | OAuthProblemException e) {
         throw Throwables.propagate(e);
       }
     });
   }
 
-  private Response replyAuthorized(HttpServletRequest servletRequest, OAuthRequestData data, Authorization authorization) throws OAuthSystemException, URISyntaxException {
+  private Authorization doAuthorization(OAuthRequestData data) throws OAuthSystemException {
+    OAuthIssuer oAuthIssuer = new OAuthIssuerImpl(new MD5Generator());
+    User user = userService.getCurrentUser();
+    Authorization authorization = authorizationService.find(user.getName(), data.getClientId());
 
-    long expiresIn = authorizationService.getExpirationDate(authorization).getMillis() - DateTime.now().getMillis();
+    if (authorization == null) {
+      authorization = new Authorization(user.getName(), data.getClientId());
+    }
+
+    authorization.setCode(oAuthIssuer.authorizationCode());
+    authorization.addScopes(data.getRequest().getScopes());
+    authorization.setRedirectURI(data.getRedirectUri());
+    authorizationService.save(authorization);
+    return authorization;
+  }
+
+  private Response replyAuthorized(HttpServletRequest servletRequest, OAuthRequestData data, Authorization authorization) throws OAuthSystemException, URISyntaxException, OAuthProblemException {
+    Authorization authz = authorization;
+    if (authorization == null) {
+      OAuthAuthzRequest oAuthRequest = new OAuthAuthzRequest(servletRequest);
+      String clientId = oAuthRequest.getParam(OAuth.OAUTH_CLIENT_ID);
+      String redirectURI = validateClientApplication(clientId, oAuthRequest.getParam(OAuth.OAUTH_REDIRECT_URI));
+      authz = doAuthorization(new OAuthRequestData(clientId, redirectURI, oAuthRequest));
+    }
+
+    long expiresIn = authorizationService.getExpirationDate(authz).getMillis() - DateTime.now().getMillis();
     OAuthASResponse.OAuthAuthorizationResponseBuilder builder = OAuthASResponse
       .authorizationResponse(servletRequest, HttpServletResponse.SC_FOUND) //
-      .setCode(authorization.getCode()) //
+      .setCode(authz.getCode()) //
       .setExpiresIn(expiresIn / 1000) //
       .location(data.getRedirectUri());
 

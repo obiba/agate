@@ -184,6 +184,8 @@
     "name-help": "Nom de votre organization.",
     "publicUrl": "URL publique",
     "publicUrl-help": "Base URL publique du serveur qui sera utilisée pour l'envoi de courriels de notification.",
+    "portalUrl": "URL du portail",
+    "portalUrl-help": "URL publique du portail de l'organisation.",
     "domain": "Domaine",
     "domain-help": "Domaine du cookie de connexion unique.",
     "shortTimeout": "Délai d'expiration à court terme (heures)",

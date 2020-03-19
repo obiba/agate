@@ -10,28 +10,13 @@
 
 package org.obiba.agate.config;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumSet;
-
-import javax.inject.Inject;
-import javax.servlet.DispatcherType;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.FilterRegistration;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRegistration;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.servlet.InstrumentedFilter;
+import com.codahale.metrics.servlets.MetricsServlet;
 import org.apache.shiro.web.env.EnvironmentLoaderListener;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.eclipse.jetty.servlets.GzipFilter;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.obiba.agate.oidc.OIDCConfigurationFilter;
@@ -57,22 +42,23 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.servlet.InstrumentedFilter;
-import com.codahale.metrics.servlets.MetricsServlet;
+import javax.inject.Inject;
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumSet;
 
-import static javax.servlet.DispatcherType.ASYNC;
-import static javax.servlet.DispatcherType.ERROR;
-import static javax.servlet.DispatcherType.FORWARD;
-import static javax.servlet.DispatcherType.INCLUDE;
-import static javax.servlet.DispatcherType.REQUEST;
+import static javax.servlet.DispatcherType.*;
 import static org.obiba.agate.web.rest.config.JerseyConfiguration.WS_ROOT;
 
 /**
  * Configuration of web application with Servlet 3.0 APIs.
  */
 @Configuration
-@ComponentScan({ "org.obiba.agate", "org.obiba.shiro" })
+@ComponentScan({"org.obiba.agate", "org.obiba.shiro"})
 @PropertySource("classpath:agate-webapp.properties")
 @AutoConfigureAfter(SecurityConfiguration.class)
 public class WebConfiguration implements ServletContextInitializer, JettyServerCustomizer, EnvironmentAware {
@@ -140,6 +126,12 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
   @Override
   public void customize(Server server) {
     customizeSsl(server);
+
+    GzipHandler gzipHandler = new GzipHandler();
+    gzipHandler.setIncludedMethods("PUT", "POST", "GET");
+    gzipHandler.setInflateBufferSize(2048);
+    gzipHandler.setHandler(server.getHandler());
+    server.setHandler(gzipHandler);
   }
 
   private void customizeSsl(Server server) {
@@ -169,13 +161,14 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
     servletContext.addListener(EnvironmentLoaderListener.class);
 
     initAllowedMethodsFilter(servletContext);
-    initAuthenticationFilter(servletContext);
+    // Note: authentication filter was already added by Spring
+
     initOIDCAuthenticationFilter(servletContext);
     initOIDCConfigurationFilter(servletContext);
 
     EnumSet<DispatcherType> disps = EnumSet.of(REQUEST, FORWARD, ASYNC);
     initMetrics(servletContext, disps);
-    if(environment.acceptsProfiles(Constants.SPRING_PROFILE_PRODUCTION)) {
+    if (environment.acceptsProfiles(Constants.SPRING_PROFILE_PRODUCTION)) {
       initStaticResourcesProductionFilter(servletContext, disps);
       initCachingHttpHeadersFilter(servletContext, disps);
     }
@@ -193,34 +186,18 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
     filterRegistration.setAsyncSupported(true);
   }
 
-  private void initAuthenticationFilter(ServletContext servletContext) {
-    log.debug("Registering Authentication Filter");
-    FilterRegistration.Dynamic filterRegistration = servletContext.addFilter("authenticationFilter", authenticationFilter);
-
-    if (filterRegistration == null) {
-      filterRegistration =
-        (FilterRegistration.Dynamic)servletContext.getFilterRegistration("authenticationFilter");
-    }
-
-    log.debug("Adding mapping to authentication filter registration");
-
-    filterRegistration.addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, ASYNC, INCLUDE, ERROR), true,
-      WS_ROOT + "/*");
-    filterRegistration.setAsyncSupported(true);
-  }
-
   private void initOIDCConfigurationFilter(ServletContext servletContext) {
     log.debug("Registering OIDC Configuration Filter");
     FilterRegistration.Dynamic filterRegistration = servletContext.addFilter("OIDCConfigurationFilter", oidcConfigurationFilter);
 
     if (filterRegistration == null) {
       filterRegistration =
-        (FilterRegistration.Dynamic)servletContext.getFilterRegistration("OIDCConfigurationFilter");
+        (FilterRegistration.Dynamic) servletContext.getFilterRegistration("OIDCConfigurationFilter");
     }
 
     log.debug("Adding mapping to OIDC configuration filter registration");
 
-    filterRegistration.addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, ASYNC, INCLUDE, ERROR), true,"/.well-known/openid-configuration");
+    filterRegistration.addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, ASYNC, INCLUDE, ERROR), true, "/.well-known/openid-configuration");
     filterRegistration.setAsyncSupported(true);
   }
 
@@ -245,7 +222,7 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
     FilterRegistration.Dynamic compressingFilter = servletContext.addFilter("gzipFilter", new GzipFilter());
 
     if (compressingFilter == null) {
-      compressingFilter = (FilterRegistration.Dynamic)servletContext.getFilterRegistration("gzipFilter");
+      compressingFilter = (FilterRegistration.Dynamic) servletContext.getFilterRegistration("gzipFilter");
     }
 
     compressingFilter.addMappingForUrlPatterns(disps, true, "*.css");
@@ -264,7 +241,7 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
 
     log.debug("Registering static resources production Filter");
     FilterRegistration.Dynamic resourcesFilter = servletContext
-        .addFilter("staticResourcesProductionFilter", new StaticResourcesProductionFilter());
+      .addFilter("staticResourcesProductionFilter", new StaticResourcesProductionFilter());
 
     resourcesFilter.addMappingForUrlPatterns(disps, true, "/favicon.ico");
     resourcesFilter.addMappingForUrlPatterns(disps, true, "/robots.txt");
@@ -283,7 +260,7 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
   private void initCachingHttpHeadersFilter(ServletContext servletContext, EnumSet<DispatcherType> disps) {
     log.debug("Registering Caching HTTP Headers Filter");
     FilterRegistration.Dynamic cachingFilter = servletContext
-        .addFilter("cachingHttpHeadersFilter", new CachingHttpHeadersFilter());
+      .addFilter("cachingHttpHeadersFilter", new CachingHttpHeadersFilter());
 
     cachingFilter.addMappingForUrlPatterns(disps, true, "/images/*");
     cachingFilter.addMappingForUrlPatterns(disps, true, "/fonts/*");
@@ -302,7 +279,7 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
 
     log.debug("Registering Metrics Filter");
     FilterRegistration.Dynamic metricsFilter = servletContext
-        .addFilter("webappMetricsFilter", new InstrumentedFilter());
+      .addFilter("webappMetricsFilter", new InstrumentedFilter());
 
     metricsFilter.addMappingForUrlPatterns(disps, true, "/*");
     metricsFilter.setAsyncSupported(true);
@@ -331,7 +308,7 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
       HttpServletRequest httpRequest = (HttpServletRequest) request;
       HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-      if("TRACE".equals(httpRequest.getMethod())) {
+      if ("TRACE".equals(httpRequest.getMethod())) {
         httpResponse.reset();
         httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "TRACE method not allowed");
         return;

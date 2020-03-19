@@ -65,6 +65,7 @@ message ConfigurationDto {
   optional string style = 10;
   repeated string languages = 11;
   repeated LocalizedStringDto translations = 12;
+  optional string portalUrl = 13;
 }
 
 message PublicConfigurationDto {

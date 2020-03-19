@@ -40,6 +40,7 @@ class ConfigurationDtos {
 
     if(configuration.hasDomain()) builder.setDomain(configuration.getDomain());
     if(configuration.hasPublicUrl()) builder.setPublicUrl(configuration.getPublicUrl());
+    if(configuration.hasPortalUrl()) builder.setPortalUrl(configuration.getPortalUrl());
     if(configuration.hasUserAttributes())
       configuration.getUserAttributes().forEach(c -> builder.addUserAttributes(asDto(c)));
     if(configuration.getAgateVersion() != null) {
@@ -56,6 +57,7 @@ class ConfigurationDtos {
     configuration.setName(dto.getName());
     if(dto.hasDomain()) configuration.setDomain(dto.getDomain());
     if(dto.hasPublicUrl()) configuration.setPublicUrl(dto.getPublicUrl());
+    if(dto.hasPortalUrl()) configuration.setPortalUrl(dto.getPortalUrl());
     dto.getLanguagesList().forEach(lang -> configuration.getLocales().add(LocaleUtils.toLocale(lang)));
     configuration.setShortTimeout(dto.getShortTimeout());
     configuration.setLongTimeout(dto.getLongTimeout());

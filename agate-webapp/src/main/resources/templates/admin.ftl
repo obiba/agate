@@ -46,12 +46,11 @@
 <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
   your browser</a> to improve your experience.</p>
 <![endif]-->
-<!--<div class="development"></div>-->
 
 <div class="navbar navbar-default navbar-fixed-top"  role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <a href="#" class="navbar-brand">{{agateConfig.name}}</a>
+      <a href=".." class="navbar-brand">{{agateConfig.name}}</a>
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
         <span class="sr-only">Toggle navigation</span>
         <span class="icon-bar"></span>
@@ -138,9 +137,9 @@
           <li>© 2019</li>
           <li><a href="http://obiba.org" target="_blank"> OBiBa </a></li>
           <li><a href="http://agatedoc.obiba.org" target="_blank">
-            Documentation </a></li>
+              Documentation </a></li>
           <li><a href="https://github.com/obiba/agate" target="_blank"> Sources
-          </a></li>
+            </a></li>
         </ul>
       </div>
     </div>

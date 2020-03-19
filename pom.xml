@@ -40,6 +40,7 @@
     <commons-io.version>2.4</commons-io.version>
     <commons-lang.version>2.6</commons-lang.version>
     <embed-mongo.version>1.50.0</embed-mongo.version>
+    <freemarker.version>2.3.29</freemarker.version>
     <guava.version>19.0</guava.version>
     <javax.inject.version>1</javax.inject.version>
     <jersey.version>2.25.1</jersey.version>
@@ -53,7 +54,7 @@
     <metrics-spring.version>3.0.0</metrics-spring.version>
     <mongodb-driver.version>3.8.0</mongodb-driver.version>
     <nosqlunit.version>0.7.9</nosqlunit.version>
-    <obiba-commons.version>1.13.2</obiba-commons.version>
+    <obiba-commons.version>1.13.4</obiba-commons.version>
     <oltu.version>1.0.1</oltu.version>
     <protobuf.version>2.5.0</protobuf.version>
     <protobuf-java-format.version>1.2.1-obiba</protobuf-java-format.version>
@@ -197,6 +198,12 @@
         <groupId>io.github.jhipster.loaded</groupId>
         <artifactId>core</artifactId>
         <version>${jhipsterloaded.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.freemarker</groupId>
+        <artifactId>freemarker</artifactId>
+        <version>${freemarker.version}</version>
       </dependency>
 
       <dependency>
@@ -467,6 +474,11 @@
           <artifactId>spring-boot-starter-tomcat</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-freemarker</artifactId>
     </dependency>
 
     <dependency>
@@ -804,5 +816,5 @@
       </build>
     </profile>
   </profiles>
-  
+
 </project>

@@ -22,6 +22,9 @@
     "angular": true,
     "agate": true,
     "jQuery": true,
-    "$": true
+    "$": true,
+    "axios": true,
+    "window": true,
+    "URLSearchParams": true
   }
 }

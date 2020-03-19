@@ -184,6 +184,8 @@
     "name-help": "Name of your organization.",
     "publicUrl": "Public URL",
     "publicUrl-help": "Public base URL of the server that will be used when sending notification emails.",
+    "portalUrl": "Portal URL",
+    "portalUrl-help": "Public base URL of the organisation portal.",
     "domain": "Domain",
     "domain-help": "Single sign-on cookie domain.",
     "shortTimeout": "Short term timeout (hours)",

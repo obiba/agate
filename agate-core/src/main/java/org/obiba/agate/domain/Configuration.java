@@ -46,6 +46,8 @@ public class Configuration extends AbstractAuditableDocument {
 
   private String publicUrl;
 
+  private String portalUrl;
+
   private int shortTimeout = DEFAULT_SHORT_TIMEOUT;
 
   private int longTimeout = DEFAULT_LONG_TIMEOUT;
@@ -99,6 +101,18 @@ public class Configuration extends AbstractAuditableDocument {
 
   public void setPublicUrl(String publicUrl) {
     this.publicUrl = publicUrl;
+  }
+
+  public boolean hasPortalUrl() {
+    return !Strings.isNullOrEmpty(portalUrl);
+  }
+
+  public String getPortalUrl() {
+    return portalUrl;
+  }
+
+  public void setPortalUrl(String portalUrl) {
+    this.portalUrl = portalUrl;
   }
 
   public int getShortTimeout() {
