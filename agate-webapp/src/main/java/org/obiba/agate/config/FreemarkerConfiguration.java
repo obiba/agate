@@ -10,20 +10,21 @@
 
 package org.obiba.agate.config;
 
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
+import org.thymeleaf.spring4.view.ThymeleafViewResolver;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.springframework.context.annotation.Configuration;
-import org.thymeleaf.spring4.view.ThymeleafViewResolver;
-
 @Configuration
-public class ThymeleafConfiguration {
+public class FreemarkerConfiguration {
 
   @Inject
-  private ThymeleafViewResolver thymeleafViewResolver;
+  private FreeMarkerViewResolver freeMarkerViewResolver;
 
   @PostConstruct
   private void init() {
-    //thymeleafViewResolver.setViewNames(new String[] { "error", "/tl/*" });
+    freeMarkerViewResolver.setSuffix(".ftl");
   }
 }
