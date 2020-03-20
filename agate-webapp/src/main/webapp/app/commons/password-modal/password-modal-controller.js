@@ -54,11 +54,11 @@ agate.passwordModal
             }
           })
           .result.then(function () {
-            if ($scope.updated) $scope.updated();
+            if ($scope.updated) {$scope.updated();}
           }, function () {
-            if ($scope.closed) $scope.closed();
+            if ($scope.closed) {$scope.closed();}
           });
-      }
+      };
 
 
     }]);

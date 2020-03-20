@@ -60,7 +60,7 @@ agate.user
       $scope.loading = true;
       $scope.users = UsersResource.query({}, onSuccess, onError);
       // To keep ng-if instead of using ng-show, declare search filter as an object
-      $scope.search = {text: ""};
+      $scope.search = {text: ''};
 
       function getRealms() {
         RealmsService.getRealmsNameTitleMap($translate.use()).then(function (realms) {
@@ -159,7 +159,7 @@ agate.user
               AlertService,
               RealmsService) {
 
-      $scope.roles = ["agate-administrator", "agate-user"];
+      $scope.roles = ['agate-administrator', 'agate-user'];
       $scope.attributesConfig = [];
       ConfigurationResource.get(function(config) {
         $scope.languages = config.languages;

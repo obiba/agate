@@ -71,7 +71,7 @@ angular.module('agate.realm')
       }
 
       function getRealms() {
-        var realmResource = "agate-administrator" === Session.role ? RealmsConfigResource.summaries() : RealmsResource.query();
+        var realmResource = 'agate-administrator' === Session.role ? RealmsConfigResource.summaries() : RealmsResource.query();
         var deferred = $q.defer();
 
         if (REALMS !== null) {

@@ -38,10 +38,10 @@ agate.controller('MainController', ['$rootScope', '$scope', '$window', '$log', '
 
     function loadScript(src) {
 
-      var script = document.createElement("script");
-      script.type = "text/javascript";
+      var script = document.createElement('script');
+      script.type = 'text/javascript';
       script.src = src;
-      document.getElementById("recaptcha").appendChild(script);
+      document.getElementById('recaptcha').appendChild(script);
     }
 
     function getScreenSize() {
@@ -187,7 +187,7 @@ agate.controller('JoinController', ['$rootScope', '$scope', '$q', '$location', '
       $scope.config = values[2];
 
       if (userCookie) {
-        $scope.model = JSON.parse(userCookie.replace(/\\"/g, "\""));
+        $scope.model = JSON.parse(userCookie.replace(/\\'/g, '\''));
 
         $scope.joinConfig.schema.properties.username.readonly = true;
         $scope.joinConfig.schema.properties.realm.readonly = true;
@@ -202,7 +202,7 @@ agate.controller('JoinController', ['$rootScope', '$scope', '$q', '$location', '
 
     $scope.hasCookie = !!userCookie;
 
-    $scope.urlOrigin = encodeURIComponent(new URL($location.absUrl()).origin + "/#/join");
+    $scope.urlOrigin = encodeURIComponent(new URL($location.absUrl()).origin + '/#/join');
 
     $scope.setResponse = function (response) {
       $scope.response = response;
@@ -348,7 +348,7 @@ agate.controller('OAuthController', ['$log', '$scope', '$q', '$location', 'Accou
                   }
                 });
                 if (allScopesCovered) {
-                  document.getElementById("oauthForm").submit();
+                  document.getElementById('oauthForm').submit();
                 }
               }
             });

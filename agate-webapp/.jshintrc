@@ -19,6 +19,7 @@
   "smarttabs": true,
   "white": true,
   "globals": {
+    "ace": true,
     "angular": true,
     "agate": true,
     "jQuery": true,

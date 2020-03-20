@@ -38,9 +38,9 @@ agate.user
   }])
 
   .directive('attributeItem', ['$compile', 'AttributesService', function ($compile, AttributesService) {
-    var linker = function(scope, element, attrs) {
+    var linker = function(scope, element) {
       if (scope.attributeConfig.type === 'BOOLEAN') {
-        scope.attribute.boolValue = scope.attribute.value === "true";
+        scope.attribute.boolValue = scope.attribute.value === 'true';
       }
 
       scope.$watch('attribute.boolValue', function () {
@@ -54,7 +54,7 @@ agate.user
     };
 
     return {
-      restrict: "E",
+      restrict: 'E',
       link: linker,
       scope: {
         attribute:'=',

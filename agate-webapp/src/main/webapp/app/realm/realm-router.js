@@ -15,22 +15,22 @@
     .config(['$routeProvider',
       function($routeProvider) {
         $routeProvider.when('/admin/realms', {
-          templateUrl: "app/realm/views/realms.html",
+          templateUrl: 'app/realm/views/realms.html',
           controller: 'RealmListController'
         });
 
         $routeProvider.when('/admin/realm/new', {
-          templateUrl: "app/realm/views/realm-form.html",
+          templateUrl: 'app/realm/views/realm-form.html',
           controller: 'RealmFormController'
         });
 
         $routeProvider.when('/admin/realm/:name', {
-          templateUrl: "app/realm/views/realm-view.html",
+          templateUrl: 'app/realm/views/realm-view.html',
           controller: 'RealmViewController'
         });
 
         $routeProvider.when('/admin/realm/:name/edit', {
-          templateUrl: "app/realm/views/realm-form.html",
+          templateUrl: 'app/realm/views/realm-form.html',
           controller: 'RealmFormController'
         });
       }]);

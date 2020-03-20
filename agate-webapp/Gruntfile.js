@@ -17,7 +17,7 @@
 // use this if you want to recursively match all subfolders:
 // 'test/spec/**/*.js'
 
-var proxySnippet = require('grunt-connect-proxy/lib/utils').proxyRequest;
+var proxySnippet = require('grunt-connect-proxy2/lib/utils').proxyRequest;
 
 module.exports = function (grunt) {
   require('load-grunt-tasks')(grunt);
@@ -58,7 +58,7 @@ module.exports = function (grunt) {
         files: [
           'src/main/webapp/{,*/}*.html',
           '.tmp/styles/{,*/}*.css',
-          '{.tmp/,}src/main/webapp/scripts/{,*/}*.js',
+          '{.tmp/,}src/main/webapp/app/{,*/}*.js',
           'src/main/webapp/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
         ]
       }
@@ -79,6 +79,20 @@ module.exports = function (grunt) {
       proxies: [
         {
           context: '/ws',
+          host: 'localhost',
+          port: 8081,
+          https: false,
+          changeOrigin: false
+        },
+        {
+          context: '/jvm',
+          host: 'localhost',
+          port: 8081,
+          https: false,
+          changeOrigin: false
+        },
+        {
+          context: '/dump',
           host: 'localhost',
           port: 8081,
           https: false,
@@ -138,16 +152,19 @@ module.exports = function (grunt) {
       assets: ['src/main/webapp/assets/libs/node_modules'],
       server: '.tmp'
     },
+
     jshint: {
       options: {
-        jshintrc: '.jshintrc',
-        reporterOutput: ''
+        jshintrc: '.jshintrc'
       },
       all: [
         'Gruntfile.js',
-        'src/main/webapp/scripts/{,*/}*.js'
+        // TODO
+        //'src/main/webapp/app/**/*.js',
+        //'src/main/webapp/assets/js/agate.js'
       ]
     },
+
     coffee: {
       options: {
         sourceMap: true,
@@ -157,7 +174,7 @@ module.exports = function (grunt) {
         files: [
           {
             expand: true,
-            cwd: 'src/main/webapp/scripts',
+            cwd: 'src/main/webapp/app',
             src: '{,*/}*.coffee',
             dest: '.tmp/scripts',
             ext: '.js'
@@ -176,11 +193,10 @@ module.exports = function (grunt) {
         ]
       }
     },
-    // not used since Uglify task does concat,
-    // but still available if needed
-    /*concat: {
-     dist: {}
-     },*/
+    // generated dynamically by useminPrepare
+    //concat: {
+    //  dist: {}
+    //},
     rev: {
       dist: {
         files: {
@@ -239,19 +255,20 @@ module.exports = function (grunt) {
         ]
       }
     },
-    cssmin: {
-      // By default, your `index.html` <!-- Usemin Block --> will take care of
-      // minification. This option is pre-configured if you do not wish to use
-      // Usemin blocks.
-      // dist: {
-      //   files: {
-      //     '<%= yeoman.dist %>/styles/main.css': [
-      //       '.tmp/styles/{,*/}*.css',
-      //       'styles/{,*/}*.css'
-      //     ]
-      //   }
-      // }
-    },
+    // generated dynamically by useminPrepare
+    //cssmin: {
+    //  // By default, your `admin.html` <!-- Usemin Block --> will take care of
+    //  // minification. This option is pre-configured if you do not wish to use
+    //  // Usemin blocks.
+    //  dist: {
+    //    files: {
+    //      '<%= yeoman.dist %>/styles/main.css': [
+    //        '.tmp/styles/{,*/}*.css',
+    //        'styles/{,*/}*.css'
+    //      ]
+    //    }
+    //  }
+    //},
     htmlmin: {
       dist: {
         options: {
@@ -269,7 +286,7 @@ module.exports = function (grunt) {
           {
             expand: true,
             cwd: 'src/main/webapp',
-            src: ['*.html', 'views/*.html'],
+            src: ['*.html', 'app/**/*.html'],
             dest: '<%= yeoman.dist %>'
           }
         ]
@@ -288,7 +305,8 @@ module.exports = function (grunt) {
               '*.{ico,png,txt}',
               '.htaccess',
               'images/{,*/}*.{png,gif,webp}',
-              'fonts/*'
+              'fonts/*',
+              'styles/*'
             ]
           },
           {
@@ -297,7 +315,7 @@ module.exports = function (grunt) {
             cwd: 'src/main/webapp/bower_components/font-awesome',
             dest: '<%= yeoman.dist %>',
             src: [
-              'fonts/fontawesome*',
+              'fonts/fontawesome*'
             ]
           },
           {
@@ -314,6 +332,8 @@ module.exports = function (grunt) {
             cwd: 'src/main/webapp/bower_components/ace-builds/src-min-noconflict',
             dest: '<%= yeoman.dist %>/scripts',
             src: [
+              'mode-json.js',
+              'worker-json.js',
               'mode-css.js',
               'worker-css.js',
               'theme-monokai.js',

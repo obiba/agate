@@ -65,9 +65,9 @@ agate.application
 
     }])
 
-  .controller('ApplicationViewController', ['$scope', '$location', '$routeParams', 'ApplicationResource', '$uibModal',
+  .controller('ApplicationViewController', ['$scope', '$location', '$routeParams', 'ApplicationResource', '$uibModal','$log',
 
-    function ($scope, $location, $routeParams, ApplicationResource, $uibModal) {
+    function ($scope, $location, $routeParams, ApplicationResource, $uibModal, $log) {
       $scope.application = $routeParams.id ? ApplicationResource.get({id: $routeParams.id}) : {};
 
       $scope.editScope = function (scp) {
@@ -81,13 +81,13 @@ agate.application
           }
         }).result.then(function (scope) {
             var onSuccess = function () {
-              $scope.status = $scope.status_codes.SUCCESS;
+              $scope.status = $scope.statusCodes.SUCCESS;
               $location.path('/application' + ($scope.application.id ? '/' + $scope.application.id : '')).replace();
             };
 
             var onError = function() {
               $log.debug('DEBUG', $scope, $scope.$parent);
-              $scope.status = $scope.status_codes.ERROR;
+              $scope.status = $scope.statusCodes.ERROR;
             };
 
             if(!$scope.application.scopes) {
@@ -117,7 +117,7 @@ agate.application
   .controller('ApplicationEditController', ['$scope', '$location', '$routeParams', 'ApplicationsResource', 'ApplicationResource', '$log',
 
     function ($scope, $location, $routeParams, ApplicationsResource, ApplicationResource, $log) {
-      $scope.status_codes = {
+      $scope.statusCodes = {
         ERROR: -2,
         SUCCESS: 1
       };
@@ -126,19 +126,19 @@ agate.application
 
       $scope.save = function(form) {
         if (!form.$valid) {
-          $scope.status = $scope.status_codes.ERROR;
+          $scope.status = $scope.statusCodes.ERROR;
           form.saveAttempted = true;
           return;
         }
 
         var onSuccess = function () {
-          $scope.status = $scope.status_codes.SUCCESS;
+          $scope.status = $scope.statusCodes.SUCCESS;
           $location.path('/applications');
         };
 
         var onError = function () {
           $log.debug('DEBUG', $scope, $scope.$parent);
-          $scope.status = $scope.status_codes.ERROR;
+          $scope.status = $scope.statusCodes.ERROR;
         };
 
         if ($scope.key) {
@@ -155,15 +155,15 @@ agate.application
       };
 
       $scope.generateKey = function() {
-        var text = "";
-        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        var text = '';
+        var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
         for( var i=0; i < 30; i++ ) {
           text += possible.charAt(Math.floor(Math.random() * possible.length));
         }
 
         $scope.key = text;
-      }
+      };
 
       $scope.cancel = function () {
         if ($scope.application.id) {
