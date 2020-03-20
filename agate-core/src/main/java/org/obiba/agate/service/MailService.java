@@ -66,7 +66,7 @@ public class MailService {
    * @param text
    */
   @Async
-  public void sendEmail(String to, String subject, String html) {
+  public void sendEmail(String to, String subject, String text) {
     MimeMessage message = javaMailSender.createMimeMessage();
     try {
       // use the true flag to indicate you need a multipart message
@@ -75,8 +75,10 @@ public class MailService {
       message.setFrom(new InternetAddress(from));
       message.setSubject(subject);
       // use the true flag to indicate the text included is HTML
-      helper.setText(html, true);
+      helper.setText(text, true);
 
+      log.trace("Sending e-mail to User '{}'!", to);
+      log.trace(text);
       javaMailSender.send(message);
       log.debug("Sent e-mail to User '{}'!", to);
     } catch(MailException me) {

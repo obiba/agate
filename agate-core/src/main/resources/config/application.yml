@@ -1,8 +1,5 @@
 
 spring:
-    thymeleaf:
-        mode: XHTML
-        cache: true
     messageSource:
         cacheSeconds: 1
     freemarker:

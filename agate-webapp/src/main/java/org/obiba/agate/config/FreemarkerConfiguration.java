@@ -12,7 +12,6 @@ package org.obiba.agate.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
-import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
