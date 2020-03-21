@@ -170,6 +170,40 @@ var agatejs = (function() {
     });
   };
 
+  const agateUpdatePassword = function(formId, onSuccess, onFailure) {
+    $(formId).submit(function(e) {
+      e.preventDefault(); // avoid to execute the actual submit of the form.
+      var form = $(this);
+      var url = '../ws/user/_current/password';
+      var data = form.serialize(); // serializes the form's elements.
+
+      var formData = form.serializeArray();
+
+      if (formData[0].value.trim() === '') {
+        onFailure('PasswordMissing');
+        return;
+      }
+      if (formData[0].value.length < 8) {
+        onFailure('PasswordTooShort');
+        return;
+      }
+      if (formData[0].value !== formData[1].value) {
+        onFailure('PasswordNoMatch');
+        return;
+      }
+
+      axios.put(url, data)
+          .then(() => {
+            //console.dir(response);
+            onSuccess();
+          })
+          .catch(handle => {
+            console.dir(handle);
+            onFailure('Failure', handle.response.data);
+          });
+    });
+  };
+
   const agateForgotPassword = function(formId, onFailure) {
     $(formId).submit(function(e) {
       e.preventDefault(); // avoid to execute the actual submit of the form.
@@ -234,6 +268,7 @@ var agatejs = (function() {
     'signup': agateSignup,
     'forgotPassword': agateForgotPassword,
     'resetPassword': agateResetPassword,
+    'updatePassword': agateUpdatePassword,
     'confirmAndSetPassword': agateConfirmAndSetPassword,
     'changeLanguage': agateChangeLanguage
   };

@@ -10,19 +10,17 @@
 
 package org.obiba.agate.web.rest.user;
 
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Response;
-
-import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.web.model.Agate;
 import org.springframework.stereotype.Component;
 
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Response;
+
 @Component
-@RequiresRoles("agate-user")
 @Path("/user/_current")
-public  class CurrentUserResource extends AbstractUserResource {
+public class CurrentUserResource extends AbstractUserResource {
 
   @PUT
   public Response updateUser(Agate.UserDto userDto) {

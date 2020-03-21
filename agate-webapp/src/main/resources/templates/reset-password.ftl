@@ -3,7 +3,7 @@
 <head>
   <#include "libs/head.ftl">  <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>${config.name!""} | <@message "reset-update"/></title>
+  <title>${config.name!""} | <@message "update-password"/></title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
@@ -17,7 +17,7 @@
     <div class="card-body login-card-body">
 
       <#if key??>
-        <p class="login-box-msg"><@message "reset-update"/></p>
+        <p class="login-box-msg"><@message "update-password"/></p>
 
         <div id="alertPasswordMissing" class="alert alert-danger d-none">
           <small><@message "password-missing"/></small>
@@ -59,7 +59,7 @@
             </div>
             <!-- /.col -->
             <div class="col-4">
-              <button type="submit" class="btn btn-primary btn-block"><@message "update-password"/></button>
+              <button type="submit" class="btn btn-primary btn-block"><@message "update"/></button>
             </div>
             <!-- /.col -->
           </div>
