@@ -69,9 +69,11 @@
       <p class="mb-1">
         <a href="forgot-password"><@message "forgot-password"/></a>
       </p>
-      <p class="mb-0">
-        <a href="signup" class="text-center"><@message "register-new-membership"/></a>
-      </p>
+      <#if config?? && config.joinPageEnabled>
+        <p class="mb-0">
+          <a href="signup" class="text-center"><@message "register-new-membership"/></a>
+        </p>
+      </#if>
     </div>
     <!-- /.login-card-body -->
   </div>

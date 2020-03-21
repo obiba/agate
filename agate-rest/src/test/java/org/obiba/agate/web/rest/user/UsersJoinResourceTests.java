@@ -96,7 +96,7 @@ public class UsersJoinResourceTests {
     resource
       .create("un", "fn", "ln", "test@localhost.domain", "fr",
         Lists.newArrayList("app"), Lists.newArrayList("g1", "g2"), "password",
-        null, "recaptchacode", request);
+        null, "recaptchacode", null, request);
     verify(userService).createUser(user.capture(), eq("password"));
     assertEquals("id", user.getValue().getId());
     assertEquals("test@localhost.domain", user.getValue().getEmail());
@@ -120,6 +120,6 @@ public class UsersJoinResourceTests {
     resource
       .create("un", "fn", "ln", "test@localhost.domain", "fr",
         Lists.newArrayList("app"), Lists.newArrayList("g1", "g2"), null,
-        null, "recaptchacode", request);
+        null, "recaptchacode", null, request);
   }
 }

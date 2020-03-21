@@ -30,6 +30,107 @@ var agatejs = (function() {
     });
   };
 
+  const agateSignup = function(formId, requiredFields, onFailure) {
+    $(formId).submit(function(e) {
+      e.preventDefault(); // avoid to execute the actual submit of the form.
+      var form = $(this);
+      var url = '../ws/users/_join';
+      var data = form.serialize(); // serializes the form's elements.
+
+      var formData = form.serializeArray();
+
+      var getField = function(name) {
+        var fields = formData.filter(function(field) {
+          return field.name === name;
+        });
+        return fields.length > 0 ? fields[0] : undefined;
+      };
+
+      if (requiredFields) {
+        var missingFields = [];
+        requiredFields.forEach(function(item) {
+          var found = formData.filter(function(field) {
+            return field.name === item.name && field.value;
+          }).length;
+          if (found === 0) {
+            missingFields.push(item.title);
+          }
+        });
+        if (missingFields.length>0) {
+          onFailure(missingFields);
+          return;
+        }
+      }
+
+      const realmField = getField('realm');
+
+      axios.post(url, data)
+          .then(() => {
+            //console.dir(response);
+            let redirect = '/';
+            let values = {};
+            const q = new URLSearchParams(window.location.search);
+            if (q.get('redirect')) {
+              redirect = q.get('redirect');
+            } else if (realmField) {
+              redirect = 'just-registered';
+              values = { signin: true };
+            } else {
+              redirect = 'just-registered';
+            }
+            $.redirect(redirect, values, 'GET');
+          })
+          .catch(handle => {
+            console.dir(handle);
+            if (handle.response.data.message === 'Email already in use') {
+              onFailure('server.error.email-already-assigned');
+            } else if (handle.response.data.message === 'Invalid reCaptcha response') {
+              onFailure('server.error.bad-captcha');
+            }else if (handle.response.data.messageTemplate) {
+              onFailure(handle.response.data.messageTemplate);
+            } else {
+              onFailure('server.error.bad-request');
+            }
+          });
+    });
+  };
+
+  const agateConfirmAndSetPassword = function(formId, onFailure) {
+    $(formId).submit(function(e) {
+      e.preventDefault(); // avoid to execute the actual submit of the form.
+      var form = $(this);
+      var url = '../ws/users/_confirm';
+      var data = form.serialize(); // serializes the form's elements.
+
+      var formData = form.serializeArray();
+
+      if (formData[0].value.trim() === '') {
+        onFailure('PasswordMissing');
+        return;
+      }
+      if (formData[0].value.length < 8) {
+        onFailure('PasswordTooShort');
+        return;
+      }
+      if (formData[0].value !== formData[1].value) {
+        onFailure('PasswordNoMatch');
+        return;
+      }
+
+      axios.post(url, data)
+          .then(() => {
+            //console.dir(response);
+            let redirect = 'just-registered';
+            let values = { signin: true };
+            $.redirect(redirect, values, 'GET');
+          })
+          .catch(handle => {
+            console.dir(handle);
+            onFailure('Failure', handle.response.data);
+          });
+    });
+  };
+
   const agateResetPassword = function(formId, onFailure) {
     $(formId).submit(function(e) {
       e.preventDefault(); // avoid to execute the actual submit of the form.
@@ -130,8 +231,10 @@ var agatejs = (function() {
   return {
     'signin': agateSignin,
     'signout': agateSignout,
+    'signup': agateSignup,
     'forgotPassword': agateForgotPassword,
     'resetPassword': agateResetPassword,
+    'confirmAndSetPassword': agateConfirmAndSetPassword,
     'changeLanguage': agateChangeLanguage
   };
 }());

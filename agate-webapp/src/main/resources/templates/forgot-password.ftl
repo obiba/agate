@@ -41,7 +41,7 @@
         </div>
       </form>
 
-      <#if config??>
+      <#if config?? && config.joinPageEnabled>
         <p class="mb-0">
           <a href="signup" class="text-center"><@message "register-new-membership"/></a>
         </p>

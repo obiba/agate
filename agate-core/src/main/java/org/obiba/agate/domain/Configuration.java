@@ -58,6 +58,8 @@ public class Configuration extends AbstractAuditableDocument {
 
   private Version agateVersion;
 
+  private boolean joinPageEnabled = true;
+
   private boolean joinWithUsername = true;
 
   private List<AttributeConfiguration> userAttributes;
@@ -137,6 +139,14 @@ public class Configuration extends AbstractAuditableDocument {
 
   public void setSecretKey(String secretKey) {
     this.secretKey = secretKey;
+  }
+
+  public boolean isJoinPageEnabled() {
+    return joinPageEnabled;
+  }
+
+  public void setJoinPageEnabled(boolean joinPageEnabled) {
+    this.joinPageEnabled = joinPageEnabled;
   }
 
   public boolean isJoinWithUsername() {

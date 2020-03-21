@@ -193,6 +193,8 @@
     "longTimeout": "Délai d'expiration à long terme (heures)",
     "longTimeout-help": "Temps d'expiration du ticket lorsque l'option \"Garder la session ouverte\" est sélectionnée.",
     "inactiveTimeout": "Délai d'expiration (jours)",
+    "joinPageEnabled": "Page d'inscription activée",
+    "joinPageEnabled-help": "La page d'inscription est accessible. Ceci n'affecte pas la disponibilité du service web d'inscription d'utilisateurs pour les applications.",
     "inactiveTimeout-help": "Temps d'expiration du compte utilisateur en jours.",
     "joinWithUsername": "S'inscrire avec les options de nom d'utilisateur",
     "joinWithUsername-help": "Le nom d'utilisateur sera extrait de votre courriel.",

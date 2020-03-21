@@ -19,6 +19,7 @@ import javax.validation.constraints.NotNull;
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import org.json.JSONException;
 import org.springframework.data.annotation.Id;
 
 /**
@@ -118,6 +119,12 @@ public class AttributeConfiguration implements Serializable {
   public void deleteValue(String value) {
     if(values == null) return;
     values.remove(value);
+  }
+
+  public String getInputType() {
+    if (Type.INTEGER.equals(type) || Type.NUMBER.equals(type)) return "number";
+    if (Type.BOOLEAN.equals(type)) return "checkbox";
+    return "text";
   }
 
   @Override

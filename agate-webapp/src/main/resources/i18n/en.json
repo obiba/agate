@@ -194,6 +194,8 @@
     "longTimeout-help": "Ticket expiration timeout in hours when \"remember me\" option is selected.",
     "inactiveTimeout": "Inactive timeout (days)",
     "inactiveTimeout-help": "User account expiration timeout in days.",
+    "joinPageEnabled": "Sign up page enabled",
+    "joinPageEnabled-help": "Sign up page is accessible. This does not affect the user join web service offered to applications.",
     "joinWithUsername": "Sign up form offers to choose the username",
     "joinWithUsername-help": "User name will be extracted from user email.",
     "encryption-keys": "Encryption Keys",

@@ -29,11 +29,12 @@ class ConfigurationDtos {
 
   @NotNull
   Agate.ConfigurationDto asDto(@NotNull Configuration configuration) {
-    Agate.ConfigurationDto.Builder builder = Agate.ConfigurationDto.newBuilder() //
-      .setName(configuration.getName()) //
-      .setShortTimeout(configuration.getShortTimeout()) //
-      .setLongTimeout(configuration.getLongTimeout())//
-      .setInactiveTimeout(configuration.getInactiveTimeout()) //
+    Agate.ConfigurationDto.Builder builder = Agate.ConfigurationDto.newBuilder()
+      .setName(configuration.getName())
+      .setShortTimeout(configuration.getShortTimeout())
+      .setLongTimeout(configuration.getLongTimeout())
+      .setInactiveTimeout(configuration.getInactiveTimeout())
+      .setJoinPageEnabled(configuration.isJoinPageEnabled())
       .setJoinWithUsername(configuration.isJoinWithUsername());
 
     configuration.getLocales().forEach(locale -> builder.addLanguages(locale.getLanguage()));
@@ -62,6 +63,7 @@ class ConfigurationDtos {
     configuration.setShortTimeout(dto.getShortTimeout());
     configuration.setLongTimeout(dto.getLongTimeout());
     configuration.setInactiveTimeout(dto.getInactiveTimeout());
+    configuration.setJoinPageEnabled(dto.getJoinPageEnabled());
     configuration.setJoinWithUsername(dto.getJoinWithUsername());
     if(dto.getUserAttributesCount() > 0)
       dto.getUserAttributesList().forEach(c -> configuration.addUserAttribute(fromDto(c)));
