@@ -10,23 +10,24 @@
 
 package org.obiba.agate.web.controller;
 
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-public class SignController {
+public class ResetForgotPasswordController {
 
-  @GetMapping("/signin")
-  public ModelAndView signin() {
-    Subject subject = SecurityUtils.getSubject();
-    if (subject.isAuthenticated())
-      return new ModelAndView("redirect:/");
-
-    ModelAndView mv = new ModelAndView("signin");
+  @GetMapping("/reset-password")
+  public ModelAndView reset(@RequestParam(value = "key", required = false) String key) {
+    ModelAndView mv = new ModelAndView("reset-password");
+    mv.getModel().put("key", key);
     return mv;
   }
 
+  @GetMapping("/forgot-password")
+  public ModelAndView forgot() {
+    ModelAndView mv = new ModelAndView("forgot-password");
+    return mv;
+  }
 }

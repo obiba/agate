@@ -11,7 +11,7 @@ var agatejs = (function() {
       var data = form.serialize(); // serializes the form's elements.
 
       axios.post(url, data)
-        .then(response => {
+        .then(() => {
           //console.dir(response);
           let redirect = '/';
           const q = new URLSearchParams(window.location.search);
@@ -27,6 +27,68 @@ var agatejs = (function() {
             onFailure(banned, handle.response.data);
           }
         });
+    });
+  };
+
+  const agateResetPassword = function(formId, onFailure) {
+    $(formId).submit(function(e) {
+      e.preventDefault(); // avoid to execute the actual submit of the form.
+      var form = $(this);
+      var url = '../ws/users/_reset_password';
+      var data = form.serialize(); // serializes the form's elements.
+
+      var formData = form.serializeArray();
+
+      if (formData[0].value.trim() === '') {
+        onFailure('PasswordMissing');
+        return;
+      }
+      if (formData[0].value.length < 8) {
+        onFailure('PasswordTooShort');
+        return;
+      }
+      if (formData[0].value !== formData[1].value) {
+        onFailure('PasswordNoMatch');
+        return;
+      }
+
+      axios.post(url, data)
+          .then(() => {
+            //console.dir(response);
+            let redirect = '/';
+            const q = new URLSearchParams(window.location.search);
+            if (q.get('redirect')) {
+              redirect = q.get('redirect');
+            }
+            window.location = redirect;
+          })
+          .catch(handle => {
+            console.dir(handle);
+            onFailure('Failure', handle.response.data);
+          });
+    });
+  };
+
+  const agateForgotPassword = function(formId, onFailure) {
+    $(formId).submit(function(e) {
+      e.preventDefault(); // avoid to execute the actual submit of the form.
+      var form = $(this);
+      var url = '../ws/users/_forgot_password';
+      var data = form.serialize(); // serializes the form's elements.
+
+      if (decodeURI(data).trim() === 'username=') {
+        return;
+      }
+
+      axios.post(url, data)
+          .then(() => {
+            //console.dir(response);
+            $.redirect('/', {}, 'GET');
+          })
+          .catch(handle => {
+            console.dir(handle);
+            onFailure();
+          });
     });
   };
 
@@ -68,6 +130,8 @@ var agatejs = (function() {
   return {
     'signin': agateSignin,
     'signout': agateSignout,
+    'forgotPassword': agateForgotPassword,
+    'resetPassword': agateResetPassword,
     'changeLanguage': agateChangeLanguage
   };
 }());
