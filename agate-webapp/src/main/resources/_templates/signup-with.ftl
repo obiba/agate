@@ -31,31 +31,8 @@
 
       <form id="form" method="post">
 
-        <#if authConfig.joinWithUsername>
-          <div class="input-group mb-3">
-            <input name="username" type="text" class="form-control" placeholder="<@message "username"/>">
-            <div class="input-group-append">
-              <div class="input-group-text">
-                <span class="fas fa-user"></span>
-              </div>
-            </div>
-          </div>
-        </#if>
         <div class="input-group mb-3">
-          <input name="email" type="email" class="form-control" placeholder="<@message "email"/>">
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-envelope"></span>
-            </div>
-          </div>
-        </div>
-
-        <div class="text-center">
-          <p>- <@message "personal-information"/> -</p>
-        </div>
-
-        <div class="input-group mb-3">
-          <input name="firstname" type="text" class="form-control" placeholder="<@message "firstname"/>">
+          <input name="username" type="text" class="form-control" placeholder="<@message "username"/>" value="${uAuth.username!""}" readonly>
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-user"></span>
@@ -63,7 +40,29 @@
           </div>
         </div>
         <div class="input-group mb-3">
-          <input name="lastname" type="text" class="form-control" placeholder="<@message "lastname"/>">
+          <input name="email" type="email" class="form-control" placeholder="<@message "email"/>" value="${uAuth.email!""}" readonly>
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-envelope"></span>
+            </div>
+          </div>
+        </div>
+        <input type="hidden" name="realm" value="${uAuth.realm}"/>
+
+        <div class="text-center">
+          <p>- <@message "personal-information"/> -</p>
+        </div>
+
+        <div class="input-group mb-3">
+          <input name="firstname" type="text" class="form-control" placeholder="<@message "firstname"/>" value="${uAuth.firstname!""}">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-user"></span>
+            </div>
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <input name="lastname" type="text" class="form-control" placeholder="<@message "lastname"/>"  value="${uAuth.lastname!""}">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-user"></span>
@@ -81,7 +80,7 @@
             </select>
           </div>
         <#else>
-          <input type="hidden" name="locale" value="${authConfig.languages[0]!"en"}"/>
+          <input type="hidden" name="locale" value="${authConfig.languages[0]}"/>
         </#if>
 
         <#list authConfig.userAttributes as attribute>
@@ -119,18 +118,6 @@
       <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"
               async defer>
       </script>
-
-      <#if oidcProviders?? && oidcProviders?size != 0>
-        <div class="social-auth-links text-center mb-3">
-          <p>- <@message "sign-up-or"/> -</p>
-          <#list oidcProviders as oidc>
-            <a href="${oidc.url}" class="btn btn-block btn-primary">
-              <@message "sign-up-with"/> ${oidc.title}
-            </a>
-          </#list>
-        </div>
-        <!-- /.social-auth-links -->
-      </#if>
 
       <p class="mb-1">
         <a href="signin" class="text-center"><@message "already-have-a-membership"/></a>

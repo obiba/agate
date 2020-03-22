@@ -10,21 +10,28 @@
 
 package org.obiba.agate.web.controller;
 
+import com.google.common.base.Strings;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.obiba.agate.config.ClientConfiguration;
-import org.obiba.agate.domain.User;
-import org.obiba.agate.domain.UserStatus;
+import org.obiba.agate.domain.RealmUsage;
+import org.obiba.agate.security.OidcAuthConfigurationProvider;
 import org.obiba.agate.service.ConfigurationService;
-import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.controller.domain.AuthConfiguration;
+import org.obiba.agate.web.controller.domain.OidcProvider;
+import org.obiba.agate.web.support.URLUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 @Controller
 public class SignController {
@@ -36,20 +43,27 @@ public class SignController {
   private ClientConfiguration clientConfiguration;
 
   @Inject
-  private UserService userService;
+  private OidcAuthConfigurationProvider oidcAuthConfigurationProvider;
 
   @GetMapping("/signin")
-  public ModelAndView signin() {
+  public ModelAndView signin(HttpServletRequest request,
+                             @CookieValue(value = "NG_TRANSLATE_LANG_KEY", required = false, defaultValue = "en") String locale,
+                             @RequestParam(value = "language", required = false) String language,
+                             @RequestParam(value = "redirect", required = false) String redirect) {
     Subject subject = SecurityUtils.getSubject();
     if (subject.isAuthenticated())
-      return new ModelAndView("redirect:/");
+      return new ModelAndView("redirect:" + (Strings.isNullOrEmpty(redirect) ? "/" : redirect));
 
     ModelAndView mv = new ModelAndView("signin");
+
+    mv.getModel().put("oidcProviders", getOidcProviders(RealmUsage.ALL, getLang(language, locale),
+      "redirect=" + (Strings.isNullOrEmpty(redirect) ? "/" : URLUtils.encode(redirect)) + "&signin_error=/signup-with"));
     return mv;
   }
 
   @GetMapping("/signup")
-  public ModelAndView signup() {
+  public ModelAndView signup(@CookieValue(value = "NG_TRANSLATE_LANG_KEY", required = false, defaultValue = "en") String locale,
+                             @RequestParam(value = "language", required = false) String language) {
     if (!configurationService.getConfiguration().isJoinPageEnabled())
       return new ModelAndView("redirect:/");
 
@@ -58,7 +72,23 @@ public class SignController {
       return new ModelAndView("redirect:/");
 
     ModelAndView mv = new ModelAndView("signup");
+    mv.getModel().put("authConfig", new AuthConfiguration(configurationService.getConfiguration(), clientConfiguration));
+    mv.getModel().put("oidcProviders", getOidcProviders(RealmUsage.SIGNUP, getLang(language, locale), "signin_error=/signup-with"));
+    return mv;
+  }
 
+  @GetMapping("/signup-with")
+  public ModelAndView signupWith(@CookieValue(value = "u_auth", required = false, defaultValue = "{}") String uAuth) {
+    if (!configurationService.getConfiguration().isJoinPageEnabled())
+      return new ModelAndView("redirect:/");
+
+    ModelAndView mv = new ModelAndView("signup-with");
+    try {
+      String fixedUAuth = uAuth.replaceAll("\\\\", "");
+      mv.getModel().put("uAuth", new JSONObject(fixedUAuth));
+    } catch (JSONException e) {
+      mv.getModel().put("uAuth", new JSONObject());
+    }
     mv.getModel().put("authConfig", new AuthConfiguration(configurationService.getConfiguration(), clientConfiguration));
 
     return mv;
@@ -78,5 +108,14 @@ public class SignController {
     return mv;
   }
 
+  private String getLang(String language, String locale) {
+    return language == null ? locale : language;
+  }
+
+  private Collection<OidcProvider> getOidcProviders(RealmUsage usage, String locale, String query) {
+    return oidcAuthConfigurationProvider.getConfigurations(usage).stream()
+      .map(conf -> new OidcProvider(conf, locale, query))
+      .collect(Collectors.toList());
+  }
 
 }

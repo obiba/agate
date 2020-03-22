@@ -23,7 +23,7 @@ public class IndexController {
   public ModelAndView admin() {
     Subject subject = SecurityUtils.getSubject();
     if (!subject.isAuthenticated())
-      return new ModelAndView("redirect:signin?redirect=admin");
+      return new ModelAndView("redirect:signin?redirect=/admin");
 
     if (subject.hasRole("agate-administrator"))
       return new ModelAndView("admin");

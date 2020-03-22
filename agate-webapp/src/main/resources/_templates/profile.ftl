@@ -87,33 +87,33 @@
             </div>
           </div>
           <div class="col-6">
-            <#if user.realm == "agate-user-realm">
               <div class="card card-primary card-outline">
                 <div class="card-header">
-                  <h3 class="card-title"><@message "update-password"/></h3>
+                  <h3 class="card-title"><@message "credentials"/></h3>
                 </div>
                 <div class="card-body">
-                  <div id="alertPasswordMissing" class="alert alert-danger d-none">
-                    <small><@message "password-missing"/></small>
-                  </div>
+                  <#if user.realm == "agate-user-realm">
+                    <div id="alertPasswordMissing" class="alert alert-danger d-none">
+                      <small><@message "password-missing"/></small>
+                    </div>
 
-                  <div id="alertPasswordTooShort" class="alert alert-danger d-none">
-                    <small><@message "password-too-short"/></small>
-                  </div>
+                    <div id="alertPasswordTooShort" class="alert alert-danger d-none">
+                      <small><@message "password-too-short"/></small>
+                    </div>
 
-                  <div id="alertPasswordNoMatch" class="alert alert-danger d-none">
-                    <small><@message "password-no-match"/></small>
-                  </div>
+                    <div id="alertPasswordNoMatch" class="alert alert-danger d-none">
+                      <small><@message "password-no-match"/></small>
+                    </div>
 
-                  <div id="alertFailure" class="alert alert-danger d-none">
-                    <small><@message "update-password-failed"/></small>
-                  </div>
+                    <div id="alertFailure" class="alert alert-danger d-none">
+                      <small><@message "update-password-failed"/></small>
+                    </div>
 
-                  <div id="alertSuccess" class="alert alert-success d-none">
-                    <small><@message "update-password-success"/></small>
-                  </div>
+                    <div id="alertSuccess" class="alert alert-success d-none">
+                      <small><@message "update-password-success"/></small>
+                    </div>
 
-                  <form id="form" method="post">
+                    <form id="form" method="post">
                     <div class="input-group mb-3">
                       <input name="password" type="password" class="form-control" placeholder="<@message "new-password"/>">
                       <div class="input-group-append">
@@ -129,14 +129,23 @@
                           <span class="fas fa-lock"></span>
                         </div>
                       </div>
-                    </div>
+                      </div>
                     <div class="float-right">
                       <button type="submit" class="btn btn-primary btn-block"><@message "update"/></button>
                     </div>
                   </form>
+                  <#elseif realmConfig??>
+                    <#if providerUrl??>
+                      <@message "user-account-at"/>
+                      <a href="${providerUrl}" class="btn btn-primary" target="_blank"><i class="fas fa-user"></i> ${realmConfig.title[.lang]}</a>
+                    <#else>
+                      <@message "contact-system-administrator-to-change-password"/>
+                    </#if>
+                  <#else>
+                    <@message "contact-system-administrator-to-change-password"/>
+                  </#if>
                 </div>
               </div>
-            </#if>
           </div>
         </div>
       </div><!-- /.container-fluid -->

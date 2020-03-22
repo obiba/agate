@@ -36,6 +36,7 @@ import org.obiba.agate.service.TicketService;
 import org.obiba.agate.service.TokenUtils;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.rest.ticket.TicketsResource;
+import org.obiba.agate.web.support.URLUtils;
 import org.obiba.oidc.OIDCConfigurationProvider;
 import org.obiba.oidc.OIDCCredentials;
 import org.obiba.oidc.OIDCException;
@@ -55,6 +56,10 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.NewCookie;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -145,7 +150,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
         session.setCallbackError(error);
         if (!Strings.isNullOrEmpty(errorUrl)) response.sendRedirect(errorUrl);
       } else {
-        sendRedirectOrSendError(publicUrl + (publicUrl.endsWith("/") ? "" : "/") + "#/error", error, response);
+        sendRedirectOrSendError(publicUrl + (publicUrl.endsWith("/") ? "" : "/") + "error", error, response);
       }
     } catch (IOException ignore) {
       // ignore
@@ -344,11 +349,22 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     return subjectSession;
   }
 
-  private Optional<Application> findApplication(String redirectUri) {
-    return applicationService.findAll()
-      .stream()
-      .filter(application -> application.hasRedirectURI() && matchRedirectUrl(application.getRedirectURI(), redirectUri))
-      .findFirst();
+  private Optional<Application> findApplication(String redirect) {
+    try {
+      URL redirectUrl = new URL(redirect);
+      String query = redirectUrl.getQuery();
+      Map<String, String> queryMap = URLUtils.queryStringToMap(query);
+      String redirectUri = queryMap.containsKey("redirect_uri") ? queryMap.get("redirect_uri") : redirect;
+      if (!Strings.isNullOrEmpty(redirectUri)) {
+        return applicationService.findAll()
+          .stream()
+          .filter(application -> application.hasRedirectURI() && matchRedirectUrl(application.getRedirectURI(), redirectUri))
+          .findFirst();
+      }
+    } catch (MalformedURLException e) {
+      // ignore
+    }
+    return Optional.empty();
   }
 
   private boolean matchRedirectUrl(String source, String target) {
@@ -376,7 +392,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
 
   private String retrieveSignupRedirectUrl(Map<String, String[]> requestParameters) {
     String signupRedirectUrl = retrieveRequestParameter(FilterParameter.REDIRECT.value(), requestParameters);
-    return Strings.isNullOrEmpty(signupRedirectUrl) ? (publicUrl + (publicUrl.endsWith("/") ? "" : "/") + "#/join") : signupRedirectUrl;
+    return Strings.isNullOrEmpty(signupRedirectUrl) ? (publicUrl + (publicUrl.endsWith("/") ? "" : "/") + "signup") : signupRedirectUrl;
   }
 
   public static class Wrapper extends DelegatingFilterProxy {
@@ -395,14 +411,14 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
 
   /**
    * If not specified in the request parameter, the error redirect goes to agate's error page.
-   * 
+   *
    * @param session
    * @return
    */
   private String makeErrorUrl(OIDCSession session) {
     String errorUrl = session != null ? Strings.emptyToNull(retrieveRequestParameter(FilterParameter.ERROR.value(), session.getRequestParameters())) : null;
     if (Strings.isNullOrEmpty(errorUrl)) {
-      errorUrl = publicUrl + (publicUrl.endsWith("/") ? "" : "/") + "#/error";
+      errorUrl = publicUrl + (publicUrl.endsWith("/") ? "" : "/") + "error";
     }
     return errorUrl;
   }
@@ -411,12 +427,12 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     Map<String, String[]> requestParameters = session.getRequestParameters();
 
     String errorUrl = retrieveRequestParameter(FilterParameter.SIGNIN_ERROR_URI.value(), requestParameters);
-    String url = Strings.isNullOrEmpty(errorUrl) ? (publicUrl + (publicUrl.endsWith("/") ? "#/join" : "/#/join")) : errorUrl;
+    String url = Strings.isNullOrEmpty(errorUrl) ? (publicUrl + (publicUrl.endsWith("/") ? "signup-with" : "/signup-with")) : errorUrl;
 
     String redirect = retrieveRedirectUrl(requestParameters);
 
     if (!Strings.isNullOrEmpty(redirect) && redirect.contains("redirect_uri")) {
-      url = url + "?redirect=" + redirect;
+      url = url + "?redirect=" + URLUtils.encode(redirect);
     }
 
     return url;

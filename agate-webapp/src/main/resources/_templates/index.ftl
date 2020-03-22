@@ -38,7 +38,7 @@
                 <div class="icon">
                   <i class="fas fa-cogs"></i>
                 </div>
-                <a href="admin" class="small-box-footer">
+                <a href="/admin" class="small-box-footer">
                   <@message "more-info"/> <i class="fas fa-arrow-circle-right"></i>
                 </a>
               </div>
@@ -61,7 +61,7 @@
                 <div class="icon">
                   <i class="fas fa-user"></i>
                 </div>
-                <a href="profile" class="small-box-footer">
+                <a href="/profile" class="small-box-footer">
                   <@message "more-info"/> <i class="fas fa-arrow-circle-right"></i>
                 </a>
               </div>

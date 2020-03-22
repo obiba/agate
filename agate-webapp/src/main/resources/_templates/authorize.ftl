@@ -2,7 +2,7 @@
 <html lang="${.lang}">
 <head>
   <#include "libs/head.ftl">
-  <title>${config.name!"Agate"} | <@message "autorization"/></title>
+  <title>${config.name!"Agate"} | <@message "authorization"/></title>
 </head>
 <body class="hold-transition layout-top-nav layout-navbar-fixed">
 <div class="wrapper">
@@ -19,7 +19,7 @@
       <div class="container">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0"><@message "autorization"/></h1>
+            <h1 class="m-0"><@message "authorization"/></h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
 

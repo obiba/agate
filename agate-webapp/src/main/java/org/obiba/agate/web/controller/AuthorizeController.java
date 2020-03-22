@@ -10,7 +10,9 @@ import org.apache.shiro.subject.Subject;
 import org.obiba.agate.domain.Application;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.service.ApplicationService;
+import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.UserService;
+import org.obiba.agate.web.support.URLUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,11 +20,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -37,22 +36,22 @@ public class AuthorizeController {
   @Inject
   private ApplicationService applicationService;
 
+  @Inject
+  private ConfigurationService configurationService;
+
   @GetMapping("/authorize")
   public ModelAndView authz(HttpServletRequest request,
-                            @RequestParam(value = "response_type", required = true) String responseType,
-                            @RequestParam(value = "client_id", required = true) String clientId,
-                            @RequestParam(value = "redirect_uri", required = true) String redirectUri,
-                            @RequestParam(value = "scope", required = true) String scope,
-                            @RequestParam(value = "state", required = true) String state) {
+                            @RequestParam(value = "response_type") String responseType,
+                            @RequestParam(value = "client_id") String clientId,
+                            @RequestParam(value = "redirect_uri") String redirectUri,
+                            @RequestParam(value = "scope") String scope,
+                            @RequestParam(value = "state") String state) {
     Subject subject = SecurityUtils.getSubject();
     String qs = request.getQueryString();
 
     if (!subject.isAuthenticated()) {
-      try {
-        return new ModelAndView("redirect:signin?redirect=/ws/oauth2/authorize" + URLEncoder.encode("?" + qs, "UTF-8"));
-      } catch (UnsupportedEncodingException e) {
-        // not supposed to happen
-      }
+      String redirect = configurationService.getPublicUrl() + "/ws/oauth2/authorize?" + qs;
+      return new ModelAndView("redirect:signin?redirect=" + URLUtils.encode(redirect));
     }
 
     try {
@@ -85,7 +84,7 @@ public class AuthorizeController {
               ApplicationBundle bundle = new ApplicationBundle("_agate", "oauth.openid-request");
               applicationScopes.put(bundle.getName(), bundle);
             }
-            applicationScopes.get("_agate").addScope(new Application.Scope(scopeName, "oauth.openid-"  + scopeName + "-description"));
+            applicationScopes.get("_agate").addScope(new Application.Scope(scopeName, "oauth.openid-" + scopeName + "-description"));
           } else {
             String[] scopeParts = scopeName.split(":");
             Application app = findApplication(applications, scopeParts[0]);
@@ -93,7 +92,7 @@ public class AuthorizeController {
               if (!applicationScopes.containsKey(app.getId())) {
                 applicationScopes.put(app.getId(), new ApplicationBundle(app));
               }
-              if (scopeParts.length>1 && app.hasScope(scopeParts[1])) {
+              if (scopeParts.length > 1 && app.hasScope(scopeParts[1])) {
                 applicationScopes.get(app.getId()).addScope(app.getScope(scopeParts[1]));
               }
             }

@@ -72,13 +72,15 @@ var agatejs = (function() {
             const q = new URLSearchParams(window.location.search);
             if (q.get('redirect')) {
               redirect = q.get('redirect');
+              window.location = redirect;
             } else if (realmField) {
               redirect = 'just-registered';
               values = { signin: true };
+              $.redirect(redirect, values, 'GET');
             } else {
               redirect = 'just-registered';
+              $.redirect(redirect, values, 'GET');
             }
-            $.redirect(redirect, values, 'GET');
           })
           .catch(handle => {
             console.dir(handle);

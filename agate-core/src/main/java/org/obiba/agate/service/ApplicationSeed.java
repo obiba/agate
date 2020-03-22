@@ -28,7 +28,7 @@ public class ApplicationSeed implements ApplicationListener<ContextRefreshedEven
     save(Application.newBuilder().name("Opal").description("The data storage application.")
         .key(applicationService.hashKey("changeit")).redirectURI("http://localhost:8080").build());
     save(Application.newBuilder().name("Mica").description("The study catalogue application.")
-        .key(applicationService.hashKey("changeit")).build());
+        .key(applicationService.hashKey("changeit")).redirectURI("http://localhost:8082").build());
     save(Application.newBuilder().name("Drupal").description("The web data portal application.")
         .key(applicationService.hashKey("changeit")).build());
   }
