@@ -21,10 +21,12 @@ import org.obiba.agate.domain.User;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.MailService;
 import org.obiba.agate.service.UserService;
+import org.obiba.agate.service.support.MessageResolverMethod;
 import org.obiba.agate.web.rest.application.ApplicationAwareResource;
 import org.obiba.shiro.realm.ObibaRealm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
@@ -38,10 +40,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -58,7 +57,7 @@ public class NotificationsResource extends ApplicationAwareResource {
   private Configuration freemarkerConfiguration;
 
   @Inject
-  private ConfigurationService configurationService;
+  private MessageSource messageSource;
 
   @Inject
   private UserService userService;
@@ -131,9 +130,11 @@ public class NotificationsResource extends ApplicationAwareResource {
     });
 
     for (User rec : recipients) {
+      Locale locale = LocaleUtils.toLocale(rec.getPreferredLanguage());
       ctx.put("user", rec);
+      ctx.put("msg", new MessageResolverMethod(messageSource, locale));
       try {
-        Template template = freemarkerConfiguration.getTemplate(templateLocation, LocaleUtils.toLocale(rec.getPreferredLanguage()));
+        Template template = freemarkerConfiguration.getTemplate(templateLocation, locale);
         mailService.sendEmail(rec.getEmail(), subject,
           FreeMarkerTemplateUtils.processTemplateIntoString(template, ctx));
       } catch (Exception e) {
