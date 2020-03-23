@@ -5,7 +5,11 @@
     <a href="${config.portalUrl!".."}" class="navbar-brand">
       <img src="${brandImageSrc}" alt="Logo" class="brand-image ${brandImageClass}"
            style="opacity: .8">
-      <span class="brand-text ${brandTextClass}">${config.name!"Agate"}</span>
+      <span class="brand-text ${brandTextClass}">
+        <#if brandTextEnabled>
+          ${config.name!""}
+        </#if>
+      </span>
     </a>
     <#else>
       <img src="${brandImageSrc}" alt="Logo" class="brand-image ${brandImageClass}"
