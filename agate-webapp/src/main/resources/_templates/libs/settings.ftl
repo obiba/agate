@@ -2,6 +2,9 @@
 <#assign datetimeFormat = "yyyy-MM-dd hh:mm"/>
 <#assign dateFormat = "yyyy-MM-dd"/>
 
+<!-- Favicon -->
+<#assign faviconPath = "/favicon.ico"/>
+
 <!-- Branding -->
 <#assign brandImageSrc = "../assets/images/logo.png"/>
 <#assign brandImageClass = "img-circle elevation-3"/>
