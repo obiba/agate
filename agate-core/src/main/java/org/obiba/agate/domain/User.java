@@ -117,6 +117,12 @@ public class User extends AbstractAuditableDocument {
     this.lastName = lastName;
   }
 
+  public String getDisplayName() {
+    String fname = (hasFirstName() ? firstName : "") + " " + (hasLastName() ? lastName : "");
+    if (Strings.isNullOrEmpty(fname.trim())) return name;
+    return fname.trim();
+  }
+
   public String getEmail() {
     return email;
   }

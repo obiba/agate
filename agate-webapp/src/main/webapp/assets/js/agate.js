@@ -230,14 +230,30 @@ var agatejs = (function() {
   };
 
   const agateSignout = function(pathPrefix) {
-    $.ajax({
-      type: 'DELETE',
-      url: pathPrefix + '/ws/auth/session/_current'
-    })
-      .always(function() {
-        var redirect = pathPrefix + '/';
-        $.redirect(redirect, {}, 'GET');
-      });
+    const removeAgateSession = function() {
+      $.ajax({
+        type: 'DELETE',
+        url: pathPrefix + '/ws/auth/session/_current'
+      })
+        .always(function() {
+          var redirect = pathPrefix + '/';
+          $.redirect(redirect, {}, 'GET');
+        });
+    };
+
+    var obibaid = Cookies.get('obibaid');
+    if (obibaid) {
+      console.log('Removing ' + obibaid);
+      $.ajax({
+        type: 'DELETE',
+        url: pathPrefix + '/ws/ticket/' + obibaid
+      })
+        .always(function() {
+          removeAgateSession();
+        });
+    } else {
+      removeAgateSession();
+    }
   };
 
   const agateChangeLanguage = function(lang) {

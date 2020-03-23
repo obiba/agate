@@ -10,16 +10,19 @@
         </ul>
       </li>
     </#if>
-    <li class="nav-item dropdown">
-      <a id="userMenu" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">
-        <i class="fas fa-user"></i> <#if user??>${user.firstName!""} ${user.lastName!""}<#else>${username}</#if>
-      </a>
-      <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow">
-        <#if user??>
-          <li><a href="${pathPrefix!".."}/profile" class="dropdown-item"><@message "profile"/></a></li>
-        </#if>
-        <li><a href="#" onclick="agatejs.signout('${pathPrefix!".."}');" class="dropdown-item"><@message "sign-out"/></a></li>
-      </ul>
+    <li class="nav-item">
+      <#if user??>
+        <a href="${pathPrefix!".."}/profile" class="nav-link">
+          <i class="fas fa-user"></i> ${user.displayName}
+        </a>
+      <#else>
+        <span class="nav-link">
+          <i class="fas fa-user"></i> ${username}
+        </span>
+      </#if>
+    </li>
+    <li class="nav-item">
+      <a class="btn btn-outline-danger" href="#" onclick="agatejs.signout('${pathPrefix!".."}');"><@message "sign-out"/></a>
     </li>
   <#elseif config??>
     <#if config.locales?size != 1>

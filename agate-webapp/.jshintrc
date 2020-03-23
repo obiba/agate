@@ -26,6 +26,7 @@
     "$": true,
     "axios": true,
     "window": true,
-    "URLSearchParams": true
+    "URLSearchParams": true,
+    "Cookies": true
   }
 }
