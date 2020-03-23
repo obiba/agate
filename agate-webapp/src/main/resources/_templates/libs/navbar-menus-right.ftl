@@ -1,4 +1,5 @@
 <#macro rightmenus>
+  <#include "../models/navbar-menus-right.ftl"/>
   <#if username??>
     <#if config?? && config.locales?size != 1>
       <li class="nav-item dropdown">
