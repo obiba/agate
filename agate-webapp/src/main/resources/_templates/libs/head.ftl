@@ -25,3 +25,6 @@
 <link rel="stylesheet" href="${pathPrefix!".."}${adminLTEPath}/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
 <!-- Toastr -->
 <link rel="stylesheet" href="${pathPrefix!".."}${adminLTEPath}/plugins/toastr/toastr.min.css">
+
+<!-- Custom head -->
+<#include "../models/head.ftl"/>

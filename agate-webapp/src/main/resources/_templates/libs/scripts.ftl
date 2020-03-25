@@ -20,3 +20,6 @@
 <script src="${pathPrefix!".."}/assets/libs/node_modules/jquery.redirect/jquery.redirect.js"></script>
 <script src="${pathPrefix!".."}/assets/libs/node_modules/js-cookie/src/js.cookie.js"></script>
 <script src="${pathPrefix!".."}/assets/js/agate.js"></script>
+
+<!-- Custom js -->
+<#include "../models/scripts.ftl"/>
