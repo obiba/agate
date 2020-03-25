@@ -172,6 +172,52 @@ var agatejs = (function() {
     });
   };
 
+  const agateUpdateProfile = function(formId, requiredFields, onFailure) {
+    $(formId).submit(function (e) {
+      e.preventDefault(); // avoid to execute the actual submit of the form.
+      var form = $(this);
+      var url = '../ws/user/_current/_profile';
+      var data = form.serialize();
+
+      var formData = form.serializeArray();
+
+      var getField = function(name) {
+        var fields = formData.filter(function(field) {
+          return field.name === name;
+        });
+        return fields.length > 0 ? fields[0] : undefined;
+      };
+
+      if (requiredFields) {
+        var missingFields = [];
+        requiredFields.forEach(function(item) {
+          var found = formData.filter(function(field) {
+            return field.name === item.name && field.value;
+          }).length;
+          if (found === 0) {
+            missingFields.push(item.title);
+          }
+        });
+        if (missingFields.length>0) {
+          onFailure(missingFields);
+          return;
+        }
+      }
+
+      let language = getField('locale').value;
+
+      axios.put(url, data)
+        .then(() => {
+          //console.dir(response);
+          window.location = '/profile?language=' + language;
+        })
+        .catch(handle => {
+          console.dir(handle);
+          onFailure('server.error.bad-request');
+        });
+    });
+  };
+
   const agateUpdatePassword = function(formId, onSuccess, onFailure) {
     $(formId).submit(function(e) {
       e.preventDefault(); // avoid to execute the actual submit of the form.
@@ -288,6 +334,7 @@ var agatejs = (function() {
     'resetPassword': agateResetPassword,
     'updatePassword': agateUpdatePassword,
     'confirmAndSetPassword': agateConfirmAndSetPassword,
-    'changeLanguage': agateChangeLanguage
+    'changeLanguage': agateChangeLanguage,
+    'updateProfile': agateUpdateProfile
   };
 }());

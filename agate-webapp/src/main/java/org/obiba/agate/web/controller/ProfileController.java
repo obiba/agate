@@ -3,6 +3,7 @@ package org.obiba.agate.web.controller;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.Subject;
+import org.obiba.agate.config.ClientConfiguration;
 import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.OidcRealmConfig;
 import org.obiba.agate.domain.RealmConfig;
@@ -12,6 +13,7 @@ import org.obiba.agate.service.AuthorizationService;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.RealmConfigService;
 import org.obiba.agate.service.UserService;
+import org.obiba.agate.web.controller.domain.AuthConfiguration;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -33,6 +35,9 @@ public class ProfileController {
   @Inject
   protected AuthorizationService authorizationService;
 
+  @Inject
+  private ClientConfiguration clientConfiguration;
+
   @GetMapping("/profile")
   public ModelAndView profile() {
     Subject subject = SecurityUtils.getSubject();
@@ -52,6 +57,7 @@ public class ProfileController {
       }
 
       mv.getModel().put("authorizations", authorizationService.list(user.getName()));
+      mv.getModel().put("authConfig", new AuthConfiguration(configurationService.getConfiguration(), clientConfiguration));
 
       return mv;
     } catch (Exception e) {

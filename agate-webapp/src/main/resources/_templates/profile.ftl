@@ -68,21 +68,31 @@
                       </#list>
                     </dd>
                   </#if>
-                  <#if user.attributes??>
-                    <#list user.attributes?keys as key>
+                  <#if authConfig.userAttributes??>
+                    <#list authConfig.userAttributes as attribute>
                       <dt class="col-sm-4">
-                        <@message key/>
+                        <@message attribute.name/>
                       </dt>
                       <dd class="col-sm-8">
-                        <#if user.attributes[key] == "true">
-                          <i class="fas fa-check"></i>
-                        <#else>
-                          ${user.attributes[key]}
+                        <#if user.attributes?? && user.attributes[attribute.name]??>
+                          <#if user.attributes[attribute.name] == "true">
+                            <i class="fas fa-check"></i>
+                          <#else>
+                            ${user.attributes[attribute.name]}
+                          </#if>
+                        <#elseif attribute.inputType == "checkbox">
+                          <i class="fas fa-times"></i>
                         </#if>
                       </dd>
                     </#list>
                   </#if>
                 </dl>
+              </div>
+              <div class="card-footer">
+                <div class="float-right">
+                  <button type="button" class="btn btn-primary" data-toggle="modal"
+                          data-target="#modal-profile"><i class="fas fa-pen"></i> <@message "personal-information"/></button>
+                </div>
               </div>
             </div>
           </div>
@@ -113,27 +123,25 @@
                       <small><@message "update-password-success"/></small>
                     </div>
 
-                    <form id="form" method="post">
-                    <div class="input-group mb-3">
-                      <input name="password" type="password" class="form-control" placeholder="<@message "new-password"/>">
-                      <div class="input-group-append">
-                        <div class="input-group-text">
-                          <span class="fas fa-lock"></span>
+                    <form id="password-form" method="post">
+                      <div class="input-group mb-3">
+                        <input name="password" type="password" class="form-control" placeholder="<@message "new-password"/>">
+                        <div class="input-group-append">
+                          <div class="input-group-text">
+                            <span class="fas fa-lock"></span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div class="input-group mb-3">
-                      <input name="password2" type="password" class="form-control" placeholder="<@message "repeat-new-password"/>">
-                      <div class="input-group-append">
-                        <div class="input-group-text">
-                          <span class="fas fa-lock"></span>
+                      <div class="input-group mb-3">
+                        <input name="password2" type="password" class="form-control" placeholder="<@message "repeat-new-password"/>">
+                        <div class="input-group-append">
+                          <div class="input-group-text">
+                            <span class="fas fa-lock"></span>
+                          </div>
                         </div>
                       </div>
-                      </div>
-                    <div class="float-right">
-                      <button type="submit" class="btn btn-primary btn-block"><@message "update"/></button>
-                    </div>
-                  </form>
+                      <button type="submit" id="submit-password" class="d-none"></button>
+                    </form>
                   <#elseif realmConfig??>
                     <#if providerUrl??>
                       <@message "user-account-at"/>
@@ -145,6 +153,11 @@
                     <@message "contact-system-administrator-to-change-password"/>
                   </#if>
                 </div>
+                <div class="card-footer">
+                  <div class="float-right">
+                    <label for="submit-password" class="btn btn-primary mb-0" style="cursor: pointer; font-weight: normal;"><@message "update"/></label>
+                  </div>
+                </div>
               </div>
           </div>
         </div>
@@ -154,33 +167,84 @@
   </div>
   <!-- /.content-wrapper -->
 
+  <div class="modal fade" id="modal-profile">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title"><@message "personal-information"/></h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div id="alertProfileFailure" class="alert alert-danger d-none">
+
+          </div>
+
+          <form id="profile-form" method="post">
+            <div class="form-group mb-3">
+              <label><@message "firstname"/></label>
+              <input name="firstname" type="text" class="form-control" value="${user.firstName!""}">
+            </div>
+            <div class="form-group mb-3">
+              <label><@message "lastname"/></label>
+              <input name="lastname" type="text" class="form-control" value="${user.lastName!""}">
+            </div>
+
+            <#if authConfig.languages?size gt 1>
+              <div class="form-group mb-3">
+                <label><@message "preferred-language"/></label>
+                <select class="form-control" name="locale">
+                  <#list authConfig.languages as language>
+                    <option value="${language}" <#if user.preferredLanguage == language>selected</#if>><@message "language." + language/></option>
+                  </#list>
+                </select>
+              </div>
+            <#else>
+              <input type="hidden" name="locale" value="${authConfig.languages[0]!"en"}"/>
+            </#if>
+
+            <#list authConfig.userAttributes as attribute>
+              <div class="form-group mb-3">
+                <#if attribute.inputType == "checkbox">
+                  <div class="form-check">
+                    <input name="${attribute.name}" type="checkbox" value="true" class="form-check-input"
+                           <#if user.attributes[attribute.name]??>checked</#if> id="${attribute.name}">
+                    <label class="form-check-label" for="${attribute.name}"><@message attribute.name/></label>
+                  </div>
+                <#elseif attribute.values?size != 0>
+                  <label><@message attribute.name/></label>
+                  <select class="form-control" name="${attribute.name}">
+                    <#list attribute.values as value>
+                      <option value="${value}" <#if user.attributes[attribute.name] == value>selected</#if>><@message value/></option>
+                    </#list>
+                  </select>
+                <#else>
+                  <label><@message attribute.name/></label>
+                  <input name="${attribute.name}" type="${attribute.inputType}" class="form-control" value="${user.attributes[attribute.name]}">
+                </#if>
+              </div>
+            </#list>
+            <button type="submit" id="submit-profile" class="d-none"></button>
+          </form>
+        </div>
+        <div class="modal-footer justify-content-between">
+          <button type="button" class="btn btn-default" data-dismiss="modal"><@message "cancel"/></button>
+          <label for="submit-profile" class="btn btn-primary mb-0" style="cursor: pointer; font-weight: normal;"><@message "update"/></label>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  <!-- /.modal -->
+
   <#include "libs/footer.ftl">
 </div>
 <!-- ./wrapper -->
 
 <#include "libs/scripts.ftl">
-
-<script>
-  const errorMessages = {
-    'server.error.password.not-changed': '<@message "server.error.password.not-changed"/>'
-  };
-  agatejs.updatePassword("#form", function() {
-    $("#alertSuccess").removeClass("d-none");
-    $("input[type=password]").val("");
-    setTimeout(function() {
-      $(alertId).addClass("d-none");
-    }, 5000);
-  }, function (errorKey, responseData) {
-    var alertId = "#alert" + errorKey;
-    if (errorKey === "Failure" && responseData && responseData.messageTemplate && errorMessages[responseData.messageTemplate]) {
-      $(alertId + " > small").text(errorMessages[responseData.messageTemplate]);
-    }
-    $(alertId).removeClass("d-none");
-    setTimeout(function() {
-      $(alertId).addClass("d-none");
-    }, 5000);
-  });
-</script>
+<#include "libs/profile-scripts.ftl">
 
 </body>
 </html>
