@@ -216,12 +216,14 @@
                   <label><@message attribute.name/></label>
                   <select class="form-control" name="${attribute.name}">
                     <#list attribute.values as value>
-                      <option value="${value}" <#if user.attributes[attribute.name] == value>selected</#if>><@message value/></option>
+                      <option value="${value}" <#if user.attributes[attribute.name]?? && user.attributes[attribute.name] == value>selected</#if>>
+                        <@message value/>
+                      </option>
                     </#list>
                   </select>
                 <#else>
                   <label><@message attribute.name/></label>
-                  <input name="${attribute.name}" type="${attribute.inputType}" class="form-control" value="${user.attributes[attribute.name]}">
+                  <input name="${attribute.name}" type="${attribute.inputType}" class="form-control" value="${user.attributes[attribute.name]!""}">
                 </#if>
               </div>
             </#list>
