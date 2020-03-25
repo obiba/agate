@@ -32,7 +32,7 @@
             <div class="col-sm-12 col-lg-6">
               <div class="small-box bg-info">
                 <div class="inner">
-                  <h3><@message "admin"/></h3>
+                  <h3><@message "administration"/></h3>
                   <p><@message "admin-users-apps"/></p>
                 </div>
                 <div class="icon">
