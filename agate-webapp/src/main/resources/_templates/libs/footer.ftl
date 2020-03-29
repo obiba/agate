@@ -10,5 +10,5 @@
     <a href="${pathPrefix!""}/admin" title="<@message "administration"/>" class="float-right border-right pr-2 mr-2"><i class="fas fa-lock"></i></a>
   </#if>
   <!-- Default to the left -->
-  <@message "powered-by"/> <a href="https://www.obiba.org">OBiBa Agate</a>.
+  <small><@message "powered-by"/> <a href="https://www.obiba.org">OBiBa Agate</a></small>
 </footer>
