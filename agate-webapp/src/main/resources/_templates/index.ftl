@@ -4,13 +4,12 @@
   <#include "libs/head.ftl">
   <title>${config.name!"Agate"}</title>
 </head>
-<body class="hold-transition layout-top-nav layout-navbar-fixed">
+<body id="index-page" class="hold-transition layout-top-nav layout-navbar-fixed">
 <div class="wrapper">
 
   <!-- Navbar -->
   <#include "libs/top-navbar.ftl">
   <!-- /.navbar -->
-
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">

@@ -41,7 +41,7 @@
   <!-- endbuild -->
   <link rel="stylesheet" href="ws/config/style.css">
 </head>
-<body ng-app="agate" ng-controller="MainController">
+<body id="admin-page" ng-app="agate" ng-controller="MainController">
 <!--[if lt IE 10]>
 <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
   your browser</a> to improve your experience.</p>
