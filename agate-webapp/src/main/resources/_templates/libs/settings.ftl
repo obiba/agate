@@ -6,7 +6,7 @@
 <#assign faviconPath = "/favicon.ico"/>
 
 <!-- Branding -->
-<#assign brandImageSrc = "../assets/images/logo.png"/>
+<#assign brandImageSrc = "../assets/images/agate-logo.png"/>
 <#assign brandImageClass = "img-circle elevation-3"/>
 <#assign brandTextEnabled = true/>
 <#assign brandTextClass = "font-weight-light"/>
