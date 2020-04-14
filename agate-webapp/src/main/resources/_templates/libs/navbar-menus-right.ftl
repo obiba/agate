@@ -13,7 +13,7 @@
     </#if>
     <li class="nav-item">
       <#if user??>
-        <a href="${pathPrefix!".."}/profile" class="nav-link">
+        <a href="/profile" class="nav-link">
           <i class="fas fa-user"></i> ${user.displayName}
         </a>
       <#else>
@@ -23,7 +23,7 @@
       </#if>
     </li>
     <li class="nav-item">
-      <a class="btn btn-outline-danger" href="#" onclick="agatejs.signout('${pathPrefix!".."}');"><@message "sign-out"/></a>
+      <a class="btn btn-outline-danger" href="#" onclick="agatejs.signout();"><@message "sign-out"/></a>
     </li>
   <#elseif config??>
     <#if config.locales?size != 1>
@@ -37,11 +37,11 @@
       </li>
     </#if>
     <li class="nav-item">
-      <a class="nav-link" href="${pathPrefix!".."}/signin<#if rc.requestUri != "/" && !rc.requestUri?starts_with("/reset-password") && !rc.requestUri?starts_with("/just-registered") && !rc.requestUri?starts_with("/error") && !rc.requestUri?starts_with("/signin")>?redirect=${rc.requestUri}</#if>"><@message "sign-in"/></a>
+      <a class="nav-link" href="/signin<#if rc.requestUri != "/" && !rc.requestUri?starts_with("/reset-password") && !rc.requestUri?starts_with("/just-registered") && !rc.requestUri?starts_with("/error") && !rc.requestUri?starts_with("/signin")>?redirect=${rc.requestUri}</#if>"><@message "sign-in"/></a>
     </li>
     <#if config.joinPageEnabled>
       <li class="nav-item">
-        <a class="btn btn-outline-primary" href="${pathPrefix!".."}/signup"><@message "sign-up"/></a>
+        <a class="btn btn-outline-primary" href="/signup"><@message "sign-up"/></a>
       </li>
     </#if>
   </#if>

@@ -275,14 +275,14 @@ var agatejs = (function() {
     });
   };
 
-  const agateSignout = function(pathPrefix) {
+  const agateSignout = function() {
     const removeAgateSession = function() {
       $.ajax({
         type: 'DELETE',
-        url: pathPrefix + '/ws/auth/session/_current'
+        url: '/ws/auth/session/_current'
       })
         .always(function() {
-          var redirect = pathPrefix + '/';
+          var redirect = '/';
           $.redirect(redirect, {}, 'GET');
         });
     };
@@ -292,7 +292,7 @@ var agatejs = (function() {
       console.log('Removing ' + obibaid);
       $.ajax({
         type: 'DELETE',
-        url: pathPrefix + '/ws/ticket/' + obibaid
+        url: '/ws/ticket/' + obibaid
       })
         .always(function() {
           removeAgateSession();

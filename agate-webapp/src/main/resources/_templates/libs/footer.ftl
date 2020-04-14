@@ -7,7 +7,7 @@
     </div>
   </#if>
   <#if !user?? || user.role == "agate-administrator">
-    <a href="${pathPrefix!""}/admin" title="<@message "administration"/>" class="float-right border-right pr-2 mr-2"><i class="fas fa-lock"></i></a>
+    <a href="/admin" title="<@message "administration"/>" class="float-right border-right pr-2 mr-2"><i class="fas fa-lock"></i></a>
   </#if>
   <!-- Default to the left -->
   <small><@message "powered-by"/> <a href="https://www.obiba.org">OBiBa Agate</a></small>
