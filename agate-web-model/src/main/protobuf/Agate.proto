@@ -84,7 +84,7 @@ message AttributeDto {
 
 message UserCreateFormDto {
   required UserDto user = 1;
-  required string password = 2;
+  optional string password = 2;
 }
 
 message UserDto {
