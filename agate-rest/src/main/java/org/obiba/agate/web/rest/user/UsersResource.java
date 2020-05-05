@@ -21,8 +21,11 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
+import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.domain.UserStatus;
 import org.obiba.agate.service.UserService;
@@ -38,7 +41,7 @@ import com.google.common.collect.ImmutableList;
 @Path("/users")
 public class UsersResource {
 
-  private static final String CURRENT_USER_NAME = "_current";
+  private static final List<String> RESERVED_USER_NAMES = Lists.newArrayList("_current", "administrator");
 
   @Inject
   private UserService userService;
@@ -86,7 +89,10 @@ public class UsersResource {
 
     if(user != null) throw new BadRequestException("Email already in use: " + user.getEmail());
 
-    if(CURRENT_USER_NAME.equals(username)) throw new BadRequestException("Reserved user name: " + CURRENT_USER_NAME);
+    if(RESERVED_USER_NAMES.contains(username)) throw new BadRequestException("Reserved user name");
+
+    if (AgateRealm.AGATE_USER_REALM.name().equals(userDto.getRealm()) && Strings.isNullOrEmpty(userCreateFormDto.getPassword()))
+      throw new BadRequestException("User requires a password");
 
     user = userService.createUser(dtos.fromDto(userDto), userCreateFormDto.getPassword());
 
