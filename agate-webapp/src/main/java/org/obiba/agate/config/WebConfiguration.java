@@ -13,6 +13,7 @@ package org.obiba.agate.config;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.servlet.InstrumentedFilter;
 import com.codahale.metrics.servlets.MetricsServlet;
+import com.google.common.base.Strings;
 import org.apache.shiro.web.env.EnvironmentLoaderListener;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
@@ -89,6 +90,8 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
 
   private int httpsPort;
 
+  private String contextPath;
+
   @Inject
   public WebConfiguration(
     MetricRegistry metricRegistry,
@@ -113,6 +116,9 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
     this.environment = environment;
     RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(environment, "https.");
     httpsPort = propertyResolver.getProperty("port", Integer.class, DEFAULT_HTTPS_PORT);
+    contextPath = environment.getProperty("server.context-path", "");
+    if (Strings.isNullOrEmpty(contextPath))
+      contextPath = environment.getProperty("server.servlet.context-path", "");
   }
 
   @Bean
@@ -120,6 +126,8 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
     return (ConfigurableEmbeddedServletContainer container) -> {
       JettyEmbeddedServletContainerFactory jetty = (JettyEmbeddedServletContainerFactory) container;
       jetty.setServerCustomizers(Collections.singleton(this));
+      if (!Strings.isNullOrEmpty(contextPath) && contextPath.startsWith("/"))
+        container.setContextPath(contextPath);
     };
   }
 

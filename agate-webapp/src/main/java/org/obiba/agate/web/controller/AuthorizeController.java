@@ -105,7 +105,7 @@ public class AuthorizeController {
 
       return mv;
     } catch (Exception e) {
-      return new ModelAndView("redirect:/");
+      return new ModelAndView("redirect:" + configurationService.getContextPath() + "/");
     }
   }
 

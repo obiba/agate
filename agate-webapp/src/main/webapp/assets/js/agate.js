@@ -3,17 +3,21 @@
 
 var agatejs = (function() {
 
+  const normalizeUrl = function(url) {
+    return contextPath + url;
+  };
+
   const agateSignin = function(formId, onFailure) {
     $(formId).submit(function(e) {
       e.preventDefault(); // avoid to execute the actual submit of the form.
       var form = $(this);
-      var url = '../ws/auth/sessions';
+      var url = '/ws/auth/sessions';
       var data = form.serialize(); // serializes the form's elements.
 
-      axios.post(url, data)
+      axios.post(normalizeUrl(url), data)
         .then(() => {
           //console.dir(response);
-          let redirect = '/';
+          let redirect = normalizeUrl('/');
           const q = new URLSearchParams(window.location.search);
           if (q.get('redirect')) {
             redirect = q.get('redirect');
@@ -34,7 +38,7 @@ var agatejs = (function() {
     $(formId).submit(function(e) {
       e.preventDefault(); // avoid to execute the actual submit of the form.
       var form = $(this);
-      var url = '../ws/users/_join';
+      var url = '/ws/users/_join';
       var data = form.serialize(); // serializes the form's elements.
 
       var formData = form.serializeArray();
@@ -64,21 +68,21 @@ var agatejs = (function() {
 
       const realmField = getField('realm');
 
-      axios.post(url, data)
+      axios.post(normalizeUrl(url), data)
           .then(() => {
             //console.dir(response);
-            let redirect = '/';
+            let redirect = normalizeUrl('/');
             let values = {};
             const q = new URLSearchParams(window.location.search);
             if (q.get('redirect')) {
               redirect = q.get('redirect');
               window.location = redirect;
             } else if (realmField) {
-              redirect = 'just-registered';
+              redirect = normalizeUrl('/just-registered');
               values = { signin: true };
               $.redirect(redirect, values, 'GET');
             } else {
-              redirect = 'just-registered';
+              redirect = normalizeUrl('/just-registered');
               $.redirect(redirect, values, 'GET');
             }
           })
@@ -101,7 +105,7 @@ var agatejs = (function() {
     $(formId).submit(function(e) {
       e.preventDefault(); // avoid to execute the actual submit of the form.
       var form = $(this);
-      var url = '../ws/users/_confirm';
+      var url = '/ws/users/_confirm';
       var data = form.serialize(); // serializes the form's elements.
 
       var formData = form.serializeArray();
@@ -119,10 +123,10 @@ var agatejs = (function() {
         return;
       }
 
-      axios.post(url, data)
+      axios.post(normalizeUrl(url), data)
           .then(() => {
             //console.dir(response);
-            let redirect = 'just-registered';
+            let redirect = normalizeUrl('/just-registered');
             let values = { signin: true };
             $.redirect(redirect, values, 'GET');
           })
@@ -137,7 +141,7 @@ var agatejs = (function() {
     $(formId).submit(function(e) {
       e.preventDefault(); // avoid to execute the actual submit of the form.
       var form = $(this);
-      var url = '../ws/users/_reset_password';
+      var url = '/ws/users/_reset_password';
       var data = form.serialize(); // serializes the form's elements.
 
       var formData = form.serializeArray();
@@ -155,10 +159,10 @@ var agatejs = (function() {
         return;
       }
 
-      axios.post(url, data)
+      axios.post(normalizeUrl(url), data)
           .then(() => {
             //console.dir(response);
-            let redirect = '/';
+            let redirect = normalizeUrl('/');
             const q = new URLSearchParams(window.location.search);
             if (q.get('redirect')) {
               redirect = q.get('redirect');
@@ -176,7 +180,7 @@ var agatejs = (function() {
     $(formId).submit(function (e) {
       e.preventDefault(); // avoid to execute the actual submit of the form.
       var form = $(this);
-      var url = '../ws/user/_current/_profile';
+      var url = '/ws/user/_current/_profile';
       var data = form.serialize();
 
       var formData = form.serializeArray();
@@ -206,10 +210,10 @@ var agatejs = (function() {
 
       let language = getField('locale').value;
 
-      axios.put(url, data)
+      axios.put(normalizeUrl(url), data)
         .then(() => {
           //console.dir(response);
-          window.location = '/profile?language=' + language;
+          window.location = normalizeUrl('/profile?language=' + language);
         })
         .catch(handle => {
           console.dir(handle);
@@ -222,7 +226,7 @@ var agatejs = (function() {
     $(formId).submit(function(e) {
       e.preventDefault(); // avoid to execute the actual submit of the form.
       var form = $(this);
-      var url = '../ws/user/_current/password';
+      var url = '/ws/user/_current/password';
       var data = form.serialize(); // serializes the form's elements.
 
       var formData = form.serializeArray();
@@ -240,7 +244,7 @@ var agatejs = (function() {
         return;
       }
 
-      axios.put(url, data)
+      axios.put(normalizeUrl(url), data)
           .then(() => {
             //console.dir(response);
             onSuccess();
@@ -256,17 +260,17 @@ var agatejs = (function() {
     $(formId).submit(function(e) {
       e.preventDefault(); // avoid to execute the actual submit of the form.
       var form = $(this);
-      var url = '../ws/users/_forgot_password';
+      var url = '/ws/users/_forgot_password';
       var data = form.serialize(); // serializes the form's elements.
 
       if (decodeURI(data).trim() === 'username=') {
         return;
       }
 
-      axios.post(url, data)
+      axios.post(normalizeUrl(url), data)
           .then(() => {
             //console.dir(response);
-            $.redirect('/', {}, 'GET');
+            $.redirect(normalizeUrl('/'), {}, 'GET');
           })
           .catch(handle => {
             console.dir(handle);
@@ -279,10 +283,10 @@ var agatejs = (function() {
     const removeAgateSession = function() {
       $.ajax({
         type: 'DELETE',
-        url: '/ws/auth/session/_current'
+        url: normalizeUrl('/ws/auth/session/_current')
       })
         .always(function() {
-          var redirect = '/';
+          var redirect = normalizeUrl('/');
           $.redirect(redirect, {}, 'GET');
         });
     };
@@ -292,7 +296,7 @@ var agatejs = (function() {
       console.log('Removing ' + obibaid);
       $.ajax({
         type: 'DELETE',
-        url: '/ws/ticket/' + obibaid
+        url: normalizeUrl('/ws/ticket/' + obibaid)
       })
         .always(function() {
           removeAgateSession();
@@ -327,6 +331,7 @@ var agatejs = (function() {
   };
 
   return {
+    'normalizeUrl': normalizeUrl,
     'signin': agateSignin,
     'signout': agateSignout,
     'signup': agateSignup,

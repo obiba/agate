@@ -13,7 +13,7 @@
     </#if>
     <li class="nav-item">
       <#if user??>
-        <a href="/profile" class="nav-link">
+        <a href="${contextPath}/profile" class="nav-link">
           <i class="fas fa-user"></i> ${user.displayName}
         </a>
       <#else>
@@ -37,11 +37,11 @@
       </li>
     </#if>
     <li class="nav-item">
-      <a class="nav-link" href="/signin<#if rc.requestUri != "/" && !rc.requestUri?starts_with("/reset-password") && !rc.requestUri?starts_with("/just-registered") && !rc.requestUri?starts_with("/error") && !rc.requestUri?starts_with("/signin")>?redirect=${rc.requestUri}</#if>"><@message "sign-in"/></a>
+      <a class="nav-link" href="${contextPath}/signin<#if rc.requestUri != "/" && !rc.requestUri?contains("/reset-password") && !rc.requestUri?contains("/just-registered") && !rc.requestUri?contains("/error") && !rc.requestUri?contains("/signin")>?redirect=${rc.requestUri}</#if>"><@message "sign-in"/></a>
     </li>
     <#if config.joinPageEnabled>
       <li class="nav-item">
-        <a class="btn btn-outline-primary" href="/signup"><@message "sign-up"/></a>
+        <a class="btn btn-outline-primary" href="${contextPath}/signup"><@message "sign-up"/></a>
       </li>
     </#if>
   </#if>

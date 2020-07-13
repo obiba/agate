@@ -16,7 +16,7 @@ agate.config
 
     function ($rootScope, $scope, $resource, $route, $log, $window, ConfigurationResource, NOTIFICATION_EVENTS, $uibModal, KeyStoreResource) {
       $scope.agateConfig = {userAttributes: []};
-      $scope.availableLanguages = $resource('ws/config/languages').get();
+      $scope.availableLanguages = $resource(contextPath + '/ws/config/languages').get();
 
       ConfigurationResource.get(function(config) {
         $scope.agateConfig = config;
@@ -46,7 +46,7 @@ agate.config
       };
 
       $scope.downloadCertificate = function () {
-        $window.open('ws/config/keystore/system/https', '_blank', '');
+        $window.open(contextPath + '/ws/config/keystore/system/https', '_blank', '');
       };
 
       $scope.editAttribute = function (att) {
@@ -192,7 +192,7 @@ agate.config
         });
       });
 
-      $scope.availableLanguages = $resource('ws/config/languages').get();
+      $scope.availableLanguages = $resource(contextPath + '/ws/config/languages').get();
 
       $scope.save = function () {
 

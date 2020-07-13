@@ -13,7 +13,7 @@
 agate.config
   .factory('ConfigurationResource', ['$resource',
   function ($resource) {
-    return $resource('ws/config', {}, {
+    return $resource(contextPath + '/ws/config', {}, {
       // override $resource.save method because it uses POST by default
       'save': {method: 'PUT'},
       'get': {method: 'GET'}
@@ -21,14 +21,14 @@ agate.config
   }])
   .factory('PublicConfigurationResource', ['$resource',
     function ($resource) {
-      return $resource('ws/config/_public', {}, {
+      return $resource(contextPath + '/ws/config/_public', {}, {
         // override $resource.save method because it uses POST by default
         'get': {method: 'GET'}
       });
     }])
   .factory('KeyStoreResource', ['$resource',
     function ($resource) {
-      return $resource('ws/config/keystore/system/https', {}, {
+      return $resource(contextPath + '/ws/config/keystore/system/https', {}, {
         'save': {method: 'PUT'}
       });
     }])
@@ -64,5 +64,5 @@ agate.config
     }])
   .factory('TranslationsResource', ['$resource',
     function ($resource) {
-      return $resource('ws/config/i18n/:id.json');
+      return $resource(contextPath + '/ws/config/i18n/:id.json');
     }]);

@@ -14,7 +14,7 @@ agate.group
 
   .factory('GroupsResource', ['$resource',
     function ($resource) {
-      return $resource('ws/groups', {}, {
+      return $resource(contextPath + '/ws/groups', {}, {
         'get': {method: 'GET', errorHandler: true},
         'save': {method: 'POST', errorHandler: true}
       });
@@ -22,10 +22,10 @@ agate.group
 
   .factory('GroupResource', ['$resource',
     function ($resource) {
-      return $resource('ws/group/:id', {}, {
+      return $resource(contextPath + '/ws/group/:id', {}, {
         'get': {method: 'GET', params: {id: '@id'}, errorHandler: true},
         'update': {method: 'PUT', params: {id: '@id'}, errorHandler: true},
         'delete': {method: 'DELETE', params: {id: '@id'}, errorHandler: true},
-        'users': {url: 'ws/group/:id/users', method: 'PUT', params: {id: '@id'}, errorHandler: true}
+        'users': {url: contextPath + '/ws/group/:id/users', method: 'PUT', params: {id: '@id'}, errorHandler: true}
       });
     }]);

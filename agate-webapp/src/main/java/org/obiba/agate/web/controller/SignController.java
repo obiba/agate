@@ -52,12 +52,13 @@ public class SignController {
                              @RequestParam(value = "redirect", required = false) String redirect) {
     Subject subject = SecurityUtils.getSubject();
     if (subject.isAuthenticated())
-      return new ModelAndView("redirect:" + (Strings.isNullOrEmpty(redirect) ? "/" : redirect));
+      return new ModelAndView("redirect:" + (Strings.isNullOrEmpty(redirect) ? configurationService.getContextPath() + "/" : redirect));
 
     ModelAndView mv = new ModelAndView("signin");
 
     mv.getModel().put("oidcProviders", getOidcProviders(RealmUsage.ALL, getLang(language, locale),
-      "redirect=" + (Strings.isNullOrEmpty(redirect) ? "/" : URLUtils.encode(redirect)) + "&signin_error=/signup-with"));
+      "redirect=" + (Strings.isNullOrEmpty(redirect) ? configurationService.getContextPath() + "/" : URLUtils.encode(redirect)) + "&signin_error=" + configurationService.getContextPath() + "/signup-with",
+      configurationService.getContextPath()));
     return mv;
   }
 
@@ -65,22 +66,24 @@ public class SignController {
   public ModelAndView signup(@CookieValue(value = "NG_TRANSLATE_LANG_KEY", required = false, defaultValue = "en") String locale,
                              @RequestParam(value = "language", required = false) String language) {
     if (!configurationService.getConfiguration().isJoinPageEnabled())
-      return new ModelAndView("redirect:/");
+      return new ModelAndView("redirect:" + configurationService.getContextPath() + "/");
 
     Subject subject = SecurityUtils.getSubject();
     if (subject.isAuthenticated())
-      return new ModelAndView("redirect:/");
+      return new ModelAndView("redirect:" + configurationService.getContextPath() + "/");
 
     ModelAndView mv = new ModelAndView("signup");
     mv.getModel().put("authConfig", new AuthConfiguration(configurationService.getConfiguration(), clientConfiguration));
-    mv.getModel().put("oidcProviders", getOidcProviders(RealmUsage.SIGNUP, getLang(language, locale), "signin_error=/signup-with"));
+    mv.getModel().put("oidcProviders", getOidcProviders(RealmUsage.SIGNUP, getLang(language, locale),
+      "signin_error=" + configurationService.getContextPath() + "/signup-with",
+      configurationService.getContextPath()));
     return mv;
   }
 
   @GetMapping("/signup-with")
   public ModelAndView signupWith(@CookieValue(value = "u_auth", required = false, defaultValue = "{}") String uAuth) {
     if (!configurationService.getConfiguration().isJoinPageEnabled())
-      return new ModelAndView("redirect:/");
+      return new ModelAndView("redirect:" + configurationService.getContextPath() + "/");
 
     ModelAndView mv = new ModelAndView("signup-with");
     try {
@@ -112,9 +115,9 @@ public class SignController {
     return language == null ? locale : language;
   }
 
-  private Collection<OidcProvider> getOidcProviders(RealmUsage usage, String locale, String query) {
+  private Collection<OidcProvider> getOidcProviders(RealmUsage usage, String locale, String query, String contextPath) {
     return oidcAuthConfigurationProvider.getConfigurations(usage).stream()
-      .map(conf -> new OidcProvider(conf, locale, query))
+      .map(conf -> new OidcProvider(conf, locale, query, contextPath))
       .collect(Collectors.toList());
   }
 

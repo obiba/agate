@@ -29,17 +29,17 @@
   <meta name="viewport" content="width=device-width">
   <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
   <!-- build:css styles/main.css -->
-  <link rel="stylesheet" href="styles/agate.css">
-  <link rel="stylesheet" href="styles/famfamfam-flags.css">
-  <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css" />
+  <link rel="stylesheet" href="${contextPath}/styles/agate.css">
+  <link rel="stylesheet" href="${contextPath}/styles/famfamfam-flags.css">
+  <link rel="stylesheet" href="${contextPath}/bower_components/font-awesome/css/font-awesome.css" />
   <!-- bower:css -->
-  <link rel="stylesheet" href="bower_components/angular-loading-bar/build/loading-bar.css" />
-  <link rel="stylesheet" href="bower_components/angular-ui-select/dist/select.css" />
-  <link rel="stylesheet" href="bower_components/nvd3/build/nv.d3.css" />
-  <link rel="stylesheet" href="bower_components/ng-obiba/dist/css/ng-obiba.css" />
+  <link rel="stylesheet" href="${contextPath}/bower_components/angular-loading-bar/build/loading-bar.css" />
+  <link rel="stylesheet" href="${contextPath}/bower_components/angular-ui-select/dist/select.css" />
+  <link rel="stylesheet" href="${contextPath}/bower_components/nvd3/build/nv.d3.css" />
+  <link rel="stylesheet" href="${contextPath}/bower_components/ng-obiba/dist/css/ng-obiba.css" />
   <!-- endbower -->
   <!-- endbuild -->
-  <link rel="stylesheet" href="ws/config/style.css">
+  <link rel="stylesheet" href="${contextPath}/ws/config/style.css">
 </head>
 <body id="admin-page" ng-app="agate" ng-controller="MainController">
 <!--[if lt IE 10]>
@@ -148,110 +148,116 @@
 
 <div id="recaptcha"></div>
 
+<!-- Global js variables -->
+<script>
+  const contextPath = '${contextPath}';
+</script>
+
+
 <!-- build:js scripts/scripts.js -->
 <!-- bower:js -->
-<script src="bower_components/modernizr/modernizr.js"></script>
-<script src="bower_components/jquery/dist/jquery.js"></script>
-<script src="bower_components/angular/angular.js"></script>
-<script src="bower_components/angular-animate/angular-animate.js"></script>
-<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-<script src="bower_components/chosen/chosen.jquery.js"></script>
-<script src="bower_components/angular-chosen-localytics/dist/angular-chosen.js"></script>
-<script src="bower_components/angular-cookies/angular-cookies.js"></script>
-<script src="bower_components/angular-dynamic-locale/src/tmhDynamicLocale.js"></script>
-<script src="bower_components/angular-loading-bar/build/loading-bar.js"></script>
-<script src="bower_components/angular-resource/angular-resource.js"></script>
-<script src="bower_components/angular-route/angular-route.js"></script>
-<script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
-<script src="bower_components/angular-translate/angular-translate.js"></script>
-<script src="bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.js"></script>
-<script src="bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.js"></script>
-<script src="bower_components/angular-ui-select/dist/select.js"></script>
-<script src="bower_components/angular-ui/build/angular-ui.min.js"></script>
-<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-<script src="bower_components/jquery-ui/jquery-ui.js"></script>
-<script src="bower_components/json3/lib/json3.js"></script>
-<script src="bower_components/moment/moment.js"></script>
-<script src="bower_components/moment/min/locales.js"></script>
-<script src="bower_components/angular-moment/angular-moment.js"></script>
-<script src="bower_components/marked/lib/marked.js"></script>
-<script src="bower_components/angular-marked/dist/angular-marked.js"></script>
-<script src="bower_components/d3/d3.js"></script>
-<script src="bower_components/nvd3/build/nv.d3.js"></script>
-<script src="bower_components/angular-nvd3/dist/angular-nvd3.js"></script>
-<script src="bower_components/ng-obiba/dist/ng-obiba.js"></script>
-<script src="bower_components/angular-utils-pagination/dirPagination.js"></script>
-<script src="bower_components/tv4/tv4.js"></script>
-<script src="bower_components/objectpath/lib/ObjectPath.js"></script>
-<script src="bower_components/angular-schema-form/dist/schema-form.js"></script>
-<script src="bower_components/angular-schema-form/dist/bootstrap-decorator.js"></script>
-<script src="bower_components/angular-schema-form-bootstrap/bootstrap-decorator.min.js"></script>
-<script src="bower_components/ace-builds/src-noconflict/ace.js"></script>
-<script src="bower_components/angular-ui-ace/ui-ace.js"></script>
-<script src="bower_components/angular-recaptcha/release/angular-recaptcha.js"></script>
-<script src="bower_components/angular-media-queries/match-media.js"></script>
-<script src="bower_components/es6-shim/es6-shim.js"></script>
-<script src="bower_components/obiba-shims/dist/obiba-shims.min.js"></script>
-<script src="bower_components/sf-obiba-ui-select/dist/sf-obiba-ui-select.js"></script>
-<script src="bower_components/sf-localized-string/dist/sf-localized-string.js"></script>
+<script src="${contextPath}/bower_components/modernizr/modernizr.js"></script>
+<script src="${contextPath}/bower_components/jquery/dist/jquery.js"></script>
+<script src="${contextPath}/bower_components/angular/angular.js"></script>
+<script src="${contextPath}/bower_components/angular-animate/angular-animate.js"></script>
+<script src="${contextPath}/bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+<script src="${contextPath}/bower_components/chosen/chosen.jquery.js"></script>
+<script src="${contextPath}/bower_components/angular-chosen-localytics/dist/angular-chosen.js"></script>
+<script src="${contextPath}/bower_components/angular-cookies/angular-cookies.js"></script>
+<script src="${contextPath}/bower_components/angular-dynamic-locale/src/tmhDynamicLocale.js"></script>
+<script src="${contextPath}/bower_components/angular-loading-bar/build/loading-bar.js"></script>
+<script src="${contextPath}/bower_components/angular-resource/angular-resource.js"></script>
+<script src="${contextPath}/bower_components/angular-route/angular-route.js"></script>
+<script src="${contextPath}/bower_components/angular-sanitize/angular-sanitize.js"></script>
+<script src="${contextPath}/bower_components/angular-translate/angular-translate.js"></script>
+<script src="${contextPath}/bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.js"></script>
+<script src="${contextPath}/bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.js"></script>
+<script src="${contextPath}/bower_components/angular-ui-select/dist/select.js"></script>
+<script src="${contextPath}/bower_components/angular-ui/build/angular-ui.min.js"></script>
+<script src="${contextPath}/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="${contextPath}/bower_components/jquery-ui/jquery-ui.js"></script>
+<script src="${contextPath}/bower_components/json3/lib/json3.js"></script>
+<script src="${contextPath}/bower_components/moment/moment.js"></script>
+<script src="${contextPath}/bower_components/moment/min/locales.js"></script>
+<script src="${contextPath}/bower_components/angular-moment/angular-moment.js"></script>
+<script src="${contextPath}/bower_components/marked/lib/marked.js"></script>
+<script src="${contextPath}/bower_components/angular-marked/dist/angular-marked.js"></script>
+<script src="${contextPath}/bower_components/d3/d3.js"></script>
+<script src="${contextPath}/bower_components/nvd3/build/nv.d3.js"></script>
+<script src="${contextPath}/bower_components/angular-nvd3/dist/angular-nvd3.js"></script>
+<script src="${contextPath}/bower_components/ng-obiba/dist/ng-obiba.js"></script>
+<script src="${contextPath}/bower_components/angular-utils-pagination/dirPagination.js"></script>
+<script src="${contextPath}/bower_components/tv4/tv4.js"></script>
+<script src="${contextPath}/bower_components/objectpath/lib/ObjectPath.js"></script>
+<script src="${contextPath}/bower_components/angular-schema-form/dist/schema-form.js"></script>
+<script src="${contextPath}/bower_components/angular-schema-form/dist/bootstrap-decorator.js"></script>
+<script src="${contextPath}/bower_components/angular-schema-form-bootstrap/bootstrap-decorator.min.js"></script>
+<script src="${contextPath}/bower_components/ace-builds/src-noconflict/ace.js"></script>
+<script src="${contextPath}/bower_components/angular-ui-ace/ui-ace.js"></script>
+<script src="${contextPath}/bower_components/angular-recaptcha/release/angular-recaptcha.js"></script>
+<script src="${contextPath}/bower_components/angular-media-queries/match-media.js"></script>
+<script src="${contextPath}/bower_components/es6-shim/es6-shim.js"></script>
+<script src="${contextPath}/bower_components/obiba-shims/dist/obiba-shims.min.js"></script>
+<script src="${contextPath}/bower_components/sf-obiba-ui-select/dist/sf-obiba-ui-select.js"></script>
+<script src="${contextPath}/bower_components/sf-localized-string/dist/sf-localized-string.js"></script>
 <!-- endbower -->
-<script src="app/http-auth-interceptor.js"></script>
-<script src="app/app.js"></script>
-<script src="app/controllers.js"></script>
-<script src="app/services.js"></script>
-<script src="app/services.js"></script>
-<script src="app/directives.js"></script>
-<script src="app/admin/admin.js"></script>
-<script src="app/admin/admin-router.js"></script>
-<script src="app/admin/admin-controller.js"></script>
-<script src="app/config/config.js"></script>
-<script src="app/config/config-router.js"></script>
-<script src="app/config/config-controller.js"></script>
-<script src="app/config/config-service.js"></script>
-<script src="app/commons/localized/localized.js"></script>
-<script src="app/commons/localized/localized-service.js"></script>
-<script src="app/commons/localized/localized-directives.js"></script>
-<script src="app/commons/password-modal/password-modal.js"></script>
-<script src="app/commons/password-modal/password-modal-directive.js"></script>
-<script src="app/commons/password-modal/password-modal-controller.js"></script>
-<script src="app/commons/users-summaries/component.js"></script>
+<script src="${contextPath}/app/http-auth-interceptor.js"></script>
+<script src="${contextPath}/app/app.js"></script>
+<script src="${contextPath}/app/controllers.js"></script>
+<script src="${contextPath}/app/services.js"></script>
+<script src="${contextPath}/app/services.js"></script>
+<script src="${contextPath}/app/directives.js"></script>
+<script src="${contextPath}/app/admin/admin.js"></script>
+<script src="${contextPath}/app/admin/admin-router.js"></script>
+<script src="${contextPath}/app/admin/admin-controller.js"></script>
+<script src="${contextPath}/app/config/config.js"></script>
+<script src="${contextPath}/app/config/config-router.js"></script>
+<script src="${contextPath}/app/config/config-controller.js"></script>
+<script src="${contextPath}/app/config/config-service.js"></script>
+<script src="${contextPath}/app/commons/localized/localized.js"></script>
+<script src="${contextPath}/app/commons/localized/localized-service.js"></script>
+<script src="${contextPath}/app/commons/localized/localized-directives.js"></script>
+<script src="${contextPath}/app/commons/password-modal/password-modal.js"></script>
+<script src="${contextPath}/app/commons/password-modal/password-modal-directive.js"></script>
+<script src="${contextPath}/app/commons/password-modal/password-modal-controller.js"></script>
+<script src="${contextPath}/app/commons/users-summaries/component.js"></script>
 
-<script src="app/realm/realm.js"></script>
-<script src="app/realm/services/realm-service.js"></script>
-<script src="app/realm/services/realm-transformer.js"></script>
-<script src="app/realm/rest/realm-config-form-resource.js"></script>
-<script src="app/realm/rest/realms-config-resource.js"></script>
-<script src="app/realm/rest/realm-config-resource.js"></script>
-<script src="app/realm/rest/realms-resource.js"></script>
-<script src="app/realm/components/realms-list/component.js"></script>
-<script src="app/realm/components/realm-view/component.js"></script>
-<script src="app/realm/components/realm-form/component.js"></script>
-<script src="app/realm/realm-router.js"></script>
-<script src="app/realm/realm-controller.js"></script>
+<script src="${contextPath}/app/realm/realm.js"></script>
+<script src="${contextPath}/app/realm/services/realm-service.js"></script>
+<script src="${contextPath}/app/realm/services/realm-transformer.js"></script>
+<script src="${contextPath}/app/realm/rest/realm-config-form-resource.js"></script>
+<script src="${contextPath}/app/realm/rest/realms-config-resource.js"></script>
+<script src="${contextPath}/app/realm/rest/realm-config-resource.js"></script>
+<script src="${contextPath}/app/realm/rest/realms-resource.js"></script>
+<script src="${contextPath}/app/realm/components/realms-list/component.js"></script>
+<script src="${contextPath}/app/realm/components/realm-view/component.js"></script>
+<script src="${contextPath}/app/realm/components/realm-form/component.js"></script>
+<script src="${contextPath}/app/realm/realm-router.js"></script>
+<script src="${contextPath}/app/realm/realm-controller.js"></script>
 
-<script src="app/application/application.js"></script>
-<script src="app/application/application-router.js"></script>
-<script src="app/application/application-controller.js"></script>
-<script src="app/application/application-service.js"></script>
+<script src="${contextPath}/app/application/application.js"></script>
+<script src="${contextPath}/app/application/application-router.js"></script>
+<script src="${contextPath}/app/application/application-controller.js"></script>
+<script src="${contextPath}/app/application/application-service.js"></script>
 
-<script src="app/user/user.js"></script>
-<script src="app/user/user-router.js"></script>
-<script src="app/user/user-controller.js"></script>
-<script src="app/user/user-service.js"></script>
-<script src="app/user/attributes/attributes-directive.js"></script>
-<script src="app/user/attributes/attributes-filter.js"></script>
-<script src="app/user/attributes/attributes-controller.js"></script>
-<script src="app/user/attributes/attributes-service.js"></script>
+<script src="${contextPath}/app/user/user.js"></script>
+<script src="${contextPath}/app/user/user-router.js"></script>
+<script src="${contextPath}/app/user/user-controller.js"></script>
+<script src="${contextPath}/app/user/user-service.js"></script>
+<script src="${contextPath}/app/user/attributes/attributes-directive.js"></script>
+<script src="${contextPath}/app/user/attributes/attributes-filter.js"></script>
+<script src="${contextPath}/app/user/attributes/attributes-controller.js"></script>
+<script src="${contextPath}/app/user/attributes/attributes-service.js"></script>
 
-<script src="app/group/group.js"></script>
-<script src="app/group/group-router.js"></script>
-<script src="app/group/group-controller.js"></script>
-<script src="app/group/group-service.js"></script>
+<script src="${contextPath}/app/group/group.js"></script>
+<script src="${contextPath}/app/group/group-router.js"></script>
+<script src="${contextPath}/app/group/group-controller.js"></script>
+<script src="${contextPath}/app/group/group-service.js"></script>
 
-<script src="app/ticket/ticket.js"></script>
-<script src="app/ticket/ticket-router.js"></script>
-<script src="app/ticket/ticket-controller.js"></script>
-<script src="app/ticket/ticket-service.js"></script>
+<script src="${contextPath}/app/ticket/ticket.js"></script>
+<script src="${contextPath}/app/ticket/ticket-router.js"></script>
+<script src="${contextPath}/app/ticket/ticket-controller.js"></script>
+<script src="${contextPath}/app/ticket/ticket-service.js"></script>
 <!-- endbuild -->
 </body>
 </html>

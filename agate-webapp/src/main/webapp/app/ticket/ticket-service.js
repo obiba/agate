@@ -14,14 +14,14 @@ agate.ticket
 
   .factory('TicketsResource', ['$resource',
     function ($resource) {
-      return $resource('ws/tickets', {}, {
+      return $resource(contextPath + '/ws/tickets', {}, {
         'get': {method: 'GET', errorHandler: true}
       });
     }])
 
   .factory('TicketResource', ['$resource',
     function ($resource) {
-      return $resource('ws/ticket/:id', {}, {
+      return $resource(contextPath + '/ws/ticket/:id', {}, {
         'get': {method: 'GET'}
       });
     }]);

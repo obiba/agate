@@ -47,7 +47,7 @@
 
             <p>
               We could not access the page you were looking for.
-              Meanwhile, you may <a href="..">return to home</a>.
+              Meanwhile, you may <a href="${contextPath}/">return to home</a>.
             </p>
           </div>
           <!-- /.error-content -->

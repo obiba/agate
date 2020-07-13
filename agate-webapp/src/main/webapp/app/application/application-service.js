@@ -14,14 +14,14 @@ agate.application
 
   .factory('ApplicationsResource', ['$resource',
     function ($resource) {
-      return $resource('ws/applications', {}, {
+      return $resource(contextPath + '/ws/applications', {}, {
         'get': {method: 'GET', errorHandler: true}
       });
     }])
 
   .factory('ApplicationResource', ['$resource',
     function ($resource) {
-      return $resource('ws/application/:id', {}, {
+      return $resource(contextPath + '/ws/application/:id', {}, {
         'get': {method: 'GET', params: {id: '@id'}, errorHandler: true},
         'update': { method:'PUT', params: {id: '@id'}, errorHandler: true},
         'delete': {method: 'DELETE', errorHandler: true}
@@ -29,7 +29,7 @@ agate.application
     }])
   .factory('ApplicationSummaryResource', ['$resource',
     function ($resource) {
-      return $resource('ws/application/:id/summary', {}, {
+      return $resource(contextPath + '/ws/application/:id/summary', {}, {
         'get': {method: 'GET', params: {id: '@id'}, errorHandler: true}
       });
     }]);

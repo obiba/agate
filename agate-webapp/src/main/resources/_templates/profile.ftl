@@ -153,11 +153,13 @@
                     <@message "contact-system-administrator-to-change-password"/>
                   </#if>
                 </div>
-                <div class="card-footer">
-                  <div class="float-right">
-                    <label for="submit-password" class="btn btn-primary mb-0" style="cursor: pointer; font-weight: normal;"><@message "update"/></label>
+                <#if user.realm == "agate-user-realm">
+                  <div class="card-footer">
+                    <div class="float-right">
+                      <label for="submit-password" class="btn btn-primary mb-0" style="cursor: pointer; font-weight: normal;"><@message "update"/></label>
+                    </div>
                   </div>
-                </div>
+                </#if>
               </div>
           </div>
         </div>

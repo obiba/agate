@@ -13,7 +13,7 @@
 agate.user
   .factory('UsersResource', ['$resource',
     function ($resource) {
-      return $resource('ws/users', {}, {
+      return $resource(contextPath + '/ws/users', {}, {
         'get': {method: 'GET', errorHandler: true},
         'save': {method: 'POST', errorHandler: true}
       });
@@ -21,7 +21,7 @@ agate.user
 
   .factory('UserResource', ['$resource',
     function ($resource) {
-      return $resource('ws/user/:id', {}, {
+      return $resource(contextPath + '/ws/user/:id', {}, {
         'save': {method: 'PUT', params: {id: '@id'}, errorHandler: true},
         'get': {method: 'GET', params: {id: '@id'}},
         'delete': {method: 'DELETE', params: {id: '@id'}, errorHandler: true}
@@ -30,14 +30,14 @@ agate.user
 
   .factory('UserAuthorizationsResource', ['$resource',
     function ($resource) {
-      return $resource('ws/user/:id/authorizations', {}, {
+      return $resource(contextPath + '/ws/user/:id/authorizations', {}, {
         'get': {method: 'GET', params: {id: '@id'}}
       });
     }])
 
   .factory('UserAuthorizationResource', ['$resource',
     function ($resource) {
-      return $resource('ws/user/:id/authorization/:authz', {}, {
+      return $resource(contextPath + '/ws/user/:id/authorization/:authz', {}, {
         'get': {method: 'GET', params: {id: '@id', authz: '@authz'}},
         'delete': {method: 'DELETE', params: {id: '@id', authz: '@authz'}, errorHandler: true}
       });
@@ -70,7 +70,7 @@ agate.user
 
   .factory('UserResetPasswordResource', ['$resource',
     function ($resource) {
-      return $resource('ws/user/:id/reset_password', {}, {
+      return $resource(contextPath + '/ws/user/:id/reset_password', {}, {
         'resetPassword': {method: 'PUT', params: {id: '@id'}}
       });
     }]);

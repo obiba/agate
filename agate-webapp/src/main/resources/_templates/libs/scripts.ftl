@@ -14,12 +14,17 @@
 <!-- Toastr -->
 <script src="${adminLTEPath}/plugins/toastr/toastr.min.js"></script>
 <!-- Axios -->
-<script src="/assets/libs/node_modules/axios/dist/axios.min.js"></script>
+<script src="${assetsPath}/libs/node_modules/axios/dist/axios.min.js"></script>
 
 <!-- Agate Utils and dependencies -->
-<script src="/assets/libs/node_modules/jquery.redirect/jquery.redirect.js"></script>
-<script src="/assets/libs/node_modules/js-cookie/src/js.cookie.js"></script>
-<script src="/assets/js/agate.js"></script>
+<script src="${assetsPath}/libs/node_modules/jquery.redirect/jquery.redirect.js"></script>
+<script src="${assetsPath}/libs/node_modules/js-cookie/src/js.cookie.js"></script>
+<script src="${assetsPath}/js/agate.js"></script>
+
+<!-- Global js variables -->
+<script>
+  const contextPath = "${contextPath}";
+</script>
 
 <!-- Custom js -->
 <#include "../models/scripts.ftl"/>

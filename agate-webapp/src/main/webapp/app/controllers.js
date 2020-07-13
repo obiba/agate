@@ -290,7 +290,7 @@ agate.controller('CredentialsTestModalController', ['$scope', '$uibModalInstance
     };
 
     $scope.test = function () {
-      $resource('ws/users/_test', {}, {'test': {method: 'POST', errorHandler: true}})
+      $resource(contextPath + '/ws/users/_test', {}, {'test': {method: 'POST', errorHandler: true}})
       .test({provider: provider, username: $scope.username, password: $scope.password})
       .$promise.then(function (value) {
         $uibModalInstance.close({provider: provider, username: $scope.username});

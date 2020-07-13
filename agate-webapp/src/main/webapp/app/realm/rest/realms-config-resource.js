@@ -15,16 +15,16 @@
     .factory('RealmsConfigResource', ['$resource', 'RealmTransformer',
       function($resource, RealmTransformer) {
 
-        return $resource('ws/config/realms', {},
+        return $resource(contextPath + '/ws/config/realms', {},
           {
             'create': {
-              url: 'ws/config/realms',
+              url: contextPath + '/ws/config/realms',
               method: 'POST',
               errorHandler: true,
               transformRequest: RealmTransformer.transformForRequest
             },
             'summaries': {
-              url: 'ws/config/realms/summaries',
+              url: contextPath + '/ws/config/realms/summaries',
               method: 'GET',
               isArray: true,
               errorHandler: true

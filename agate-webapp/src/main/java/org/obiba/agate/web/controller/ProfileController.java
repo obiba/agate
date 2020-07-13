@@ -42,7 +42,7 @@ public class ProfileController {
   public ModelAndView profile() {
     Subject subject = SecurityUtils.getSubject();
     if (!subject.isAuthenticated())
-      return new ModelAndView("redirect:signin?redirect=/profile");
+      return new ModelAndView("redirect:signin?redirect=" + configurationService.getContextPath() + "/profile");
 
     try {
       User user = userService.getCurrentUser();
@@ -61,7 +61,7 @@ public class ProfileController {
 
       return mv;
     } catch (Exception e) {
-      return new ModelAndView("redirect:/");
+      return new ModelAndView("redirect:" + configurationService.getContextPath() + "/");
     }
   }
 

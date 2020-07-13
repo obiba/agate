@@ -398,7 +398,7 @@ agate.user
       });
 
       $scope.approve = function (user) {
-        $http.put('ws/user/' + user.id + '/status', $.param({status: 'approved'}), {
+        $http.put(contextPath + '/ws/user/' + user.id + '/status', $.param({status: 'approved'}), {
           headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).then(function() {
           $route.reload();

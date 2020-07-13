@@ -104,6 +104,15 @@ public class ConfigurationService {
     this.cipherService = new AesCipherService();
   }
 
+  /**
+   * Get the http server context path, if configured.
+   * @return
+   */
+  public String getContextPath() {
+    String contextPath = env.getProperty("server.context-path", "");
+    return Strings.isNullOrEmpty(contextPath) ? env.getProperty("server.servlet.context-path", "") : contextPath;
+  }
+
   @Cacheable(value = "agateConfig", key = "#root.methodName")
   public Configuration getConfiguration() {
     Configuration configuration = getOrCreateConfiguration();
@@ -135,7 +144,7 @@ public class ConfigurationService {
     } else {
       String host = env.getProperty("server.address");
       String port = env.getProperty("https.port");
-      return "https://" + host + ":" + port;
+      return "https://" + host + ":" + port + getContextPath();
     }
   }
 

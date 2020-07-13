@@ -27,6 +27,7 @@
     "axios": true,
     "window": true,
     "URLSearchParams": true,
-    "Cookies": true
+    "Cookies": true,
+    "contextPath": true
   }
 }

@@ -14,7 +14,7 @@
   angular.module('agate.realm')
     .factory('RealmConfigFormResource', ['$resource',
       function($resource) {
-        return $resource('ws/config/realm-form', {}, {
+        return $resource(contextPath + '/ws/config/realm-form', {}, {
           get: {method: 'GET', errorHandler: true}
         });
       }

@@ -15,10 +15,10 @@
     .factory('RealmsResource', ['$resource',
       function($resource) {
 
-        return $resource('ws/realms', {},
+        return $resource(contextPath + '/ws/realms', {},
           {
             'get': {
-              url: 'ws/realms',
+              url: contextPath + '/ws/realms',
               method: 'GET',
               errorHandler: true
             }

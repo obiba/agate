@@ -25,7 +25,7 @@ public class OidcProvider {
 
   private final String url;
 
-  public OidcProvider(OIDCConfiguration configuration, String locale, String query) {
+  public OidcProvider(OIDCConfiguration configuration, String locale, String query, String contextPath) {
     this.configuration = configuration;
 
     Map<String, String> customParams = configuration.getCustomParams();
@@ -42,7 +42,7 @@ public class OidcProvider {
       this.title = configuration.getName();
     }
 
-    this.url = "/auth/signin/" + configuration.getName() + (Strings.isNullOrEmpty(query) ? "" : "?" + query);
+    this.url = contextPath + "/auth/signin/" + configuration.getName() + (Strings.isNullOrEmpty(query) ? "" : "?" + query);
   }
 
   public String getName() {
