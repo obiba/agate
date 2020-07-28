@@ -14,7 +14,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import org.obiba.core.util.StringUtil;
-import sun.util.locale.LanguageTag;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
@@ -32,6 +31,8 @@ public class LocalizedString extends TreeMap<String, String> {
 
   private static final long serialVersionUID = 5813178087884887246L;
 
+  private static final String UNDETERMINED_LANGUAGE_TAG = "und";
+
   public LocalizedString() {}
 
   public LocalizedString(@NotNull Locale locale, @NotNull String str) {
@@ -42,12 +43,12 @@ public class LocalizedString extends TreeMap<String, String> {
   @Override
   public String put(@Nullable String locale, String value) {
     if(Strings.isNullOrEmpty(value)) return null;
-    return super.put(locale == null ? LanguageTag.UNDETERMINED : Locale.forLanguageTag(locale).toLanguageTag(), value);
+    return super.put(locale == null ? UNDETERMINED_LANGUAGE_TAG : Locale.forLanguageTag(locale).toLanguageTag(), value);
   }
 
   public String put(@NotNull Locale locale, @NotNull String str) {
     if(Strings.isNullOrEmpty(str)) return null;
-    return super.put(locale == null ? LanguageTag.UNDETERMINED : locale.toLanguageTag(), str);
+    return super.put(locale == null ? UNDETERMINED_LANGUAGE_TAG : locale.toLanguageTag(), str);
   }
 
   /**
@@ -58,7 +59,7 @@ public class LocalizedString extends TreeMap<String, String> {
   @JsonIgnore
   @Nullable
   public String getUndetermined() {
-    return get(LanguageTag.UNDETERMINED);
+    return get(UNDETERMINED_LANGUAGE_TAG);
   }
 
   public LocalizedString forLocale(@NotNull Locale locale, @NotNull String str) {
@@ -79,7 +80,7 @@ public class LocalizedString extends TreeMap<String, String> {
   }
 
   public boolean contains(@Nullable Locale locale) {
-    return containsKey(locale);
+    return containsKey(locale.toLanguageTag());
   }
 
   public LocalizedString merge(LocalizedString values) {
