@@ -22,6 +22,7 @@ import org.eclipse.jetty.servlets.GzipFilter;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.obiba.agate.oidc.OIDCConfigurationFilter;
 import org.obiba.agate.web.filter.CachingHttpHeadersFilter;
+import org.obiba.agate.web.filter.ClickjackingHttpHeadersFilter;
 import org.obiba.agate.web.filter.StaticResourcesProductionFilter;
 import org.obiba.agate.web.filter.auth.oidc.AgateCallbackFilter;
 import org.obiba.agate.web.filter.auth.oidc.AgateSignInFilter;
@@ -180,6 +181,7 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
       initStaticResourcesProductionFilter(servletContext, disps);
       initCachingHttpHeadersFilter(servletContext, disps);
     }
+    initClickjackingHttpHeadersFilter(servletContext, disps);
     initGzipFilter(servletContext, disps);
 
     log.info("Web application fully configured");
@@ -274,6 +276,18 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
     cachingFilter.addMappingForUrlPatterns(disps, true, "/fonts/*");
     cachingFilter.addMappingForUrlPatterns(disps, true, "/scripts/*");
     cachingFilter.addMappingForUrlPatterns(disps, true, "/styles/*");
+    cachingFilter.setAsyncSupported(true);
+  }
+
+  /**
+   * Initializes the clickjacking HTTP Headers Filter.
+   */
+  private void initClickjackingHttpHeadersFilter(ServletContext servletContext, EnumSet<DispatcherType> disps) {
+    log.debug("Registering Clickjacking HTTP Headers Filter");
+    FilterRegistration.Dynamic cachingFilter = servletContext
+      .addFilter("clickjackingHttpHeadersFilter", new ClickjackingHttpHeadersFilter());
+
+    cachingFilter.addMappingForUrlPatterns(disps, true, "/*");
     cachingFilter.setAsyncSupported(true);
   }
 
