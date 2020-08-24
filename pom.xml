@@ -48,25 +48,25 @@
     <jhipsterloaded.version>0.7</jhipsterloaded.version>
     <jjwt.version>0.6.0</jjwt.version>
     <json-path.version>2.2.0</json-path.version>
+    <json-smart.version>2.3</json-smart.version>
     <jsr305.version>3.0.0</jsr305.version>
+    <lang-tag.version>1.4.4</lang-tag.version>
     <logback.version>1.1.11</logback.version>
     <logstash-logback.version>4.5.1</logstash-logback.version>
+    <mariabd.version>1.5.9</mariabd.version>
     <metrics-spring.version>3.0.0</metrics-spring.version>
     <mongodb-driver.version>3.8.0</mongodb-driver.version>
+    <mysql.version>5.1.45</mysql.version>
+    <nimbus-jose-jwt.version>7.9</nimbus-jose-jwt.version>
     <nosqlunit.version>0.7.9</nosqlunit.version>
+    <oauth-oidc-sdk.version>5.45</oauth-oidc-sdk.version>
     <obiba-commons.version>1.14-SNAPSHOT</obiba-commons.version>
     <oltu.version>1.0.1</oltu.version>
+    <postgres.version>9.4.1212.jre7</postgres.version>
     <protobuf.version>2.5.0</protobuf.version>
     <protobuf-java-format.version>1.2.1-obiba</protobuf-java-format.version>
     <shiro.version>1.4.0</shiro.version>
     <shiro-extras.version>1.0.3-obiba</shiro-extras.version>
-    <mysql.version>5.1.45</mysql.version>
-    <mariabd.version>1.5.9</mariabd.version>
-    <postgres.version>9.4.1212.jre7</postgres.version>
-    <lang-tag.version>1.4.4</lang-tag.version>
-    <oauth-oidc-sdk.version>5.45</oauth-oidc-sdk.version>
-    <nimbus-jose-jwt.version>7.9</nimbus-jose-jwt.version>
-    <json-smart.version>2.3</json-smart.version>
 
     <!-- maven plugins -->
     <bintray-maven-plugin.version>1.2.20180117184439</bintray-maven-plugin.version>
