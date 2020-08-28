@@ -116,6 +116,7 @@ public class ConfigurationService {
   @Cacheable(value = "agateConfig", key = "#root.methodName")
   public Configuration getConfiguration() {
     Configuration configuration = getOrCreateConfiguration();
+    configuration.setContextPath(getContextPath());
     if (configuration.getLocales().size() == 0) configuration.getLocales().add(Configuration.DEFAULT_LOCALE);
     return configuration;
   }

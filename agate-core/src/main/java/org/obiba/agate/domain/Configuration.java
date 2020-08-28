@@ -18,6 +18,7 @@ import com.google.common.collect.Iterables;
 import org.hibernate.validator.constraints.NotBlank;
 import org.obiba.mongodb.domain.AbstractAuditableDocument;
 import org.obiba.runtime.Version;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.google.common.base.Objects;
@@ -69,6 +70,9 @@ public class Configuration extends AbstractAuditableDocument {
   private LocalizedString translations;
 
   private List<Locale> locales = Lists.newArrayList();
+
+  @Transient
+  private String contextPath;
 
   public String getName() {
     return name;
@@ -234,5 +238,13 @@ public class Configuration extends AbstractAuditableDocument {
 
   public boolean hasTranslations() {
     return translations != null && !translations.isEmpty();
+  }
+
+  public void setContextPath(String contextPath) {
+    this.contextPath = contextPath;
+  }
+
+  public String getContextPath() {
+    return contextPath;
   }
 }

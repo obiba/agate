@@ -32,6 +32,5 @@ public class ConfigurationInterceptor extends HandlerInterceptorAdapter {
   @Override
   public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
     modelAndView.getModel().put("config", configurationService.getConfiguration());
-    modelAndView.getModel().put("contextPath", configurationService.getContextPath());
   }
 }

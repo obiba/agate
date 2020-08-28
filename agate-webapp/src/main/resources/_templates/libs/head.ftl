@@ -4,6 +4,9 @@
   <@spring.messageText code code/>
 </#macro>
 
+<!-- Context path setting -->
+<#assign contextPath = "${config.contextPath}"/>
+
 <!-- App settings -->
 <#include "settings.ftl"/>
 <#include "../models/settings.ftl"/>
