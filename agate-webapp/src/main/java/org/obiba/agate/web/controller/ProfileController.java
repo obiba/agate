@@ -1,14 +1,12 @@
 package org.obiba.agate.web.controller;
 
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.Subject;
 import org.obiba.agate.config.ClientConfiguration;
 import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.OidcRealmConfig;
 import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.domain.User;
-import org.obiba.agate.security.AgateRealmFactory;
 import org.obiba.agate.service.AuthorizationService;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.RealmConfigService;
@@ -19,6 +17,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Locale;
+
+import static org.springframework.web.servlet.i18n.CookieLocaleResolver.LOCALE_REQUEST_ATTRIBUTE_NAME;
 
 @Controller
 public class ProfileController {
@@ -39,7 +41,7 @@ public class ProfileController {
   private ClientConfiguration clientConfiguration;
 
   @GetMapping("/profile")
-  public ModelAndView profile() {
+  public ModelAndView profile(HttpServletRequest request) {
     Subject subject = SecurityUtils.getSubject();
     if (!subject.isAuthenticated())
       return new ModelAndView("redirect:signin?redirect=/profile");
@@ -58,6 +60,13 @@ public class ProfileController {
 
       mv.getModel().put("authorizations", authorizationService.list(user.getName()));
       mv.getModel().put("authConfig", new AuthConfiguration(configurationService.getConfiguration(), clientConfiguration));
+
+      try {
+        Locale locale = Locale.forLanguageTag(user.getPreferredLanguage());
+        if (locale != null)
+          request.setAttribute(LOCALE_REQUEST_ATTRIBUTE_NAME, locale);
+      } catch (Exception e) {
+      }
 
       return mv;
     } catch (Exception e) {
