@@ -19,3 +19,8 @@
 
 <!-- Home page settings -->
 <#assign portalLink = "${config.portalUrl!contextPath}" + "/"/>
+
+<!-- Profile -->
+<#assign showProfileRole = false/>
+<#assign showProfileGroups = false/>
+<#assign showProfileApplications = false/>
