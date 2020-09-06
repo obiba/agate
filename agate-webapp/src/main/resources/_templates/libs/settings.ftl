@@ -13,3 +13,8 @@
 
 <!-- Theme -->
 <#assign adminLTEPath = "/assets/libs/node_modules/admin-lte"/>
+
+<!-- Profile -->
+<#assign showProfileRole = false/>
+<#assign showProfileGroups = false/>
+<#assign showProfileApplications = false/>

@@ -50,9 +50,11 @@
                   <dd class="col-sm-8">${user.email}</dd>
                   <dt class="col-sm-4"><@message "preferred-language"/></dt>
                   <dd class="col-sm-8"><@message "language." + user.preferredLanguage/></dd>
-                  <dt class="col-sm-4"><@message "role"/></dt>
-                  <dd class="col-sm-8"><span class="badge badge-secondary">${user.role}</span></dd>
-                  <#if user.groups??>
+                  <#if showProfileRole>
+                    <dt class="col-sm-4"><@message "role"/></dt>
+                    <dd class="col-sm-8"><span class="badge badge-secondary">${user.role}</span></dd>
+                  </#if>
+                  <#if showProfileGroups && user.groups??>
                     <dt class="col-sm-4"><@message "groups"/></dt>
                     <dd class="col-sm-8">
                       <#list user.groups as group>
@@ -60,7 +62,7 @@
                       </#list>
                     </dd>
                   </#if>
-                  <#if applications??>
+                  <#if showProfileApplications && applications??>
                     <dt class="col-sm-4"><@message "applications"/></dt>
                     <dd class="col-sm-8">
                       <#list applications as application>
