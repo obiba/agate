@@ -14,7 +14,7 @@
       <div
         style="padding: 10px 15px;border-top-right-radius: 3px;border-top-left-radius: 3px;background-color: gainsboro;border-color: gainsboro;">
         <h3 style="font-family: 'Lato','Helvetica Neue',Helvetica,Arial,sans-serif;font-weight: 400;line-height: 1.1;color: inherit;margin-top: 0;margin-bottom: 0;font-size: 17px;">
-          ${msg("mica.email.commentAdded.title", organization)}
+          ${msg("mica.email.contactUs.title", organization)}
         </h3>
       </div>
       <div style="padding: 15px;">
@@ -22,23 +22,22 @@
           ${msg("email.generic.presentation", user.firstName!"", user.lastName!"")}
         </p>
         <p style="margin: 0 0 10px;">
-          <#switch status>
-            <#case "CREATED">
-              ${msg("mica.email.commentAdded.body.created", documentType, documentId)}
-              <#break>
-            <#case "UPDATED">
-              ${msg("mica.email.commentAdded.body.updated", documentType, documentId)}
-              <#break>
-            <#default>
-              ${msg("mica.email.commentAdded.body.other", documentType, documentId)}
-          </#switch>
+          ${msg("mica.email.contactUs.text")}
         </p>
         <p style="margin: 0 0 10px;">
-        </p><p style="margin: auto;text-align: center;">
-        <a href="${publicUrl}/admin#/${documentType}/${documentId}/comments"
-          target="_blank"
-          style="color: #ffffff;text-decoration: none;display: inline-block;margin-bottom: 0;font-weight: normal;text-align: center;vertical-align: middle;-ms-touch-action: manipulation;touch-action: manipulation;cursor: pointer;background: #2c3e50 none;white-space: nowrap;padding: 10px 15px;font-size: 15px;line-height: 1.5;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;border: 1px solid #2c3e50;">${msg("mica.email.commentAdded.link")}</a>
-      </p>
+          <dl>
+            <dt>${msg("mica.email.contactUs.name")}</dt>
+            <dd>${contactName}</dd>
+            <dt>${msg("mica.email.contactUs.email")}</dt>
+            <dd><a href="mailto:${contactEmail}">${contactEmail}</a></dd>
+            <dt>${msg("mica.email.contactUs.subject")}</dt>
+            <dd>${contactSubject}</dd>
+            <dt>${msg("mica.email.contactUs.message")}</dt>
+            <dd>
+              <pre>${contactMessage}</pre>
+            </dd>
+          </dl>
+        </p>
       </div>
     </div>
     <p style="display: block;margin: 5px 0 10px;color: #597ea2;">

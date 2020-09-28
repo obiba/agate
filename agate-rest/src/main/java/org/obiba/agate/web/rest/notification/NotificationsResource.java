@@ -20,6 +20,7 @@ import org.apache.commons.lang.LocaleUtils;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.MailService;
+import org.obiba.agate.service.ReCaptchaService;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.service.support.MessageResolverMethod;
 import org.obiba.agate.web.rest.application.ApplicationAwareResource;
@@ -61,6 +62,9 @@ public class NotificationsResource extends ApplicationAwareResource {
 
   @Inject
   private UserService userService;
+
+  @Inject
+  private ReCaptchaService reCaptchaService;
 
   /**
    * Send a notification email to all active users matching the provided user names and/or belonging to the provided groups AND
@@ -128,6 +132,10 @@ public class NotificationsResource extends ApplicationAwareResource {
         ctx.put(k, v);
       }
     });
+
+    if (ctx.containsKey("reCaptcha")) {
+      reCaptchaService.verify(ctx.get("reCaptcha").toString());
+    }
 
     for (User rec : recipients) {
       Locale locale = LocaleUtils.toLocale(rec.getPreferredLanguage());

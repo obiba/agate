@@ -98,3 +98,6 @@ dependencies-update:
 
 plugins-update:
 	mvn versions:display-plugin-updates
+
+templates:
+	cd agate-webapp && cp -r src/main/resources/_templates/ target/classes/
