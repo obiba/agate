@@ -8,12 +8,23 @@ var agatejs = (function() {
   };
 
   const agateSignin = function(formId, onFailure) {
-    $(formId).submit(function(e) {
+    const toggleSubmitButton = function(enable)  {
+      const submitSelect = '#' + formId + ' button[type="submit"]';
+      if (enable) {
+        $(submitSelect).prop("disabled",false);
+        $( submitSelect + ' i').hide();
+      } else {
+        $(submitSelect).prop("disabled",true);
+        $( submitSelect + ' i').show();
+      }
+    };
+    $('#' + formId).submit(function(e) {
       e.preventDefault(); // avoid to execute the actual submit of the form.
       var form = $(this);
       var url = '/ws/auth/sessions';
       var data = form.serialize(); // serializes the form's elements.
 
+      toggleSubmitButton(false);
       axios.post(normalizeUrl(url), data)
         .then(() => {
           //console.dir(response);
@@ -25,6 +36,7 @@ var agatejs = (function() {
           window.location = redirect;
         })
         .catch(handle => {
+          toggleSubmitButton(true);
           console.dir(handle);
           if (onFailure) {
             var banned = handle.response.data && handle.response.data.message === 'User is banned';
@@ -35,7 +47,17 @@ var agatejs = (function() {
   };
 
   const agateSignup = function(formId, requiredFields, onFailure) {
-    $(formId).submit(function(e) {
+    const toggleSubmitButton = function(enable)  {
+      const submitSelect = '#' + formId + ' button[type="submit"]';
+      if (enable) {
+        $(submitSelect).prop("disabled",false);
+        $( submitSelect + ' i').hide();
+      } else {
+        $(submitSelect).prop("disabled",true);
+        $( submitSelect + ' i').show();
+      }
+    };
+    $('#' + formId).submit(function(e) {
       e.preventDefault(); // avoid to execute the actual submit of the form.
       var form = $(this);
       var url = '/ws/users/_join';
@@ -68,6 +90,7 @@ var agatejs = (function() {
 
       const realmField = getField('realm');
 
+      toggleSubmitButton(false);
       axios.post(normalizeUrl(url), data)
           .then(() => {
             //console.dir(response);
@@ -87,6 +110,7 @@ var agatejs = (function() {
             }
           })
           .catch(handle => {
+            toggleSubmitButton(true);
             console.dir(handle);
             if (handle.response.data.message === 'Email already in use') {
               onFailure('server.error.email-already-assigned');
