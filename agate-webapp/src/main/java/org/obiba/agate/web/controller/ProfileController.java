@@ -1,5 +1,6 @@
 package org.obiba.agate.web.controller;
 
+import com.google.common.base.Strings;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.obiba.agate.config.ClientConfiguration;
@@ -13,7 +14,9 @@ import org.obiba.agate.service.RealmConfigService;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.controller.domain.AuthConfiguration;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.inject.Inject;
@@ -41,7 +44,9 @@ public class ProfileController {
   private ClientConfiguration clientConfiguration;
 
   @GetMapping("/profile")
-  public ModelAndView profile(HttpServletRequest request) {
+  public ModelAndView profile(HttpServletRequest request,
+                              @CookieValue(value = "NG_TRANSLATE_LANG_KEY", required = false) String locale,
+                              @RequestParam(value = "language", required = false) String language) {
     Subject subject = SecurityUtils.getSubject();
     if (!subject.isAuthenticated())
       return new ModelAndView("redirect:signin?redirect=" + configurationService.getContextPath() + "/profile");
@@ -61,11 +66,13 @@ public class ProfileController {
       mv.getModel().put("authorizations", authorizationService.list(user.getName()));
       mv.getModel().put("authConfig", new AuthConfiguration(configurationService.getConfiguration(), clientConfiguration));
 
-      try {
-        Locale locale = Locale.forLanguageTag(user.getPreferredLanguage());
-        if (locale != null)
-          request.setAttribute(LOCALE_REQUEST_ATTRIBUTE_NAME, locale);
-      } catch (Exception e) {
+      if (Strings.isNullOrEmpty(locale) && Strings.isNullOrEmpty(language)) {
+        try {
+          Locale localePref = Locale.forLanguageTag(user.getPreferredLanguage());
+          if (localePref != null)
+            request.setAttribute(LOCALE_REQUEST_ATTRIBUTE_NAME, localePref);
+        } catch (Exception e) {
+        }
       }
 
       return mv;
