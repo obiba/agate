@@ -441,11 +441,14 @@
       User user = userJoinedEvent.getPersistable();
       String organization = configurationService.getConfiguration().getName();
 
-      administrators.stream().forEach(u -> sendEmail(u, "[" + organization + "] " + propertyResolver.getProperty("pendingForReviewSubject"),
-        "pendingForReviewEmail", null));
+      Map<String, Object> context = Maps.newHashMap();
+      context.put("user", user);
+
+      administrators.forEach(u -> sendEmail(u, "[" + organization + "] " + propertyResolver.getProperty("pendingForReviewSubject"),
+        "pendingForReviewEmail", context));
 
       sendEmail(user, "[" + organization + "] " + propertyResolver.getProperty("pendingForApprovalSubject"),
-        "pendingForApprovalEmail", null);
+        "pendingForApprovalEmail", context);
     }
 
     @Subscribe
@@ -463,7 +466,8 @@
     private void sendEmail(User user, String subject, String templateName, Map<String, Object> context) {
       Locale locale = LocaleUtils.toLocale(user.getPreferredLanguage());
       Map<String, Object> ctx = context == null ? Maps.newHashMap() : Maps.newHashMap(context);
-      ctx.put("user", user);
+      if (!ctx.containsKey("user"))
+        ctx.put("user", user);
       ctx.put("organization", configurationService.getConfiguration().getName());
       ctx.put("publicUrl", configurationService.getPublicUrl());
       ctx.put("msg", new MessageResolverMethod(messageSource, locale));
