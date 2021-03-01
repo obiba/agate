@@ -112,7 +112,7 @@ var agatejs = (function() {
           .catch(handle => {
             toggleSubmitButton(true);
             console.dir(handle);
-            if (handle.response.data.message === 'Email already in use') {
+            if (handle.response.data.message.startsWith('Email already in use')) {
               onFailure('server.error.email-already-assigned');
             } else if (handle.response.data.message === 'Invalid reCaptcha response') {
               onFailure('server.error.bad-captcha');
