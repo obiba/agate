@@ -41,7 +41,7 @@ public class Application extends AbstractAuditableDocument {
 
   private List<Scope> scopes;
 
-  private boolean userApprovedOnSignUp = true;
+  private boolean autoApproval = true;
 
   public Application() {
   }
@@ -148,12 +148,12 @@ public class Application extends AbstractAuditableDocument {
    *
    * @return
    */
-  public boolean isUserApprovedOnSignUp() {
-    return userApprovedOnSignUp;
+  public boolean isAutoApproval() {
+    return autoApproval;
   }
 
-  public void setUserApprovedOnSignUp(boolean userApprovedOnSignUp) {
-    this.userApprovedOnSignUp = userApprovedOnSignUp;
+  public void setAutoApproval(boolean autoApproval) {
+    this.autoApproval = autoApproval;
   }
 
   @Override

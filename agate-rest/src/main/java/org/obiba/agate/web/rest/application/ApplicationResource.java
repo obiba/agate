@@ -59,7 +59,7 @@ public class ApplicationResource {
     application.setScopes(Lists.newArrayList());
     dto.getScopesList().forEach(s -> application.addScope(s.getName(), s.getDescription()));
     if (dto.hasKey()) application.setKey(applicationService.hashKey(dto.getKey()));
-    if (dto.hasUserApprovedOnSignUp()) application.setUserApprovedOnSignUp(dto.getUserApprovedOnSignUp());
+    if (dto.hasAutoApproval()) application.setAutoApproval(dto.getAutoApproval());
 
     applicationService.save(application);
 

@@ -34,7 +34,7 @@ class ApplicationDtos {
     if(application.hasScopes()) builder.addAllScopes(application.getScopes().stream().map(this::asDto)
       .collect(Collectors.toList()));
 
-    builder.setUserApprovedOnSignUp(application.isUserApprovedOnSignUp());
+    builder.setAutoApproval(application.isAutoApproval());
 
     return builder.build();
   }
@@ -52,7 +52,7 @@ class ApplicationDtos {
     application.setRedirectURI(dto.getRedirectURI());
     application.setScopes(dto.getScopesList().stream().map(this::fromDto).collect(Collectors.toList()));
 
-    if (dto.hasUserApprovedOnSignUp()) application.setUserApprovedOnSignUp(dto.getUserApprovedOnSignUp());
+    if (dto.hasAutoApproval()) application.setAutoApproval(dto.getAutoApproval());
 
     return application;
   }

@@ -224,7 +224,7 @@ public class UsersPublicResource {
       user.getApplications().add(applicationName);
       if (!Strings.isNullOrEmpty(password))
         user.setStatus(UserStatus.ACTIVE);
-      else if (applicationService.findByName(applicationName).isUserApprovedOnSignUp())
+      else if (applicationService.findByName(applicationName).isAutoApproval())
         user.setStatus(UserStatus.APPROVED);
       else
         user.setStatus(UserStatus.PENDING);
