@@ -61,12 +61,12 @@ public class UserGroupSeed implements ApplicationListener<ContextRefreshedEvent>
   private void seedGroups() {
     save(Group.newBuilder().name("mica-administrator").description("Administrate Mica").applications("mica").build());
     save(Group.newBuilder().name("mica-reviewer").description("Edit and publish any Mica content")
-      .applications("opal", "mica", "drupal").build());
-    save(Group.newBuilder().name("mica-editor").description("Edit any Mica content").applications("opal", "mica", "drupal")
+      .applications("opal", "mica").build());
+    save(Group.newBuilder().name("mica-editor").description("Edit any Mica content").applications("opal", "mica")
       .build());
     save(Group.newBuilder().name("mica-data-access-officer").description("Manage data access requests in Mica")
-      .applications("mica", "drupal").build());
-    save(Group.newBuilder().name("mica-user").description("Can submit data access requests in Mica").applications("mica", "drupal").build());
+      .applications("mica").build());
+    save(Group.newBuilder().name("mica-user").description("Can submit data access requests in Mica").applications("mica").build());
     save(Group.newBuilder().name("opal-administrator").description("Administrate Opal").applications("opal").build());
   }
 
@@ -158,7 +158,7 @@ public class UserGroupSeed implements ApplicationListener<ContextRefreshedEvent>
       .lastName("Tremblay") //
       .email("user2@example.org") //
       .groups("group1", "group3") //
-      .applications("mica", "drupal");
+      .applications("mica");
 
     save(builder.build());
 

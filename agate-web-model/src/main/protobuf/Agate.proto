@@ -142,6 +142,7 @@ message ApplicationDto {
   optional TimestampsDto timestamps = 5;
   optional string redirectURI = 6;
   repeated ScopeDto scopes = 7;
+  optional bool userApprovedOnSignUp = 8;
 }
 
 message ConfirmForm {

@@ -272,6 +272,8 @@
     "key-generate": "Generate Key",
     "redirectURI": "Redirect URI",
     "redirectURI-help": "Callback URL to the application's server, required in the OAuth context.",
+    "userApprovedOnSignUp": "User Approved on Sign up",
+    "userApprovedOnSignUp-help": "Automatically approve a user who signed up through the application. Otherwise the user will be in 'pending for approval' state, requiring manual action.",
     "confirmKey": "Confirm key",
     "changeKey": "Change Key",
     "delete-dialog": {

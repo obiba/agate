@@ -224,8 +224,10 @@ public class UsersPublicResource {
       user.getApplications().add(applicationName);
       if (!Strings.isNullOrEmpty(password))
         user.setStatus(UserStatus.ACTIVE);
-      else
+      else if (applicationService.findByName(applicationName).isUserApprovedOnSignUp())
         user.setStatus(UserStatus.APPROVED);
+      else
+        user.setStatus(UserStatus.PENDING);
     }
 
     userService.createUser(user, password);

@@ -58,10 +58,8 @@ public class ApplicationResource {
     application.setRedirectURI(dto.getRedirectURI());
     application.setScopes(Lists.newArrayList());
     dto.getScopesList().forEach(s -> application.addScope(s.getName(), s.getDescription()));
-
-    if (dto.hasKey()) {
-      application.setKey(applicationService.hashKey(dto.getKey()));
-    }
+    if (dto.hasKey()) application.setKey(applicationService.hashKey(dto.getKey()));
+    if (dto.hasUserApprovedOnSignUp()) application.setUserApprovedOnSignUp(dto.getUserApprovedOnSignUp());
 
     applicationService.save(application);
 

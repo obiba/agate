@@ -272,6 +272,8 @@
     "key-generate": "Générer un clé",
     "redirectURI": "URI de redirection",
     "redirectURI-help": "L'URL de rappel au serveur d'application, requise dans le context d'OAuth.",
+    "userApprovedOnSignUp": "Approuver les utilisateurs nouvellement inscrits",
+    "userApprovedOnSignUp-help": "Approuver automatiquement les utilisateurs s'étant inscrits par l'application. Sinon l'utilisateur sera en attente d'approbation, nécessitant une intervention manuelle.",
     "confirmKey": "Confirmer la clé",
     "changeKey": "Changer la clé",
     "delete-dialog": {

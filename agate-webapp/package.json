@@ -5,7 +5,7 @@
   "description": "Agate web UI",
   "dependencies": {
     "admin-lte": "^3.0.5",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "bootstrap-datepicker": "^1.9.0",
     "jquery.redirect": "^1.1.4",
     "js-cookie": "^2.2.1"

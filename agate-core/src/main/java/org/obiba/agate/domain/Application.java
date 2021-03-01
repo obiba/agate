@@ -41,6 +41,8 @@ public class Application extends AbstractAuditableDocument {
 
   private List<Scope> scopes;
 
+  private boolean userApprovedOnSignUp = true;
+
   public Application() {
   }
 
@@ -102,14 +104,14 @@ public class Application extends AbstractAuditableDocument {
   }
 
   public boolean hasScope(String name) {
-    return hasScopes() && scopes.stream().filter(a -> a.getName().equals(name)).findFirst().isPresent();
+    return hasScopes() && scopes.stream().anyMatch(a -> a.getName().equals(name));
   }
 
   @Nullable
   public Scope getScope(String name) {
     if(!hasScopes()) return null;
     Optional<Scope> action = scopes.stream().filter(a -> a.getName().equals(name)).findFirst();
-    return action.isPresent() ? action.get() : null;
+    return action.orElse(null);
   }
 
   public List<Scope> getScopes() {
@@ -141,13 +143,27 @@ public class Application extends AbstractAuditableDocument {
     if (scope != null) scopes.remove(scope);
   }
 
+  /**
+   * User created through the application can be automatically approved, otherwise pending for approval status is applied.
+   *
+   * @return
+   */
+  public boolean isUserApprovedOnSignUp() {
+    return userApprovedOnSignUp;
+  }
+
+  public void setUserApprovedOnSignUp(boolean userApprovedOnSignUp) {
+    this.userApprovedOnSignUp = userApprovedOnSignUp;
+  }
+
   @Override
   protected Objects.ToStringHelper toStringHelper() {
     return super.toStringHelper().add("name", name) //
-      .add("key", key).add("redirectURI", redirectURI).add("scopes", scopes == null
-        ? null
-        : Joiner.on(",").join(scopes.stream().map(Scope::getName).collect(Collectors.toList())));
+        .add("key", key).add("redirectURI", redirectURI).add("scopes", scopes == null
+            ? null
+            : Joiner.on(",").join(scopes.stream().map(Scope::getName).collect(Collectors.toList())));
   }
+
 
   /**
    * A OAuth scope allows to qualify the scope of the authorization granted on the application.
@@ -189,7 +205,7 @@ public class Application extends AbstractAuditableDocument {
 
   public static class Builder {
 
-    private Application application;
+    private final Application application;
 
     private Builder() {
       application = new Application();
