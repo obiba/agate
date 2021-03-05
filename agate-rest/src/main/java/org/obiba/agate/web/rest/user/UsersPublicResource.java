@@ -26,6 +26,7 @@ import org.obiba.agate.security.AgateUserRealm;
 import org.obiba.agate.security.Roles;
 import org.obiba.agate.service.*;
 import org.obiba.agate.web.rest.config.JerseyConfiguration;
+import org.obiba.agate.web.rest.security.InvalidApplicationKeyException;
 import org.obiba.shiro.authc.HttpAuthorizationToken;
 import org.obiba.shiro.realm.ObibaRealm;
 import org.springframework.stereotype.Component;
@@ -307,6 +308,8 @@ public class UsersPublicResource {
     if (appAuthHeader == null) return null;
 
     HttpAuthorizationToken token = new HttpAuthorizationToken(ObibaRealm.APPLICATION_AUTH_SCHEMA, appAuthHeader);
-    return applicationService.isValid(token.getUsername(), new String(token.getPassword())) ? token.getUsername() : null;
+    if (!applicationService.isValid(token.getUsername(), new String(token.getPassword())))
+      throw new InvalidApplicationKeyException();
+    return token.getUsername();
   }
 }
