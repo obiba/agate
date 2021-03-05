@@ -71,9 +71,19 @@ public class ApplicationService {
     return applications == null || applications.isEmpty() ? null : applications.get(0);
   }
 
+  public Application findByIdOrName(@NotNull String idOrName) {
+    Application application = find(idOrName);
+    if (application == null) {
+      List<Application> applications = applicationRepository.findByName(idOrName);
+      return applications == null || applications.isEmpty() ? null : applications.get(0);
+    }
+    return application;
+  }
+
+
   public boolean isValid(String idOrName, String key) {
     List<Application> applications = applicationRepository.findByIdAndKey(idOrName, hashKey(key));
-    if(applications == null && applications.isEmpty())
+    if(applications == null || applications.isEmpty())
       applications = applicationRepository.findByNameAndKey(idOrName, hashKey(key));
     return applications != null && !applications.isEmpty();
   }

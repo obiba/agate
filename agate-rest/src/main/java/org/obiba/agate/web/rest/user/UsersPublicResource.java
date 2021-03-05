@@ -221,13 +221,18 @@ public class UsersPublicResource {
     user.setAttributes(extractAttributes(request));
 
     if (!Strings.isNullOrEmpty(applicationName)) {
-      user.getApplications().add(applicationName);
-      if (!Strings.isNullOrEmpty(password))
-        user.setStatus(UserStatus.ACTIVE);
-      else if (applicationService.findByName(applicationName).isAutoApproval())
-        user.setStatus(UserStatus.APPROVED);
-      else
+      Application application = applicationService.findByIdOrName(applicationName);
+      if (application != null) {
+        user.getApplications().add(application.getId());
+        if (!Strings.isNullOrEmpty(password))
+          user.setStatus(UserStatus.ACTIVE);
+        else if (application.isAutoApproval())
+          user.setStatus(UserStatus.APPROVED);
+        else
+          user.setStatus(UserStatus.PENDING);
+      } else {
         user.setStatus(UserStatus.PENDING);
+      }
     }
 
     userService.createUser(user, password);
