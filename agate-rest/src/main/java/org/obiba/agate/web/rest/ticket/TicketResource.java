@@ -13,11 +13,9 @@ package org.obiba.agate.web.rest.ticket;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.NewCookie;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.*;
 
+import io.jsonwebtoken.lang.Strings;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
@@ -35,6 +33,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
@@ -66,7 +67,7 @@ public class TicketResource extends ApplicationAwareResource {
 
   /**
    * Get the user profile as a angular schema form model. See also
-   * {@link org.obiba.agate.web.rest.config.ConfigurationResource#getProfileConfiguration()}. The user profile is
+   * {@link org.obiba.agate.web.rest.config.ConfigurationResource#getProfileConfiguration(String)}. The user profile is
    * only accessible to authenticated applications to which the user has access.
    *
    * @return
@@ -95,7 +96,7 @@ public class TicketResource extends ApplicationAwareResource {
 
   /**
    * Update the user profile from a angular schema form model. See also
-   * {@link org.obiba.agate.web.rest.config.ConfigurationResource#getProfileConfiguration()}.The user profile is
+   * {@link org.obiba.agate.web.rest.config.ConfigurationResource#getProfileConfiguration(String)}.The user profile is
    * only accessible to authenticated applications to which the user has access.
    *
    * @return
@@ -164,6 +165,7 @@ public class TicketResource extends ApplicationAwareResource {
 
   @GET
   @Path("/{token}/username")
+  @Produces(MediaType.TEXT_PLAIN + ";charset=utf-8")
   public Response getUsername(@Context HttpServletRequest servletRequest, @PathParam("token") String token,
     @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) {
     validateApplication(authHeader);
@@ -178,7 +180,9 @@ public class TicketResource extends ApplicationAwareResource {
     if(user == null) user = userService.findActiveUserByEmail(username);
     authorizationValidator.validateApplication(servletRequest, user, getApplicationName());
 
-    return Response.ok().header(HttpHeaders.SET_COOKIE, getCookie(ticket)).entity(ticket.getUsername()).build();
+    return Response.ok().header(HttpHeaders.SET_COOKIE, getCookie(ticket))
+        .entity(ticket.getUsername().getBytes(StandardCharsets.UTF_8))
+        .encoding("UTF-8").build();
   }
 
   @DELETE
