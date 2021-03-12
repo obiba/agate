@@ -315,19 +315,26 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
 
       JSONObject userMappedInfo = new JSONObject();
 
+      log.debug("User info received: {}", new JSONObject(credentials.getUserInfo()));
+      log.debug("User info fields mapping: {}", new JSONObject(userInfoMapping));
+
       // map other fields, use config and join's schema?
       for (int i = 0; i < names.length(); i++) {
         String name = names.getString(i);
-        userMappedInfo.put(name, credentials.getUserInfo(userInfoMapping.get(name)));
+        if (userInfoMapping.containsKey(name))
+          userMappedInfo.put(name, credentials.getUserInfo(userInfoMapping.get(name)));
       }
 
       if (!userMappedInfo.has("username")) userMappedInfo.put("username", oidcAuthenticationToken.getUsername());
       userMappedInfo.put("realm", config.getName());
+
+      log.debug("User info mapped: {}", userMappedInfo);
+
       Configuration configuration =  configurationService.getConfiguration();
       response.addHeader(HttpHeaders.SET_COOKIE,
         new NewCookie(
           "u_auth",
-          userMappedInfo.toString(),
+          URLUtils.encode(userMappedInfo.toString()).replaceAll("\\+", "%20"),
           "/",
           configuration.getDomain(),
           null,
