@@ -66,7 +66,7 @@
     <protobuf.version>2.5.0</protobuf.version>
     <protobuf-java-format.version>1.2.1-obiba</protobuf-java-format.version>
     <shiro.version>1.4.0</shiro.version>
-    <shiro-extras.version>1.0.3-obiba</shiro-extras.version>
+    <shiro-extras.version>1.1.0</shiro-extras.version>
 
     <!-- maven plugins -->
     <bintray-maven-plugin.version>1.2.20180117184439</bintray-maven-plugin.version>
