@@ -80,8 +80,10 @@ public class UserCredentials extends AbstractAuditableDocument {
   }
 
   @Override
-  protected Objects.ToStringHelper toStringHelper() {
-    return super.toStringHelper().add("name", name);
+  public String toString() {
+    return "UserCredentials{" +
+        "name='" + name + '\'' +
+        '}';
   }
 
   public static Builder newBuilder() {

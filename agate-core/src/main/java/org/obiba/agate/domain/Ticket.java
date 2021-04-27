@@ -82,9 +82,11 @@ public class Ticket extends AbstractAuditableDocument {
   }
 
   @Override
-  protected Objects.ToStringHelper toStringHelper() {
-    return super.toStringHelper().add("username", username) //
-        .add("remembered", remembered);
+  public String toString() {
+    return "Ticket{" +
+        "username='" + username + '\'' +
+        ", remembered=" + remembered +
+        '}';
   }
 
   public static class Event {

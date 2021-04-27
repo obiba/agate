@@ -178,14 +178,6 @@ public class Configuration extends AbstractAuditableDocument {
     userAttributes.add(config);
   }
 
-  @Override
-  protected Objects.ToStringHelper toStringHelper() {
-    return super.toStringHelper().add("name", name) //
-      .add("domain", domain) //
-      .add("shortTimeout", shortTimeout) //
-      .add("longTimeout", longTimeout);
-  }
-
   public int getInactiveTimeout() {
     return inactiveTimeout;
   }

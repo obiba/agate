@@ -157,13 +157,13 @@ public class Application extends AbstractAuditableDocument {
   }
 
   @Override
-  protected Objects.ToStringHelper toStringHelper() {
-    return super.toStringHelper().add("name", name) //
-        .add("key", key).add("redirectURI", redirectURI).add("scopes", scopes == null
-            ? null
-            : Joiner.on(",").join(scopes.stream().map(Scope::getName).collect(Collectors.toList())));
+  public String toString() {
+    return "Application{" +
+        "name='" + name + '\'' +
+        ", redirectURI='" + redirectURI + '\'' +
+        ", scopes=" + scopes +
+        '}';
   }
-
 
   /**
    * A OAuth scope allows to qualify the scope of the authorization granted on the application.

@@ -273,11 +273,21 @@ public class User extends AbstractAuditableDocument {
   }
 
   @Override
-  protected Objects.ToStringHelper toStringHelper() {
-    return super.toStringHelper().add("name", name) //
-      .add("firstName", firstName) //
-      .add("lastName", lastName) //
-      .add("email", email);
+  public String toString() {
+    return "User{" +
+        "name='" + name + '\'' +
+        ", realm='" + realm + '\'' +
+        ", firstName='" + firstName + '\'' +
+        ", lastName='" + lastName + '\'' +
+        ", email='" + email + '\'' +
+        ", attributes=" + attributes +
+        ", status=" + status +
+        ", role='" + role + '\'' +
+        ", groups=" + groups +
+        ", applications=" + applications +
+        ", lastLogin=" + lastLogin +
+        ", preferredLanguage='" + preferredLanguage + '\'' +
+        '}';
   }
 
   public DateTime getLastLogin() {

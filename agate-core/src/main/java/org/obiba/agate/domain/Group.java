@@ -100,9 +100,12 @@ public class Group extends AbstractAuditableDocument {
   }
 
   @Override
-  protected Objects.ToStringHelper toStringHelper() {
-    return super.toStringHelper().add("name", name) //
-        .add("description", description);
+  public String toString() {
+    return "Group{" +
+        "name='" + name + '\'' +
+        ", description='" + description + '\'' +
+        ", applications=" + applications +
+        '}';
   }
 
   public Set<String> getApplications() {
