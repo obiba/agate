@@ -713,7 +713,7 @@
     <repository>
       <id>obiba-releases</id>
       <name>Obiba Maven Releases Repository</name>
-      <url>https://dl.bintray.com/obiba/maven</url>
+      <url>https://obiba.jfrog.io/obiba/libs-release</url>
       <releases>
         <enabled>true</enabled>
       </releases>
@@ -736,12 +736,12 @@
 
   <distributionManagement>
     <repository>
-      <id>obiba-bintray</id>
-      <url>https://api.bintray.com/obiba/maven/</url>
+      <id>obiba-release-local</id>
+      <url>https://obiba.jfrog.io/obiba/libs-release-local</url>
     </repository>
     <snapshotRepository>
-      <id>obiba-artifactory</id>
-      <url>https://obiba.jfrog.io/obiba/libs-snapshot</url>
+      <id>obiba-snapshot-local</id>
+      <url>https://obiba.jfrog.io/obiba/libs-snapshot-local</url>
     </snapshotRepository>
   </distributionManagement>
 
@@ -776,45 +776,5 @@
       <url>https://www.gnu.org/licenses/gpl-3.0.txt</url>
     </license>
   </licenses>
-
-  <profiles>
-    <profile>
-      <id>release</id>
-      <build>
-        <plugins>
-          <!-- Disable default deployer. -->
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-deploy-plugin</artifactId>
-            <configuration>
-              <skip>true</skip>
-            </configuration>
-          </plugin>
-
-          <!-- Enable alternative deployer. -->
-          <plugin>
-            <groupId>com.carrotgarden.maven</groupId>
-            <artifactId>bintray-maven-plugin</artifactId>
-            <configuration>
-              <skip>false</skip>
-              <subject>obiba</subject>
-              <repository>maven</repository>
-              <serverId>obiba-bintray</serverId>
-              <packageVcsUrl>https://github.com/obiba/agate</packageVcsUrl>
-              <performCleanup>false</performCleanup>
-            </configuration>
-            <executions>
-              <!-- Activate "bintray:deploy" during "deploy" -->
-              <execution>
-                <goals>
-                  <goal>deploy</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 
 </project>
