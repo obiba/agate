@@ -87,6 +87,12 @@ npm-install:
 clear-log:
 	rm -rf ${agate_log}
 
+log:
+	tail -f ${agate_home}/logs/agate.log
+
+restlog:
+	tail -f ${agate_home}/logs/rest.log
+
 drop-mongo:
 	mongo agate --eval "db.dropDatabase()"
 
