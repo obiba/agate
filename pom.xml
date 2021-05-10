@@ -69,7 +69,6 @@
     <shiro-extras.version>1.1.0</shiro-extras.version>
 
     <!-- maven plugins -->
-    <bintray-maven-plugin.version>1.2.20180117184439</bintray-maven-plugin.version>
     <github-release-plugin.version>1.2.0</github-release-plugin.version>
     <maven-assertj-generator-plugin.version>1.2.0</maven-assertj-generator-plugin.version>
     <maven-dependency-plugin.version>3.1.0</maven-dependency-plugin.version>
@@ -571,12 +570,6 @@
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>rpm-maven-plugin</artifactId>
           <version>${rpm-maven-plugin.version}</version>
-        </plugin>
-
-        <plugin>
-          <groupId>com.carrotgarden.maven</groupId>
-          <artifactId>bintray-maven-plugin</artifactId>
-          <version>${bintray-maven-plugin.version}</version>
         </plugin>
       </plugins>
     </pluginManagement>
