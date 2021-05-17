@@ -90,7 +90,7 @@
                 <a href ng-click="delete(user)" title="{{'delete' | translate}}"><i class="fa fa-trash-o"></i></a>
               </li>
               <li>
-                <a ng-if="user.realm === 'agate-user-realm'" href="" ng-click="resetPassword(user)" title="{{'user.resetPassword' | translate}}"><i
+                <a ng-if="user.realm === 'agate-user-realm' && user.status === 'ACTIVE'" href="" ng-click="resetPassword(user)" title="{{'user.resetPassword' | translate}}"><i
                   class="fa fa-bolt"></i></a>
               </li>
             </ul>
