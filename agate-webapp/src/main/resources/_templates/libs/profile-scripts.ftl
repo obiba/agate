@@ -1,23 +1,23 @@
 <script>
   const requiredFields = [
-    { name: 'firstname', title: '<@message "firstname"/>' },
-    { name: 'lastname', title: '<@message "lastname"/>' },
+    { name: 'firstname', title: "<@message "firstname"/>" },
+    { name: 'lastname', title: "<@message "lastname"/>" },
     <#list authConfig.userAttributes as attribute>
     <#if attribute.required>
-    { name: '${attribute.name}', title: '<@message attribute.name/>' },
+    { name: '${attribute.name}', title: "<@message attribute.name/>" },
     </#if>
     </#list>
   ];
 
   const errorMessages = {
-    'server.error.password.not-changed': '<@message "server.error.password.not-changed"/>'
+    'server.error.password.not-changed': "<@message "server.error.password.not-changed"/>"
   };
 
   agatejs.updateProfile("#profile-form", requiredFields, function (message) {
     var alertId = "#alertProfileFailure";
     var msg = message;
     if (Array.isArray(message)) {
-      msg = '<@message "sign-up-fields-required"/>: ' + message.join(", ");
+      msg = "<@message "sign-up-fields-required"/>: " + message.join(", ");
     } else if (errorMessages[msg]) {
       msg = errorMessages[msg];
     }
