@@ -51,7 +51,7 @@
     <json-smart.version>2.3</json-smart.version>
     <jsr305.version>3.0.0</jsr305.version>
     <lang-tag.version>1.4.4</lang-tag.version>
-    <logback.version>1.1.11</logback.version>
+    <logback.version>1.2.0</logback.version>
     <logstash-logback.version>4.5.1</logstash-logback.version>
     <mariabd.version>1.5.9</mariabd.version>
     <metrics-spring.version>3.0.0</metrics-spring.version>
