@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import javax.servlet.ServletRequest;
-import javax.ws.rs.ForbiddenException;
+import javax.servlet.http.HttpServletRequest;
 
 @Component
 public class AuthorizationValidator {
@@ -52,28 +52,28 @@ public class AuthorizationValidator {
     return appName;
   }
 
-  public void validateRealm(ServletRequest servletRequest, User user, Subject subject) {
+  public void validateRealm(HttpServletRequest servletRequest, User user, Subject subject) {
     // check that authentication realm is the expected one as specified in user profile
-    if(!subject.getPrincipals().getRealmNames().contains(user.getRealm())) {
+    if (!subject.getPrincipals().getRealmNames().contains(user.getRealm())) {
       log.info("Authentication failure of user '{}' at ip: '{}': unexpected realm '{}'", user.getName(),
-        servletRequest.getRemoteAddr(), subject.getPrincipals().getRealmNames().iterator().next());
+          ClientIPUtils.getClientIP(servletRequest), subject.getPrincipals().getRealmNames().iterator().next());
       throw new InvalidRealmException();
     }
   }
 
   /**
-     * Check user exists and has the right status.
-     *
-     * @param servletRequest
-     * @param username
-     * @param user
-     */
+   * Check user exists and has the right status.
+   *
+   * @param servletRequest
+   * @param username
+   * @param user
+   */
 
   public void validateUser(ServletRequest servletRequest, String username, User user) {
-    if(user == null) {
+    if (user == null) {
       log.warn("Not a registered user '{}' at ip: '{}'", username, servletRequest.getRemoteAddr());
       throw new InvalidUserException();
-    } else if(user.getStatus() != UserStatus.ACTIVE) {
+    } else if (user.getStatus() != UserStatus.ACTIVE) {
       log.warn("Not an active user '{}': status is '{}'", username, user.getStatus());
       throw new InvalidUserStatusException();
     }
@@ -81,12 +81,12 @@ public class AuthorizationValidator {
 
   public void validateApplication(ServletRequest servletRequest, User user, String appName) {
     // check application
-    if(!user.hasApplication(appName) && user.getGroups().stream().noneMatch(g -> {
+    if (!user.hasApplication(appName) && user.getGroups().stream().noneMatch(g -> {
       Group group = groupService.findGroup(g);
       return group != null && group.hasApplication(appName);
     })) {
       log.info("Application '{}' not allowed for user '{}' at ip: '{}'", appName, user.getName(),
-        servletRequest.getRemoteAddr());
+          servletRequest.getRemoteAddr());
       throw new InvalidUserApplicationException();
     }
   }
@@ -98,7 +98,7 @@ public class AuthorizationValidator {
    * @param key
    */
   public void validateApplicationParameters(String name, String key) {
-    if(!applicationService.isValid(name, key)) throw new InvalidApplicationKeyException();
+    if (!applicationService.isValid(name, key)) throw new InvalidApplicationKeyException();
   }
 
 }

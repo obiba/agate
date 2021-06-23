@@ -44,6 +44,7 @@ import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.model.Agate;
 import org.obiba.agate.web.rest.application.ApplicationAwareResource;
 import org.obiba.agate.web.rest.config.JerseyConfiguration;
+import org.obiba.agate.web.rest.security.ClientIPUtils;
 import org.obiba.shiro.realm.ObibaRealm;
 import org.obiba.web.model.AuthDtos;
 import org.slf4j.Logger;
@@ -127,7 +128,7 @@ public class TicketsResource extends ApplicationAwareResource {
         .header(HttpHeaders.SET_COOKIE, cookie).build();
 
     } catch(AuthenticationException e) {
-      log.info("Authentication failure of user '{}' at ip: '{}': {}", username, servletRequest.getRemoteAddr(),
+      log.info("Authentication failure of user '{}' at ip: '{}': {}", username, ClientIPUtils.getClientIP(servletRequest),
         e.getMessage());
       // When a request contains credentials and they are invalid, the a 403 (Forbidden) should be returned.
       throw new ForbiddenException();

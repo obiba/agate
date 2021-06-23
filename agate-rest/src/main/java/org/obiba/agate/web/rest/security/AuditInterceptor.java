@@ -42,18 +42,6 @@ public class AuditInterceptor implements ContainerResponseFilter {
 
   private static final String WS_ROOT = "/ws";
 
-  private static final String[] VALID_IP_HEADER_CANDIDATES = {
-      "X-Forwarded-For",
-      "Proxy-Client-IP",
-      "WL-Proxy-Client-IP",
-      "HTTP_X_FORWARDED_FOR",
-      "HTTP_X_FORWARDED",
-      "HTTP_X_CLUSTER_CLIENT_IP",
-      "HTTP_CLIENT_IP",
-      "HTTP_FORWARDED_FOR",
-      "HTTP_FORWARDED",
-      "HTTP_VIA",
-      "REMOTE_ADDR"};
 
   @Inject
   private ShiroAuditorAware auditorAware;
@@ -75,7 +63,7 @@ public class AuditInterceptor implements ContainerResponseFilter {
     MDC.put("username", auditorAware.getCurrentAuditor());
     MDC.put("status", responseContext.getStatus() + "");
     MDC.put("method", requestContext.getMethod());
-    MDC.put("ip", getClientIP(requestContext));
+    MDC.put("ip", ClientIPUtils.getClientIP(requestContext, servletRequest));
 
     Date d = requestContext.getDate();
     if(d != null) MDC.put("time", (DateTime.now().getMillis() - d.getTime()) + "");
@@ -94,23 +82,6 @@ public class AuditInterceptor implements ContainerResponseFilter {
     }
 
     return sb.toString();
-  }
-
-  private String getClientIP(ContainerRequestContext requestContext) {
-    String ip = "";
-
-    for (String ipHeader : VALID_IP_HEADER_CANDIDATES) {
-      ip = requestContext.getHeaders().keySet().stream()
-          .filter(ipHeader::equalsIgnoreCase)
-          .map(requestContext::getHeaderString)
-          .findFirst().orElse("");
-      if (!Strings.isNullOrEmpty(ip)) break;
-    }
-
-    if (Strings.isNullOrEmpty(ip))
-      ip = servletRequest.getRemoteAddr();
-
-    return ip;
   }
 
   private void logServerError(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {

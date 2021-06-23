@@ -73,7 +73,7 @@ public class SessionsResource {
     } catch(UserBannedException e) {
       throw e;
     } catch(AuthenticationException e) {
-      log.info("Authentication failure of user '{}' at ip: '{}': {}", username, servletRequest.getRemoteAddr(),
+      log.info("Authentication failure of user '{}' at ip: '{}': {}", username, ClientIPUtils.getClientIP(servletRequest),
           e.getMessage());
       // When a request contains credentials and they are invalid, the a 403 (Forbidden) should be returned.
       return Response.status(Response.Status.FORBIDDEN).cookie().build();
