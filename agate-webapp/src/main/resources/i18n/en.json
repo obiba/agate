@@ -535,6 +535,8 @@
     "new-realm": "New Realm",
     "users-help": "List of users authenticated by this realm.",
     "users-none": "No users are authenticated by this realm.",
+    "username-claim": "Username Claim",
+    "username-claim-help": "Key used to get the username from the JWT custom claims.",
     "jdbc": {
       "url": "URL",
       "username": "DB User Name",
