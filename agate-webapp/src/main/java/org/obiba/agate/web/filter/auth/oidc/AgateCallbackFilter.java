@@ -251,7 +251,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
   private void signIn(OIDCCredentials credentials, HttpServletResponse response, String provider, String errorUrl, String signInErrorUrl)
       throws IOException {
     OIDCAuthenticationToken oidcAuthenticationToken = new OIDCAuthenticationToken(credentials);
-    User user = userService.findUser(credentials.getUsername());
+    User user = userService.findUser(credentials.getUsername(""));
 
     if (user != null) {
       if (!user.getRealm().equals(provider)) {
