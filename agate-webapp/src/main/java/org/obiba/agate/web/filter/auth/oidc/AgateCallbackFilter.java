@@ -209,7 +209,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
   private void signInWithTicket(OIDCCredentials credentials, HttpServletResponse response, String provider, Application application, String errorUrl, String signInErrorUrl)
       throws IOException {
     OIDCAuthenticationToken oidcAuthenticationToken = new OIDCAuthenticationToken(credentials);
-    User user = userService.findUser(credentials.getUsername());
+    User user = userService.findUser(credentials.getUsername(""));
 
     if (user != null) {
       if (!user.getRealm().equals(provider)) {
@@ -231,7 +231,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
         }
       }
     } else {
-      log.info("Agate Authentication failure for '{}', user does not exist in Agate", credentials.getUsername());
+      log.info("Agate Authentication failure for '{}', user does not exist in Agate", credentials.getUsername(""));
       try {
         setUserAuthCookieForSignUp(credentials, oidcAuthenticationToken, response, provider, errorUrl);
       } catch (JSONException e) {
@@ -251,7 +251,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
   private void signIn(OIDCCredentials credentials, HttpServletResponse response, String provider, String errorUrl, String signInErrorUrl)
       throws IOException {
     OIDCAuthenticationToken oidcAuthenticationToken = new OIDCAuthenticationToken(credentials);
-    User user = userService.findUser(credentials.getUsername());
+    User user = userService.findUser(credentials.getUsername(""));
 
     if (user != null) {
       if (!user.getRealm().equals(provider)) {
@@ -268,7 +268,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
         }
       }
     } else {
-      log.info("Agate Authentication failure for '{}', user does not exist in Agate", credentials.getUsername());
+      log.info("Agate Authentication failure for '{}', user does not exist in Agate", credentials.getUsername(""));
       try {
         setUserAuthCookieForSignUp(credentials, oidcAuthenticationToken, response, provider, errorUrl);
       } catch (JSONException e) {
@@ -281,12 +281,12 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
   private void signUp(OIDCCredentials credentials, HttpServletResponse response, String provider, String errorUrl) throws IOException, JSONException {
     // User profile response should be either in a cookie or the response body
     OIDCAuthenticationToken oidcAuthenticationToken = new OIDCAuthenticationToken(credentials);
-    User user = userService.findUser(credentials.getUsername());
+    User user = userService.findUser(credentials.getUsername(""));
 
     if (user == null) {
       setUserAuthCookieForSignUp(credentials, oidcAuthenticationToken, response, provider, errorUrl);
     } else {
-      log.info("SignUp failure for '{}' with provider '{}', user already exists in Agate", credentials.getUsername(), provider);
+      log.info("SignUp failure for '{}' with provider '{}', user already exists in Agate", credentials.getUsername(""), provider);
       sendRedirectOrSendError(errorUrl, "Can't sign up with these credentials.", response);
     }
   }
@@ -310,7 +310,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
           userMappedInfo.put(name, credentials.getUserInfo(userInfoMapping.get(name)));
       }
 
-      if (!userMappedInfo.has("username")) userMappedInfo.put("username", credentials.getUsername());
+      if (!userMappedInfo.has("username")) userMappedInfo.put("username", credentials.getUsername(""));
       userMappedInfo.put("realm", config.getName());
 
       log.debug("User info mapped: {}", userMappedInfo);
