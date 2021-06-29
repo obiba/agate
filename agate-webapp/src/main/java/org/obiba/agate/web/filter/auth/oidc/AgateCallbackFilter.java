@@ -197,6 +197,26 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
   }
 
   /**
+   * Returns the usernameClaim for OIDC Realm
+   *
+   * @param config
+   * @return
+   */
+  private String getUsernameClaim(RealmConfig config) {
+    String content = config.getContent();
+    if (AgateRealm.AGATE_OIDC_REALM.equals(config.getType()) && !Strings.isNullOrEmpty(content)) {
+      try {
+        OidcRealmConfig.Builder builder = OidcRealmConfig.newBuilder(content);
+        return builder.build().getUsernameClaim();
+      } catch (JSONException e) {
+        /* ignore */
+      }
+    }
+
+    return null;
+  }
+
+  /**
    * Sign in a client with a redirect URI matching that of a registered application.
    *
    * @param credentials
@@ -210,7 +230,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
       throws IOException {
     RealmConfig config = realmConfigService.findConfig(provider);
     OIDCAuthenticationToken oidcAuthenticationToken = new OIDCAuthenticationToken(credentials);
-    User user = userService.findUser(credentials.getUsername(config.getUsernameClaim()));
+    User user = userService.findUser(credentials.getUsername(getUsernameClaim(config)));
 
     if (user != null) {
       if (!user.getRealm().equals(provider)) {
@@ -232,7 +252,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
         }
       }
     } else {
-      log.info("Agate Authentication failure for '{}', user does not exist in Agate", credentials.getUsername(config.getUsernameClaim()));
+      log.info("Agate Authentication failure for '{}', user does not exist in Agate", credentials.getUsername(getUsernameClaim(config)));
       try {
         setUserAuthCookieForSignUp(credentials, oidcAuthenticationToken, response, provider, errorUrl);
       } catch (JSONException e) {
@@ -253,7 +273,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
       throws IOException {
     RealmConfig config = realmConfigService.findConfig(provider);
     OIDCAuthenticationToken oidcAuthenticationToken = new OIDCAuthenticationToken(credentials);
-    User user = userService.findUser(credentials.getUsername(config.getUsernameClaim()));
+    User user = userService.findUser(credentials.getUsername(getUsernameClaim(config)));
 
     if (user != null) {
       if (!user.getRealm().equals(provider)) {
@@ -270,7 +290,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
         }
       }
     } else {
-      log.info("Agate Authentication failure for '{}', user does not exist in Agate", credentials.getUsername(config.getUsernameClaim()));
+      log.info("Agate Authentication failure for '{}', user does not exist in Agate", credentials.getUsername(getUsernameClaim(config)));
       try {
         setUserAuthCookieForSignUp(credentials, oidcAuthenticationToken, response, provider, errorUrl);
       } catch (JSONException e) {
@@ -284,12 +304,12 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     // User profile response should be either in a cookie or the response body
     RealmConfig config = realmConfigService.findConfig(provider);
     OIDCAuthenticationToken oidcAuthenticationToken = new OIDCAuthenticationToken(credentials);
-    User user = userService.findUser(credentials.getUsername(config.getUsernameClaim()));
+    User user = userService.findUser(credentials.getUsername(getUsernameClaim(config)));
 
     if (user == null) {
       setUserAuthCookieForSignUp(credentials, oidcAuthenticationToken, response, provider, errorUrl);
     } else {
-      log.info("SignUp failure for '{}' with provider '{}', user already exists in Agate", credentials.getUsername(config.getUsernameClaim()), provider);
+      log.info("SignUp failure for '{}' with provider '{}', user already exists in Agate", credentials.getUsername(getUsernameClaim(config)), provider);
       sendRedirectOrSendError(errorUrl, "Can't sign up with these credentials.", response);
     }
   }
@@ -313,7 +333,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
           userMappedInfo.put(name, credentials.getUserInfo(userInfoMapping.get(name)));
       }
 
-      if (!userMappedInfo.has("username")) userMappedInfo.put("username", credentials.getUsername(config.getUsernameClaim()));
+      if (!userMappedInfo.has("username")) userMappedInfo.put("username", credentials.getUsername(getUsernameClaim(config)));
       userMappedInfo.put("realm", config.getName());
 
       log.debug("User info mapped: {}", userMappedInfo);

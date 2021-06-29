@@ -36,8 +36,6 @@ public class RealmConfig extends AbstractAuditableDocument {
 
   private Map<String, String> userInfoMapping = new HashMap<>();
 
-  private String usernameClaim;
-
   public String getName() {
     return name;
   }
@@ -118,14 +116,6 @@ public class RealmConfig extends AbstractAuditableDocument {
     this.userInfoMapping = userInfoMapping;
   }
 
-  public String getUsernameClaim() {
-    return usernameClaim;
-  }
-
-  public void setUsernameClaim(String usernameClaim) {
-    this.usernameClaim = usernameClaim;
-  }
-
   public static Builder newBuilder() {
     return new Builder();
   }
@@ -187,11 +177,6 @@ public class RealmConfig extends AbstractAuditableDocument {
       if (mapping != null) {
         config.setUserInfoMapping(mapping);
       }
-      return this;
-    }
-
-    public Builder usernameClaim(String value) {
-      config.setUsernameClaim(value);
       return this;
     }
 

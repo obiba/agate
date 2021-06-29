@@ -45,8 +45,7 @@ public class RealmConfigDtos {
       .setStatus(Agate.RealmStatus.valueOf(config.getStatus().toString()))
       .addAllGroups(config.getGroups())
       .setContent(ensureSecuredContent(configurationService.decrypt(config.getContent()), config.getType()))
-      .setUserCount(userRepository.countByRealm(config.getName()))
-      .setUsernameClaim(config.getUsernameClaim());
+      .setUserCount(userRepository.countByRealm(config.getName()));
 
     if (config.getTitle() != null) builder.addAllTitle(localizedStringDtos.asDto(config.getTitle()));
     if (config.getDescription() != null) builder.addAllDescription(localizedStringDtos.asDto(config.getDescription()));
@@ -76,7 +75,6 @@ public class RealmConfigDtos {
     builder.type(AgateRealm.fromString(dto.getType()));
     builder.forSignup(dto.getForSignup());
     builder.groups(dto.getGroupsList());
-    builder.usernameClaim(dto.getUsernameClaim());
 
     if (dto.hasContent() && !Strings.isNullOrEmpty(dto.getContent())) {
       builder.content(configurationService.encrypt(dto.getContent()));

@@ -536,7 +536,7 @@
     "users-help": "Liste des utilisateurs authentifiés par ce domaine.",
     "users-none": "Aucun utilisateur n'est authentifié par ce domaine.",
     "username-claim": "Revendication de nom d’utilisateur",
-    "username-claim-help": "Clé utilisée pour obtenir le nom d’utilisateur à partir des revendications personnalisées JWT.",
+    "username-claim-help": "Clé facultative utilisée pour obtenir le nom d’utilisateur à partir des revendications personnalisées JWT. S’il n’est pas trouvé, 'preferred_username' sera utilisé comme revendication de nom d’utilisateur.",
     "jdbc": {
       "url": "URL",
       "username": "Nom d'utilisateur de la base de données",

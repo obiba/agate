@@ -60,6 +60,11 @@ public class OidcRealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
       "      \"type\": \"string\"," +
       "      \"title\": \"t(realm.oidc.provider-url)\"," +
       "      \"description\": \"t(realm.oidc.provider-url-help)\"" +
+      "    }," +
+      "    \"usernameClaim\": {" +
+      "      \"type\": \"string\"," +
+      "      \"title\": \"t(realm.username-claim)\"," +
+      "      \"description\": t(realm.username-claim-help)" +
       "    }" +
       "  }," +
       "  \"required\": [" +
@@ -80,7 +85,8 @@ public class OidcRealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
       "      \"scope\"," +
       "      \"useNonce\"," +
       "      \"connectTimeout\"," +
-      "      \"readTimeout\"" +
+      "      \"readTimeout\"," +
+      "      \"usernameClaim\"" +
       "    ]" +
       "  }" +
       "]";
