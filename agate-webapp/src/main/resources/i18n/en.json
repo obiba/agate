@@ -535,6 +535,8 @@
     "new-realm": "New Realm",
     "users-help": "List of users authenticated by this realm.",
     "users-none": "No users are authenticated by this realm.",
+    "username-claim": "Username Claim",
+    "username-claim-help": "Optional name of the claim in the ID token and in the UserInfo response which value will represent the username. If not explicitly specified (or not found), the username will be looked up with the claims in the following order: 'preferred_username', 'username', 'email', 'name' and 'sub' (subject ID).",
     "jdbc": {
       "url": "URL",
       "username": "DB User Name",

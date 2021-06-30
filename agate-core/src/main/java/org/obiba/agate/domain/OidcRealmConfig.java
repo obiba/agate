@@ -17,6 +17,7 @@ import org.obiba.oidc.OIDCConfiguration;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class OidcRealmConfig extends OIDCConfiguration {
   private static final String NAME_FIELD = "NAME";
@@ -29,7 +30,7 @@ public class OidcRealmConfig extends OIDCConfiguration {
   private static final String READ_TIMEOUT_FIELD = "readTimeout";
   private static final String MAX_CLOCK_SKEW_FIELD = "maxClockSkew";
   private static final String PROVIDER_URL_FIELD = "providerUrl";
-
+  private static final String USERNAME_CLAIM_FIELD = "usernameClaim";
 
   public static OidcRealmConfig.Builder newBuilder(String content) throws JSONException {
     return newBuilder(new JSONObject(content));
@@ -37,6 +38,10 @@ public class OidcRealmConfig extends OIDCConfiguration {
 
   public static OidcRealmConfig.Builder newBuilder(JSONObject content) {
     return new OidcRealmConfig.Builder(content);
+  }
+
+  public String getUsernameClaim() {
+    return getCustomParam(USERNAME_CLAIM_FIELD);
   }
 
   public JSONObject getAsSecuredJSONObject() throws JSONException {
@@ -47,10 +52,13 @@ public class OidcRealmConfig extends OIDCConfiguration {
     jsonObject.put(SCOPE_FIELD, getScope());
     jsonObject.put(USE_NONCE_FIELD, isUseNonce());
     jsonObject.put(CONNECT_TIMEOUT_FIELD, getConnectTimeout());
-    jsonObject.put(READ_TIMEOUT_FIELD, getReadTimeout());
 
     if (getCustomParams().containsKey(PROVIDER_URL_FIELD)) {
       jsonObject.put(PROVIDER_URL_FIELD, getCustomParams().get(PROVIDER_URL_FIELD));
+    }
+
+    if (getCustomParams().containsKey(USERNAME_CLAIM_FIELD)) {
+      jsonObject.put(USERNAME_CLAIM_FIELD, getCustomParams().get(USERNAME_CLAIM_FIELD));
     }
 
     return jsonObject;
@@ -77,6 +85,10 @@ public class OidcRealmConfig extends OIDCConfiguration {
 
       if (content.has(PROVIDER_URL_FIELD)) {
         customParameters.put(PROVIDER_URL_FIELD, content.optString(PROVIDER_URL_FIELD));
+      }
+
+      if (content.has(USERNAME_CLAIM_FIELD)) {
+        customParameters.put(USERNAME_CLAIM_FIELD, content.optString(USERNAME_CLAIM_FIELD));
       }
     }
 
