@@ -37,7 +37,7 @@
     <assertj-core.version>1.7.1</assertj-core.version>
     <awaitility.version>1.4.0</awaitility.version>
     <codahale-metrics.version>3.0.2</codahale-metrics.version>
-    <commons-io.version>2.4</commons-io.version>
+    <commons-io.version>2.7</commons-io.version>
     <commons-lang.version>2.6</commons-lang.version>
     <embed-mongo.version>1.50.0</embed-mongo.version>
     <freemarker.version>2.3.29</freemarker.version>
