@@ -536,7 +536,7 @@
     "users-help": "Liste des utilisateurs authentifiés par ce domaine.",
     "users-none": "Aucun utilisateur n'est authentifié par ce domaine.",
     "username-claim": "Revendication de nom d’utilisateur",
-    "username-claim-help": "Nom facultatif de la revendication dans le jeton d’ID et dans la réponse UserInfo dont la valeur représentera le nom d’utilisateur. S’il n’est pas explicitement spécifié (ou s’il n’est pas trouvé), le nom d’utilisateur sera recherché avec les revendications dans l’ordre suivant: 'preferred_username', 'username', 'email', 'name' et 'sub' (ID d’objet).",
+    "username-claim-help": "Nom facultatif qui représentera le nom d’utilisateur dans le jeton d’ID et dans la réponse 'UserInfo'. S’il n’est pas explicitement spécifié (ou s’il n’est pas trouvé), le nom d’utilisateur sera recherché avec les paramètres dans l’ordre suivant: 'preferred_username', 'username', 'email', 'name' et 'sub' (ID d’objet).",
     "jdbc": {
       "url": "URL",
       "username": "Nom d'utilisateur de la base de données",
