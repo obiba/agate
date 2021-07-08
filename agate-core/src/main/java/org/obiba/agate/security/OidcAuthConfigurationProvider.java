@@ -13,11 +13,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.obiba.agate.domain.AgateRealm;
-import org.obiba.agate.domain.LocalizedString;
-import org.obiba.agate.domain.OidcRealmConfig;
-import org.obiba.agate.domain.RealmStatus;
-import org.obiba.agate.domain.RealmUsage;
+import org.obiba.agate.domain.*;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.RealmConfigService;
 import org.obiba.oidc.OIDCConfiguration;
@@ -58,7 +54,7 @@ public class OidcAuthConfigurationProvider implements OIDCConfigurationProvider 
   public Collection<OIDCConfiguration> getConfigurations(RealmUsage usage) {
     return realmConfigService.findAllForUsageByStatusAndType(usage, RealmStatus.ACTIVE, AgateRealm.AGATE_OIDC_REALM)
       .stream()
-      .map(realm -> createOIDCConfiguration(realm.getName(), realm.getTitle(), realm.getContent()))
+      .map(realm -> createOIDCConfiguration(realm))
       .filter(Objects::nonNull)
       .collect(Collectors.toList());
   }
@@ -67,7 +63,7 @@ public class OidcAuthConfigurationProvider implements OIDCConfigurationProvider 
     return realmConfigService
       .findAllForUsageByStatusAndTypeAndApplication(usage, RealmStatus.ACTIVE, AgateRealm.AGATE_OIDC_REALM, application)
         .stream()
-        .map(realm -> createOIDCConfiguration(realm.getName(), realm.getTitle(), realm.getContent()))
+        .map(realm -> createOIDCConfiguration(realm))
         .filter(Objects::nonNull)
         .collect(Collectors.toList());
   }
@@ -79,23 +75,23 @@ public class OidcAuthConfigurationProvider implements OIDCConfigurationProvider 
   }
 
   /**
-   * Add the Reaml name as the provider name for authentication purposes. Use the Realm title as a custom parameter for
+   * Add the Realm name as the provider name for authentication purposes. Use the Realm title as a custom parameter for
    * later use by the client applications.
    *
-   * @param name
-   * @param title
-   * @param content
+   * @param realmConfig
    * @return
    */
-  private OIDCConfiguration createOIDCConfiguration(String name, LocalizedString title, String content) {
+  private OIDCConfiguration createOIDCConfiguration(RealmConfig realmConfig) {
+    String name = realmConfig.getName();
+    LocalizedString title = realmConfig.getTitle();
+    String content = realmConfig.getContent();
     try {
-      OidcRealmConfig oidcRealmConfig = OidcRealmConfig.newBuilder(configurationService.decrypt(content)).build();
+      OidcRealmConfig oidcRealmConfig = OidcRealmConfig.newBuilder(configurationService.decrypt(content))
+          .setUserInfoMapping(realmConfig.getUserInfoMapping()).build();
       oidcRealmConfig.setName(name);
       Map<String, String> valueMap = Maps.newHashMap();
 
       // Add localized title as custom parameters
-      Map<String, String> customParameters = oidcRealmConfig.getCustomParams();
-
       configurationService.getConfiguration()
         .getLocales()
         .forEach(locale -> {
@@ -105,8 +101,7 @@ public class OidcAuthConfigurationProvider implements OIDCConfigurationProvider 
         });
 
       if (valueMap.size() > 0) {
-        customParameters.put("title", new JSONObject(valueMap).toString());
-        oidcRealmConfig.setCustomParams(customParameters);
+        oidcRealmConfig.setCustomParam("title", new JSONObject(valueMap).toString());
       }
 
       return oidcRealmConfig;

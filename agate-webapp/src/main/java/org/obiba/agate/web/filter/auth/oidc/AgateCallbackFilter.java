@@ -203,14 +203,8 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
    * @return
    */
   private String getUsernameClaim(RealmConfig config) {
-    String content = config.getContent();
-    if (AgateRealm.AGATE_OIDC_REALM.equals(config.getType()) && !Strings.isNullOrEmpty(content)) {
-      try {
-        OidcRealmConfig.Builder builder = OidcRealmConfig.newBuilder(content);
-        return builder.build().getUsernameClaim();
-      } catch (JSONException e) {
-        /* ignore */
-      }
+    if (AgateRealm.AGATE_OIDC_REALM.equals(config.getType()) && config.getUserInfoMapping() != null) {
+      return config.getUserInfoMapping().get("username");
     }
 
     return null;

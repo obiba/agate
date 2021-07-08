@@ -14,10 +14,9 @@ import com.google.common.collect.Maps;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.obiba.oidc.OIDCConfiguration;
+import org.obiba.oidc.shiro.realm.OIDCRealm;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class OidcRealmConfig extends OIDCConfiguration {
   private static final String NAME_FIELD = "NAME";
@@ -30,18 +29,15 @@ public class OidcRealmConfig extends OIDCConfiguration {
   private static final String READ_TIMEOUT_FIELD = "readTimeout";
   private static final String MAX_CLOCK_SKEW_FIELD = "maxClockSkew";
   private static final String PROVIDER_URL_FIELD = "providerUrl";
-  private static final String USERNAME_CLAIM_FIELD = "usernameClaim";
+  private static final String USERNAME_MAPPING_FIELD = "username";
+  private static final String USERNAME_CLAIM = "usernameClaim";
 
   public static OidcRealmConfig.Builder newBuilder(String content) throws JSONException {
     return newBuilder(new JSONObject(content));
   }
 
-  public static OidcRealmConfig.Builder newBuilder(JSONObject content) {
+  private static OidcRealmConfig.Builder newBuilder(JSONObject content) {
     return new OidcRealmConfig.Builder(content);
-  }
-
-  public String getUsernameClaim() {
-    return getCustomParam(USERNAME_CLAIM_FIELD);
   }
 
   public JSONObject getAsSecuredJSONObject() throws JSONException {
@@ -55,10 +51,6 @@ public class OidcRealmConfig extends OIDCConfiguration {
 
     if (getCustomParams().containsKey(PROVIDER_URL_FIELD)) {
       jsonObject.put(PROVIDER_URL_FIELD, getCustomParams().get(PROVIDER_URL_FIELD));
-    }
-
-    if (getCustomParams().containsKey(USERNAME_CLAIM_FIELD)) {
-      jsonObject.put(USERNAME_CLAIM_FIELD, getCustomParams().get(USERNAME_CLAIM_FIELD));
     }
 
     return jsonObject;
@@ -86,10 +78,19 @@ public class OidcRealmConfig extends OIDCConfiguration {
       if (content.has(PROVIDER_URL_FIELD)) {
         customParameters.put(PROVIDER_URL_FIELD, content.optString(PROVIDER_URL_FIELD));
       }
+    }
 
-      if (content.has(USERNAME_CLAIM_FIELD)) {
-        customParameters.put(USERNAME_CLAIM_FIELD, content.optString(USERNAME_CLAIM_FIELD));
+    public Builder setUserInfoMapping(Map<String, String> userInfoMapping) {
+      if (userInfoMapping.containsKey(USERNAME_MAPPING_FIELD)) {
+        config.setCustomParam(USERNAME_CLAIM, userInfoMapping.get(USERNAME_MAPPING_FIELD));
       }
+      if (userInfoMapping.containsKey(OIDCRealm.GROUPS_CLAIM_PARAM)) {
+        config.setCustomParam(OIDCRealm.GROUPS_CLAIM_PARAM, userInfoMapping.get(OIDCRealm.GROUPS_CLAIM_PARAM));
+      }
+      if (userInfoMapping.containsKey(OIDCRealm.GROUPS_JS_PARAM)) {
+        config.setCustomParam(OIDCRealm.GROUPS_JS_PARAM, userInfoMapping.get(OIDCRealm.GROUPS_JS_PARAM));
+      }
+      return this;
     }
 
     public OidcRealmConfig build() {
