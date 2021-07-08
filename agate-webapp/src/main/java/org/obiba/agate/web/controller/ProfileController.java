@@ -59,7 +59,9 @@ public class ProfileController {
       RealmConfig realmConfig = realmConfigService.findConfig(user.getRealm());
       if (realmConfig != null && realmConfig.getType().equals(AgateRealm.AGATE_OIDC_REALM)) {
         mv.getModel().put("realmConfig", realmConfig);
-        OidcRealmConfig oidcRealmConfig = OidcRealmConfig.newBuilder(configurationService.decrypt(realmConfig.getContent())).build();
+        OidcRealmConfig oidcRealmConfig = OidcRealmConfig.newBuilder(configurationService.decrypt(realmConfig.getContent()))
+            .setUserInfoMapping(realmConfig.getUserInfoMapping())
+            .build();
         mv.getModel().put("providerUrl", oidcRealmConfig.getCustomParam("providerUrl"));
       }
 

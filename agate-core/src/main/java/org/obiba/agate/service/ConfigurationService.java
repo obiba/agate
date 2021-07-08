@@ -178,6 +178,10 @@ public class ConfigurationService {
    * @throws JSONException
    */
   public JSONObject getJoinConfiguration(String locale, String application) throws JSONException, IOException {
+    return getJoinConfiguration(locale, application, false);
+  }
+
+  public JSONObject getJoinConfiguration(String locale, String application, boolean forEditing) throws JSONException, IOException {
     Configuration config = getConfiguration();
     List<RealmConfig> realms = Strings.isNullOrEmpty(application)
       ? realmConfigService.findAllRealmsForSignup()
@@ -186,7 +190,7 @@ public class ConfigurationService {
     JSONObject form = UserFormBuilder.newBuilder(config, locale, applicationContext.getResource("classpath:join/formDefinition.json"))
       .realms(realms)
       .attributes(config.getUserAttributes())
-      .addUsername(config.isJoinWithUsername())
+      .addUsername(forEditing || config.isJoinWithUsername())
       .build();
 
     return new TranslationUtils().translate(form, getTranslator(locale));
@@ -222,7 +226,7 @@ public class ConfigurationService {
     );
     form.put(
   "userInfoMapping",
-      translationUtils.translate(RealmUserInfoFormBuilder.newBuilder(extractUserInfoFieldsToMap()).build(), translator).toString()
+      translationUtils.translate(RealmUserInfoFormBuilder.newBuilder(extractUserInfoFieldsToMap(forEditing)).build(), translator).toString()
     );
     form.put(
   "userInfoMappingDefaults",
@@ -248,9 +252,9 @@ public class ConfigurationService {
     return form;
   }
 
-  private List<String> extractUserInfoFieldsToMap() throws IOException, JSONException {
+  private List<String> extractUserInfoFieldsToMap(boolean forEditing) throws IOException, JSONException {
     List<String> exclusions = Lists.newArrayList("realm", "locale");
-    JSONArray names = getJoinConfiguration("en", null).getJSONObject("schema").getJSONObject("properties").names();
+    JSONArray names = getJoinConfiguration("en", null, forEditing).getJSONObject("schema").getJSONObject("properties").names();
     List<String> fields = Lists.newArrayList();
     for (int i = 0; i < names.length(); i++) {
       String name = names.optString(i);

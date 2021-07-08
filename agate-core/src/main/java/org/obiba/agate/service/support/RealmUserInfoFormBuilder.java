@@ -11,6 +11,8 @@
 package org.obiba.agate.service.support;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Collection;
 import java.util.List;
@@ -32,7 +34,7 @@ public class RealmUserInfoFormBuilder extends BaseRealmConfigFormBuilder {
       "    }" +
       "  }" +
       "}";
-    
+
     formDefinition = "[" +
       "  {" +
       "    \"notitle\": " + true + "," +
@@ -55,7 +57,35 @@ public class RealmUserInfoFormBuilder extends BaseRealmConfigFormBuilder {
 
   private String addFieldDefinitions(Iterable<String> userInfoFields) {
     JSONArray fields = new JSONArray();
-    userInfoFields.forEach(field -> fields.put("userInfoMapping." + field));
+    userInfoFields.forEach(field -> {
+      if ("groupsJS".equals(field)) {
+        JSONObject obj = new JSONObject();
+        try {
+          obj.put("key", "userInfoMapping." + field);
+          obj.put("type", "textarea");
+          obj.put("title", String.format("t(user-info.%s)", field));
+          obj.put("description", String.format("t(user-info.%s-help)", field));
+          obj.put("placeholder", "// input: userInfo\n" +
+              "// output: string or array of strings\n\n" +
+              "// example:\n" +
+              "// userInfo.some.property.map(x => x.split(':')[0])");
+          fields.put(obj);
+        } catch (JSONException e) {
+          e.printStackTrace();
+        }
+      } else {
+        JSONObject obj = new JSONObject();
+        try {
+          obj.put("key", "userInfoMapping." + field);
+          obj.put("type", "string");
+          obj.put("title", String.format("t(user-info.%s)", field));
+          obj.put("description", String.format("t(user-info.%s-help)", field));
+          fields.put(obj);
+        } catch (JSONException e) {
+          e.printStackTrace();
+        }
+      }
+    });
     return fields.toString();
   }
 }
