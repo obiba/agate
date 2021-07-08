@@ -349,12 +349,20 @@
   "users-description": "Les utilisateurs peuvent s'identifier auprès des applications qui leurs sont associées (soit directement, soit par l'intermédiaire des groupes). Un utilisateur peut également autoriser une application à accéder à ses données d'une autre application (voir la documentation de <a href='http://agatedoc.obiba.org/en/latest/oauth2-api/' target='_blank'>OAuth2</a>)",
   "user-info": {
     "username": "Nom d'utilisateur",
+    "username-help": "Field name to extract user name from UserInfo. If this field is not found, other fields will be looked up in the order: preferred_username, username, email, name and sub.",
     "email": "Courriel",
-    "email-help": "Courriel doit être unique.",
+    "email-help": "Champ de UserInfo duquel sera extrait le courriel.",
     "email-invalid": "Courriel non valide.",
     "firstname": "Prénom",
+    "firstname-help": "Champ de UserInfo duquel sera extrait le prénom.",
     "lastname": "Nom de famille",
+    "lastname-help": "Champ de UserInfo duquel sera extrait le nom de famille.",
     "locale": "Langue préférée",
+    "locale-help": "Champ de UserInfo duquel sera extrait la langue préférée.",
+    "groupsClaim": "Groupes par champ",
+    "groupsClaim-help": "Champ de UserInfo duquel seront extraits les noms des groupes. Ignoré si 'Groupes par javascript' est défini.",
+    "groupsJS": "Groups par javascript",
+    "groupsJS-help": "Code javascript pour extraire les noms des groupes de UserInfo.",
     "realm": "Domaine"
   },
   "user": {

@@ -349,12 +349,20 @@
   "users-description": "Users can sign in their associated applications (this association can be direct or through a group). A user can also authorize an application to access its data in another application (see <a href='http://agatedoc.obiba.org/en/latest/oauth2-api/' target='_blank'>OAuth2</a> documentation).",
   "user-info": {
     "username": "User Name",
+    "username-help": "Field name to extract user name from UserInfo. If this field is not found, other fields will be looked up in the order: preferred_username, username, email, name and sub.",
     "email": "Email",
-    "email-help": "Email must be unique.",
+    "email-help": "Field name to extract email from UserInfo.",
     "email-invalid": "Not a valid email.",
     "firstname": "First Name",
+    "firstname-help": "Field name to extract first name from UserInfo.",
     "lastname": "Last Name",
+    "lastname-help": "Field name to extract last name from UserInfo.",
     "locale": "Preferred Language",
+    "locale-help": "Field name to extract preferred language from UserInfo.",
+    "groupsClaim": "Groups by Claim",
+    "groupsClaim-help": "Field name to extract group name(s) from UserInfo. Ignored if 'Groups by JS' is defined.",
+    "groupsJS": "Groups by JS",
+    "groupsJS-help": "Javascript code chunk to extract group name(s) from UserInfo.",
     "realm": "Realm"
   },
   "user": {
