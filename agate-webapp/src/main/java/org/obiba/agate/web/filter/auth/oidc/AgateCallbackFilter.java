@@ -20,11 +20,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.obiba.agate.domain.*;
 import org.obiba.agate.event.AgateConfigUpdatedEvent;
+import org.obiba.agate.security.OidcAuthConfigurationProvider;
 import org.obiba.agate.service.*;
 import org.obiba.agate.web.rest.ticket.TicketsResource;
 import org.obiba.agate.web.support.URLUtils;
 import org.obiba.oidc.*;
 import org.obiba.oidc.shiro.authc.OIDCAuthenticationToken;
+import org.obiba.oidc.shiro.realm.DefaultOIDCGroupsExtractor;
 import org.obiba.oidc.web.filter.OIDCCallbackFilter;
 import org.obiba.shiro.web.filter.AuthenticationExecutor;
 import org.slf4j.Logger;
@@ -46,6 +48,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -60,6 +63,8 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
   private final ConfigurationService configurationService;
 
   private final OIDCConfigurationProvider oidcConfigurationProvider;
+
+  private final OidcAuthConfigurationProvider oidcAuthConfigurationProvider;
 
   private final OIDCSessionManager oidcSessionManager;
 
@@ -80,6 +85,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
   @Inject
   public AgateCallbackFilter(
       OIDCConfigurationProvider oidcConfigurationProvider,
+      OidcAuthConfigurationProvider oidcAuthConfigurationProvider,
       OIDCSessionManager oidcSessionManager,
       AuthenticationExecutor authenticationExecutor,
       ConfigurationService configurationService,
@@ -88,6 +94,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
       TicketService ticketService,
       TokenUtils tokenUtils) {
     this.oidcConfigurationProvider = oidcConfigurationProvider;
+    this.oidcAuthConfigurationProvider = oidcAuthConfigurationProvider;
     this.oidcSessionManager = oidcSessionManager;
     this.authenticationExecutor = authenticationExecutor;
     this.configurationService = configurationService;
@@ -235,6 +242,8 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
           Session subjectSession = prepareSubjectSession(subject);
           int timeout = (int) (subjectSession.getTimeout() / 1000);
 
+          updateUserGroups(user, subject);
+
           Configuration configuration = configurationService.getConfiguration();
           Ticket ticket = ticketService.create(subject.getPrincipal().toString(), false, false, application.getId());
           String token = tokenUtils.makeAccessToken(ticket);
@@ -253,6 +262,29 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
         // ignore
       }
       response.sendRedirect(signInErrorUrl);
+    }
+  }
+
+  private void updateUserGroups(User user, Subject subject) {
+    // do it only when the realm is OIDC
+    OIDCConfiguration oidcConfig = oidcAuthConfigurationProvider.getConfiguration(user.getRealm());
+    if (oidcConfig != null) {
+      // groups to be retrieved from user info claims
+      for (Object principal : subject.getPrincipals()) {
+        if (principal instanceof Map) {
+          Set<String> groups = user.getGroups();
+          int count = groups.size();
+          new DefaultOIDCGroupsExtractor().extractGroups(oidcConfig, (Map<String, Object>) principal)
+              .stream()
+              .map(String::trim)
+              .filter(g -> !g.isEmpty())
+              .forEach(groups::add);
+          if (count<groups.size()) {
+            user.setGroups(groups);
+            userService.save(user);
+          }
+        }
+      }
     }
   }
 

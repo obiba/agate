@@ -358,11 +358,7 @@
     "lastname": "Nom de famille",
     "lastname-help": "Champ de UserInfo duquel sera extrait le nom de famille.",
     "locale": "Langue préférée",
-    "locale-help": "Champ de UserInfo duquel sera extrait la langue préférée.",
-    "groupsClaim": "Groupes par champ",
-    "groupsClaim-help": "Champ de UserInfo duquel seront extraits les noms des groupes. Ignoré si 'Groupes par javascript' est défini.",
-    "groupsJS": "Groups par javascript",
-    "groupsJS-help": "Code javascript pour extraire les noms des groupes de UserInfo.",
+    "locale-help": "Champ de UserInfo duquel sera extrait la langue préférée.",,
     "realm": "Domaine"
   },
   "user": {
@@ -586,6 +582,10 @@
       "user-account": "Compte d'utilisateur",
       "scope": "Portée",
       "scope-help": "Liste des noms de portée à spécifier pour récupérer des informations utilisateur. Habituellement, <code>openid</code> suffit.",
+      "groups-claim": "Groupes par champ",
+      "groups-claim-help": "Champ de UserInfo duquel seront extraits les noms des groupes. Ignoré si 'Groupes par javascript' est défini.",
+      "groups-js": "Groups par javascript",
+      "groups-js-help": "Code javascript pour extraire les noms des groupes de UserInfo.",
       "use-nonce": "Utilisez Nonce",
       "use-nonce-help": "<a href=\"https://openid.net/specs/openid-connect-core-1_0.html#IDToken\" target=\"_blank\">Nonce</a> est une chaîne de caractères utilisée pour valider le jeton d'ID.",
       "connect-timeout": "Délai de connexion",

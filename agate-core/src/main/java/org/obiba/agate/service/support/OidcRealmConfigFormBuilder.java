@@ -60,6 +60,16 @@ public class OidcRealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
       "      \"type\": \"string\"," +
       "      \"title\": \"t(realm.oidc.provider-url)\"," +
       "      \"description\": \"t(realm.oidc.provider-url-help)\"" +
+      "    }," +
+      "    \"groupsClaim\": {" +
+      "      \"type\": \"string\"," +
+      "      \"title\": \"t(realm.oidc.groups-claim)\"," +
+      "      \"description\": \"t(realm.oidc.groups-claim-help)\"" +
+      "    }," +
+      "    \"groupsJS\": {" +
+      "      \"type\": \"string\"," +
+      "      \"title\": \"t(realm.oidc.groups-js)\"," +
+      "      \"description\": \"t(realm.oidc.groups-js-help)\"" +
       "    }" +
       "  }," +
       "  \"required\": [" +
@@ -78,6 +88,16 @@ public class OidcRealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
       "      \"discoveryURI\"," +
       "      \"providerUrl\"," +
       "      \"scope\"," +
+      "      \"groupsClaim\"," +
+      "      {" +
+      "        \"key\": \"groupsJS\",\n" +
+      "        \"type\": \"textarea\",\n" +
+      "        \"placeholder\": \"// input: userInfo\\n" +
+      "// output: string or array of strings\\n" +
+      "\\n" +
+      "// example:\\n" +
+      "userInfo.some.property.map(x => x.split (':')[0])\"" +
+      "      }," +
       "      \"useNonce\"," +
       "      \"connectTimeout\"," +
       "      \"readTimeout\"" +

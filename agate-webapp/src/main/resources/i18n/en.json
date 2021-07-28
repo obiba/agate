@@ -359,10 +359,6 @@
     "lastname-help": "Field name to extract last name from UserInfo.",
     "locale": "Preferred Language",
     "locale-help": "Field name to extract preferred language from UserInfo.",
-    "groupsClaim": "Groups by Claim",
-    "groupsClaim-help": "Field name to extract group name(s) from UserInfo. Ignored if 'Groups by JS' is defined.",
-    "groupsJS": "Groups by JS",
-    "groupsJS-help": "Javascript code chunk to extract group name(s) from UserInfo.",
     "realm": "Realm"
   },
   "user": {
@@ -586,6 +582,10 @@
       "user-account": "User account",
       "scope": "Scope",
       "scope-help": "List of scope names to be specified to retrieve user information. Usually <code>openid</code> is enough.",
+      "groups-claim": "Groups by Claim",
+      "groups-claim-help": "Field name to extract group name(s) from UserInfo. Ignored if 'Groups by JS' is defined.",
+      "groups-js": "Groups by JS",
+      "groups-js-help": "Javascript code chunk to extract group name(s) from UserInfo.",
       "use-nonce": "Use Nonce",
       "use-nonce-help": "<a href=\"https://openid.net/specs/openid-connect-core-1_0.html#IDToken\" target=\"_blank\">Nonce</a> is a string value used to validate ID Token.",
       "connect-timeout": "Connect Timeout",

@@ -31,6 +31,8 @@ public class OidcRealmConfig extends OIDCConfiguration {
   private static final String PROVIDER_URL_FIELD = "providerUrl";
   private static final String USERNAME_MAPPING_FIELD = "username";
   private static final String USERNAME_CLAIM = "usernameClaim";
+  private static final String GROUPS_CLAIM = "groupsClaim";
+  private static final String GROUPS_JS = "groupsJS";
 
   public static OidcRealmConfig.Builder newBuilder(String content) throws JSONException {
     return newBuilder(new JSONObject(content));
@@ -51,6 +53,14 @@ public class OidcRealmConfig extends OIDCConfiguration {
 
     if (getCustomParams().containsKey(PROVIDER_URL_FIELD)) {
       jsonObject.put(PROVIDER_URL_FIELD, getCustomParams().get(PROVIDER_URL_FIELD));
+    }
+
+    if (getCustomParams().containsKey(GROUPS_CLAIM)) {
+      jsonObject.put(GROUPS_CLAIM, getCustomParams().get(GROUPS_CLAIM));
+    }
+
+    if (getCustomParams().containsKey(GROUPS_JS)) {
+      jsonObject.put(GROUPS_JS, getCustomParams().get(GROUPS_JS));
     }
 
     return jsonObject;
@@ -78,17 +88,19 @@ public class OidcRealmConfig extends OIDCConfiguration {
       if (content.has(PROVIDER_URL_FIELD)) {
         customParameters.put(PROVIDER_URL_FIELD, content.optString(PROVIDER_URL_FIELD));
       }
+
+      if (content.has(GROUPS_CLAIM)) {
+        customParameters.put(GROUPS_CLAIM, content.optString(GROUPS_CLAIM));
+      }
+
+      if (content.has(GROUPS_JS)) {
+        customParameters.put(GROUPS_JS, content.optString(GROUPS_JS));
+      }
     }
 
     public Builder setUserInfoMapping(Map<String, String> userInfoMapping) {
       if (userInfoMapping.containsKey(USERNAME_MAPPING_FIELD)) {
         config.setCustomParam(USERNAME_CLAIM, userInfoMapping.get(USERNAME_MAPPING_FIELD));
-      }
-      if (userInfoMapping.containsKey(OIDCRealm.GROUPS_CLAIM_PARAM)) {
-        config.setCustomParam(OIDCRealm.GROUPS_CLAIM_PARAM, userInfoMapping.get(OIDCRealm.GROUPS_CLAIM_PARAM));
-      }
-      if (userInfoMapping.containsKey(OIDCRealm.GROUPS_JS_PARAM)) {
-        config.setCustomParam(OIDCRealm.GROUPS_JS_PARAM, userInfoMapping.get(OIDCRealm.GROUPS_JS_PARAM));
       }
       return this;
     }
