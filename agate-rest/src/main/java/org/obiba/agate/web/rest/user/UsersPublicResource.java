@@ -189,9 +189,7 @@ public class UsersPublicResource {
         name = new ObjectId().toString();
       }
     }
-
-    if (new EmailValidator().isValid(name, null)) throw new BadRequestException("User name cannot be an email address");
-
+    
     if (!reCaptchaService.verify(Strings.isNullOrEmpty(reCaptchaResponse) ? reCaptchaResponse2 : reCaptchaResponse))
       throw new BadRequestException("Invalid reCaptcha response");
 
