@@ -3,6 +3,3 @@ var/lib/agate
 
 # Store agate log here
 var/log/agate
-
-# Store agate.pid here
-tmp/agate

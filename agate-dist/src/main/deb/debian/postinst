@@ -63,6 +63,13 @@ case "$1" in
       chmod +x /usr/share/agate/tools/shiro-hasher
       find /etc/agate/ -type f -print0 | xargs -0 chmod 640
 
+      if [ -e /etc/init.d/agate ]; then
+        update-rc.d agate defaults >/dev/null
+        rm /etc/init.d/agate
+      fi
+      systemctl daemon-reload
+      systemctl enable agate
+      systemctl start agate
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

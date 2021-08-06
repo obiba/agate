@@ -18,7 +18,19 @@ set -e
 
 
 case "$1" in
-    remove|upgrade|deconfigure)
+    remove|deconfigure|upgrade)
+        # Read configuration variable file if it is present
+        [ -r /etc/default/agate ] && . /etc/default/agate
+
+        if [ -x "/etc/init.d/agate" ]; then
+            if [ -x "`which invoke-rc.d 2>/dev/null`" ]; then
+              invoke-rc.d agate stop || true
+            else
+              /etc/init.d/agate stop || true
+            fi
+        elif [ $(systemctl list-unit-files "agate.service" | wc -l) -gt 3 ]; then
+            systemctl stop agate
+        fi
     ;;
 
     failed-upgrade)

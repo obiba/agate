@@ -17,11 +17,13 @@ set -e
 # for details, see http://www.debian.org/doc/debian-policy/ or
 # the debian-policy package
 
-
+systemctl daemon-reload >/dev/null 2>&1 || :
 case "$1" in
   0)
     userdel -f agate || true
-    rm -rf /var/log/agate /tmp/agate /etc/agate /usr/share/agate*
+    unlink /usr/share/agate
+    # Remove logs and data
+    rm -rf /var/log/agate /etc/agate /usr/share/agate*
 
     # Backup agate home
     timestamp="$(date '+%N')"
@@ -31,11 +33,9 @@ case "$1" in
   ;;
 
   1)
-  ;;
-
-  *)
-    echo "postrm called with unknown argument \`$1'" >&2
-    exit 1
+    # Package upgrade, not removal
+    find /usr/share/agate-* -empty -type d -delete
+    systemctl try-restart agate.service >/dev/null 2>&1 || :
   ;;
 esac
 
