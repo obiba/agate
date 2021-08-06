@@ -358,7 +358,7 @@
     "lastname": "Nom de famille",
     "lastname-help": "Champ de UserInfo duquel sera extrait le nom de famille.",
     "locale": "Langue préférée",
-    "locale-help": "Champ de UserInfo duquel sera extrait la langue préférée.",,
+    "locale-help": "Champ de UserInfo duquel sera extrait la langue préférée.",
     "realm": "Domaine"
   },
   "user": {
