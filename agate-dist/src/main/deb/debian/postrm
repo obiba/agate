@@ -21,8 +21,12 @@ set -e
 
 case "$1" in
 	purge)
+        # Remove service
+        update-rc.d agate remove >/dev/null || true
+
+        # Remove user
         userdel -f agate || true
-        rm -rf /var/lib/agate /var/log/agate /tmp/agate /etc/agate /usr/share/agate
+        rm -rf /var/lib/agate /var/log/agate /etc/agate /usr/share/agate
     ;;
 
     remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
