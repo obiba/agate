@@ -36,7 +36,8 @@ public class SessionInterceptor extends HandlerInterceptorAdapter {
         User user = userService.getCurrentUser();
         modelAndView.getModel().put("user", user);
       } catch (Exception e) {
-        log.warn("Cannot retrieve profile of user {}", username, e);
+        // user from Ini realm
+        log.debug("User {} is not a Agate regular user", username);
       }
     }
   }
