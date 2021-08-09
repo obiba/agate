@@ -259,9 +259,8 @@
             if (user.getGroups() != null) {
               user.getGroups().addAll(realmConfig.getGroups());
             } else {
-              user.setGroups(realmConfig.getGroups());
+              user.setGroups(Sets.newHashSet(realmConfig.getGroups()));
             }
-
           } else {
             user.setRealm(AgateRealm.AGATE_USER_REALM.getName());
           }
