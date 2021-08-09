@@ -310,6 +310,8 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
           Session subjectSession = prepareSubjectSession(subject);
           int timeout = (int) (subjectSession.getTimeout() / 1000);
 
+          updateUserGroups(user, subject);
+
           response.addHeader(HttpHeaders.SET_COOKIE,
               new NewCookie("agatesid", subjectSession.getId().toString(), configurationService.getContextPath() + "/", null, null, timeout, false).toString());
           log.debug("Successfully authenticated subject {}", SecurityUtils.getSubject().getPrincipal());
