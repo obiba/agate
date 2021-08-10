@@ -227,12 +227,6 @@
                       <username>agate</username>
                       <groupname>adm</groupname>
                     </mapping>
-                    <mapping>
-                      <directory>/tmp/agate</directory>
-                      <filemode>740</filemode>
-                      <username>agate</username>
-                      <groupname>adm</groupname>
-                    </mapping>
                   </mappings>
                   <preinstallScriptlet>
                     <scriptFile>src/main/rpm/scripts/preinstall.sh</scriptFile>
