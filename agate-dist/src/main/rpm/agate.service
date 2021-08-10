@@ -10,7 +10,7 @@ User=agate
 LimitNOFILE=16384
 StandardOutput=file:/var/log/agate/stdout.log
 StandardError=file:/var/log/agate/stderr.log
-ExecStart=$JAVA $JAVA_ARGS -cp "${AGATE_HOME}/conf:${AGATE_DIST}/WEB-INF/classes:${AGATE_DIST}/WEB-INF/lib/*" -DAGATE_HOME=${AGATE_HOME} -DAGATE_DIST=${AGATE_DIST} -DAGATE_LOG=${AGATE_LOG} org.obiba.agate.Application $AGATE_ARGS
+ExecStart=/usr/share/agate/bin/start.sh
 
 [Install]
 WantedBy=network-online.target
