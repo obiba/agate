@@ -2,6 +2,8 @@
 
 [Unit]
 Description=OBiBa Agate service
+# Wait for network
+After=network-online.target
 
 [Service]
 WorkingDirectory=/var/lib/agate
@@ -13,4 +15,4 @@ StandardError=file:/var/log/agate/stderr.log
 ExecStart=/usr/share/agate/bin/start.sh
 
 [Install]
-WantedBy=network-online.target
+WantedBy=multi-user.target
