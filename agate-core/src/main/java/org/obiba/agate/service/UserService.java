@@ -56,6 +56,7 @@
   import java.security.SignatureException;
   import java.util.*;
   import java.util.function.Function;
+  import java.util.regex.Pattern;
   import java.util.stream.Collectors;
   import java.util.stream.StreamSupport;
 
@@ -68,7 +69,16 @@
 
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
-    private static final int MINIMUM_LENGTH = 8;
+    private static final int PWD_MINIMUM_LENGTH = 8;
+
+    private static final int PWD_MAXIMUM_LENGTH = 64;
+
+    static final Pattern PWD_PATTERN = Pattern.compile(
+        "^(?=.*[0-9])"       // a digit must occur at least once
+        + "(?=.*[a-z])"      // a lower case alphabet must occur at least once
+        + "(?=.*[A-Z])"      // a upper case alphabet must occur at least once
+        + "(?=.*[@#$%^&+=])" // a special character that must occur at least once
+        + "(?=\\S+$).{" + PWD_MINIMUM_LENGTH + "," + PWD_MAXIMUM_LENGTH + "}$");
 
     private final UserRepository userRepository;
 
@@ -92,15 +102,15 @@
 
     @Inject
     public UserService(
-      UserRepository userRepository,
-      GroupService groupService,
-      UserCredentialsRepository userCredentialsRepository,
-      Environment env,
-      EventBus eventBus,
-      Configuration freemarkerConfiguration,
-      MessageSource messageSource, MailService mailService,
-      ConfigurationService configurationService,
-      RealmConfigRepository realmConfigRepository) {
+        UserRepository userRepository,
+        GroupService groupService,
+        UserCredentialsRepository userCredentialsRepository,
+        Environment env,
+        EventBus eventBus,
+        Configuration freemarkerConfiguration,
+        MessageSource messageSource, MailService mailService,
+        ConfigurationService configurationService,
+        RealmConfigRepository realmConfigRepository) {
       this.userRepository = userRepository;
       this.groupService = groupService;
       this.userCredentialsRepository = userCredentialsRepository;
@@ -139,14 +149,14 @@
      */
     public List<User> findActiveUsersByApplicationAndGroup(@NotNull String application, @Nullable String group) {
       List<String> groupNames = groupService.findByApplication(application).stream() //
-        .map(Group::getName) //
-        .collect(Collectors.toList());
+          .map(Group::getName) //
+          .collect(Collectors.toList());
 
       return (Strings.isNullOrEmpty(group)
-        ? userRepository.findByStatus(UserStatus.ACTIVE)
-        : userRepository.findByStatusAndGroups(UserStatus.ACTIVE, group)).stream() //
-        .filter(user -> (user.hasApplication(application) || user.hasOneOfGroup(groupNames)) && user.hasGroup(group)) //
-        .collect(Collectors.toList());
+          ? userRepository.findByStatus(UserStatus.ACTIVE)
+          : userRepository.findByStatusAndGroups(UserStatus.ACTIVE, group)).stream() //
+          .filter(user -> (user.hasApplication(application) || user.hasOneOfGroup(groupNames)) && user.hasGroup(group)) //
+          .collect(Collectors.toList());
     }
 
     public List<User> findActiveUserByApplication(@NotNull String username, @NotNull String application) {
@@ -156,14 +166,14 @@
     public List<User> findActiveUserByApplicationAndGroup(@NotNull String username, @NotNull String application,
                                                           @Nullable String group) {
       List<String> groupNames = groupService.findByApplication(application).stream() //
-        .map(Group::getName) //
-        .collect(Collectors.toList());
+          .map(Group::getName) //
+          .collect(Collectors.toList());
 
       return (Strings.isNullOrEmpty(group)
-        ? userRepository.findByNameAndStatus(username, UserStatus.ACTIVE)
-        : userRepository.findByNameAndStatusAndGroups(username, UserStatus.ACTIVE, group)).stream() //
-        .filter(user -> (user.hasApplication(application) || user.hasOneOfGroup(groupNames)) && user.hasGroup(group)) //
-        .collect(Collectors.toList());
+          ? userRepository.findByNameAndStatus(username, UserStatus.ACTIVE)
+          : userRepository.findByNameAndStatusAndGroups(username, UserStatus.ACTIVE, group)).stream() //
+          .filter(user -> (user.hasApplication(application) || user.hasOneOfGroup(groupNames)) && user.hasGroup(group)) //
+          .collect(Collectors.toList());
     }
 
     /**
@@ -231,7 +241,10 @@
       if (Strings.isNullOrEmpty(password)) throw new BadRequestException("User password cannot be empty");
       if (!user.getRealm().equals(AgateRealm.AGATE_USER_REALM.getName()))
         throw new BadRequestException("User password cannot be changed");
-      if (password.length() < MINIMUM_LENGTH) throw new PasswordTooShortException(MINIMUM_LENGTH);
+      if (password.length() < PWD_MINIMUM_LENGTH) throw new PasswordTooShortException(PWD_MINIMUM_LENGTH);
+      if (password.length() > PWD_MAXIMUM_LENGTH) throw new PasswordTooLongException(PWD_MAXIMUM_LENGTH);
+
+      if (!PWD_PATTERN.matcher(password).matches()) throw new PasswordTooWeakException();
 
       UserCredentials userCredentials = findUserCredentials(user.getName());
       String hashedPassword = hashPassword(password);
@@ -298,7 +311,7 @@
         } else {
           updateUserCredentials(saved, user);
           BeanUtils.copyProperties(user, saved, "id", "name", "version", "createdBy", "createdDate", "lastModifiedBy",
-            "lastModifiedDate");
+              "lastModifiedDate");
         }
       }
 
@@ -386,6 +399,8 @@
         userCredentials = UserCredentials.newBuilder().name(user.getName()).build();
       }
 
+      if (!PWD_PATTERN.matcher(password).matches()) throw new PasswordTooWeakException();
+
       userCredentials.setPassword(hashPassword(password));
 
       userCredentialsRepository.save(userCredentials);
@@ -406,7 +421,7 @@
     @Scheduled(cron = "0 0 0 * * ?") //every day at midnight
     public void removeInactiveUsers() {
       List<User> inactiveUsers = userRepository.findByRoleAndLastLoginLessThan("agate-user",
-        DateTime.now().minusHours(configurationService.getConfiguration().getInactiveTimeout()));
+          DateTime.now().minusHours(configurationService.getConfiguration().getInactiveTimeout()));
 
       inactiveUsers.forEach(u -> {
         u.setStatus(UserStatus.INACTIVE);
@@ -429,7 +444,7 @@
       ctx.put("key", key);
 
       sendEmail(user, "[" + organization + "] " + propertyResolver.getProperty("resetPasswordSubject"),
-        "resetPasswordEmail", ctx);
+          "resetPasswordEmail", ctx);
     }
 
     @Subscribe
@@ -444,10 +459,10 @@
       context.put("user", user);
 
       administrators.forEach(u -> sendEmail(u, "[" + organization + "] " + propertyResolver.getProperty("pendingForReviewSubject"),
-        "pendingForReviewEmail", context));
+          "pendingForReviewEmail", context));
 
       sendEmail(user, "[" + organization + "] " + propertyResolver.getProperty("pendingForApprovalSubject"),
-        "pendingForApprovalEmail", context);
+          "pendingForApprovalEmail", context);
     }
 
     @Subscribe
@@ -459,7 +474,7 @@
       Map<String, Object> ctx = Maps.newHashMap();
       ctx.put("key", configurationService.encrypt(user.getName()));
       sendEmail(user, "[" + organization + "] " + propertyResolver.getProperty("confirmationSubject"),
-        "confirmationEmail", ctx);
+          "confirmationEmail", ctx);
     }
 
     private void sendEmail(User user, String subject, String templateName, Map<String, Object> context) {
@@ -474,8 +489,8 @@
       try {
         Template template = freemarkerConfiguration.getTemplate(templateLocation, locale);
         mailService
-          .sendEmail(user.getEmail(), subject,
-            FreeMarkerTemplateUtils.processTemplateIntoString(template, ctx));
+            .sendEmail(user.getEmail(), subject,
+                FreeMarkerTemplateUtils.processTemplateIntoString(template, ctx));
       } catch (Exception e) {
         log.error("Error while handling template {}", templateLocation, e);
       }
@@ -632,7 +647,7 @@
     public String hashPassword(String password) {
       RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "shiro.password.");
       return new Sha512Hash(password, propertyResolver.getProperty("salt"),
-        propertyResolver.getProperty("nbHashIterations", Integer.class)).toString();
+          propertyResolver.getProperty("nbHashIterations", Integer.class)).toString();
     }
 
     /**

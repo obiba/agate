@@ -10,7 +10,8 @@
   ];
 
   const errorMessages = {
-    'server.error.password.not-changed': "<@message "server.error.password.not-changed"/>"
+      'server.error.password.not-changed': "<@message "server.error.password.not-changed"/>",
+      'server.error.password.too-weak': "<@message "server.error.password.too-weak"/>"
   };
 
   agatejs.updateProfile("#profile-form", requiredFields, function (message) {

@@ -26,6 +26,7 @@ import org.obiba.agate.repository.RealmConfigRepository;
 import org.obiba.agate.repository.UserCredentialsRepository;
 import org.obiba.agate.repository.UserRepository;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -77,9 +78,21 @@ public class UserServiceTest {
   }
 
   @Test
+  public void testPasswordPattern() {
+    assertFalse(UserService.PWD_PATTERN.matcher("").matches());
+    assertFalse(UserService.PWD_PATTERN.matcher("password").matches());
+    assertFalse(UserService.PWD_PATTERN.matcher("PASSWORD").matches());
+    assertFalse(UserService.PWD_PATTERN.matcher("12345678").matches());
+    assertFalse(UserService.PWD_PATTERN.matcher("@#$%^&+=").matches());
+    assertFalse(UserService.PWD_PATTERN.matcher("P@0rd").matches());
+    assertTrue(UserService.PWD_PATTERN.matcher("P@ssw0rd").matches());
+    assertTrue(UserService.PWD_PATTERN.matcher("Pa$$w0rd").matches());
+  }
+
+  @Test
   public void testUserConfirmation() {
     User user = User.newBuilder().name("toto").active().build();
-    userService.confirmUser(user, "p4ssw0rd");
+    userService.confirmUser(user, "P@ssw0rd");
     assertTrue(user.getStatus() == UserStatus.ACTIVE);
   }
 

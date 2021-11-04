@@ -178,7 +178,7 @@ public class UserGroupSeed implements ApplicationListener<ContextRefreshedEvent>
     if(userService.findUser(user.getName()) == null) {
       userService.save(user);
       try {
-        userService.updateUserPassword(user, "password");
+        userService.updateUserPassword(user, "Pa$$w0rd");
       } catch(PasswordNotChangedException e) {
         // ignored
       }
