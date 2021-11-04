@@ -2,7 +2,7 @@ skipTests = false
 version=0.1-SNAPSHOT
 mvn_exec = mvn -Dmaven.test.skip=${skipTests}
 current_dir = $(shell pwd)
-agate_home = ${current_dir}/agate-webapp/target/agate_home
+agate_home = ${current_dir}/agate_home
 agate_log = ${agate_home}/logs
 
 help:
