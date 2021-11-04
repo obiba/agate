@@ -474,7 +474,7 @@
         "too-short": "Password is shorter than the required {{arg0}} characters",
         "too-long": "Password is longer than {{arg0}} characters",
         "not-changed": "New password is identical to the current password",
-        "too-weak": "Password must contain at least one digit, one upper case alphabet, one lower case alphabet, one special character (which includes @#$%^&+=) and no white space"
+        "too-weak": "Password must contain at least one digit, one upper case alphabet, one lower case alphabet, one special character (which includes @#$%^&+=!) and no white space"
       },
       "email-already-assigned": "Email '{{arg0}}' is already assigned to another user.",
       "duplicate-key": "Duplicate item ID.",

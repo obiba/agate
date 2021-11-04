@@ -13,7 +13,7 @@ package org.obiba.agate.service;
 public class PasswordTooWeakException extends RuntimeException {
 
   public PasswordTooWeakException() {
-    super("Password is too weak: must contain at least one digit, one upper case alphabet, one lower case alphabet, one special character (which includes @#$%^&+=) and no white space.");
+    super("Password is too weak: must contain at least one digit, one upper case alphabet, one lower case alphabet, one special character (which includes @#$%^&+=!) and no white space.");
   }
 
 }

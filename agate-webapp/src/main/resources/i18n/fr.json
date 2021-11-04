@@ -474,7 +474,7 @@
         "too-short": "Le mot de passe est plus court que le {{arg0}} caractères requis",
         "too-long": "Le mot de passe est plus long que {{arg0}} caractères",
         "not-changed": "Le nouveau mot de passe est le même que le mot de passe actuel",
-        "too-weak": "Le mot de passe doit contenir au moins un chiffre, une lettre minuscule, une lettre majuscule, un caractère spécial (tel que @#$%^&+=) et aucun espace"
+        "too-weak": "Le mot de passe doit contenir au moins un chiffre, une lettre minuscule, une lettre majuscule, un caractère spécial (tel que @#$%^&+=!) et aucun espace"
       },
       "email-already-assigned": "Le courriel '{{arg0}}' est déjà assigné à un autre utilisateur.",
       "duplicate-key": "L'ID de l'item est en duplicata.",

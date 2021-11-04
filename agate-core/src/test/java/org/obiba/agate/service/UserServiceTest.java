@@ -83,7 +83,7 @@ public class UserServiceTest {
     assertFalse(UserService.PWD_PATTERN.matcher("password").matches());
     assertFalse(UserService.PWD_PATTERN.matcher("PASSWORD").matches());
     assertFalse(UserService.PWD_PATTERN.matcher("12345678").matches());
-    assertFalse(UserService.PWD_PATTERN.matcher("@#$%^&+=").matches());
+    assertFalse(UserService.PWD_PATTERN.matcher("@#$%^&+=!").matches());
     assertFalse(UserService.PWD_PATTERN.matcher("P@0rd").matches());
     assertTrue(UserService.PWD_PATTERN.matcher("P@ssw0rd").matches());
     assertTrue(UserService.PWD_PATTERN.matcher("Pa$$w0rd").matches());
