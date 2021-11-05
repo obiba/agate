@@ -28,12 +28,19 @@ var agatejs = (function() {
       axios.post(normalizeUrl(url), data)
         .then(() => {
           //console.dir(response);
-          let redirect = normalizeUrl('/');
-          const q = new URLSearchParams(window.location.search);
-          if (q.get('redirect')) {
-            redirect = q.get('redirect');
-          }
-          window.location = redirect;
+
+          axios.get(normalizeUrl('/ws/auth/session/_current'), (currentSession) => {
+            const Session = {login: currentSession.username, role: currentSession.role, realm: currentSession.realm};
+            document.cookie = `agate_subject=${JSON.stringify(Session)}; path=/`;
+
+            let redirect = normalizeUrl('/');
+            const q = new URLSearchParams(window.location.search);
+            if (q.get('redirect')) {
+              redirect = q.get('redirect');
+            }
+            window.location = redirect;
+          });
+
         })
         .catch(handle => {
           toggleSubmitButton(true);

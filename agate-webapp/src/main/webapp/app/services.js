@@ -153,8 +153,6 @@ agate.factory('Session', ['$cookieStore',
       this.role = null;
       this.realm = null;
       $cookieStore.remove('agate_subject');
-      $cookieStore.remove('agatesid');
-      $cookieStore.remove('obibaid');
     };
     return this;
   }]);
