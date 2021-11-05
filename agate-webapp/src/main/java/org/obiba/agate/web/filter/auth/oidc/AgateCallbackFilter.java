@@ -250,7 +250,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
 
           response.addHeader(HttpHeaders.SET_COOKIE,
               new NewCookie(TicketsResource.TICKET_COOKIE_NAME, token, "/", configuration.getDomain(),
-                  "Obiba session deleted", timeout, configuration.hasDomain()).toString());
+                  "Obiba session deleted", timeout, true, true).toString());
           log.debug("Successfully authenticated subject {}", SecurityUtils.getSubject().getPrincipal());
         }
       }
@@ -313,7 +313,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
           updateUserGroups(user, subject);
 
           response.addHeader(HttpHeaders.SET_COOKIE,
-              new NewCookie("agatesid", subjectSession.getId().toString(), configurationService.getContextPath() + "/", null, null, timeout, false).toString());
+              new NewCookie("agatesid", subjectSession.getId().toString(), configurationService.getContextPath() + "/", null, null, timeout, true, true).toString());
           log.debug("Successfully authenticated subject {}", SecurityUtils.getSubject().getPrincipal());
         }
       }
@@ -375,7 +375,8 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
               configuration.getDomain(),
               null,
               600,
-              configuration.hasDomain()
+              true,
+              true
           ).toString());
     } else {
       sendRedirectOrSendError(errorUrl, "Realm '" + provider + "' not set up for sign up.", response);

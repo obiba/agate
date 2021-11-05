@@ -42,11 +42,11 @@ public class AuthenticationInterceptor implements ContainerResponseFilter {
       session.touch();
       int timeout = (int) (session.getTimeout() / 1000);
       responseContext.getHeaders().add(HttpHeaders.SET_COOKIE,
-          new NewCookie(AGATE_SESSION_ID_COOKIE_NAME, session.getId().toString(), path, null, null, timeout, false));
+          new NewCookie(AGATE_SESSION_ID_COOKIE_NAME, session.getId().toString(), path, null, null, timeout, true, true));
     } else {
       if(responseContext.getHeaders().get(HttpHeaders.SET_COOKIE) == null) {
         responseContext.getHeaders().putSingle(HttpHeaders.SET_COOKIE,
-            new NewCookie(AGATE_SESSION_ID_COOKIE_NAME, null, path, null, "Agate session deleted", 0, false));
+            new NewCookie(AGATE_SESSION_ID_COOKIE_NAME, null, path, null, "Agate session deleted", 0, true, true));
       }
     }
   }

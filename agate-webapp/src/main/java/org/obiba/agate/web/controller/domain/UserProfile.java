@@ -58,8 +58,6 @@ public class UserProfile {
     return user.getRealm();
   }
 
-
-
   public boolean hasAttributes() {
     return user.hasAttributes();
   }
