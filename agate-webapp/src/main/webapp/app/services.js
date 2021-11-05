@@ -175,7 +175,6 @@ agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$log', '$c
         }).then(function () {
           CurrentSession.get(function (data) {
             Session.create(data.username, data.role, data.realm);
-            $cookies.put('agate_subject', JSON.stringify(Session));
             authService.loginConfirmed(data);
           });
         }, function (response) {
@@ -188,47 +187,7 @@ agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$log', '$c
         });
       },
       isAuthenticated: function () {
-        // WORKAROUND: until next angular update, cookieStore always returns NULL event 'agatesid' cookie exists
-        function getAgateSidCookie() {
-          var regexp = /agatesid=([^;]+)/g;
-          var result = regexp.exec(document.cookie);
-          return (result === null) ? null : result[1];
-        }
-
-        if (!getAgateSidCookie()) {
-          // session has terminated, cleanup
-          Session.destroy();
-          return false;
-        }
-
-        if (!Session.login) {
-          // check if the user has a cookie
-          if ($cookies.get('agate_subject')) {
-            var account;
-
-            try {
-              account = JSON.parse($cookies.get('agate_subject'));
-            } catch (e) {
-              $log.info('Invalid agate_subject cookie value. Ignoring.');
-            }
-
-            if (account) {
-              Session.create(account.login, account.role, account.realm);
-              $rootScope.account = Session;
-            }
-          } else if ($cookies.get('agatesid')) {
-            // Open ID case
-            CurrentSession.get(function (data) {
-              Session.create(data.username, data.role, data.realm);
-              $cookies.put('agate_subject', JSON.stringify(Session));
-              authService.loginConfirmed(data);
-            });
-
-            return true;
-          }
-        }
-
-        return !!Session.login;
+        return Session.login !== null && Session.login !== undefined;
       },
       isAuthorized: function (authorizedRoles) {
         if (!angular.isArray(authorizedRoles)) {
