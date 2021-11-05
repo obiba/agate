@@ -171,6 +171,7 @@ agate
   .run(['$rootScope',
     '$location',
     '$http',
+    '$route',
     'AuthenticationSharedService',
     'Session',
     'USER_ROLES',
@@ -180,6 +181,7 @@ agate
     function ($rootScope,
       $location,
       $http,
+      $route,
       AuthenticationSharedService,
       Session,
       USER_ROLES,
@@ -190,29 +192,38 @@ agate
       var langKey = $cookies.get('NG_TRANSLATE_LANG_KEY');
       amMoment.changeLocale(langKey ? langKey.replace(/"/g, '') : 'en');
 
-      $rootScope.$on('$routeChangeStart', function (event, next) {
-        $rootScope.authenticated = AuthenticationSharedService.isAuthenticated();
-        $rootScope.hasRole = AuthenticationSharedService.isAuthorized;
-        $rootScope.hasProfile = AuthenticationSharedService.hasProfile();
-        $rootScope.canChangePassword = AuthenticationSharedService.canChangePassword();
-        $rootScope.userRoles = USER_ROLES;
-        $rootScope.subject = Session;
+      var isSessionInitialized = false;
 
-        if (!$rootScope.authenticated) {
-          Session.destroy();
-          var path = $location.path();
-          var invalidRedirectPaths = ['', '/error', '/logout', '/login', '/confirm', '/forgotten', '/join', '/reset_password'];
-          if (invalidRedirectPaths.indexOf(path) === -1) {
-            // save path to navigate to after login
-            var search = $location.search();
-            search.redirect = path;
-            $location.search(search);
+      $rootScope.$on('$routeChangeStart', function (event, next) {
+        if(!isSessionInitialized) {
+          event.preventDefault();
+          AuthenticationSharedService.isSessionInitialized().then(function() {
+            $route.reload();
+          });
+        } else {
+          $rootScope.authenticated = AuthenticationSharedService.isAuthenticated();
+          $rootScope.hasRole = AuthenticationSharedService.isAuthorized;
+          $rootScope.hasProfile = AuthenticationSharedService.hasProfile();
+          $rootScope.canChangePassword = AuthenticationSharedService.canChangePassword();
+          $rootScope.userRoles = USER_ROLES;
+          $rootScope.subject = Session;
+
+          if (!$rootScope.authenticated) {
+            Session.destroy();
+            var path = $location.path();
+            var invalidRedirectPaths = ['', '/error', '/logout', '/login', '/confirm', '/forgotten', '/join', '/reset_password'];
+            if (invalidRedirectPaths.indexOf(path) === -1) {
+              // save path to navigate to after login
+              var search = $location.search();
+              search.redirect = path;
+              $location.search(search);
+            }
+            if (['/confirm', '/forgotten', '/join', '/reset_password', '/error'].indexOf(path) === -1) {
+              $rootScope.$broadcast('event:auth-loginRequired');
+            }
+          } else if (!AuthenticationSharedService.isAuthorized(next.access ? next.access.authorizedRoles : '*')) {
+            $rootScope.$broadcast('event:auth-notAuthorized');
           }
-          if (['/confirm', '/forgotten', '/join', '/reset_password', '/error'].indexOf(path) === -1) {
-            $rootScope.$broadcast('event:auth-loginRequired');
-          }
-        } else if (!AuthenticationSharedService.isAuthorized(next.access ? next.access.authorizedRoles : '*')) {
-          $rootScope.$broadcast('event:auth-notAuthorized');
         }
       });
 
@@ -256,5 +267,9 @@ agate
       $rootScope.$on('event:auth-loginCancelled', function () {
         $rootScope.authenticated = undefined;
         $location.path('/login');
+      });
+
+      AuthenticationSharedService.initSession().finally(function() {
+        isSessionInitialized = true;
       });
     }]);
