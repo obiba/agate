@@ -37,7 +37,7 @@
       </li>
     </#if>
     <li class="nav-item">
-      <a class="nav-link" href="${contextPath}/signin<#if rc.requestUri != "/" && !rc.requestUri?contains("/reset-password") && !rc.requestUri?contains("/just-registered") && !rc.requestUri?contains("/error") && !rc.requestUri?contains("/signin")>?redirect=${rc.requestUri}</#if>"><@message "sign-in"/></a>
+      <a class="nav-link" href="${contextPath}/signin"><@message "sign-in"/></a>
     </li>
     <#if config.joinPageEnabled>
       <li class="nav-item">

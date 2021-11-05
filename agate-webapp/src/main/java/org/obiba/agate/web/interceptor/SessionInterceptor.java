@@ -4,6 +4,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.service.UserService;
+import org.obiba.agate.web.controller.domain.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -34,7 +35,7 @@ public class SessionInterceptor extends HandlerInterceptorAdapter {
       modelAndView.getModel().put("username", username);
       try {
         User user = userService.getCurrentUser();
-        modelAndView.getModel().put("user", user);
+        modelAndView.getModel().put("user", new UserProfile(user));
       } catch (Exception e) {
         // user from Ini realm
         log.debug("User {} is not a Agate regular user", username);

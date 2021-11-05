@@ -40,6 +40,7 @@
     <commons-io.version>2.4</commons-io.version>
     <commons-lang.version>2.6</commons-lang.version>
     <embed-mongo.version>1.50.0</embed-mongo.version>
+    <esapi.version>2.2.1.1</esapi.version>
     <freemarker.version>2.3.29</freemarker.version>
     <guava.version>19.0</guava.version>
     <javax.inject.version>1</javax.inject.version>
@@ -273,6 +274,12 @@
         <groupId>com.jayway.jsonpath</groupId>
         <artifactId>json-path</artifactId>
         <version>${json-path.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.owasp.esapi</groupId>
+        <artifactId>esapi</artifactId>
+        <version>${esapi.version}</version>
       </dependency>
 
       <dependency>
