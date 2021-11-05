@@ -175,6 +175,7 @@ agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$log', '$c
         }).then(function () {
           CurrentSession.get(function (data) {
             Session.create(data.username, data.role, data.realm);
+            $cookies.put('agate_subject', JSON.stringify(Session));
             authService.loginConfirmed(data);
           });
         }, function (response) {
@@ -187,6 +188,21 @@ agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$log', '$c
         });
       },
       isAuthenticated: function () {
+        if (!Session.login && $cookies.get('agate_subject')) {
+          var account;
+
+          try {
+            account = JSON.parse($cookies.get('agate_subject'));
+          } catch (e) {
+            $log.info('Invalid agate_subject cookie value. Ignoring.');
+          }
+
+          if (account) {
+            Session.create(account.login, account.role, account.realm);
+            $rootScope.account = Session;
+          }
+        }
+
         return Session.login !== null && Session.login !== undefined;
       },
       isAuthorized: function (authorizedRoles) {
