@@ -21,6 +21,6 @@
 <#assign portalLink = "${config.portalUrl!contextPath}" + "/"/>
 
 <!-- Profile -->
-<#assign showProfileRole = true/>
-<#assign showProfileGroups = true/>
-<#assign showProfileApplications = true/>
+<#assign showProfileRole = false/>
+<#assign showProfileGroups = false/>
+<#assign showProfileApplications = false/>
