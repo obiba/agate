@@ -159,91 +159,103 @@ agate.factory('Session', ['$cookieStore',
     return this;
   }]);
 
-agate.factory('AuthenticationSharedService', ['$rootScope', '$http', '$log', '$cookies', 'authService', 'Session', 'CurrentSession',
-  function ($rootScope, $http, $log, $cookies, authService, Session, CurrentSession) {
-    return {
-      login: function (param) {
-        $rootScope.authenticationError = false;
-        $rootScope.userBannedError = false;
-        var data = 'username=' + param.username + '&password=' + param.password;
-        $http.post(contextPath + '/ws/auth/sessions', data, {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          errorHandler: true,
-          ignoreAuthModule: 'ignoreAuthModule'
-        }).then(function () {
-          CurrentSession.get(function (data) {
-            Session.create(data.username, data.role, data.realm);
-            $cookies.put('agate_subject', JSON.stringify(Session));
-            authService.loginConfirmed(data);
-          });
-        }, function (response) {
-          var resp = response.data;
-          if (resp.messageTemplate && resp.messageTemplate === 'error.userBanned') {
-            $rootScope.userBannedError = true;
-          }
-          $rootScope.authenticationError = true;
-          Session.destroy();
+agate.service('AuthenticationSharedService', ['$rootScope', '$q', '$http', '$log', '$cookies', 'authService', 'Session', 'CurrentSession',
+  function ($rootScope, $q, $http, $log, $cookies, authService, Session, CurrentSession) {
+    let isInitializingSession = false, isInitializedDeferred = $q.defer(), self = this;
+
+    this.isSessionInitialized = function() {
+      return isInitializedDeferred.promise;
+    };
+
+    this.initSession = function() {
+      let deferred = $q.defer();
+
+      if(!isInitializingSession) {
+        isInitializingSession = true;
+        CurrentSession.get().$promise.then(function (data) {
+          Session.create(data.username, data.role, data.realm);
+          deferred.resolve(Session);
+          authService.loginConfirmed(data);
+          return data;
+        }).catch(function() {
+          deferred.reject();
+          return $q.reject();
+        }).finally(function() {
+          isInitializingSession = false;
+          isInitializedDeferred.resolve(true);
         });
-      },
-      isAuthenticated: function () {
-        if (!Session.login && $cookies.get('agate_subject')) {
-          var account;
-
-          try {
-            account = JSON.parse($cookies.get('agate_subject'));
-          } catch (e) {
-            $log.info('Invalid agate_subject cookie value. Ignoring.');
-          }
-
-          if (account) {
-            Session.create(account.login, account.role, account.realm);
-            $rootScope.account = Session;
-          }
-        }
-
-        return Session.login !== null && Session.login !== undefined;
-      },
-      isAuthorized: function (authorizedRoles) {
-        if (!angular.isArray(authorizedRoles)) {
-          if (authorizedRoles === '*') {
-            return true;
-          }
-
-          authorizedRoles = [authorizedRoles];
-        }
-
-        var isAuthorized = false;
-
-        angular.forEach(authorizedRoles, function (authorizedRole) {
-          var authorized = (!!Session.login &&
-            Session.role === authorizedRole);
-
-          if (authorized || authorizedRole === '*') {
-            isAuthorized = true;
-          }
-        });
-
-        return isAuthorized;
-      },
-      hasProfile: function () {
-        return Session.realm !== 'agate-ini-realm';
-      },
-      canChangePassword: function () {
-        return Session.realm !== 'agate-user-realm';
-      },
-      logout: function () {
-        $rootScope.authenticationError = false;
-        $rootScope.userBannedError = false;
-        $http({ method: 'DELETE', url: contextPath + '/ws/auth/session/_current', errorHandler: true })
-          .then(function () {
-            Session.destroy();
-            authService.loginCancelled(null, 'logout');
-          }, function () {
-            Session.destroy();
-            authService.loginCancelled(null, 'logout failure');
-          });
       }
+
+      return deferred.promise;
+    };
+
+    this.login = function (param) {
+      $rootScope.authenticationError = false;
+      $rootScope.userBannedError = false;
+      var data = 'username=' + param.username + '&password=' + param.password;
+      $http.post(contextPath + '/ws/auth/sessions', data, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        errorHandler: true,
+        ignoreAuthModule: 'ignoreAuthModule'
+      }).then(function () {
+        self.initSession();
+      }, function (response) {
+        var resp = response.data;
+        if (resp.messageTemplate && resp.messageTemplate === 'error.userBanned') {
+          $rootScope.userBannedError = true;
+        }
+        $rootScope.authenticationError = true;
+        Session.destroy();
+      });
+    };
+
+    this.isAuthenticated = function () {
+      return Session.login !== null && Session.login !== undefined;
+    };
+
+    this.isAuthorized = function (authorizedRoles) {
+      if (!angular.isArray(authorizedRoles)) {
+        if (authorizedRoles === '*') {
+          return true;
+        }
+
+        authorizedRoles = [authorizedRoles];
+      }
+
+      var isAuthorized = false;
+
+      angular.forEach(authorizedRoles, function (authorizedRole) {
+        var authorized = (!!Session.login &&
+          Session.role === authorizedRole);
+
+        if (authorized || authorizedRole === '*') {
+          isAuthorized = true;
+        }
+      });
+
+      return isAuthorized;
+    };
+
+    this.hasProfile = function () {
+      return Session.realm !== 'agate-ini-realm';
+    };
+
+    this.canChangePassword = function () {
+      return Session.realm !== 'agate-user-realm';
+    };
+
+    this.logout = function () {
+      $rootScope.authenticationError = false;
+      $rootScope.userBannedError = false;
+      $http({ method: 'DELETE', url: contextPath + '/ws/auth/session/_current', errorHandler: true })
+        .then(function () {
+          Session.destroy();
+          authService.loginCancelled(null, 'logout');
+        }, function () {
+          Session.destroy();
+          authService.loginCancelled(null, 'logout failure');
+        });
     };
   }]);
