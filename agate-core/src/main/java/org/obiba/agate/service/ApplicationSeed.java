@@ -26,9 +26,9 @@ public class ApplicationSeed implements ApplicationListener<ContextRefreshedEven
   @Override
   public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
     save(Application.newBuilder().name("Opal").description("The data storage application.")
-        .key(applicationService.hashKey("changeit")).redirectURI("http://localhost:8080").build());
+        .key(applicationService.hashKey("changeit")).redirectURI("https://localhost:8443").build());
     save(Application.newBuilder().name("Mica").description("The study catalogue application.")
-        .key(applicationService.hashKey("changeit")).redirectURI("http://localhost:8082").build());
+        .key(applicationService.hashKey("changeit")).redirectURI("https://localhost:8445").build());
   }
 
   private void save(Application application) {
