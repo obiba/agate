@@ -51,10 +51,4 @@ if [ -f "/etc/agate/log4j.properties" ]; then
   mv /etc/agate/log4j.properties /etc/agate/log4j.properties.old
 fi
 
-# for clean install
-if [ $1 -eq 1 ] ; then
-  # Initial installation
-  systemctl preset agate.service >/dev/null 2>&1 || :
-fi
-
 exit 0
