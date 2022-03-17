@@ -187,11 +187,17 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     try {
       switch (FilterAction.valueOf(action[0])) {
         case SIGNIN:
-          application = findApplication(redirect);
-          if (application.isPresent()) {
-            signInWithTicket(credentials, response, provider, application.get(), errorUrl, signInErrorUrl);
-          } else {
+          if (Strings.isNullOrEmpty(redirect)) {
             signIn(credentials, response, provider, errorUrl, signInErrorUrl);
+          } else {
+            application = findApplication(redirect);
+            if (application.isPresent()) {
+              signInWithTicket(credentials, response, provider, application.get(), errorUrl, signInErrorUrl);
+            } else {
+              String redirectUri = extractRedirectUri(redirect);
+              log.warn("Could not find an Application matching the redirect URI: {}", redirectUri);
+              signIn(credentials, response, provider, errorUrl, signInErrorUrl);
+            }
           }
           break;
         case SIGNUP:
@@ -393,20 +399,25 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     return subjectSession;
   }
 
-  private Optional<Application> findApplication(String redirect) {
+  private String extractRedirectUri(String redirect) {
     try {
       URL redirectUrl = new URL(redirect);
       String query = redirectUrl.getQuery();
       Map<String, String> queryMap = URLUtils.queryStringToMap(query);
-      String redirectUri = queryMap.containsKey("redirect_uri") ? queryMap.get("redirect_uri") : redirect;
-      if (!Strings.isNullOrEmpty(redirectUri)) {
-        return applicationService.findAll()
-            .stream()
-            .filter(application -> application.hasRedirectURI() && matchRedirectUrl(application.getRedirectURI(), redirectUri))
-            .findFirst();
-      }
+      return queryMap.containsKey("redirect_uri") ? queryMap.get("redirect_uri") : redirect;
     } catch (MalformedURLException e) {
       // ignore
+    }
+    return null;
+  }
+
+  private Optional<Application> findApplication(String redirect) {
+    String redirectUri = extractRedirectUri(redirect);
+    if (!Strings.isNullOrEmpty(redirectUri)) {
+      return applicationService.findAll()
+          .stream()
+          .filter(application -> application.hasRedirectURI() && matchRedirectUrl(application.getRedirectURI(), redirectUri))
+          .findFirst();
     }
     return Optional.empty();
   }
