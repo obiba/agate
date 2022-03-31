@@ -1,10 +1,12 @@
 package org.obiba.agate.web.filter.auth.oidc;
 
-import javax.annotation.PostConstruct;
 import org.obiba.agate.service.ConfigurationService;
+import org.obiba.agate.service.RealmConfigService;
 import org.obiba.oidc.OIDCConfigurationProvider;
 import org.obiba.oidc.OIDCSessionManager;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
 
 @Component("agateSignUpFilter")
 public class AgateSignUpFilter extends AbstractAgateAuthenticationFilter {
@@ -12,9 +14,10 @@ public class AgateSignUpFilter extends AbstractAgateAuthenticationFilter {
   private String publicUrl;
 
   public AgateSignUpFilter(ConfigurationService configurationService,
-    OIDCConfigurationProvider oidcConfigurationProvider,
-    OIDCSessionManager oidcSessionManager) {
-    super(configurationService, oidcConfigurationProvider, oidcSessionManager);
+                           OIDCConfigurationProvider oidcConfigurationProvider,
+                           OIDCSessionManager oidcSessionManager,
+                           RealmConfigService realmConfigService) {
+    super(configurationService, oidcConfigurationProvider, oidcSessionManager, realmConfigService);
   }
 
   @PostConstruct

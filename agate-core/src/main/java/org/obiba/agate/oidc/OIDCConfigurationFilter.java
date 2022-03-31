@@ -51,6 +51,8 @@ public class OIDCConfigurationFilter extends OncePerRequestFilter {
   }
 
   private JSONObject getOIDCConfiguration(HttpServletRequest request) throws JSONException {
+    // TODO be more more flexible with entry point as agate could be accessed from different host name
+    // request.getRequestURI();
     String baseUrl = configurationService.getPublicUrl();
     JSONObject oidcConfig = new JSONObject();
     oidcConfig.put("issuer", tokenUtils.getIssuerID());

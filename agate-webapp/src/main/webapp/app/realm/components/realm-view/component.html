@@ -48,6 +48,20 @@
             <th translate>global.groups</th>
             <td><span class="label label-default hoffset-right" ng-repeat="group in $ctrl.realm.groups">{{group}}</span></td>
           </tr>
+          <tr>
+            <td>
+              <span translate>config.publicUrl</span>
+              <span class="help-block" translate>config.publicUrl-help</span>
+            </td>
+            <td>{{$ctrl.realm.publicUrl}}</td>
+          </tr>
+          <tr>
+            <td>
+              <span translate>config.domain</span>
+              <span class="help-block" translate>config.domain-help</span>
+            </td>
+            <td>{{$ctrl.realm.domain}}</td>
+          </tr>
         </tbody>
       </table>
 

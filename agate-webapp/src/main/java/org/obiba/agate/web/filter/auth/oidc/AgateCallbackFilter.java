@@ -235,9 +235,9 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
    */
   private void signInWithTicket(OIDCCredentials credentials, HttpServletResponse response, String provider, Application application, String errorUrl, String signInErrorUrl)
       throws IOException {
-    RealmConfig config = realmConfigService.findConfig(provider);
+    RealmConfig realmConfig = realmConfigService.findConfig(provider);
     OIDCAuthenticationToken oidcAuthenticationToken = new OIDCAuthenticationToken(credentials);
-    User user = userService.findUser(credentials.getUsername(getUsernameClaim(config)));
+    User user = userService.findUser(credentials.getUsername(getUsernameClaim(realmConfig)));
 
     if (user != null) {
       if (!user.getRealm().equals(provider)) {
@@ -254,14 +254,17 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
           Ticket ticket = ticketService.create(subject.getPrincipal().toString(), false, false, application.getId());
           String token = tokenUtils.makeAccessToken(ticket);
 
+          // get domain from realm config
+          String domain = realmConfig.hasDomain() ? realmConfig.getDomain() : configuration.getDomain();
+
           response.addHeader(HttpHeaders.SET_COOKIE,
-              new NewCookie(TicketsResource.TICKET_COOKIE_NAME, token, "/", configuration.getDomain(),
+              new NewCookie(TicketsResource.TICKET_COOKIE_NAME, token, "/", domain,
                   "Obiba session deleted", timeout, true, true).toString());
           log.debug("Successfully authenticated subject {}", SecurityUtils.getSubject().getPrincipal());
         }
       }
     } else {
-      log.info("Agate Authentication failure for '{}', user does not exist in Agate", credentials.getUsername(getUsernameClaim(config)));
+      log.info("Agate Authentication failure for '{}', user does not exist in Agate", credentials.getUsername(getUsernameClaim(realmConfig)));
       try {
         setUserAuthCookieForSignUp(credentials, oidcAuthenticationToken, response, provider, errorUrl);
       } catch (JSONException e) {
@@ -285,7 +288,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
               .map(String::trim)
               .filter(g -> !g.isEmpty())
               .forEach(groups::add);
-          if (count<groups.size()) {
+          if (count < groups.size()) {
             user.setGroups(groups);
             userService.save(user);
           }
@@ -349,11 +352,11 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
   }
 
   private void setUserAuthCookieForSignUp(OIDCCredentials credentials, OIDCAuthenticationToken oidcAuthenticationToken, HttpServletResponse response, String provider, String errorUrl) throws IOException, JSONException {
-    RealmConfig config = realmConfigService.findConfig(provider);
+    RealmConfig realmConfig = realmConfigService.findConfig(provider);
 
-    if (config != null && config.isForSignup()) {
+    if (realmConfig != null && realmConfig.isForSignup()) {
       JSONArray names = configurationService.getJoinConfiguration("en", null).getJSONObject("schema").getJSONObject("properties").names();
-      Map<String, String> userInfoMapping = config.getUserInfoMapping();
+      Map<String, String> userInfoMapping = realmConfig.getUserInfoMapping();
 
       JSONObject userMappedInfo = new JSONObject();
 
@@ -367,10 +370,15 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
           userMappedInfo.put(name, credentials.getUserInfo(userInfoMapping.get(name)));
       }
 
-      if (!userMappedInfo.has("username")) userMappedInfo.put("username", credentials.getUsername(getUsernameClaim(config)));
-      userMappedInfo.put("realm", config.getName());
+      if (!userMappedInfo.has("username"))
+        userMappedInfo.put("username", credentials.getUsername(getUsernameClaim(realmConfig)));
+      userMappedInfo.put("realm", realmConfig.getName());
 
       log.debug("User info mapped: {}", userMappedInfo);
+
+      // TODO get domain from realm config
+      // String domain = realmConfig.getDomain();
+      // if (Strings.isNullOrEmpty(domain)) domain = configuration.getDomain();
 
       Configuration configuration = configurationService.getConfiguration();
       response.addHeader(HttpHeaders.SET_COOKIE,

@@ -264,7 +264,7 @@
       if (Strings.isNullOrEmpty(password)) {
         if (user.getRealm() == null) user.setRealm(AgateRealm.AGATE_USER_REALM.getName());
         else {
-          List<RealmConfig> foundConfigs = realmConfigRepository.findAll().stream().filter(realmConfig -> user.getRealm().equals(realmConfig.getName())).collect(Collectors.toList());
+          List<RealmConfig> foundConfigs = getRealmConfigs(user);
           if (foundConfigs.size() == 1) {
             RealmConfig realmConfig = foundConfigs.get(0);
             user.setStatus(UserStatus.ACTIVE);
@@ -483,7 +483,9 @@
       if (!ctx.containsKey("user"))
         ctx.put("user", user);
       ctx.put("organization", configurationService.getConfiguration().getName());
-      ctx.put("publicUrl", configurationService.getPublicUrl());
+      // get user's realm and find if there is a specific agate base url for this realm
+      Optional<RealmConfig> realmConfig = getRealmConfigs(user).stream().findFirst();
+      ctx.put("publicUrl", realmConfig.isPresent() && realmConfig.get().hasPublicUrl() ? realmConfig.get().getPublicUrl() : configurationService.getPublicUrl());
       ctx.put("msg", new MessageResolverMethod(messageSource, locale));
       String templateLocation = "notifications/" + templateName + ".ftl";
       try {
@@ -665,6 +667,10 @@
           return Optional.of(r);
         }));
       return applications;
+    }
+
+    private List<RealmConfig> getRealmConfigs(User user) {
+      return realmConfigRepository.findAll().stream().filter(realmConfig -> user.getRealm().equals(realmConfig.getName())).collect(Collectors.toList());
     }
 
   }

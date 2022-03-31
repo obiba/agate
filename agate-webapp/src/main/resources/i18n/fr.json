@@ -183,7 +183,7 @@
     "languages-help": "Langues de notification possibles.",
     "name-help": "Nom de votre organization.",
     "publicUrl": "URL publique",
-    "publicUrl-help": "Base URL publique du serveur qui sera utilisée pour l'envoi de courriels de notification.",
+    "publicUrl-help": "URL publique de base du serveur qui sera utilisée pour l'envoi de courriels de notification et la construction de l'adresse de retour lors d'un échange OpenID Connect.",
     "portalUrl": "URL du portail",
     "portalUrl-help": "URL publique du portail de l'organisation.",
     "domain": "Domaine",

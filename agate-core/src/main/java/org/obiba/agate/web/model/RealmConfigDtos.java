@@ -49,6 +49,8 @@ public class RealmConfigDtos {
 
     if (config.getTitle() != null) builder.addAllTitle(localizedStringDtos.asDto(config.getTitle()));
     if (config.getDescription() != null) builder.addAllDescription(localizedStringDtos.asDto(config.getDescription()));
+    if (config.hasPublicUrl()) builder.setPublicUrl(config.getPublicUrl());
+    if (config.hasDomain()) builder.setDomain(config.getDomain());
 
     Optional.ofNullable(config.getUserInfoMapping()).ifPresent(map -> {
       List<RealmConfigDto.UserInfoMappingDto> userInfoMappings = map.entrySet()
@@ -75,6 +77,14 @@ public class RealmConfigDtos {
     builder.type(AgateRealm.fromString(dto.getType()));
     builder.forSignup(dto.getForSignup());
     builder.groups(dto.getGroupsList());
+
+    if (dto.hasPublicUrl()) {
+      builder.publicUrl(dto.getPublicUrl());
+    }
+
+    if (dto.hasDomain()) {
+      builder.domain(dto.getDomain());
+    }
 
     if (dto.hasContent() && !Strings.isNullOrEmpty(dto.getContent())) {
       builder.content(configurationService.encrypt(dto.getContent()));

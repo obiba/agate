@@ -212,6 +212,8 @@ message RealmConfigDto {
   repeated UserSummaryDto users = 10;
   optional int64 userCount = 11;
   repeated UserInfoMappingDto userInfoMappings = 12;
+  optional string publicUrl = 13;
+  optional string domain = 14;
 }
 
 message RealmConfigSummaryDto {

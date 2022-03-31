@@ -183,7 +183,7 @@
     "languages-help": "Possible notification languages.",
     "name-help": "Name of your organization.",
     "publicUrl": "Public URL",
-    "publicUrl-help": "Public base URL of the server that will be used when sending notification emails.",
+    "publicUrl-help": "Public base URL of the server that will be used when sending notification emails and building an OpenID Connect callback URL.",
     "portalUrl": "Portal URL",
     "portalUrl-help": "Public base URL of the organisation portal.",
     "domain": "Domain",

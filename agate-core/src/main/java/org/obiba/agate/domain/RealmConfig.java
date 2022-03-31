@@ -1,5 +1,6 @@
 package org.obiba.agate.domain;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +32,10 @@ public class RealmConfig extends AbstractAuditableDocument {
   private AgateRealm type = AgateRealm.AGATE_USER_REALM;
 
   private boolean forSignup = false;
+
+  private String domain;
+
+  private String publicUrl;
 
   private String content;
 
@@ -100,6 +105,33 @@ public class RealmConfig extends AbstractAuditableDocument {
     this.forSignup = forSignup;
   }
 
+  public String getDomain() {
+    return domain;
+  }
+
+  public void setDomain(String domain) {
+    this.domain = domain;
+  }
+
+  public boolean hasDomain() {
+    return !Strings.isNullOrEmpty(domain);
+  }
+
+  public void setPublicUrl(String publicUrl) {
+    this.publicUrl = publicUrl;
+  }
+
+  public boolean hasPublicUrl() {
+    return !Strings.isNullOrEmpty(publicUrl);
+  }
+
+  public String getPublicUrl() {
+    if (!Strings.isNullOrEmpty(publicUrl) && publicUrl.endsWith("/")) {
+      return publicUrl.substring(0, publicUrl.length() -1);
+    }
+    return publicUrl;
+  }
+
   public String getContent() {
     return content;
   }
@@ -165,6 +197,16 @@ public class RealmConfig extends AbstractAuditableDocument {
 
     public Builder groups(Collection<String> groups) {
       config.setGroups(groups);
+      return this;
+    }
+
+    public Builder publicUrl(String value) {
+      config.setPublicUrl(value);
+      return this;
+    }
+
+    public Builder domain(String value) {
+      config.setDomain(value);
       return this;
     }
 

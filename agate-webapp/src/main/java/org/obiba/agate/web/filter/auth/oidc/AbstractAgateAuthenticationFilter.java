@@ -1,18 +1,13 @@
 package org.obiba.agate.web.filter.auth.oidc;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.eventbus.Subscribe;
 import com.nimbusds.openid.connect.sdk.AuthenticationRequest;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.event.AgateConfigUpdatedEvent;
 import org.obiba.agate.service.ConfigurationService;
+import org.obiba.agate.service.RealmConfigService;
 import org.obiba.oidc.OIDCConfigurationProvider;
 import org.obiba.oidc.OIDCException;
 import org.obiba.oidc.OIDCSession;
@@ -21,7 +16,17 @@ import org.obiba.oidc.utils.OIDCHelper;
 import org.obiba.oidc.web.J2EContext;
 import org.obiba.oidc.web.filter.OIDCLoginFilter;
 
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
+
 public abstract class AbstractAgateAuthenticationFilter extends OIDCLoginFilter {
+
+  private final RealmConfigService realmConfigService;
 
   private final ConfigurationService configurationService;
 
@@ -36,12 +41,14 @@ public abstract class AbstractAgateAuthenticationFilter extends OIDCLoginFilter 
   public abstract String getAction();
 
   public AbstractAgateAuthenticationFilter(
-    ConfigurationService configurationService,
-    OIDCConfigurationProvider oidcConfigurationProvider,
-    OIDCSessionManager oidcSessionManager) {
+      ConfigurationService configurationService,
+      OIDCConfigurationProvider oidcConfigurationProvider,
+      OIDCSessionManager oidcSessionManager,
+      RealmConfigService realmConfigService) {
     this.configurationService = configurationService;
     this.oidcConfigurationProvider = oidcConfigurationProvider;
     this.oidcSessionManager = oidcSessionManager;
+    this.realmConfigService = realmConfigService;
   }
 
   public void init() {
@@ -82,10 +89,21 @@ public abstract class AbstractAgateAuthenticationFilter extends OIDCLoginFilter 
   protected OIDCSession makeSession(J2EContext context, AuthenticationRequest authRequest) {
     Map<String, String[]> requestParameters = context.getRequestParameters();
     Map<String, String[]> map = Maps.newHashMap(requestParameters);
-    map.put(FilterParameter.ACTION.value(), new String[] {getAction()});
-    map.put(FilterParameter.OIDC_PROVIDER_ID.value(), new String[] {OIDCHelper.extractProviderName(context, getProviderParameter())});
+    map.put(FilterParameter.ACTION.value(), new String[]{getAction()});
+    map.put(FilterParameter.OIDC_PROVIDER_ID.value(), new String[]{OIDCHelper.extractProviderName(context, getProviderParameter())});
 
     return new OIDCSession(context.getClientId(), authRequest.getState(), authRequest.getNonce(), Collections.unmodifiableMap(map));
   }
 
+  @Override
+  protected String makeCallbackURL(String provider) {
+    RealmConfig realmConfig = realmConfigService.findConfig(provider);
+    // get agate's callback url from this realm config, if defined
+    if (realmConfig.hasPublicUrl()) {
+      String callbackURL = realmConfig.getPublicUrl() + "/auth/callback/";
+      return Strings.isNullOrEmpty(getProviderParameter()) ? callbackURL + (callbackURL.endsWith("/") ? "" : "/") + provider : callbackURL + "?" + getProviderParameter() + "=" + provider;
+    }
+    // otherwise fallback to agate's public url
+    return super.makeCallbackURL(provider);
+  }
 }

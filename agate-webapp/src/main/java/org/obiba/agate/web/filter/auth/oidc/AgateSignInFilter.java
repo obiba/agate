@@ -10,6 +10,7 @@ package org.obiba.agate.web.filter.auth.oidc;
  */
 
 import org.obiba.agate.service.ConfigurationService;
+import org.obiba.agate.service.RealmConfigService;
 import org.obiba.oidc.OIDCConfigurationProvider;
 import org.obiba.oidc.OIDCSessionManager;
 import org.slf4j.Logger;
@@ -31,11 +32,11 @@ public class AgateSignInFilter extends AbstractAgateAuthenticationFilter {
   private String publicUrl;
 
   @Inject
-  public AgateSignInFilter(
-    ConfigurationService configurationService,
-    OIDCConfigurationProvider oidcConfigurationProvider,
-    OIDCSessionManager oidcSessionManager) {
-    super(configurationService, oidcConfigurationProvider, oidcSessionManager);
+  public AgateSignInFilter(ConfigurationService configurationService,
+                           OIDCConfigurationProvider oidcConfigurationProvider,
+                           OIDCSessionManager oidcSessionManager,
+                           RealmConfigService realmConfigService) {
+    super(configurationService, oidcConfigurationProvider, oidcSessionManager, realmConfigService);
   }
 
   @PostConstruct

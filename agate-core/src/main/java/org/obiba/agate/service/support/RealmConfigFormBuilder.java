@@ -63,6 +63,16 @@ public class RealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
       "        \"type\": \"boolean\"," +
       "        \"title\": \"t(realm.for-signup)\"," +
       "        \"description\": t(realm.for-signup-help)" +
+      "      }," +
+      "      \"publicUrl\": {" +
+      "        \"type\": \"string\"," +
+      "        \"title\": \"t(config.publicUrl)\"," +
+      "        \"description\": t(config.publicUrl-help)" +
+      "      }," +
+      "      \"domain\": {" +
+      "        \"type\": \"string\"," +
+      "        \"title\": \"t(config.domain)\"," +
+      "        \"description\": t(config.domain-help)" +
       "      }" +
       "    }," +
       "    \"required\": [" +
@@ -101,7 +111,9 @@ public class RealmConfigFormBuilder extends BaseRealmConfigFormBuilder {
       "    \"key\": \"groups\"," +
       "    \"type\": \"obibaUiSelect\"," +
       "    \"multiple\": \"true\"" +
-      "  }" +
+      "  }," +
+      "  \"publicUrl\"," +
+      "  \"domain\"" +
       "]";
   }
 
