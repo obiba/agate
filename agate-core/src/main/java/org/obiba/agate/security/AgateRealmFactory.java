@@ -132,8 +132,11 @@ public class AgateRealmFactory {
           };
 
           activeDirectoryRealm.setName(realmConfig.getName());
-
-          JndiLdapContextFactory ldapContextFactory = createLdapContextFactory(realmConfig.getName(), activeDirectoryRealmConfig.getUrl(), activeDirectoryRealmConfig.getSystemUsername(), activeDirectoryRealmConfig.getSystemPassword());
+          String username = activeDirectoryRealmConfig.getSystemUsername();
+          if (!Strings.isNullOrEmpty(activeDirectoryRealmConfig.getPrincipalSuffix()))
+            username = username + activeDirectoryRealmConfig.getPrincipalSuffix();
+          JndiLdapContextFactory ldapContextFactory = createLdapContextFactory(realmConfig.getName(), activeDirectoryRealmConfig.getUrl(),
+              username, activeDirectoryRealmConfig.getSystemPassword());
 
           activeDirectoryRealm.setLdapContextFactory(ldapContextFactory);
           activeDirectoryRealm.setSearchFilter(activeDirectoryRealmConfig.getSearchFilter());
