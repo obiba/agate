@@ -17,6 +17,7 @@ import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.server.spring.scope.RequestContextFilter;
+import org.obiba.agate.config.Profiles;
 import org.obiba.agate.web.rest.security.AuditInterceptor;
 import org.obiba.agate.web.rest.security.AuthenticationInterceptor;
 import org.obiba.agate.web.rest.security.CSRFInterceptor;
@@ -37,7 +38,7 @@ public class JerseyConfiguration extends ResourceConfig {
     register(LoggingFilter.class);
     register(AuthenticationInterceptor.class);
     register(AuditInterceptor.class);
-    register(new CSRFInterceptor(getServerPort(environment)));
+    register(new CSRFInterceptor(getServerPort(environment), environment.acceptsProfiles(Profiles.PROD), environment.getProperty("csrf.allowed", "")));
     // validation errors will be sent to the client
     property(ServerProperties.BV_SEND_ERROR_IN_RESPONSE, true);
   }
