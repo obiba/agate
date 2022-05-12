@@ -75,8 +75,8 @@ public class NotificationsResource extends ApplicationAwareResource {
    * @param usernames
    * @param groups
    * @param subject
-   * @param body           body of the message (optional)
-   * @param template       template name to be used if message body is not specified
+   * @param body           body of the message if the message template is not specified
+   * @param template       template name to be used
    * @param authHeader
    * @return
    */
