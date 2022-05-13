@@ -30,6 +30,7 @@ import org.obiba.agate.web.rest.application.ApplicationAwareResource;
 import org.obiba.agate.web.rest.config.JerseyConfiguration;
 import org.obiba.agate.web.rest.security.ClientIPUtils;
 import org.obiba.shiro.NoSuchOtpException;
+import org.obiba.shiro.authc.UsernamePasswordOtpToken;
 import org.obiba.shiro.realm.ObibaRealm;
 import org.obiba.web.model.AuthDtos;
 import org.slf4j.Logger;
@@ -96,11 +97,10 @@ public class TicketsResource extends ApplicationAwareResource {
       // check authentication
       subject = SecurityUtils.getSubject();
       assert user != null;
-      subject.login(new UsernamePasswordToken(user.getName(), password));
-      authorizationValidator.validateRealm(servletRequest, user, subject);
 
       try {
-        validateOtp(user, servletRequest);
+        subject.login(makeUsernamePasswordToken(user.getName(), password, servletRequest));
+        authorizationValidator.validateRealm(servletRequest, user, subject);
       } catch (NoSuchOtpException e) {
         return Response.status(Response.Status.UNAUTHORIZED).header("WWW-Authenticate", e.getOtpHeader()).build();
       }
@@ -152,17 +152,11 @@ public class TicketsResource extends ApplicationAwareResource {
     return subject;
   }
 
-  private void validateOtp(User user, HttpServletRequest servletRequest) throws NoSuchOtpException {
-    if (user.hasSecret() && getConfiguration().hasOtpStrategy()) {
-      String strategy = getConfiguration().getOtpStrategy();
-      if (strategy.equals("TOTP")) {
-        String code = servletRequest.getHeader("X-Obiba-" + strategy);
-        if (Strings.isNullOrEmpty(code)) throw new NoSuchOtpException("X-Obiba-" + strategy);
-        if (!totpService.validateCode(code, user.getSecret())) {
-          throw new AuthenticationException("Wrong TOTP");
-        }
-      }
-    }
+  private UsernamePasswordToken makeUsernamePasswordToken(String username, String password, HttpServletRequest request) {
+    String otp = request.getHeader("X-Obiba-TOTP");
+    if (!Strings.isNullOrEmpty(otp))
+      return new UsernamePasswordOtpToken(username, password, otp);
+    return new UsernamePasswordToken(username, password);
   }
 
 }

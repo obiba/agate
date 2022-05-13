@@ -44,7 +44,7 @@ var agatejs = (function() {
         })
         .catch(handle => {
           toggleSubmitButton(true);
-          console.dir(handle);
+          //console.dir(handle);
           if (onFailure) {
             var banned = handle.response.data && handle.response.data.message === 'User is banned';
             onFailure(handle.response, banned);

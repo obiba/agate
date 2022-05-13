@@ -107,7 +107,7 @@
         </div>
       </div>
     </div>
-    <!-- /.otp-card-body -->
+    <!-- /.2fa-card-body -->
   </div>
 </div>
 <!-- /.login-box -->
