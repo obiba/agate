@@ -66,6 +66,15 @@ public class UserResource {
     return Response.noContent().build();
   }
 
+  @DELETE
+  @Path("/otp")
+  public Response disableOtp(@PathParam("id") String id) {
+    User user = getUser(id);
+    user.setSecret(null);
+    userService.save(user);
+    return Response.ok().build();
+  }
+
   @GET
   @Path("/authorizations")
   public List<AuthorizationDto> getAutorizations(@PathParam("id") String id) {

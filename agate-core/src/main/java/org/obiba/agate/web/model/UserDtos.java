@@ -45,13 +45,14 @@ class UserDtos {
   @NotNull
   Agate.UserDto asDto(@NotNull User user) {
     Agate.UserDto.Builder builder = Agate.UserDto.newBuilder();
-    builder.setId(user.getId()) //
-      .setName(user.getName()) //
-      .setRealm(user.getRealm()) //
-      .setRole(user.getRole())//
-      .setStatus(user.getStatus().toString()) //
+    builder.setId(user.getId())
+      .setName(user.getName())
+      .setRealm(user.getRealm())
+      .setRole(user.getRole())
+      .setStatus(user.getStatus().toString())
       .setTimestamps(TimestampsDtos.asDto(user))
-      .setPreferredLanguage(user.getPreferredLanguage());
+      .setPreferredLanguage(user.getPreferredLanguage())
+      .setOtpEnabled(user.hasSecret());
 
     if(!Strings.isNullOrEmpty(user.getFirstName())) builder.setFirstName(user.getFirstName());
     if(!Strings.isNullOrEmpty(user.getLastName())) builder.setLastName(user.getLastName());

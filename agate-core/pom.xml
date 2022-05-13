@@ -149,6 +149,11 @@
       <artifactId>postgresql</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>dev.samstevens.totp</groupId>
+      <artifactId>totp</artifactId>
+    </dependency>
+
     <!-- Test dependencies -->
     <dependency>
       <groupId>com.jayway.awaitility</groupId>

@@ -27,6 +27,8 @@ import org.obiba.agate.domain.User;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.rest.config.JerseyConfiguration;
+import org.obiba.shiro.NoSuchOtpException;
+import org.obiba.shiro.authc.UsernamePasswordOtpToken;
 import org.obiba.shiro.web.filter.AuthenticationExecutor;
 import org.obiba.shiro.web.filter.UserBannedException;
 import org.slf4j.Logger;
@@ -56,7 +58,7 @@ public class SessionsResource {
   public Response createSession(@SuppressWarnings("TypeMayBeWeakened") @Context HttpServletRequest servletRequest,
       @FormParam("username") String username, @FormParam("password") String password) {
     try {
-      authenticationExecutor.login(new UsernamePasswordToken(username, password));
+      authenticationExecutor.login(makeUsernamePasswordToken(username, password, servletRequest));
       String sessionId = SecurityUtils.getSubject().getSession().getId().toString();
       userService.updateUserLastLogin(username);
       log.info("Successful session creation for user '{}' session ID is '{}'.", username, sessionId);
@@ -72,12 +74,21 @@ public class SessionsResource {
       return builder.build();
     } catch(UserBannedException e) {
       throw e;
+    } catch (NoSuchOtpException e) {
+      return Response.status(Response.Status.UNAUTHORIZED).header("WWW-Authenticate", e.getOtpHeader()).build();
     } catch(AuthenticationException e) {
       log.info("Authentication failure of user '{}' at ip: '{}': {}", username, ClientIPUtils.getClientIP(servletRequest),
           e.getMessage());
       // When a request contains credentials and they are invalid, the a 403 (Forbidden) should be returned.
       return Response.status(Response.Status.FORBIDDEN).cookie().build();
     }
+  }
+
+  private UsernamePasswordToken makeUsernamePasswordToken(String username, String password, HttpServletRequest request) {
+    String otp = request.getHeader("X-Obiba-TOTP");
+    if (!Strings.isNullOrEmpty(otp))
+      return new UsernamePasswordOtpToken(username, password, otp);
+    return new UsernamePasswordToken(username, password);
   }
 }
 

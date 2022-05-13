@@ -67,6 +67,7 @@ public class ProfileController {
 
       mv.getModel().put("authorizations", authorizationService.list(user.getName()));
       mv.getModel().put("authConfig", new AuthConfiguration(configurationService.getConfiguration(), clientConfiguration));
+      mv.getModel().put("otpEnabled", user.hasSecret());
 
       if (Strings.isNullOrEmpty(locale) && Strings.isNullOrEmpty(language)) {
         try {

@@ -14,6 +14,7 @@ import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.service.RealmConfigService;
 import org.obiba.agate.service.UserService;
+import org.obiba.shiro.NoSuchOtpException;
 
 public class AgateSuccessfulStrategy extends AbstractAuthenticationStrategy {
 
@@ -44,6 +45,8 @@ public class AgateSuccessfulStrategy extends AbstractAuthenticationStrategy {
 
   @Override
   public AuthenticationInfo afterAttempt(Realm realm, AuthenticationToken token, AuthenticationInfo singleRealmInfo, AuthenticationInfo aggregateInfo, Throwable t) throws AuthenticationException {
+    if (t instanceof NoSuchOtpException) throw (NoSuchOtpException)t;
+
     AuthenticationInfo info;
     if (singleRealmInfo == null) {
       info = aggregateInfo;

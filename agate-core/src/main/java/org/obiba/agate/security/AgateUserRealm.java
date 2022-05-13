@@ -15,6 +15,7 @@ import java.util.Collections;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import com.google.common.base.Strings;
 import org.apache.shiro.authc.AccountException;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -34,7 +35,11 @@ import org.apache.shiro.util.SimpleByteSource;
 import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.domain.UserCredentials;
+import org.obiba.agate.service.ConfigurationService;
+import org.obiba.agate.service.TotpService;
 import org.obiba.agate.service.UserService;
+import org.obiba.shiro.NoSuchOtpException;
+import org.obiba.shiro.authc.UsernamePasswordOtpToken;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -51,6 +56,12 @@ public class AgateUserRealm extends AuthorizingRealm {
 
   @Inject
   private UserService userService;
+
+  @Inject
+  private ConfigurationService configurationService;
+
+  @Inject
+  private TotpService totpService;
 
   @Inject
   private Environment env;
@@ -100,6 +111,17 @@ public class AgateUserRealm extends AuthorizingRealm {
     username = user.getName();
     UserCredentials userCredentials = userService.findUserCredentials(username);
     if(userCredentials == null) throw new UnknownAccountException("No account found for user [" + username + "]");
+
+    if (user.hasSecret()) {
+      String strategy = configurationService.getConfiguration().getOtpStrategy();
+      if (strategy.equals("TOTP")) {
+        String code = token instanceof UsernamePasswordOtpToken ? ((UsernamePasswordOtpToken) token).getOtp() : null;
+        if (Strings.isNullOrEmpty(code)) throw new NoSuchOtpException("X-Obiba-" + strategy);
+        if (!totpService.validateCode(code, user.getSecret())) {
+          throw new AuthenticationException("Wrong TOTP");
+        }
+      }
+    }
 
     SimpleAuthenticationInfo authInfo = new SimpleAuthenticationInfo(username, userCredentials.getPassword(), getName());
     authInfo.setCredentialsSalt(new SimpleByteSource(salt));

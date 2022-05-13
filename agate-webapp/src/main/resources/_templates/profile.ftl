@@ -163,6 +163,32 @@
                   </div>
                 </#if>
               </div>
+
+            <#if user.realm == "agate-user-realm">
+              <div class="card card-primary card-outline">
+                <div class="card-header">
+                  <h3 class="card-title"><@message "two-factor-authentication"/></h3>
+                </div>
+                <div class="card-body">
+                  <div class="mb-3">
+                    <@message "2fa-instructions"/>
+                  </div>
+                  <div>
+                    <button id="disable-otp" type="button" class="btn btn-primary" onclick="disableOtp();" <#if !otpEnabled>style="display: none;"</#if>><i class="fas fa-unlock"></i> <@message "2fa-disable"/></button>
+                    <button id="enable-otp" type="button" class="btn btn-primary" onclick="enableOtp();" <#if otpEnabled>style="display: none;"</#if>><i class="fas fa-lock"></i> <@message "2fa-enable"/></button>
+                  </div>
+                </div>
+                <div id="qr-panel" class="card-footer" style="display:none;">
+                  <div>
+                    <@message "2fa-qrcode-instructions"/>
+                  </div>
+                  <div class="text-center">
+                    <img id="qr-img" src=""/>
+                  </div>
+                </div>
+              </div>
+            </#if>
+
           </div>
         </div>
       </div><!-- /.container-fluid -->
