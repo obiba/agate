@@ -89,6 +89,11 @@ public class OidcAuthConfigurationProvider implements OIDCConfigurationProvider 
       OidcRealmConfig oidcRealmConfig = OidcRealmConfig.newBuilder(configurationService.decrypt(content))
           .setUserInfoMapping(realmConfig.getUserInfoMapping()).build();
       oidcRealmConfig.setName(name);
+      if (realmConfig.hasPublicUrl()) {
+        String publicUrl = realmConfig.getPublicUrl();
+        String callbackUrl = publicUrl + (publicUrl.endsWith("/") ? "" : "/") + "auth/callback/";
+        oidcRealmConfig.setCallbackURL(callbackUrl);
+      }
       Map<String, String> valueMap = Maps.newHashMap();
 
       // Add localized title as custom parameters
