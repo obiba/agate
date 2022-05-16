@@ -28,6 +28,13 @@ agate.user
       });
     }])
 
+  .factory('UserOTPResource', ['$resource',
+    function ($resource) {
+      return $resource(contextPath + '/ws/user/:id/otp', {}, {
+        'delete': {method: 'DELETE', params: {id: '@id'}, errorHandler: true}
+      });
+    }])
+
   .factory('UserAuthorizationsResource', ['$resource',
     function ($resource) {
       return $resource(contextPath + '/ws/user/:id/authorizations', {}, {

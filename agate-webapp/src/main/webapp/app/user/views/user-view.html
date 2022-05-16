@@ -125,6 +125,17 @@
           </tbody>
         </table>
       </div>
+
+      <h3 translate>user.two-factor-auth.title</h3>
+      <p class="help-block" ng-if="user.otpEnabled" translate>user.two-factor-auth.enabled</p>
+      <p class="help-block" ng-if="user.otpEnabled !== undefined && !user.otpEnabled" translate>user.two-factor-auth.disabled</p>
+      <p class="help-block" ng-if="user.otpEnabled === undefined" translate>user.two-factor-auth.unknown</p>
+
+      <button type="button" class="btn btn-info btn-default" ng-if="user.otpEnabled" ng-click="deleteOTP()">
+        <i class="fa fa-unlock"></i>
+        <span translate>user.two-factor-auth.disable</span>
+      </button>
+
     </div>
   </div>
 

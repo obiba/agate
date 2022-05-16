@@ -12,7 +12,9 @@ package org.obiba.agate.web.model;
 
 import com.google.common.base.Strings;
 import org.joda.time.DateTime;
+import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.User;
+import org.obiba.agate.security.AgateUserRealm;
 import org.obiba.agate.security.OidcAuthConfigurationProvider;
 import org.obiba.agate.service.GroupService;
 import org.obiba.agate.service.RealmConfigService;
@@ -45,13 +47,16 @@ class UserDtos {
   @NotNull
   Agate.UserDto asDto(@NotNull User user) {
     Agate.UserDto.Builder builder = Agate.UserDto.newBuilder();
-    builder.setId(user.getId()) //
-      .setName(user.getName()) //
-      .setRealm(user.getRealm()) //
-      .setRole(user.getRole())//
-      .setStatus(user.getStatus().toString()) //
+    builder.setId(user.getId())
+      .setName(user.getName())
+      .setRealm(user.getRealm())
+      .setRole(user.getRole())
+      .setStatus(user.getStatus().toString())
       .setTimestamps(TimestampsDtos.asDto(user))
       .setPreferredLanguage(user.getPreferredLanguage());
+
+    if (AgateRealm.AGATE_USER_REALM.getName().equals(user.getRealm()))
+      builder.setOtpEnabled(user.hasSecret());
 
     if(!Strings.isNullOrEmpty(user.getFirstName())) builder.setFirstName(user.getFirstName());
     if(!Strings.isNullOrEmpty(user.getLastName())) builder.setLastName(user.getLastName());
@@ -115,6 +120,9 @@ class UserDtos {
       if (lastLogin != null) addAttribute(builder, "lastLogin", lastLogin.toString());
       user.getAttributes().forEach((n, v) -> addAttribute(builder, n, v));
     }
+
+    if (user.getRealm().equals(AgateRealm.AGATE_USER_REALM.getName()))
+      builder.setOtpEnabled(user.hasSecret());
 
     return builder.build();
   }

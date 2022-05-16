@@ -65,6 +65,9 @@ public class User extends AbstractAuditableDocument {
 
   private String preferredLanguage;
 
+  // Encrypted 2FA secret key
+  private String secret;
+
   public User() {
   }
 
@@ -300,6 +303,18 @@ public class User extends AbstractAuditableDocument {
 
   public static Builder newBuilder() {
     return new Builder();
+  }
+
+  public void setSecret(String secret) {
+    this.secret = secret;
+  }
+
+  public String getSecret() {
+    return secret;
+  }
+
+  public boolean hasSecret() {
+    return !Strings.isNullOrEmpty(secret);
   }
 
   public static class Builder {

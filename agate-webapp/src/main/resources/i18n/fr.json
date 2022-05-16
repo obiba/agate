@@ -414,7 +414,15 @@
     },
     "authorizations": "Autorisations",
     "authorizations-help": "Autorisations accordé par l'utilisateur.",
-    "authorizations-none": "Aucune autorisation."
+    "authorizations-none": "Aucune autorisation.",
+    "2fa": "2FA",
+    "two-factor-auth": {
+      "title": "Authentification à deux facteurs",
+      "disable": "Désactiver 2FA",
+      "enabled": "L'authentification à deux facteurs est activée.",
+      "disabled": "L'authentification à deux facteurs n'est pas activée.",
+      "unknown": "L'activation de l'authentification à deux facteurs dépend du domaine par lequel l'utilisateur s'authentifie."
+    }
   },
   "attributes": "Attributes",
   "attribute": {

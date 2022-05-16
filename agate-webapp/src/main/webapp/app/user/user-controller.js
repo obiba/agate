@@ -295,6 +295,7 @@ agate.user
       '$location',
       '$translate',
       'UserResource',
+      'UserOTPResource',
       'UserAuthorizationsResource',
       'UserAuthorizationResource',
       'ConfigurationResource',
@@ -309,6 +310,7 @@ agate.user
               $location,
               $translate,
               UserResource,
+              UserOTPResource,
               UserAuthorizationsResource,
               UserAuthorizationResource,
               ConfigurationResource,
@@ -341,6 +343,12 @@ agate.user
       $scope.deleteAuthorization = function(authz) {
         UserAuthorizationResource.delete({id: $routeParams.id, authz: authz.id}, function() {
           $scope.authorizations = UserAuthorizationsResource.query({id: $routeParams.id});
+        });
+      };
+
+      $scope.deleteOTP = function() {
+        UserOTPResource.delete({id: $routeParams.id}, function() {
+          $scope.user.otpEnabled = false;
         });
       };
 

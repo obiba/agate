@@ -71,6 +71,9 @@ public class Configuration extends AbstractAuditableDocument {
 
   private List<Locale> locales = Lists.newArrayList();
 
+  // One time password strategy
+  private String otpStrategy = "TOTP";
+
   @Transient
   private String contextPath;
 
@@ -238,5 +241,17 @@ public class Configuration extends AbstractAuditableDocument {
 
   public String getContextPath() {
     return contextPath;
+  }
+
+  public String getOtpStrategy() {
+    return otpStrategy;
+  }
+
+  public void setOtpStrategy(String otpStrategy) {
+    this.otpStrategy = otpStrategy;
+  }
+
+  public boolean hasOtpStrategy() {
+    return !Strings.isNullOrEmpty(otpStrategy);
   }
 }

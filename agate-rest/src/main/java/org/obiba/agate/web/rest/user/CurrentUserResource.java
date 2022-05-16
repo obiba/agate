@@ -13,14 +13,13 @@ package org.obiba.agate.web.rest.user;
 import com.google.common.collect.Maps;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.service.ConfigurationService;
+import org.obiba.agate.service.TotpService;
 import org.obiba.agate.web.model.Agate;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.util.Map;
@@ -31,6 +30,9 @@ public class CurrentUserResource extends AbstractUserResource {
 
   @Inject
   private ConfigurationService configurationService;
+
+  @Inject
+  private TotpService totpService;
 
   @PUT
   public Response updateUser(Agate.UserDto userDto) {
@@ -61,6 +63,25 @@ public class CurrentUserResource extends AbstractUserResource {
     current.setAttributes(attributes);
     userService.save(current);
     return Response.noContent().build();
+  }
+
+  @PUT
+  @Path("/otp")
+  @Produces("text/plain")
+  public Response enableOtp() {
+    User current = getUser();
+    current.setSecret(totpService.generateSecret());
+    userService.save(current);
+    return Response.ok(totpService.getQrImageDataUri(current.getEmail(), current.getSecret()), "text/plain").build();
+  }
+
+  @DELETE
+  @Path("/otp")
+  public Response disableOtp() {
+    User current = getUser();
+    current.setSecret(null);
+    userService.save(current);
+    return Response.ok().build();
   }
 
   @Override

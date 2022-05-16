@@ -50,6 +50,7 @@
           <th translate>user.groups</th>
           <th translate>user.applications</th>
           <th translate>user.realm</th>
+          <th translate>user.2fa</th>
           <th translate>user.actions</th>
         </tr>
         </thead>
@@ -81,6 +82,10 @@
             </ul>
           </td>
           <td>{{realms[user.realm]}}</td>
+          <td>
+            <i class="fa fa-check" ng-if="user.otpEnabled"></i>
+            <i class="fa fa-question" ng-if="user.otpEnabled === undefined"></i>
+          </td>
           <td class="action-column">
             <ul class="list-inline">
               <li>

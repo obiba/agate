@@ -68,6 +68,7 @@
     <protobuf-java-format.version>1.2.1-obiba</protobuf-java-format.version>
     <shiro.version>1.4.0</shiro.version>
     <shiro-extras.version>1.1.0</shiro-extras.version>
+    <totp.version>1.7.1</totp.version>
 
     <!-- maven plugins -->
     <github-release-plugin.version>1.2.0</github-release-plugin.version>
@@ -286,6 +287,12 @@
             <artifactId>log4j</artifactId>
           </exclusion>
         </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>dev.samstevens.totp</groupId>
+        <artifactId>totp</artifactId>
+        <version>${totp.version}</version>
       </dependency>
 
       <dependency>

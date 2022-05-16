@@ -7,7 +7,7 @@ var agatejs = (function() {
     return contextPath + url;
   };
 
-  const agateSignin = function(formId, onFailure) {
+  const agateSignin = function(formId, otpId, onFailure) {
     const toggleSubmitButton = function(enable)  {
       const submitSelect = '#' + formId + ' button[type="submit"]';
       if (enable) {
@@ -20,12 +20,19 @@ var agatejs = (function() {
     };
     $('#' + formId).submit(function(e) {
       e.preventDefault(); // avoid to execute the actual submit of the form.
-      var form = $(this);
-      var url = '/ws/auth/sessions';
-      var data = form.serialize(); // serializes the form's elements.
+      const form = $(this);
+      const url = '/ws/auth/sessions';
+      const data = form.serialize(); // serializes the form's elements.
 
       toggleSubmitButton(false);
-      axios.post(normalizeUrl(url), data)
+      const config = {}
+      const otp = $('#' + otpId).val();
+      if (otp) {
+        config.headers = {
+          'X-Obiba-TOTP': otp
+        }
+      }
+      axios.post(normalizeUrl(url), data, config)
         .then(() => {
           //console.dir(response);
           let redirect = normalizeUrl('/');
@@ -37,10 +44,10 @@ var agatejs = (function() {
         })
         .catch(handle => {
           toggleSubmitButton(true);
-          console.dir(handle);
+          //console.dir(handle);
           if (onFailure) {
             var banned = handle.response.data && handle.response.data.message === 'User is banned';
-            onFailure(banned, handle.response.data);
+            onFailure(handle.response, banned);
           }
         });
     });
@@ -280,6 +287,31 @@ var agatejs = (function() {
     });
   };
 
+  const agateEnableOtp = function(onSuccess, onFailure) {
+    const url = '/ws/user/_current/otp';
+    axios.put(normalizeUrl(url))
+        .then((response) => {
+          console.dir(response);
+          onSuccess(response.data);
+        })
+        .catch(handle => {
+          console.dir(handle);
+          onFailure('Failure', handle.response.data);
+        });
+  }
+
+  const agateDisableOtp = function(onSuccess, onFailure) {
+    const url = '/ws/user/_current/otp';
+    axios.delete(normalizeUrl(url))
+        .then(() => {
+          onSuccess();
+        })
+        .catch(handle => {
+          console.dir(handle);
+          onFailure('Failure', handle.response.data);
+        });
+  }
+
   const agateForgotPassword = function(formId, onFailure) {
     $(formId).submit(function(e) {
       e.preventDefault(); // avoid to execute the actual submit of the form.
@@ -364,6 +396,8 @@ var agatejs = (function() {
     'updatePassword': agateUpdatePassword,
     'confirmAndSetPassword': agateConfirmAndSetPassword,
     'changeLanguage': agateChangeLanguage,
-    'updateProfile': agateUpdateProfile
+    'updateProfile': agateUpdateProfile,
+    'enableOtp': agateEnableOtp,
+    'disableOtp': agateDisableOtp
   };
 }());
