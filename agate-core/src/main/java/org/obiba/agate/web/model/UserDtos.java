@@ -53,8 +53,10 @@ class UserDtos {
       .setRole(user.getRole())
       .setStatus(user.getStatus().toString())
       .setTimestamps(TimestampsDtos.asDto(user))
-      .setPreferredLanguage(user.getPreferredLanguage())
-      .setOtpEnabled(user.hasSecret());
+      .setPreferredLanguage(user.getPreferredLanguage());
+
+    if (AgateRealm.AGATE_USER_REALM.getName().equals(user.getRealm()))
+      builder.setOtpEnabled(user.hasSecret());
 
     if(!Strings.isNullOrEmpty(user.getFirstName())) builder.setFirstName(user.getFirstName());
     if(!Strings.isNullOrEmpty(user.getLastName())) builder.setLastName(user.getLastName());

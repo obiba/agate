@@ -414,7 +414,15 @@
     },
     "authorizations": "Authorizations",
     "authorizations-help": "Authorizations granted by the user.",
-    "authorizations-none": "No authorizations."
+    "authorizations-none": "No authorizations.",
+    "2fa": "2FA",
+    "two-factor-auth": {
+      "title": "Two-factor Authentication",
+      "disable": "Disable 2FA",
+      "enabled": "2FA is enabled.",
+      "disabled": "2FA is not enabled.",
+      "unknown": "2FA activation status is unknown because it depends on the realm in which the user authenticates."
+    }
   },
   "attributes": "Attributes",
   "attribute": {

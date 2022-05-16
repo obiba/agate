@@ -105,7 +105,7 @@ message UserDto {
   optional string lastLogin = 14;
   optional string preferredLanguage = 15;
   optional string accountUrl = 16;
-  optional bool otpEnabled = 17 [default = false];
+  optional bool otpEnabled = 17;
 }
 
 message UserSummaryDto {

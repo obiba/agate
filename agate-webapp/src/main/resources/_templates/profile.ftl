@@ -147,7 +147,7 @@
                   <#elseif realmConfig??>
                     <#if providerUrl??>
                       <@message "user-account-at"/>
-                      <a href="${providerUrl}" class="btn btn-primary" target="_blank"><i class="fas fa-user"></i> ${realmConfig.title[.lang]}</a>
+                      <a href="${providerUrl}" class="btn btn-primary ml-2" target="_blank"><i class="fas fa-user"></i> ${realmConfig.title[.lang]}</a>
                     <#else>
                       <@message "contact-system-administrator-to-change-password"/>
                     </#if>
