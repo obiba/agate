@@ -12,7 +12,9 @@ package org.obiba.agate.web.model;
 
 import com.google.common.base.Strings;
 import org.joda.time.DateTime;
+import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.User;
+import org.obiba.agate.security.AgateUserRealm;
 import org.obiba.agate.security.OidcAuthConfigurationProvider;
 import org.obiba.agate.service.GroupService;
 import org.obiba.agate.service.RealmConfigService;
@@ -116,6 +118,9 @@ class UserDtos {
       if (lastLogin != null) addAttribute(builder, "lastLogin", lastLogin.toString());
       user.getAttributes().forEach((n, v) -> addAttribute(builder, n, v));
     }
+
+    if (user.getRealm().equals(AgateRealm.AGATE_USER_REALM.getName()))
+      builder.setOtpEnabled(user.hasSecret());
 
     return builder.build();
   }
