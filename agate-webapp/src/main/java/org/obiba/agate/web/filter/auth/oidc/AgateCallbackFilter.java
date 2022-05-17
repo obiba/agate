@@ -46,6 +46,7 @@ import javax.ws.rs.core.NewCookie;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -424,10 +425,14 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     if (!Strings.isNullOrEmpty(redirectUri)) {
       return applicationService.findAll()
           .stream()
-          .filter(application -> application.hasRedirectURI() && matchRedirectUrl(application.getRedirectURI(), redirectUri))
+          .filter(application -> application.hasRedirectURI() && matchRedirectUrl(application.getRedirectURIs(), redirectUri))
           .findFirst();
     }
     return Optional.empty();
+  }
+
+  private boolean matchRedirectUrl(List<String> sources, String target) {
+    return sources.stream().anyMatch(source -> matchRedirectUrl(source, target));
   }
 
   private boolean matchRedirectUrl(String source, String target) {

@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
+import com.google.common.base.Splitter;
 import org.obiba.mongodb.domain.AbstractAuditableDocument;
 import org.springframework.data.mongodb.core.index.Indexed;
 
@@ -93,6 +94,13 @@ public class Application extends AbstractAuditableDocument {
 
   public String getRedirectURI() {
     return redirectURI;
+  }
+
+  public List<String> getRedirectURIs() {
+    return Splitter.on(",").splitToList(redirectURI).stream()
+        .map(String::trim)
+        .filter(uri -> !uri.isEmpty())
+        .collect(Collectors.toList());
   }
 
   public void setRedirectURI(String redirectURI) {

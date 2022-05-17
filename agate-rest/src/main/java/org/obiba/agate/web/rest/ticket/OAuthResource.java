@@ -128,7 +128,7 @@ public class OAuthResource {
     }
 
     return Response.status(Response.Status.FOUND).location(URI.create(
-      String.format("%s/authorize?%s", getPublicUrl(), servletRequest.getQueryString()))).build();
+        String.format("%s/authorize?%s", getPublicUrl(), servletRequest.getQueryString()))).build();
   }
 
   @GET
@@ -156,7 +156,7 @@ public class OAuthResource {
   @Path("/authz")
   @RequiresRoles("agate-user")
   public Response authorize(@Context HttpServletRequest servletRequest, @FormParam("grant") Boolean grant)
-    throws URISyntaxException, OAuthSystemException {
+      throws URISyntaxException, OAuthSystemException {
     return tryBuildResponse(servletRequest, (data) -> {
       try {
         if (grant != null && !grant) {
@@ -197,10 +197,10 @@ public class OAuthResource {
 
     long expiresIn = authorizationService.getExpirationDate(authz).getMillis() - DateTime.now().getMillis();
     OAuthASResponse.OAuthAuthorizationResponseBuilder builder = OAuthASResponse
-      .authorizationResponse(servletRequest, HttpServletResponse.SC_FOUND) //
-      .setCode(authz.getCode()) //
-      .setExpiresIn(expiresIn / 1000) //
-      .location(data.getRedirectUri());
+        .authorizationResponse(servletRequest, HttpServletResponse.SC_FOUND) //
+        .setCode(authz.getCode()) //
+        .setExpiresIn(expiresIn / 1000) //
+        .location(data.getRedirectUri());
 
     setState(builder, data.getRequest());
     OAuthResponse response = builder.buildQueryMessage();
@@ -230,9 +230,9 @@ public class OAuthResource {
       return Response.status(res.getResponseStatus()).entity(res.getBody()).build();
     } catch (Exception e) {
       OAuthResponse res = OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST) //
-        .setError(e.getClass().getSimpleName()) //
-        .setErrorDescription(e.getMessage()) //
-        .buildJSONMessage();
+          .setError(e.getClass().getSimpleName()) //
+          .setErrorDescription(e.getMessage()) //
+          .buildJSONMessage();
       return Response.status(res.getResponseStatus()).entity(res.getBody()).build();
     }
   }
@@ -242,7 +242,7 @@ public class OAuthResource {
   //
 
   private Response tryBuildResponse(HttpServletRequest servletRequest, Function<OAuthRequestData, Response> responseBuilder)
-    throws URISyntaxException, OAuthSystemException {
+      throws URISyntaxException, OAuthSystemException {
     OAuthAuthzRequest oAuthRequest = null;
     String redirectURI = null;
 
@@ -268,10 +268,10 @@ public class OAuthResource {
   }
 
   private Response buildErrorResponse(Exception e, OAuthAuthzRequest oAuthRequest, String redirectURI)
-    throws OAuthSystemException, URISyntaxException {
+      throws OAuthSystemException, URISyntaxException {
     boolean canRedirect = !Strings.isNullOrEmpty(redirectURI);
     OAuthASResponse.OAuthErrorResponseBuilder builder = OAuthASResponse
-      .errorResponse(canRedirect ? HttpServletResponse.SC_FOUND : HttpServletResponse.SC_BAD_REQUEST);
+        .errorResponse(canRedirect ? HttpServletResponse.SC_FOUND : HttpServletResponse.SC_BAD_REQUEST);
     if (e instanceof OAuthProblemException)
       builder.error((OAuthProblemException) e);
     else {
@@ -304,7 +304,7 @@ public class OAuthResource {
   }
 
   private Response accessAuthorizationCodeGrant(HttpServletRequest servletRequest, OAuthTokenRequest oAuthRequest)
-    throws OAuthSystemException, OAuthProblemException {
+      throws OAuthSystemException, OAuthProblemException {
     validateClient(oAuthRequest);
 
     String clientId = oAuthRequest.getClientId();
@@ -313,11 +313,11 @@ public class OAuthResource {
     // verify authorization
     if (!authorization.getApplication().equals(clientId)) {
       throw OAuthProblemException
-        .error("invalid_client_id", "The client ID does not match the one of the authorization");
+          .error("invalid_client_id", "The client ID does not match the one of the authorization");
     }
     if (!authorization.getRedirectURI().equals(redirectURI)) {
       throw OAuthProblemException
-        .error("invalid_redirect_uri", "The redirect URI does not match the one of the authorization");
+          .error("invalid_redirect_uri", "The redirect URI does not match the one of the authorization");
     }
     User user = userService.findActiveUser(authorization.getUsername());
     if (user == null) {
@@ -329,7 +329,7 @@ public class OAuthResource {
   }
 
   private Response accessPasswordGrant(HttpServletRequest servletRequest, OAuthTokenRequest oAuthRequest)
-    throws OAuthSystemException {
+      throws OAuthSystemException {
     validateClient(oAuthRequest);
 
     String clientId = oAuthRequest.getClientId();
@@ -357,13 +357,13 @@ public class OAuthResource {
     long expiresIn = ticketService.getExpirationDate(ticket).getMillis() - DateTime.now().getMillis();
 
     OAuthASResponse.OAuthTokenResponseBuilder responseBuilder = OAuthASResponse.tokenResponse(HttpServletResponse.SC_OK) //
-      .setAccessToken(token) //
-      .setTokenType(OAuth.OAUTH_HEADER_NAME.toLowerCase()) // bug: OAUTH_BEARER_TOKEN has a wrong value
-      .setExpiresIn(expiresIn / 1000 + "");
+        .setAccessToken(token) //
+        .setTokenType(OAuth.OAUTH_HEADER_NAME.toLowerCase()) // bug: OAUTH_BEARER_TOKEN has a wrong value
+        .setExpiresIn(expiresIn / 1000 + "");
 
     if (authorization != null && authorization.hasScope(TokenUtils.OPENID_SCOPE)) {
       responseBuilder.setParam(TokenUtils.OPENID_TOKEN, tokenUtils.makeIDToken(authorization,
-        getSupportedOpenIdScopes(authorization::hasScope)));
+          getSupportedOpenIdScopes(authorization::hasScope)));
     }
 
     OAuthResponse response = responseBuilder.buildJSONMessage();
@@ -401,18 +401,17 @@ public class OAuthResource {
     Application application = applicationService.getApplication(clientId);
     if (!application.hasRedirectURI()) {
       throw OAuthProblemException
-        .error("missing_application_redirect_uri", "Application does not have a default redirect URI");
+          .error("missing_application_redirect_uri", "Application does not have a default redirect URI");
     }
-    String defaultURI = application.getRedirectURI();
     // TODO? check user has access to this application
     // Verify the validity of the given URI
     String normalizedURI = redirectURI;
+    List<String> defaultURIs = application.getRedirectURIs();
     if (Strings.isNullOrEmpty(redirectURI)) {
-      normalizedURI = defaultURI;
-    }
-    if (!normalizedURI.startsWith(defaultURI)) {
+      normalizedURI = defaultURIs.get(0);
+    } else if (defaultURIs.stream().noneMatch(normalizedURI::startsWith)) {
       throw OAuthProblemException
-        .error("invalid_redirect_uri", "The redirect URI does not match the application's redirect URI");
+          .error("invalid_redirect_uri", "The redirect URI does not match the application's redirect URI");
     }
     return normalizedURI;
   }
