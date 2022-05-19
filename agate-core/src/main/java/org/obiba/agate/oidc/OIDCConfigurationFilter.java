@@ -59,18 +59,23 @@ public class OIDCConfigurationFilter extends OncePerRequestFilter {
     String host = request.getHeader("Host");
     if (Strings.isNullOrEmpty(host) && queryMap.containsKey("host"))
       host = queryMap.get("host");
+    String baseURL;
     if (Strings.isNullOrEmpty(host))
-      host = configurationService.getPublicUrl();
+      baseURL = configurationService.getPublicUrl();
+    else if (Strings.isNullOrEmpty(configurationService.getContextPath()))
+      baseURL = host;
+    else
+      baseURL = String.format("%s%s", host, configurationService.getContextPath());
     JSONObject oidcConfig = new JSONObject();
     oidcConfig.put("issuer", tokenUtils.getIssuerID());
-    oidcConfig.put("authorization_endpoint", host + "/ws/oauth2/authorize");
-    oidcConfig.put("token_endpoint", host + "/ws/oauth2/token");
-    oidcConfig.put("userinfo_endpoint", host + "/ws/oauth2/userinfo");
+    oidcConfig.put("authorization_endpoint", baseURL + "/ws/oauth2/authorize");
+    oidcConfig.put("token_endpoint", baseURL + "/ws/oauth2/token");
+    oidcConfig.put("userinfo_endpoint", baseURL + "/ws/oauth2/userinfo");
     oidcConfig.put("scopes_supported", new String[]{"openid", "email", "profile"});
     oidcConfig.put("id_token_signing_alg_values_supported", new String[]{tokenUtils.getSignatureAlgorithm()});
     oidcConfig.put("response_types_supported", new String[]{"code"});
     oidcConfig.put("subject_types_supported", new String[]{"public"});
-    oidcConfig.put("jwks_uri", host + "/ws/oauth2/certs");
+    oidcConfig.put("jwks_uri", baseURL + "/ws/oauth2/certs");
     return oidcConfig;
   }
 
