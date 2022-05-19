@@ -63,9 +63,9 @@ public class OIDCConfigurationFilter extends OncePerRequestFilter {
     if (Strings.isNullOrEmpty(host))
       baseURL = configurationService.getPublicUrl();
     else if (Strings.isNullOrEmpty(configurationService.getContextPath()))
-      baseURL = host;
+      baseURL = String.format("%s://%s", request.getScheme(), host);
     else
-      baseURL = String.format("%s%s", host, configurationService.getContextPath());
+      baseURL = String.format("%s://%s%s", request.getScheme(), host, configurationService.getContextPath());
     JSONObject oidcConfig = new JSONObject();
     oidcConfig.put("issuer", tokenUtils.getIssuerID());
     oidcConfig.put("authorization_endpoint", baseURL + "/ws/oauth2/authorize");
