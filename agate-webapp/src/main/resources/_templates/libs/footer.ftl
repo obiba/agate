@@ -3,7 +3,7 @@
   <!-- To the right -->
   <#if config??>
     <div class="float-right d-none d-sm-inline">
-      <strong><@message "copyright"/> &copy; 2021 <a href="${config.portalUrl!"#"}">${config.name!""}</a>.</strong> <@message "all-rights-reserved"/>
+      <strong><@message "copyright"/> &copy; 2022 <a href="${config.portalUrl!"#"}">${config.name!""}</a>.</strong> <@message "all-rights-reserved"/>
     </div>
   </#if>
   <#if !user?? || user.role == "agate-administrator">

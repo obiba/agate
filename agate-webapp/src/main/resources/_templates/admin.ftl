@@ -136,7 +136,7 @@
       <div class="col-lg-12">
         <ul class="list-unstyled list-inline">
           <li class="pull-right">{{agateConfig.version}}</li>
-          <li>© 2020</li>
+          <li>© 2022</li>
           <li><a href="http://obiba.org" target="_blank"> OBiBa </a></li>
           <li><a href="http://agatedoc.obiba.org" target="_blank">
               Documentation </a></li>
