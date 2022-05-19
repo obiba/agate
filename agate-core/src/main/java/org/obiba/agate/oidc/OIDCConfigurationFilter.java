@@ -57,7 +57,7 @@ public class OIDCConfigurationFilter extends OncePerRequestFilter {
     // Be flexible with entry point as agate could be accessed from different host name
     Map<String, String> queryMap = parseQuery(request.getQueryString());
     String host = request.getHeader("Host");
-    if (queryMap.containsKey("host"))
+    if (Strings.isNullOrEmpty(host) && queryMap.containsKey("host"))
       host = queryMap.get("host");
     if (Strings.isNullOrEmpty(host))
       host = configurationService.getPublicUrl();
