@@ -128,7 +128,7 @@ public class OAuthResource {
     }
 
     return Response.status(Response.Status.FOUND).location(URI.create(
-        String.format("%s/authorize?%s", getPublicUrl(), servletRequest.getQueryString()))).build();
+        String.format("%s/authorize?%s", configurationService.getBaseURL(servletRequest), servletRequest.getQueryString()))).build();
   }
 
   @GET
@@ -414,14 +414,6 @@ public class OAuthResource {
           .error("invalid_redirect_uri", "The redirect URI does not match the application's redirect URI");
     }
     return normalizedURI;
-  }
-
-  private String getPublicUrl() {
-    String url = configurationService.getPublicUrl();
-    if (Strings.isNullOrEmpty(url)) {
-      log.warn("Public URL is not defined, OAuth/OpenID Connect services might not work properly");
-    }
-    return url;
   }
 
   /**
