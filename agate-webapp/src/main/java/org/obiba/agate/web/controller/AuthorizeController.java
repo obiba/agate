@@ -2,6 +2,7 @@ package org.obiba.agate.web.controller;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -50,7 +51,7 @@ public class AuthorizeController {
     String qs = request.getQueryString();
 
     if (!subject.isAuthenticated()) {
-      String redirect = configurationService.getPublicUrl() + "/ws/oauth2/authorize?" + qs;
+      String redirect = configurationService.getBaseURL(request) + "/ws/oauth2/authorize?" + qs;
       return new ModelAndView("redirect:signin?redirect=" + URLUtils.encode(redirect));
     }
 
