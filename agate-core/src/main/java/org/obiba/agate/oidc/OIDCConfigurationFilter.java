@@ -54,18 +54,7 @@ public class OIDCConfigurationFilter extends OncePerRequestFilter {
   }
 
   private JSONObject getOIDCConfiguration(HttpServletRequest request) throws JSONException {
-    // Be flexible with entry point as agate could be accessed from different host name
-    Map<String, String> queryMap = parseQuery(request.getQueryString());
-    String host = request.getHeader("Host");
-    if (Strings.isNullOrEmpty(host) && queryMap.containsKey("host"))
-      host = queryMap.get("host");
-    String baseURL;
-    if (Strings.isNullOrEmpty(host))
-      baseURL = configurationService.getPublicUrl();
-    else if (Strings.isNullOrEmpty(configurationService.getContextPath()))
-      baseURL = String.format("%s://%s", request.getScheme(), host);
-    else
-      baseURL = String.format("%s://%s%s", request.getScheme(), host, configurationService.getContextPath());
+    String baseURL = configurationService.getBaseURL(request);
     JSONObject oidcConfig = new JSONObject();
     oidcConfig.put("issuer", tokenUtils.getIssuerID());
     oidcConfig.put("authorization_endpoint", baseURL + "/ws/oauth2/authorize");
@@ -77,22 +66,6 @@ public class OIDCConfigurationFilter extends OncePerRequestFilter {
     oidcConfig.put("subject_types_supported", new String[]{"public"});
     oidcConfig.put("jwks_uri", baseURL + "/ws/oauth2/certs");
     return oidcConfig;
-  }
-
-  private Map<String, String> parseQuery(String query) {
-    Map<String, String> queryMap = Maps.newHashMap();
-    if (Strings.isNullOrEmpty(query)) return queryMap;
-
-    for (String pair : query.split("&")) {
-      int idxOfEqual = pair.indexOf("=");
-
-      if (idxOfEqual > 0) {
-        String key = pair.substring(0, idxOfEqual);
-        String value = pair.substring(idxOfEqual + 1);
-        queryMap.put(key, value);
-      }
-    }
-    return queryMap;
   }
 
 }

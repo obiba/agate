@@ -56,6 +56,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
@@ -111,6 +112,24 @@ public class ConfigurationService {
   public String getContextPath() {
     String contextPath = env.getProperty("server.context-path", "");
     return Strings.isNullOrEmpty(contextPath) ? env.getProperty("server.servlet.context-path", "") : contextPath;
+  }
+
+  /**
+   * Be flexible with entry point as agate could be accessed from different host name.
+   *
+   * @param request
+   * @return
+   */
+  public String getBaseURL(HttpServletRequest request) {
+    String host = request.getHeader("Host");
+    String baseURL;
+    if (Strings.isNullOrEmpty(host))
+      baseURL = getPublicUrl();
+    else if (Strings.isNullOrEmpty(getContextPath()))
+      baseURL = String.format("%s://%s", request.getScheme(), host);
+    else
+      baseURL = String.format("%s://%s%s", request.getScheme(), host, getContextPath());
+    return baseURL;
   }
 
   @Cacheable(value = "agateConfig", key = "#root.methodName")
