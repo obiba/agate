@@ -27,6 +27,7 @@ import org.obiba.agate.web.support.URLUtils;
 import org.obiba.oidc.*;
 import org.obiba.oidc.shiro.authc.OIDCAuthenticationToken;
 import org.obiba.oidc.shiro.realm.DefaultOIDCGroupsExtractor;
+import org.obiba.oidc.web.J2EContext;
 import org.obiba.oidc.web.filter.OIDCCallbackFilter;
 import org.obiba.shiro.web.filter.AuthenticationExecutor;
 import org.slf4j.Logger;
@@ -148,9 +149,8 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
       // ignore
     }
   }
-
   @Override
-  protected void onRedirect(OIDCSession session, HttpServletResponse response) throws IOException {
+  protected void onRedirect(OIDCSession session, J2EContext context, String provider) throws IOException {
     Map<String, String[]> requestParameters = session.getRequestParameters();
     String action = retrieveRequestParameter(FilterParameter.ACTION.value(), requestParameters);
 
@@ -158,12 +158,12 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
 
     if (Strings.isNullOrEmpty(redirect)) {
       if (FilterAction.SIGNIN.equals(FilterAction.valueOf(action))) {
-        response.sendRedirect(retrieveRedirectUrl(requestParameters));
+        context.getResponse().sendRedirect(retrieveRedirectUrl(requestParameters));
       } else {
-        response.sendRedirect(retrieveSignupRedirectUrl(requestParameters));
+        context.getResponse().sendRedirect(retrieveSignupRedirectUrl(requestParameters));
       }
     } else {
-      response.sendRedirect(redirect);
+      context.getResponse().sendRedirect(redirect);
     }
   }
 

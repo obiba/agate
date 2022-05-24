@@ -61,7 +61,7 @@
     <nimbus-jose-jwt.version>7.9</nimbus-jose-jwt.version>
     <nosqlunit.version>0.7.9</nosqlunit.version>
     <oauth-oidc-sdk.version>5.45</oauth-oidc-sdk.version>
-    <obiba-commons.version>2.1.1</obiba-commons.version>
+    <obiba-commons.version>2.1.3</obiba-commons.version>
     <oltu.version>1.0.1</oltu.version>
     <postgres.version>9.4.1212.jre7</postgres.version>
     <protobuf.version>2.5.0</protobuf.version>

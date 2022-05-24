@@ -181,18 +181,22 @@ public class OAuthResource {
 
     authorization.setCode(oAuthIssuer.authorizationCode());
     authorization.addScopes(data.getRequest().getScopes());
-    authorization.setRedirectURI(data.getRedirectUri());
+    authorization.addRedirectURI(data.getRedirectUri());
     authorizationService.save(authorization);
     return authorization;
   }
 
   private Response replyAuthorized(HttpServletRequest servletRequest, OAuthRequestData data, Authorization authorization) throws OAuthSystemException, URISyntaxException, OAuthProblemException {
     Authorization authz = authorization;
+    OAuthAuthzRequest oAuthRequest = new OAuthAuthzRequest(servletRequest);
+    String clientId = oAuthRequest.getParam(OAuth.OAUTH_CLIENT_ID);
+    String redirectURI = validateClientApplication(clientId, oAuthRequest.getParam(OAuth.OAUTH_REDIRECT_URI));
     if (authorization == null) {
-      OAuthAuthzRequest oAuthRequest = new OAuthAuthzRequest(servletRequest);
-      String clientId = oAuthRequest.getParam(OAuth.OAUTH_CLIENT_ID);
-      String redirectURI = validateClientApplication(clientId, oAuthRequest.getParam(OAuth.OAUTH_REDIRECT_URI));
       authz = doAuthorization(new OAuthRequestData(clientId, redirectURI, oAuthRequest));
+    } else {
+      // case multiple urls are allowed per application
+      authorization.addRedirectURI(redirectURI);
+      authorizationService.save(authorization);
     }
 
     long expiresIn = authorizationService.getExpirationDate(authz).getMillis() - DateTime.now().getMillis();
@@ -315,7 +319,7 @@ public class OAuthResource {
       throw OAuthProblemException
           .error("invalid_client_id", "The client ID does not match the one of the authorization");
     }
-    if (!authorization.getRedirectURI().equals(redirectURI)) {
+    if (!authorization.getRedirectURIs().contains(redirectURI)) {
       throw OAuthProblemException
           .error("invalid_redirect_uri", "The redirect URI does not match the one of the authorization");
     }
