@@ -10,11 +10,15 @@
 
 package org.obiba.agate.domain;
 
+import com.beust.jcommander.internal.Lists;
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import org.obiba.mongodb.domain.AbstractAuditableDocument;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -99,4 +103,16 @@ public class Authorization extends AbstractAuditableDocument {
   public void setRedirectURI(String redirectURI) {
     this.redirectURI = redirectURI;
   }
+
+  public List<String> getRedirectURIs() {
+    return Strings.isNullOrEmpty(redirectURI) ? Lists.newArrayList() : Splitter.on(",").splitToList(redirectURI);
+  }
+
+  public void addRedirectURI(String redirectURI) {
+    if (Strings.isNullOrEmpty(redirectURI))
+      this.redirectURI = redirectURI;
+    else if (!getRedirectURIs().contains(redirectURI))
+      this.redirectURI = this.redirectURI + "," + redirectURI;
+  }
+
 }

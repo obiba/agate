@@ -129,7 +129,7 @@ public class AuthorizationService {
   public Authorization find(@NotNull String username, @NotNull String application) {
     Optional<Authorization> authorization = authorizationRepository.findByUsernameAndApplication(username, application)
       .stream().findFirst();
-    return authorization.isPresent() ? authorization.get() : null;
+    return authorization.orElse(null);
   }
 
   /**
