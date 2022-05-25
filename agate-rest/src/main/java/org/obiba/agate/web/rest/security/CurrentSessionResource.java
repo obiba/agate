@@ -12,25 +12,51 @@ package org.obiba.agate.web.rest.security;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.session.InvalidSessionException;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
+import org.obiba.agate.domain.AgateRealm;
+import org.obiba.agate.security.AgateTokenRealm;
 import org.obiba.agate.security.Roles;
+import org.obiba.agate.service.ConfigurationService;
+import org.obiba.agate.service.TicketService;
 import org.obiba.agate.web.model.Agate;
+import org.obiba.agate.web.rest.ticket.TicketsResource;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
+import java.util.Collection;
+import java.util.function.Consumer;
 
 @Component
 @Path("/auth/session/_current")
 public class CurrentSessionResource {
 
+  @Inject
+  private TicketService ticketService;
+
   @DELETE
   public Response deleteSession() {
     // Delete the Shiro session
     try {
-      SecurityUtils.getSubject().logout();
+      Subject subject = SecurityUtils.getSubject();
+      if (subject.isAuthenticated()) {
+        Collection principals = subject.getPrincipals().fromRealm(AgateRealm.AGATE_TOKEN_REALM.getName());
+        for (Object principal : principals) {
+          try {
+            ticketService.delete(principal.toString());
+          } catch (Exception e) {
+            // ignore
+          }
+        }
+      }
+      subject.logout();
     } catch (InvalidSessionException e) {
       // Ignore
     }
