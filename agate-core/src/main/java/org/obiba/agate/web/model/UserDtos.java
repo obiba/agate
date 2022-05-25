@@ -116,6 +116,8 @@ class UserDtos {
       addAttribute(builder, "locale", user.getPreferredLanguage());
       addAttribute(builder, "createdDate", user.getCreatedDate().toString());
       addAttribute(builder, "realm", user.getRealm());
+      if (user.getRealm().equals("agate-user-realm"))
+        addAttribute(builder, "otpEnabled", user.hasSecret() + "");
       DateTime lastLogin = user.getLastLogin();
       if (lastLogin != null) addAttribute(builder, "lastLogin", lastLogin.toString());
       user.getAttributes().forEach((n, v) -> addAttribute(builder, n, v));
