@@ -54,6 +54,10 @@ public class UserProfile {
     return user.getPreferredLanguage();
   }
 
+  public boolean getOtpEnabled() {
+    return user.hasSecret();
+  }
+
   public String getRealm() {
     return user.getRealm();
   }
