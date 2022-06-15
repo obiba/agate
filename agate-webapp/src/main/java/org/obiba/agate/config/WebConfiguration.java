@@ -97,13 +97,13 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
 
   @Inject
   public WebConfiguration(
-    MetricRegistry metricRegistry,
-    org.obiba.ssl.SslContextFactory sslContextFactory,
-    AuthenticationFilter authenticationFilter,
-    AgateSignInFilter agateSignInFilter,
-    AgateSignUpFilter agateSignUpFilter,
-    AgateCallbackFilter agateCallbackFilter,
-    OIDCConfigurationFilter oidcConfigurationFilter) {
+      MetricRegistry metricRegistry,
+      org.obiba.ssl.SslContextFactory sslContextFactory,
+      AuthenticationFilter authenticationFilter,
+      AgateSignInFilter agateSignInFilter,
+      AgateSignUpFilter agateSignUpFilter,
+      AgateCallbackFilter agateCallbackFilter,
+      OIDCConfigurationFilter oidcConfigurationFilter) {
 
     this.metricRegistry = metricRegistry;
     this.sslContextFactory = sslContextFactory;
@@ -180,15 +180,28 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
     initOIDCConfigurationFilter(servletContext);
 
     EnumSet<DispatcherType> disps = EnumSet.of(REQUEST, FORWARD, ASYNC);
+    initForbiddenUrlsFilter(servletContext, disps);
     initMetrics(servletContext, disps);
+
     if (environment.acceptsProfiles(Constants.SPRING_PROFILE_PRODUCTION)) {
       initStaticResourcesProductionFilter(servletContext, disps);
       initCachingHttpHeadersFilter(servletContext, disps);
     }
+
     initClickjackingHttpHeadersFilter(servletContext, disps);
     initGzipFilter(servletContext, disps);
 
     log.info("Web application fully configured");
+  }
+
+  private void initForbiddenUrlsFilter(ServletContext servletContext, EnumSet<DispatcherType> disps) {
+    log.debug("Registering Forbidden URLs Filter");
+
+    FilterRegistration.Dynamic filterRegistration = servletContext.addFilter("forbiddenUrlsFilter", new ForbiddenUrlsFilter());
+
+    filterRegistration.addMappingForUrlPatterns(disps, true, "/.htaccess");
+    filterRegistration.addMappingForUrlPatterns(disps, true, "/.htaccess/");
+    filterRegistration.setAsyncSupported(true);
   }
 
   private void initAllowedMethodsFilter(ServletContext servletContext) {
@@ -206,7 +219,7 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
 
     if (filterRegistration == null) {
       filterRegistration =
-        (FilterRegistration.Dynamic) servletContext.getFilterRegistration("OIDCConfigurationFilter");
+          (FilterRegistration.Dynamic) servletContext.getFilterRegistration("OIDCConfigurationFilter");
     }
 
     log.debug("Adding mapping to OIDC configuration filter registration");
@@ -255,7 +268,7 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
 
     log.debug("Registering static resources production Filter");
     FilterRegistration.Dynamic resourcesFilter = servletContext
-      .addFilter("staticResourcesProductionFilter", new StaticResourcesProductionFilter());
+        .addFilter("staticResourcesProductionFilter", new StaticResourcesProductionFilter());
 
     resourcesFilter.addMappingForUrlPatterns(disps, true, "/favicon.ico");
     resourcesFilter.addMappingForUrlPatterns(disps, true, "/robots.txt");
@@ -274,7 +287,7 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
   private void initCachingHttpHeadersFilter(ServletContext servletContext, EnumSet<DispatcherType> disps) {
     log.debug("Registering Caching HTTP Headers Filter");
     FilterRegistration.Dynamic cachingFilter = servletContext
-      .addFilter("cachingHttpHeadersFilter", new CachingHttpHeadersFilter());
+        .addFilter("cachingHttpHeadersFilter", new CachingHttpHeadersFilter());
 
     cachingFilter.addMappingForUrlPatterns(disps, true, "/images/*");
     cachingFilter.addMappingForUrlPatterns(disps, true, "/fonts/*");
@@ -289,7 +302,7 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
   private void initClickjackingHttpHeadersFilter(ServletContext servletContext, EnumSet<DispatcherType> disps) {
     log.debug("Registering Clickjacking HTTP Headers Filter");
     FilterRegistration.Dynamic cachingFilter = servletContext
-      .addFilter("clickjackingHttpHeadersFilter", new ClickjackingHttpHeadersFilter());
+        .addFilter("clickjackingHttpHeadersFilter", new ClickjackingHttpHeadersFilter());
 
     cachingFilter.addMappingForUrlPatterns(disps, true, "/*");
     cachingFilter.setAsyncSupported(true);
@@ -305,7 +318,7 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
 
     log.debug("Registering Metrics Filter");
     FilterRegistration.Dynamic metricsFilter = servletContext
-      .addFilter("webappMetricsFilter", new InstrumentedFilter());
+        .addFilter("webappMetricsFilter", new InstrumentedFilter());
 
     metricsFilter.addMappingForUrlPatterns(disps, true, "/*");
     metricsFilter.setAsyncSupported(true);
@@ -330,7 +343,7 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-      throws IOException, ServletException {
+        throws IOException, ServletException {
       HttpServletRequest httpRequest = (HttpServletRequest) request;
       HttpServletResponse httpResponse = (HttpServletResponse) response;
 
@@ -348,4 +361,26 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
     }
   }
 
+  /**
+   * Filters all forbidden URLs registered above (/.htaccess, /.htacces/)
+   */
+  private static class ForbiddenUrlsFilter implements Filter {
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+    }
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+        throws IOException {
+      HttpServletRequest httpRequest = (HttpServletRequest) request;
+      HttpServletResponse httpResponse = (HttpServletResponse) response;
+      httpResponse.reset();
+      httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, String.format("%s not allowed", httpRequest.getRequestURI()));
+    }
+
+    @Override
+    public void destroy() {
+    }
+  }
 }
