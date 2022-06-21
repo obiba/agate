@@ -57,7 +57,7 @@
     <mariabd.version>1.5.9</mariabd.version>
     <metrics-spring.version>3.0.0</metrics-spring.version>
     <mongodb-driver.version>3.12.11</mongodb-driver.version>
-    <mysql.version>5.1.45</mysql.version>
+    <mysql.version>8.0.28</mysql.version>
     <nimbus-jose-jwt.version>7.9</nimbus-jose-jwt.version>
     <nosqlunit.version>0.7.9</nosqlunit.version>
     <oauth-oidc-sdk.version>5.45</oauth-oidc-sdk.version>
