@@ -10,10 +10,6 @@
 
 package org.obiba.agate.web.rest.config;
 
-import javax.inject.Inject;
-import javax.ws.rs.ApplicationPath;
-
-import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.server.spring.scope.RequestContextFilter;
@@ -21,9 +17,11 @@ import org.obiba.agate.config.Profiles;
 import org.obiba.agate.web.rest.security.AuditInterceptor;
 import org.obiba.agate.web.rest.security.AuthenticationInterceptor;
 import org.obiba.agate.web.rest.security.CSRFInterceptor;
-import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
+import javax.ws.rs.ApplicationPath;
 
 @Component
 @ApplicationPath(JerseyConfiguration.WS_ROOT)
@@ -35,7 +33,7 @@ public class JerseyConfiguration extends ResourceConfig {
   public JerseyConfiguration(Environment environment) {
     register(RequestContextFilter.class);
     packages("org.obiba.agate.web", "org.obiba.jersey", "com.fasterxml.jackson");
-    register(LoggingFilter.class);
+    ///register(LoggingFilter.class);
     register(AuthenticationInterceptor.class);
     register(AuditInterceptor.class);
     register(new CSRFInterceptor(environment.acceptsProfiles(Profiles.PROD), environment.getProperty("csrf.allowed", "")));
@@ -44,7 +42,6 @@ public class JerseyConfiguration extends ResourceConfig {
   }
 
   private String getServerPort(Environment environment) {
-    RelaxedPropertyResolver relaxedPropertyResolver = new RelaxedPropertyResolver(environment, "server.");
-    return relaxedPropertyResolver.getProperty("port", "8081");
+    return environment.getProperty("server.port", "8081");
   }
 }

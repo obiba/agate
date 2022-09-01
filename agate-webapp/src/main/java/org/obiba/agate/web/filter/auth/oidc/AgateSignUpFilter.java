@@ -4,11 +4,7 @@ import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.RealmConfigService;
 import org.obiba.oidc.OIDCConfigurationProvider;
 import org.obiba.oidc.OIDCSessionManager;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-
-@Component("agateSignUpFilter")
 public class AgateSignUpFilter extends AbstractAgateAuthenticationFilter {
 
   private String publicUrl;
@@ -18,12 +14,7 @@ public class AgateSignUpFilter extends AbstractAgateAuthenticationFilter {
                            OIDCSessionManager oidcSessionManager,
                            RealmConfigService realmConfigService) {
     super(configurationService, oidcConfigurationProvider, oidcSessionManager, realmConfigService);
-  }
-
-  @PostConstruct
-  @Override
-  public void init() {
-    super.init();
+    init();
   }
 
   @Override

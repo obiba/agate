@@ -1,5 +1,5 @@
 skipTests = false
-version=0.1-SNAPSHOT
+version=2.7-SNAPSHOT
 mvn_exec = mvn -Dmaven.test.skip=${skipTests}
 current_dir = $(shell pwd)
 agate_home = ${current_dir}/agate_home
@@ -38,13 +38,21 @@ install:
 	${mvn_exec} install
 
 core:
-	cd agate-core && ${mvn_exec} install
+	cd agate-core && ${mvn_exec} clean install
 
 rest:
-	cd agate-rest && ${mvn_exec} install
+	cd agate-rest && ${mvn_exec} clean install
+
+model: proto
 
 proto:
-	cd agate-web-model && ${mvn_exec} install
+	cd agate-web-model && ${mvn_exec} clean install
+
+webapp:
+	cd agate-webapp && ${mvn_exec} install
+
+dist:
+	cd agate-dist && ${mvn_exec} clean install
 
 python:
 	cd ../agate-python-client && ${mvn_exec} install
@@ -59,16 +67,15 @@ run-prod:
 	cd ../agate-dist && \
 	mvn clean package && \
 	cd target && \
-	unzip agate-dist-${version}-dist.zip && \
-	mkdir agate_home && \
-	mv agate-dist-${version}/conf agate_home/conf && \
-	export AGATE_HOME="${current_dir}/agate-dist/target/agate_home" && \
-	agate-dist-${version}/bin/agate
+	unzip agate-${version}-dist.zip && \
+	mkdir -p ${agate_home} && \
+	if [ ! -d ${agate_home}/conf ]; then cp -r agate-${version}/conf ${agate_home}/conf; fi && \
+	export AGATE_HOME="${agate_home}" && \
+	./agate-${version}/bin/agate
 
 debug:
-	export MAVEN_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,address=8001,suspend=n && \
 	cd agate-webapp && \
-	${mvn_exec} spring-boot:run -Pdev -Dspring.profiles.active=dev -DAGATE_HOME="${agate_home}" -DAGATE_LOG="${agate_log}"
+	${mvn_exec} spring-boot:run -Pdev -Dspring-boot.run.jvmArguments="-Xmx2G -agentlib:jdwp=transport=dt_socket,server=y,address=8001,suspend=n -Dspring.profiles.active=dev -DAGATE_HOME='${agate_home}' -DAGATE_LOG='${agate_log}'"
 
 run-python:
 	cd ../agate-python-client/target/agate-python/bin && \

@@ -30,12 +30,9 @@ import com.google.common.collect.Lists;
 @Configuration
 public class UpgradeConfiguration {
 
-  @Resource(name = "upgradeSteps")
-  List<UpgradeStep> upgradeSteps;
-
   @Bean
   public UpgradeManager upgradeManager(AgateVersionModifier agateVersionModifier,
-    RuntimeVersionProvider runtimeVersionProvider) {
+    RuntimeVersionProvider runtimeVersionProvider, List<UpgradeStep> upgradeSteps) {
     DefaultUpgradeManager upgradeManager = new DefaultUpgradeManager();
     upgradeManager.setUpgradeSteps(upgradeSteps);
     upgradeManager.setInstallSteps(new ArrayList<>());

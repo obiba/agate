@@ -10,15 +10,9 @@
 
 package org.obiba.agate.web.filter;
 
-import java.io.IOException;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.*;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * This filter is used in production, to put HTTP cache headers with a long (1 month) expiration time.
@@ -58,4 +52,5 @@ public class CachingHttpHeadersFilter implements Filter {
 
     chain.doFilter(request, response);
   }
+
 }

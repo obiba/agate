@@ -10,6 +10,7 @@
 
 package org.obiba.agate.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 
@@ -19,11 +20,13 @@ import javax.inject.Inject;
 @Configuration
 public class FreemarkerConfiguration {
 
-  @Inject
-  private FreeMarkerViewResolver freeMarkerViewResolver;
-
-  @PostConstruct
-  private void init() {
-    freeMarkerViewResolver.setSuffix(".ftl");
+  @Bean
+  public FreeMarkerViewResolver freemarkerViewResolver() {
+    FreeMarkerViewResolver resolver = new FreeMarkerViewResolver();
+    //resolver.setCache(true);
+    //resolver.setPrefix("");
+    resolver.setSuffix(".ftl");
+    return resolver;
   }
+
 }

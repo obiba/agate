@@ -1,38 +1,31 @@
 package org.obiba.agate.oidc;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.TokenUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.inject.Inject;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Map;
 
 /**
  * Implements the well-known entry point that provides the settings of OpenID Connect.
  */
-@Component
 public class OIDCConfigurationFilter extends OncePerRequestFilter {
 
   private static final Logger log = LoggerFactory.getLogger(OIDCConfigurationFilter.class);
 
-  private final TokenUtils tokenUtils;
+  private TokenUtils tokenUtils;
 
   private final ConfigurationService configurationService;
 
-  @Inject
   public OIDCConfigurationFilter(TokenUtils tokenUtils, ConfigurationService configurationService) {
     this.tokenUtils = tokenUtils;
     this.configurationService = configurationService;
@@ -67,5 +60,6 @@ public class OIDCConfigurationFilter extends OncePerRequestFilter {
     oidcConfig.put("jwks_uri", baseURL + "/ws/oauth2/certs");
     return oidcConfig;
   }
+
 
 }

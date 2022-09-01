@@ -12,15 +12,15 @@ package org.obiba.agate.web.interceptor;
 
 import org.obiba.agate.service.ConfigurationService;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Component
-public class ConfigurationInterceptor extends HandlerInterceptorAdapter {
+public class ConfigurationInterceptor implements HandlerInterceptor {
 
   private final ConfigurationService configurationService;
 
@@ -30,7 +30,8 @@ public class ConfigurationInterceptor extends HandlerInterceptorAdapter {
   }
 
   @Override
-  public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+  public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
+    if (modelAndView == null) return;
     modelAndView.getModel().put("config", configurationService.getConfiguration());
   }
 }

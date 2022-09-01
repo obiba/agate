@@ -21,6 +21,7 @@ import com.jayway.jsonpath.JsonPath;
 import org.apache.shiro.codec.CodecSupport;
 import org.apache.shiro.codec.Hex;
 import org.apache.shiro.crypto.AesCipherService;
+import org.apache.shiro.crypto.PaddingScheme;
 import org.apache.shiro.util.ByteSource;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,21 +31,13 @@ import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.LocalizedString;
 import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.event.AgateConfigUpdatedEvent;
-import org.obiba.agate.event.RealmConfigActivatedOrUpdatedEvent;
 import org.obiba.agate.repository.AgateConfigRepository;
-import org.obiba.agate.service.support.ActiveDirectoryRealmConfigFormBuilder;
-import org.obiba.agate.service.support.JdbcRealmConfigFormBuilder;
-import org.obiba.agate.service.support.LdapRealmConfigFormBuilder;
-import org.obiba.agate.service.support.OidcRealmConfigFormBuilder;
-import org.obiba.agate.service.support.RealmConfigFormBuilder;
-import org.obiba.agate.service.support.RealmUserInfoFormBuilder;
-import org.obiba.agate.service.support.UserFormBuilder;
-import org.obiba.agate.service.support.UserInfoFieldsComparator;
-import org.obiba.agate.service.support.UserInfoFieldsMappingDefaultsFactory;
+import org.obiba.agate.service.support.*;
 import org.obiba.core.translator.JsonTranslator;
 import org.obiba.core.translator.PrefixedValueTranslator;
 import org.obiba.core.translator.TranslationUtils;
 import org.obiba.core.translator.Translator;
+import org.obiba.shiro.crypto.LegacyAesCipherService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -87,6 +80,9 @@ public class ConfigurationService {
 
   private final AesCipherService cipherService;
 
+
+  private final LegacyAesCipherService legacyCipherService = new LegacyAesCipherService();
+
   @Inject
   public ConfigurationService(
     AgateConfigRepository agateConfigRepository,
@@ -103,6 +99,7 @@ public class ConfigurationService {
     this.objectMapper = objectMapper;
 
     this.cipherService = new AesCipherService();
+    this.cipherService.setPaddingScheme(PaddingScheme.PKCS5);
   }
 
   /**
@@ -186,7 +183,15 @@ public class ConfigurationService {
    * @return
    */
   public String decrypt(String encrypted) {
-    ByteSource decrypted = cipherService.decrypt(Hex.decode(encrypted), getSecretKey());
+    ByteSource decrypted;
+    try {
+      decrypted = cipherService.decrypt(Hex.decode(encrypted), getSecretKey());
+    } catch (Exception e) {
+      if (log.isDebugEnabled()) {
+        log.warn("Falling back on legacy crypto service", e);
+      }
+      decrypted = legacyCipherService.decrypt(Hex.decode(encrypted), getSecretKey());
+    }
     return CodecSupport.toString(decrypted.getBytes());
   }
 
@@ -385,4 +390,5 @@ public class ConfigurationService {
   private Resource getTranslationsResource(String locale) {
     return applicationContext.getResource(String.format("classpath:/i18n/%s.json", locale));
   }
+
 }
