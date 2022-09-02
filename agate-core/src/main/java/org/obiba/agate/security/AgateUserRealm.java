@@ -40,7 +40,6 @@ import org.obiba.agate.service.TotpService;
 import org.obiba.agate.service.UserService;
 import org.obiba.shiro.NoSuchOtpException;
 import org.obiba.shiro.authc.UsernamePasswordOtpToken;
-import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
@@ -78,14 +77,13 @@ public class AgateUserRealm extends AuthorizingRealm {
 
     setCacheManager(new MemoryConstrainedCacheManager());
 
-    RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "shiro.password.");
-    nbHashIterations = propertyResolver.getProperty("nbHashIterations", Integer.class);
+    nbHashIterations = env.getProperty("shiro.password.nbHashIterations", Integer.class, 10000);
 
     HashedCredentialsMatcher credentialsMatcher = new HashedCredentialsMatcher(Sha512Hash.ALGORITHM_NAME);
     credentialsMatcher.setHashIterations(nbHashIterations);
     setCredentialsMatcher(credentialsMatcher);
 
-    salt = propertyResolver.getProperty("salt");
+    salt = env.getProperty("shiro.password.salt");
   }
 
   @Override

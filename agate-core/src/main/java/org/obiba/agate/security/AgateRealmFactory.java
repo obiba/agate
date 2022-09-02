@@ -2,8 +2,6 @@ package org.obiba.agate.security;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
@@ -22,7 +20,7 @@ import org.obiba.agate.service.UserService;
 import org.obiba.oidc.shiro.realm.OIDCRealm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +28,8 @@ import javax.inject.Inject;
 import javax.sql.DataSource;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class AgateRealmFactory {

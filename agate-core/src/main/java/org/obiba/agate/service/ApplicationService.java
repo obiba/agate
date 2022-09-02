@@ -10,11 +10,6 @@
 
 package org.obiba.agate.service;
 
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-
 import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.obiba.agate.domain.Application;
 import org.obiba.agate.domain.Group;
@@ -24,10 +19,14 @@ import org.obiba.agate.repository.GroupRepository;
 import org.obiba.agate.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Service class for managing applications.
@@ -51,15 +50,15 @@ public class ApplicationService {
   private Environment env;
 
   public Application getApplication(@NotNull String id) throws NoSuchApplicationException {
-    Application application = applicationRepository.findOne(id);
+    Optional<Application> application = applicationRepository.findById(id);
 
-    if(application == null) throw NoSuchApplicationException.withId(id);
+    if(!application.isPresent()) throw NoSuchApplicationException.withId(id);
 
-    return application;
+    return application.get();
   }
 
   public Application find(@NotNull String id) {
-    return applicationRepository.findOne(id);
+    return applicationRepository.findById(id).orElse(null);
   }
 
   public List<Application> findAll() {
@@ -89,8 +88,11 @@ public class ApplicationService {
   }
 
   public void save(@NotNull Application application) {
-    if(application.isNew()) generateId(application);
-    applicationRepository.save(application);
+    if(application.isNew()) {
+      generateId(application);
+      applicationRepository.insert(application);
+    } else
+      applicationRepository.save(application);
   }
 
   public void delete(@NotNull String id) {
@@ -106,9 +108,7 @@ public class ApplicationService {
   }
 
   public String hashKey(String key) {
-    RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "shiro.password.");
-    return new Sha512Hash(key, propertyResolver.getProperty("salt"),
-        propertyResolver.getProperty("nbHashIterations", Integer.class)).toString();
+    return new Sha512Hash(key, env.getProperty("shiro.password.salt"), env.getProperty("shiro.password.nbHashIterations", Integer.class, 10000)).toString();
   }
 
   //

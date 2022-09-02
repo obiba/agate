@@ -15,7 +15,6 @@ import org.obiba.agate.config.locale.AngularCookieLocaleResolver;
 import org.obiba.agate.config.locale.ExtendedResourceBundleMessageSource;
 import org.obiba.agate.event.AgateConfigUpdatedEvent;
 import org.obiba.agate.service.ConfigurationService;
-import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -32,7 +31,7 @@ import javax.inject.Inject;
 @Configuration
 public class LocaleConfiguration extends WebMvcConfigurerAdapter implements EnvironmentAware {
 
-  private RelaxedPropertyResolver propertyResolver;
+  private Environment environment;
 
   private final ConfigurationService configurationService;
 
@@ -45,7 +44,7 @@ public class LocaleConfiguration extends WebMvcConfigurerAdapter implements Envi
 
   @Override
   public void setEnvironment(Environment environment) {
-    propertyResolver = new RelaxedPropertyResolver(environment, "spring.messageSource.");
+    this.environment = environment;
   }
 
   @Bean(name = "localeResolver")
@@ -57,7 +56,7 @@ public class LocaleConfiguration extends WebMvcConfigurerAdapter implements Envi
 
   @Bean
   public MessageSource messageSource() {
-    int cacheSeconds = propertyResolver.getProperty("cacheSeconds", Integer.class, 60);
+    int cacheSeconds = environment.getProperty("spring.messageSource.cacheSeconds", Integer.class, 60);
     messageSource = new ExtendedResourceBundleMessageSource(configurationService, cacheSeconds);
     messageSource.setBasenames("classpath:/translations/messages", "classpath:/translations/notifications/messages", "classpath:/i18n/messages", "classpath:/i18n/notifications/messages");
     messageSource.setDefaultEncoding("UTF-8");

@@ -10,13 +10,8 @@
 
 package org.obiba.agate.service;
 
-import java.util.List;
-import java.util.Optional;
-
-import javax.annotation.Nullable;
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import org.joda.time.DateTime;
 import org.obiba.agate.domain.Authorization;
 import org.obiba.agate.event.ApplicationDeletedEvent;
@@ -26,8 +21,11 @@ import org.obiba.agate.repository.AuthorizationRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Manage the {@link org.obiba.agate.domain.Authorization} entities.
@@ -65,9 +63,9 @@ public class AuthorizationService {
    * @throws NoSuchAuthorizationException
    */
   public Authorization get(@NotNull String id) {
-    Authorization authorization = authorizationRepository.findOne(id);
-    if(authorization == null) throw NoSuchAuthorizationException.withId(id);
-    return authorization;
+    Optional<Authorization> authorization = authorizationRepository.findById(id);
+    if(!authorization.isPresent()) throw NoSuchAuthorizationException.withId(id);
+    return authorization.get();
   }
 
   /**
@@ -115,7 +113,7 @@ public class AuthorizationService {
    */
   @Nullable
   public Authorization find(@NotNull String id) {
-    return authorizationRepository.findOne(id);
+    return authorizationRepository.findById(id).get();
   }
 
   /**
@@ -148,7 +146,7 @@ public class AuthorizationService {
    * @param id
    */
   public void delete(@NotNull String id) {
-    delete(authorizationRepository.findOne(id));
+    delete(authorizationRepository.findById(id).get());
   }
 
   /**
@@ -158,14 +156,14 @@ public class AuthorizationService {
    */
   public void delete(Authorization authorization) {
     if(authorization == null) return;
-    authorizationRepository.delete(authorization.getId());
+    authorizationRepository.deleteById(authorization.getId());
     eventBus.post(new AuthorizationDeletedEvent(authorization));
   }
 
   /**
    * Compute expiration date using configured timeouts.
    *
-   * @param ticket
+   * @param authorization
    * @return
    */
   public DateTime getExpirationDate(Authorization authorization) {

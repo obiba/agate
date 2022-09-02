@@ -1,6 +1,5 @@
 package org.obiba.agate.web.filter.auth.oidc;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.eventbus.Subscribe;
 import com.nimbusds.openid.connect.sdk.AuthenticationRequest;

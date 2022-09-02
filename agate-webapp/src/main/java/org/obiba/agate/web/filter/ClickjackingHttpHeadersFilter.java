@@ -40,4 +40,5 @@ public class ClickjackingHttpHeadersFilter implements Filter {
 
     chain.doFilter(request, response);
   }
+
 }

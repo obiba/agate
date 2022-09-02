@@ -39,10 +39,8 @@
   import org.slf4j.Logger;
   import org.slf4j.LoggerFactory;
   import org.springframework.beans.BeanUtils;
-  import org.springframework.boot.bind.RelaxedPropertyResolver;
   import org.springframework.context.MessageSource;
   import org.springframework.core.env.Environment;
-  import org.springframework.core.env.PropertyResolver;
   import org.springframework.scheduling.annotation.Scheduled;
   import org.springframework.stereotype.Service;
   import org.springframework.transaction.annotation.Transactional;
@@ -53,7 +51,6 @@
   import javax.validation.constraints.NotNull;
   import javax.ws.rs.BadRequestException;
   import java.io.IOException;
-  import java.security.SignatureException;
   import java.util.*;
   import java.util.function.Function;
   import java.util.regex.Pattern;
@@ -302,10 +299,12 @@
     public User save(@NotNull User user) {
       User saved = user;
 
+      boolean uNew = false;
       if (user.isNew()) {
         user.setNameAsId();
+        uNew = true;
       } else {
-        saved = userRepository.findOne(user.getId());
+        saved = userRepository.findById(user.getId()).orElse(null);
         if (saved == null) {
           saved = user;
         } else {
@@ -321,7 +320,10 @@
         throw new EmailAlreadyAssignedException(user.getEmail());
       }
 
-      userRepository.save(saved);
+      if (uNew)
+        userRepository.insert(user);
+      else
+        userRepository.save(saved);
 
       if (saved.getGroups() != null) {
         for (String groupName : saved.getGroups()) {
@@ -350,7 +352,7 @@
         if (agateUserRealm.equals(savedRealm)) {
           // cleanup credentials
           UserCredentials userCredential = userCredentialsRepository.findOneByName(saved.getName());
-          if (userCredential != null) userCredentialsRepository.delete(userCredential.getId());
+          if (userCredential != null) userCredentialsRepository.delete(userCredential);
         } else if (agateUserRealm.equals(newRealm)) {
           // Re-approve the user and send email so user to set a password
           user.setStatus(UserStatus.APPROVED);
@@ -366,7 +368,7 @@
 
       if (optionalRealm.isPresent()) {
         Realm realm = optionalRealm.get();
-        RealmConfig realmConfig = realmConfigRepository.findOne(realm.getName());
+        RealmConfig realmConfig = realmConfigRepository.findOneByName(realm.getName());
         return realm.getAuthenticationInfo(token);
       }
 
@@ -437,20 +439,17 @@
       }});
 
       String key = configurationService.encrypt(keyData);
-
-      RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "registration.");
       Map<String, Object> ctx = Maps.newHashMap();
       String organization = configurationService.getConfiguration().getName();
       ctx.put("key", key);
 
-      sendEmail(user, "[" + organization + "] " + propertyResolver.getProperty("resetPasswordSubject"),
+      sendEmail(user, "[" + organization + "] " + env.getProperty("registration.resetPasswordSubject"),
           "resetPasswordEmail", ctx);
     }
 
     @Subscribe
-    public void sendPendingEmail(UserJoinedEvent userJoinedEvent) throws SignatureException {
+    public void sendPendingEmail(UserJoinedEvent userJoinedEvent) {
       log.info("Sending pending review email: {}", userJoinedEvent.getPersistable());
-      PropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "registration.");
       List<User> administrators = userRepository.findByRole("agate-administrator");
       User user = userJoinedEvent.getPersistable();
       String organization = configurationService.getConfiguration().getName();
@@ -458,22 +457,21 @@
       Map<String, Object> context = Maps.newHashMap();
       context.put("user", user);
 
-      administrators.forEach(u -> sendEmail(u, "[" + organization + "] " + propertyResolver.getProperty("pendingForReviewSubject"),
+      administrators.forEach(u -> sendEmail(u, "[" + organization + "] " + env.getProperty("registration.pendingForReviewSubject"),
           "pendingForReviewEmail", context));
 
-      sendEmail(user, "[" + organization + "] " + propertyResolver.getProperty("pendingForApprovalSubject"),
+      sendEmail(user, "[" + organization + "] " + env.getProperty("registration.pendingForApprovalSubject"),
           "pendingForApprovalEmail", context);
     }
 
     @Subscribe
-    public void sendConfirmationEmail(UserApprovedEvent userApprovedEvent) throws SignatureException {
+    public void sendConfirmationEmail(UserApprovedEvent userApprovedEvent) {
       log.info("Sending confirmation email: {}", userApprovedEvent.getPersistable());
-      PropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "registration.");
       User user = userApprovedEvent.getPersistable();
       String organization = configurationService.getConfiguration().getName();
       Map<String, Object> ctx = Maps.newHashMap();
       ctx.put("key", configurationService.encrypt(user.getName()));
-      sendEmail(user, "[" + organization + "] " + propertyResolver.getProperty("confirmationSubject"),
+      sendEmail(user, "[" + organization + "] " + env.getProperty("registration.confirmationSubject"),
           "confirmationEmail", ctx);
     }
 
@@ -504,7 +502,8 @@
      * @param id
      */
     public void delete(@NotNull String id) {
-      delete(userRepository.findOne(id));
+      Optional<User> toDelete = userRepository.findById(id);
+      toDelete.ifPresent(this::delete);
     }
 
     /**
@@ -527,9 +526,9 @@
      * @return
      */
     public User getUser(String id) {
-      User user = userRepository.findOne(id);
-      if (user == null) throw NoSuchUserException.withId(id);
-      return user;
+      Optional<User> user = userRepository.findById(id);
+      if (!user.isPresent()) throw NoSuchUserException.withId(id);
+      return user.get();
     }
 
     /**
@@ -647,9 +646,8 @@
      * @return
      */
     public String hashPassword(String password) {
-      RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "shiro.password.");
-      return new Sha512Hash(password, propertyResolver.getProperty("salt"),
-          propertyResolver.getProperty("nbHashIterations", Integer.class)).toString();
+      return new Sha512Hash(password, env.getProperty("shiro.password.salt"),
+          env.getProperty("shiro.password.nbHashIterations", Integer.class, 10000)).toString();
     }
 
     /**

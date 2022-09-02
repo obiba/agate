@@ -75,7 +75,11 @@ public class RealmConfigService {
       BeanUtils.copyProperties(config, saved, IGNORE_PROPERTIES);
     }
 
-    RealmConfig savedRealmConfig = realmConfigRepository.save(saved);
+    RealmConfig savedRealmConfig;
+    if (aNew)
+      savedRealmConfig = realmConfigRepository.insert(saved);
+    else
+      savedRealmConfig = realmConfigRepository.save(saved);
 
     if (RealmStatus.ACTIVE.equals(savedRealmConfig.getStatus())) {
       eventBus.post(new RealmConfigActivatedOrUpdatedEvent(savedRealmConfig));

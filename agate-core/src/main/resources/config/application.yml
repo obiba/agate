@@ -5,6 +5,11 @@ spring:
     freemarker:
       template-loader-path: classpath:/web/,classpath:/static/templates/,classpath:/public/templates/,classpath:/templates/,classpath:/_templates/
       request-context-attribute: rc
+    task:
+      scheduling:
+        pool:
+          size: 50
+        thread-name-prefix: agate-executor-
 
 metrics:
     jmx.enabled: true
@@ -14,11 +19,6 @@ metrics:
         port: 2003
 
 cache.timeToLiveSeconds: 3600
-
-async:
-    corePoolSize: 2
-    maxPoolSize: 50
-    queueCapacity: 10000
 
 authentication:
     oauth:

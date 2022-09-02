@@ -31,6 +31,10 @@
       <artifactId>agate-web-model</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-servlet</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.codahale.metrics</groupId>
       <artifactId>metrics-core</artifactId>
     </dependency>
@@ -91,10 +95,6 @@
       <artifactId>joda-time</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-validator</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-mongodb</artifactId>
     </dependency>
@@ -129,12 +129,8 @@
       <artifactId>spring-context-support</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.github.jhipster.loaded</groupId>
-      <artifactId>core</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.mongodb</groupId>
-      <artifactId>mongodb-driver</artifactId>
+      <artifactId>mongodb-driver-sync</artifactId>
     </dependency>
     <dependency>
       <groupId>mysql</groupId>
@@ -155,6 +151,11 @@
     </dependency>
 
     <!-- Test dependencies -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>com.jayway.awaitility</groupId>
       <artifactId>awaitility</artifactId>

@@ -18,43 +18,34 @@ import org.apache.shiro.web.env.EnvironmentLoaderListener;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
-import org.eclipse.jetty.servlets.GzipFilter;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.obiba.agate.oidc.OIDCConfigurationFilter;
-import org.obiba.agate.web.filter.CachingHttpHeadersFilter;
-import org.obiba.agate.web.filter.ClickjackingHttpHeadersFilter;
-import org.obiba.agate.web.filter.StaticResourcesProductionFilter;
+import org.obiba.agate.security.OidcAuthConfigurationProvider;
+import org.obiba.agate.service.*;
+import org.obiba.agate.web.filter.*;
 import org.obiba.agate.web.filter.auth.oidc.AgateCallbackFilter;
 import org.obiba.agate.web.filter.auth.oidc.AgateSignInFilter;
 import org.obiba.agate.web.filter.auth.oidc.AgateSignUpFilter;
-import org.obiba.shiro.web.filter.AuthenticationFilter;
+import org.obiba.oidc.OIDCConfigurationProvider;
+import org.obiba.oidc.OIDCSessionManager;
+import org.obiba.shiro.web.filter.AuthenticationExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.bind.RelaxedPropertyResolver;
-import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
-import org.springframework.boot.context.embedded.jetty.JettyEmbeddedServletContainerFactory;
-import org.springframework.boot.context.embedded.jetty.JettyServerCustomizer;
+import org.springframework.boot.web.embedded.jetty.JettyServerCustomizer;
+import org.springframework.boot.web.embedded.jetty.JettyServletWebServerFactory;
+import org.springframework.boot.web.server.WebServerFactoryCustomizer;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.EnvironmentAware;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 
 import javax.inject.Inject;
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import javax.servlet.ServletContext;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.EnumSet;
-
-import static javax.servlet.DispatcherType.*;
-import static org.obiba.agate.web.rest.config.JerseyConfiguration.WS_ROOT;
 
 /**
  * Configuration of web application with Servlet 3.0 APIs.
@@ -71,23 +62,9 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
 
   private static final int MAX_IDLE_TIME = 30000;
 
-  private static final int REQUEST_HEADER_SIZE = 8192;
-
   private Environment environment;
 
-  private final MetricRegistry metricRegistry;
-
   private final org.obiba.ssl.SslContextFactory sslContextFactory;
-
-  private final AuthenticationFilter authenticationFilter;
-
-  private final AgateSignInFilter agateSignInFilter;
-
-  private final AgateSignUpFilter agateSignUpFilter;
-
-  private final AgateCallbackFilter agateCallbackFilter;
-
-  private final OIDCConfigurationFilter oidcConfigurationFilter;
 
   private int httpsPort;
 
@@ -96,29 +73,14 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
   private String contextPath;
 
   @Inject
-  public WebConfiguration(
-      MetricRegistry metricRegistry,
-      org.obiba.ssl.SslContextFactory sslContextFactory,
-      AuthenticationFilter authenticationFilter,
-      AgateSignInFilter agateSignInFilter,
-      AgateSignUpFilter agateSignUpFilter,
-      AgateCallbackFilter agateCallbackFilter,
-      OIDCConfigurationFilter oidcConfigurationFilter) {
-
-    this.metricRegistry = metricRegistry;
+  public WebConfiguration(org.obiba.ssl.SslContextFactory sslContextFactory) {
     this.sslContextFactory = sslContextFactory;
-    this.authenticationFilter = authenticationFilter;
-    this.agateSignUpFilter = agateSignUpFilter;
-    this.oidcConfigurationFilter = oidcConfigurationFilter;
-    this.agateSignInFilter = agateSignInFilter;
-    this.agateCallbackFilter = agateCallbackFilter;
   }
 
   @Override
   public void setEnvironment(Environment environment) {
     this.environment = environment;
-    RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(environment, "https.");
-    httpsPort = propertyResolver.getProperty("port", Integer.class, DEFAULT_HTTPS_PORT);
+    httpsPort = environment.getProperty("https.port", Integer.class, DEFAULT_HTTPS_PORT);
     serverAddress = environment.getProperty("server.address", "localhost");
     contextPath = environment.getProperty("server.context-path", "");
     if (Strings.isNullOrEmpty(contextPath))
@@ -126,12 +88,11 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
   }
 
   @Bean
-  public EmbeddedServletContainerCustomizer containerCustomizer() throws Exception {
-    return (ConfigurableEmbeddedServletContainer container) -> {
-      JettyEmbeddedServletContainerFactory jetty = (JettyEmbeddedServletContainerFactory) container;
-      jetty.setServerCustomizers(Collections.singleton(this));
+  public WebServerFactoryCustomizer<JettyServletWebServerFactory> containerCustomizer() throws Exception {
+    return factory -> {
+      factory.setServerCustomizers(Collections.singleton(WebConfiguration.this)); // FIXME is this necessary?
       if (!Strings.isNullOrEmpty(contextPath) && contextPath.startsWith("/"))
-        container.setContextPath(contextPath);
+        factory.setContextPath(contextPath);
     };
   }
 
@@ -168,219 +129,176 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
   }
 
   @Override
-  public void onStartup(ServletContext servletContext) throws ServletException {
+  public void onStartup(ServletContext servletContext) {
     log.info("Web application configuration, using profiles: {}", Arrays.toString(environment.getActiveProfiles()));
 
     servletContext.addListener(EnvironmentLoaderListener.class);
 
-    initAllowedMethodsFilter(servletContext);
     // Note: authentication filter was already added by Spring
-
-    initOIDCAuthenticationFilter(servletContext);
-    initOIDCConfigurationFilter(servletContext);
-
-    EnumSet<DispatcherType> disps = EnumSet.of(REQUEST, FORWARD, ASYNC);
-    initForbiddenUrlsFilter(servletContext, disps);
-    initMetrics(servletContext, disps);
-
-    if (environment.acceptsProfiles(Constants.SPRING_PROFILE_PRODUCTION)) {
-      initStaticResourcesProductionFilter(servletContext, disps);
-      initCachingHttpHeadersFilter(servletContext, disps);
-    }
-
-    initClickjackingHttpHeadersFilter(servletContext, disps);
-    initGzipFilter(servletContext, disps);
 
     log.info("Web application fully configured");
   }
 
-  private void initForbiddenUrlsFilter(ServletContext servletContext, EnumSet<DispatcherType> disps) {
-    log.debug("Registering Forbidden URLs Filter");
+  @Bean
+  public FilterRegistrationBean<InstrumentedFilter> instrumentedFilterRegistration() {
+    log.debug("Registering Instrumented Filter");
+    FilterRegistrationBean<InstrumentedFilter> bean = new FilterRegistrationBean<>();
 
-    FilterRegistration.Dynamic filterRegistration = servletContext.addFilter("forbiddenUrlsFilter", new ForbiddenUrlsFilter());
+    bean.setFilter(new InstrumentedFilter());
+    bean.addUrlPatterns("/*");
+    bean.setAsyncSupported(true);
 
-    filterRegistration.addMappingForUrlPatterns(disps, true, "/.htaccess");
-    filterRegistration.addMappingForUrlPatterns(disps, true, "/.htaccess/");
-    filterRegistration.setAsyncSupported(true);
+    return bean;
   }
 
-  private void initAllowedMethodsFilter(ServletContext servletContext) {
-    log.debug("Registering Allowed Methods Filter");
-
-    FilterRegistration.Dynamic filterRegistration = servletContext.addFilter("noTrace", new NoTraceFilter());
-
-    filterRegistration.addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, ASYNC, INCLUDE, ERROR), true, "/*");
-    filterRegistration.setAsyncSupported(true);
-  }
-
-  private void initOIDCConfigurationFilter(ServletContext servletContext) {
-    log.debug("Registering OIDC Configuration Filter");
-    FilterRegistration.Dynamic filterRegistration = servletContext.addFilter("OIDCConfigurationFilter", oidcConfigurationFilter);
-
-    if (filterRegistration == null) {
-      filterRegistration =
-          (FilterRegistration.Dynamic) servletContext.getFilterRegistration("OIDCConfigurationFilter");
-    }
-
-    log.debug("Adding mapping to OIDC configuration filter registration");
-
-    filterRegistration.addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, ASYNC, INCLUDE, ERROR), true, "/.well-known/openid-configuration");
-    filterRegistration.setAsyncSupported(true);
-  }
-
-  private void initOIDCAuthenticationFilter(ServletContext servletContext) {
-    log.debug("Registering OIDC Authentication Filter");
-    FilterRegistration.Dynamic signInFilterRegistration = servletContext.addFilter("agateSignInFilter", agateSignInFilter);
-    signInFilterRegistration.addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE, ERROR), true, "/auth/signin/*");
-
-    FilterRegistration.Dynamic signUpFilterRegistration = servletContext.addFilter("agateSignUpFilter", agateSignUpFilter);
-    signUpFilterRegistration.addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE, ERROR), true, "/auth/signup/*");
-
-    FilterRegistration.Dynamic callbackFilterRegistration = servletContext.addFilter("agateCallbackFilter", agateCallbackFilter);
-    callbackFilterRegistration.addMappingForUrlPatterns(EnumSet.of(REQUEST, FORWARD, INCLUDE, ERROR), true, "/auth/callback/*");
-  }
-
-  /**
-   * Initializes the GZip filter.
-   */
-  private void initGzipFilter(ServletContext servletContext, EnumSet<DispatcherType> disps) {
-    log.debug("Registering GZip Filter");
-
-    FilterRegistration.Dynamic compressingFilter = servletContext.addFilter("gzipFilter", new GzipFilter());
-
-    if (compressingFilter == null) {
-      compressingFilter = (FilterRegistration.Dynamic) servletContext.getFilterRegistration("gzipFilter");
-    }
-
-    compressingFilter.addMappingForUrlPatterns(disps, true, "*.css");
-    compressingFilter.addMappingForUrlPatterns(disps, true, "*.json");
-    compressingFilter.addMappingForUrlPatterns(disps, true, "*.html");
-    compressingFilter.addMappingForUrlPatterns(disps, true, "*.js");
-    compressingFilter.addMappingForUrlPatterns(disps, true, "/metrics/*");
-    compressingFilter.addMappingForUrlPatterns(disps, true, WS_ROOT + "/*");
-    compressingFilter.setAsyncSupported(true);
-  }
-
-  /**
-   * Initializes the static resources production Filter.
-   */
-  private void initStaticResourcesProductionFilter(ServletContext servletContext, EnumSet<DispatcherType> disps) {
-
-    log.debug("Registering static resources production Filter");
-    FilterRegistration.Dynamic resourcesFilter = servletContext
-        .addFilter("staticResourcesProductionFilter", new StaticResourcesProductionFilter());
-
-    resourcesFilter.addMappingForUrlPatterns(disps, true, "/favicon.ico");
-    resourcesFilter.addMappingForUrlPatterns(disps, true, "/robots.txt");
-    resourcesFilter.addMappingForUrlPatterns(disps, true, "/index.html");
-    resourcesFilter.addMappingForUrlPatterns(disps, true, "/images/*");
-    resourcesFilter.addMappingForUrlPatterns(disps, true, "/fonts/*");
-    resourcesFilter.addMappingForUrlPatterns(disps, true, "/scripts/*");
-    resourcesFilter.addMappingForUrlPatterns(disps, true, "/styles/*");
-    resourcesFilter.addMappingForUrlPatterns(disps, true, "/views/*");
-    resourcesFilter.setAsyncSupported(true);
-  }
-
-  /**
-   * Initializes the caching HTTP Headers Filter.
-   */
-  private void initCachingHttpHeadersFilter(ServletContext servletContext, EnumSet<DispatcherType> disps) {
-    log.debug("Registering Caching HTTP Headers Filter");
-    FilterRegistration.Dynamic cachingFilter = servletContext
-        .addFilter("cachingHttpHeadersFilter", new CachingHttpHeadersFilter());
-
-    cachingFilter.addMappingForUrlPatterns(disps, true, "/images/*");
-    cachingFilter.addMappingForUrlPatterns(disps, true, "/fonts/*");
-    cachingFilter.addMappingForUrlPatterns(disps, true, "/scripts/*");
-    cachingFilter.addMappingForUrlPatterns(disps, true, "/styles/*");
-    cachingFilter.setAsyncSupported(true);
-  }
-
-  /**
-   * Initializes the clickjacking HTTP Headers Filter.
-   */
-  private void initClickjackingHttpHeadersFilter(ServletContext servletContext, EnumSet<DispatcherType> disps) {
-    log.debug("Registering Clickjacking HTTP Headers Filter");
-    FilterRegistration.Dynamic cachingFilter = servletContext
-        .addFilter("clickjackingHttpHeadersFilter", new ClickjackingHttpHeadersFilter());
-
-    cachingFilter.addMappingForUrlPatterns(disps, true, "/*");
-    cachingFilter.setAsyncSupported(true);
-  }
-
-  /**
-   * Initializes Metrics.
-   */
-  private void initMetrics(ServletContext servletContext, EnumSet<DispatcherType> disps) {
-    log.debug("Initializing Metrics registries");
-    servletContext.setAttribute(InstrumentedFilter.REGISTRY_ATTRIBUTE, metricRegistry);
-    servletContext.setAttribute(MetricsServlet.METRICS_REGISTRY, metricRegistry);
-
-    log.debug("Registering Metrics Filter");
-    FilterRegistration.Dynamic metricsFilter = servletContext
-        .addFilter("webappMetricsFilter", new InstrumentedFilter());
-
-    metricsFilter.addMappingForUrlPatterns(disps, true, "/*");
-    metricsFilter.setAsyncSupported(true);
-
+  @Bean
+  public ServletRegistrationBean<MetricsServlet> metricsServletRegistration(MetricRegistry metricRegistry) {
     log.debug("Registering Metrics Servlet");
-    ServletRegistration.Dynamic metricsAdminServlet = servletContext.addServlet("metricsServlet", new MetricsServlet());
+    ServletRegistrationBean<MetricsServlet> bean = new ServletRegistrationBean<>();
 
-    metricsAdminServlet.addMapping("/metrics/metrics/*");
-    metricsAdminServlet.setAsyncSupported(true);
-    metricsAdminServlet.setLoadOnStartup(2);
+    bean.setServlet(new MetricsServlet(metricRegistry));
+    bean.addUrlMappings("/metrics/metrics/*");
+    bean.setAsyncSupported(true);
+    bean.setLoadOnStartup(2);
+
+    return bean;
   }
 
-  /**
-   * When a TRACE request is received, returns a Forbidden response.
-   */
-  private static class NoTraceFilter implements Filter {
+  @Bean
+  public FilterRegistrationBean<OIDCConfigurationFilter> oidcConfigurationFilterRegistration(TokenUtils tokenUtils, ConfigurationService configurationService) {
+    log.debug("Registering OIDC Configuration Filter");
+    FilterRegistrationBean<OIDCConfigurationFilter> bean = new FilterRegistrationBean<>();
 
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    bean.setFilter(new OIDCConfigurationFilter(tokenUtils, configurationService));
+    bean.addUrlPatterns("/.well-known/openid-configuration");
+    bean.setAsyncSupported(true);
 
-    }
-
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-        throws IOException, ServletException {
-      HttpServletRequest httpRequest = (HttpServletRequest) request;
-      HttpServletResponse httpResponse = (HttpServletResponse) response;
-
-      if ("TRACE".equals(httpRequest.getMethod())) {
-        httpResponse.reset();
-        httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "TRACE method not allowed");
-        return;
-      }
-      chain.doFilter(request, response);
-    }
-
-    @Override
-    public void destroy() {
-
-    }
+    return bean;
   }
 
-  /**
-   * Filters all forbidden URLs registered above (/.htaccess, /.htacces/)
-   */
-  private static class ForbiddenUrlsFilter implements Filter {
+  @Bean
+  public FilterRegistrationBean<ClickjackingHttpHeadersFilter> clickjackingHttpHeadersFilterRegistration() {
+    log.debug("Registering Click Jacking Http Header Filter");
+    FilterRegistrationBean<ClickjackingHttpHeadersFilter> bean = new FilterRegistrationBean<>();
 
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-    }
+    bean.setFilter(new ClickjackingHttpHeadersFilter());
+    bean.addUrlPatterns("/*");
+    bean.setAsyncSupported(true);
 
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-        throws IOException {
-      HttpServletRequest httpRequest = (HttpServletRequest) request;
-      HttpServletResponse httpResponse = (HttpServletResponse) response;
-      httpResponse.reset();
-      httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, String.format("%s not allowed", httpRequest.getRequestURI()));
-    }
-
-    @Override
-    public void destroy() {
-    }
+    return bean;
   }
+
+  @Bean
+  @Profile(Constants.SPRING_PROFILE_PRODUCTION)
+  public FilterRegistrationBean<StaticResourcesProductionFilter> staticResourcesProductionFilterRegistration() {
+    log.debug("Registering Static Resources Production Filter");
+    FilterRegistrationBean<StaticResourcesProductionFilter> bean = new FilterRegistrationBean<>();
+
+    bean.setFilter(new StaticResourcesProductionFilter());
+    bean.addUrlPatterns("/favicon.ico");
+    bean.addUrlPatterns("/robots.txt");
+    bean.addUrlPatterns("/index.html");
+    bean.addUrlPatterns("/images/*");
+    bean.addUrlPatterns("/fonts/*");
+    bean.addUrlPatterns("/scripts/*");
+    bean.addUrlPatterns("/styles/*");
+    bean.addUrlPatterns("/views/*");
+    bean.setAsyncSupported(true);
+
+    return bean;
+  }
+
+  @Bean
+  @Profile(Constants.SPRING_PROFILE_PRODUCTION)
+  public FilterRegistrationBean<CachingHttpHeadersFilter> cachingHttpHeadersFilterRegistration() {
+    log.debug("Registering Caching Htpp Headers Filter");
+    FilterRegistrationBean<CachingHttpHeadersFilter> bean = new FilterRegistrationBean<>();
+
+    bean.setFilter(new CachingHttpHeadersFilter());
+    bean.addUrlPatterns("/images/*");
+    bean.addUrlPatterns("/fonts/*");
+    bean.addUrlPatterns("/scripts/*");
+    bean.addUrlPatterns("/styles/*");
+    bean.setAsyncSupported(true);
+
+    return bean;
+  }
+
+  @Bean
+  public FilterRegistrationBean<AgateCallbackFilter> agateCallbackFilterRegistration(OIDCConfigurationProvider oidcConfigurationProvider,
+                                                                                     OidcAuthConfigurationProvider oidcAuthConfigurationProvider,
+                                                                                     OIDCSessionManager oidcSessionManager,
+                                                                                     AuthenticationExecutor authenticationExecutor,
+                                                                                     ConfigurationService configurationService,
+                                                                                     ApplicationService applicationService,
+                                                                                     RealmConfigService realmConfigService, UserService userService,
+                                                                                     TicketService ticketService,
+                                                                                     TokenUtils tokenUtils) {
+    log.debug("Registering Callback Filter");
+    FilterRegistrationBean<AgateCallbackFilter> bean = new FilterRegistrationBean<>();
+
+    bean.setFilter(new AgateCallbackFilter(oidcConfigurationProvider, oidcAuthConfigurationProvider, oidcSessionManager, authenticationExecutor, configurationService, applicationService, realmConfigService, userService, ticketService, tokenUtils));
+    bean.addUrlPatterns("/auth/callback/*");
+    bean.setAsyncSupported(true);
+
+    return bean;
+  }
+
+  @Bean
+  public FilterRegistrationBean<AgateSignInFilter> agateSignInFilterRegistration(ConfigurationService configurationService,
+                                                                                 OIDCConfigurationProvider oidcConfigurationProvider,
+                                                                                 OIDCSessionManager oidcSessionManager,
+                                                                                 RealmConfigService realmConfigService) {
+    log.debug("Registering Sign-in Filter");
+    FilterRegistrationBean<AgateSignInFilter> bean = new FilterRegistrationBean<>();
+
+    bean.setFilter(new AgateSignInFilter(configurationService, oidcConfigurationProvider, oidcSessionManager, realmConfigService));
+    bean.addUrlPatterns("/auth/signin/*");
+    bean.setAsyncSupported(true);
+
+    return bean;
+  }
+
+  @Bean
+  public FilterRegistrationBean<AgateSignUpFilter> agateSignUpFilterRegistration(ConfigurationService configurationService,
+                                                                                 OIDCConfigurationProvider oidcConfigurationProvider,
+                                                                                 OIDCSessionManager oidcSessionManager,
+                                                                                 RealmConfigService realmConfigService) {
+    log.debug("Registering Sign-up Filter");
+    FilterRegistrationBean<AgateSignUpFilter> bean = new FilterRegistrationBean<>();
+
+    bean.setFilter(new AgateSignUpFilter(configurationService, oidcConfigurationProvider, oidcSessionManager, realmConfigService));
+    bean.addUrlPatterns("/auth/signup/*");
+    bean.setAsyncSupported(true);
+
+    return bean;
+  }
+
+  @Bean
+  public FilterRegistrationBean<NoTraceFilter> noTraceFilterRegistration() {
+    log.debug("Registering No Trace Filter");
+    FilterRegistrationBean<NoTraceFilter> bean = new FilterRegistrationBean<>();
+
+    bean.setFilter(new NoTraceFilter());
+    bean.addUrlPatterns("/*");
+    bean.setAsyncSupported(true);
+
+    return bean;
+  }
+
+  @Bean
+  public FilterRegistrationBean<ForbiddenUrlsFilter> forbiddenUrlsFilterRegistration() {
+    log.debug("Registering Forbidden Urls Filter");
+    FilterRegistrationBean<ForbiddenUrlsFilter> bean = new FilterRegistrationBean<>();
+
+    bean.setFilter(new ForbiddenUrlsFilter());
+    bean.addUrlPatterns("/.htaccess");
+    bean.addUrlPatterns("/.htaccess/");
+    bean.setAsyncSupported(true);
+
+    return bean;
+  }
+
+
+
 }

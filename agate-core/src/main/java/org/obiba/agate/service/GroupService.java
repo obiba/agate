@@ -13,7 +13,7 @@ import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -72,9 +72,9 @@ public class GroupService {
    * @return
    */
   public Group getGroup(String id) {
-    Group group = groupRepository.findOne(id);
-    if(group == null) throw NoSuchGroupException.withId(id);
-    return group;
+    Optional<Group> group = groupRepository.findById(id);
+    if(!group.isPresent()) throw NoSuchGroupException.withId(id);
+    return group.get();
   }
 
   /**
@@ -86,8 +86,9 @@ public class GroupService {
   public Group save(@NotNull Group group) {
     if(group.isNew()) {
       group.setNameAsId();
-    }
-    groupRepository.save(group);
+      groupRepository.insert(group);
+    } else
+      groupRepository.save(group);
     return group;
   }
 

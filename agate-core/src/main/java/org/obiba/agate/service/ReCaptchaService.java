@@ -11,15 +11,12 @@
 package org.obiba.agate.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.core.env.Environment;
-import org.springframework.core.env.PropertyResolver;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -41,14 +38,13 @@ public class ReCaptchaService {
   private Environment env;
 
   public boolean verify(String reCaptchaResponse) {
-    PropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "recaptcha.");
 
     MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-    map.add("secret", propertyResolver.getProperty("secret"));
+    map.add("secret", env.getProperty("recaptcha.secret"));
     map.add("response", reCaptchaResponse);
 
     ReCaptchaVerifyResponse recaptchaVerifyResponse = restTemplate
-      .postForObject(propertyResolver.getProperty("verifyUrl"), map, ReCaptchaVerifyResponse.class);
+      .postForObject(env.getProperty("recaptcha.verifyUrl"), map, ReCaptchaVerifyResponse.class);
 
     if(!recaptchaVerifyResponse.isSuccess() && (recaptchaVerifyResponse.getErrorCodes().contains("invalid-input-secret") ||
       recaptchaVerifyResponse.getErrorCodes().contains("missing-input-secret"))) {

@@ -121,9 +121,9 @@ public class TicketService {
   public Ticket getTicket(@NotNull String idOrToken) throws NoSuchTicketException {
     if(isToken(idOrToken)) return getTicketByToken(idOrToken);
 
-    Ticket ticket = ticketRepository.findOne(idOrToken);
-    if(ticket == null) throw NoSuchTicketException.withId(idOrToken);
-    return ticket;
+    Optional<Ticket> ticket = ticketRepository.findById(idOrToken);
+    if(!ticket.isPresent()) throw NoSuchTicketException.withId(idOrToken);
+    return ticket.get();
   }
 
   /**
@@ -136,7 +136,7 @@ public class TicketService {
     try {
       Claims claims = Jwts.parser().setSigningKey(configurationService.getConfiguration().getSecretKey().getBytes())
         .parseClaimsJws(token).getBody();
-      return ticketRepository.findOne(claims.getId());
+      return ticketRepository.findById(claims.getId()).get();
     } catch(SignatureException e) {
       return null;
     }
@@ -268,7 +268,8 @@ public class TicketService {
   }
 
   private void deleteById(@NotNull String id) {
-    if(!Strings.isNullOrEmpty(id)) ticketRepository.delete(id);
+    if(!Strings.isNullOrEmpty(id))
+      ticketRepository.deleteById(id);
   }
 
   private void removeExpired(List<Ticket> tickets) {

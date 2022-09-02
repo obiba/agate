@@ -32,12 +32,9 @@ import org.obiba.oidc.web.filter.OIDCCallbackFilter;
 import org.obiba.shiro.web.filter.AuthenticationExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.web.filter.DelegatingFilterProxy;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -57,7 +54,6 @@ import java.util.regex.Pattern;
  * This filter is used upon a successful OIDC authentication. Clients are signed-in to Agate via a <code>obibasid</code> or
  * a <code>obibaid</code> cookie.
  */
-@Component("agateCallbackFilter")
 public class AgateCallbackFilter extends OIDCCallbackFilter {
 
   private static final Logger log = LoggerFactory.getLogger(AgateCallbackFilter.class);
@@ -84,7 +80,6 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
 
   private String publicUrl;
 
-  @Inject
   public AgateCallbackFilter(
       OIDCConfigurationProvider oidcConfigurationProvider,
       OidcAuthConfigurationProvider oidcAuthConfigurationProvider,
@@ -105,9 +100,9 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     this.userService = userService;
     this.ticketService = ticketService;
     this.tokenUtils = tokenUtils;
+    init();
   }
 
-  @PostConstruct
   public void init() {
     setOIDCConfigurationProvider(oidcConfigurationProvider);
     setOIDCSessionManager(oidcSessionManager);
@@ -151,6 +146,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
   }
   @Override
   protected void onRedirect(OIDCSession session, J2EContext context, String provider) throws IOException {
+    if (session == null) return;
     Map<String, String[]> requestParameters = session.getRequestParameters();
     String action = retrieveRequestParameter(FilterParameter.ACTION.value(), requestParameters);
 

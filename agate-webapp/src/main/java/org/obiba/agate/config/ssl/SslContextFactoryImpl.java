@@ -10,18 +10,17 @@
 
 package org.obiba.agate.config.ssl;
 
-import javax.inject.Inject;
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.SSLContext;
-
 import org.obiba.agate.service.KeyStoreService;
 import org.obiba.security.KeyStoreManager;
 import org.obiba.ssl.SslContextFactory;
 import org.obiba.ssl.X509ExtendedKeyManagerImpl;
-import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.SSLContext;
 
 /**
  * Build a {@code SSLContext} based on the system keystore.
@@ -29,7 +28,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class SslContextFactoryImpl implements SslContextFactory, EnvironmentAware {
 
-  private RelaxedPropertyResolver propertyResolver;
+  private Environment environment;
 
   @Inject
   private KeyStoreService keyStoreService;
@@ -62,12 +61,12 @@ public class SslContextFactoryImpl implements SslContextFactory, EnvironmentAwar
   }
 
   private String generateCertificateInfo() {
-    String hostname = propertyResolver.getProperty("address", "localhost");
+    String hostname = environment.getProperty("server.address", "localhost");
     return "CN=" + hostname + ", OU=Agate, O=" + hostname + ", L=, ST=, C=";
   }
 
   @Override
   public void setEnvironment(Environment environment) {
-    propertyResolver = new RelaxedPropertyResolver(environment, "server.");
+    this.environment = environment;
   }
 }
