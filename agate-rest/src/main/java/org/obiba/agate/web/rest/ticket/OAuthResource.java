@@ -46,16 +46,17 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toList;
@@ -215,16 +216,17 @@ public class OAuthResource {
   @Consumes("application/x-www-form-urlencoded")
   @Produces("application/json")
   @Path("/token")
-  public Response access(@Context HttpServletRequest servletRequest) throws OAuthSystemException {
+  public Response access(@Context HttpServletRequest servletRequest, MultivaluedMap<String, String> formParams) throws OAuthSystemException {
     try {
-      OAuthTokenRequest oAuthRequest = new OAuthTokenRequest(servletRequest);
+      HttpServletRequest requestWrapper = new OAuthServletRequest(servletRequest, formParams);
+      OAuthTokenRequest oAuthRequest = new OAuthTokenRequest(requestWrapper);
       GrantType type = GrantType.valueOf(oAuthRequest.getParam(OAuth.OAUTH_GRANT_TYPE).toUpperCase());
 
       switch (type) {
         case AUTHORIZATION_CODE:
-          return accessAuthorizationCodeGrant(servletRequest, oAuthRequest);
+          return accessAuthorizationCodeGrant(requestWrapper, oAuthRequest);
         case PASSWORD:
-          return accessPasswordGrant(servletRequest, oAuthRequest);
+          return accessPasswordGrant(requestWrapper, oAuthRequest);
         default:
           OAuthResponse res = OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST).buildJSONMessage();
           return Response.status(res.getResponseStatus()).entity(res.getBody()).build();
@@ -464,4 +466,41 @@ public class OAuthResource {
       this.request = request;
     }
   }
+
+  /**
+   * Servlet request wrapper to workaround an incompatibility between Jersey and Jetty:
+   * Jersey consumes the request's content input stream, and then the Jetty's Request
+   * does not want to extract parameters.
+   */
+  private static class OAuthServletRequest extends HttpServletRequestWrapper {
+
+    private final MultivaluedMap<String, String> formParams;
+
+    /**
+     * Constructs a request object wrapping the given request.
+     *
+     * @param request the {@link HttpServletRequest} to be wrapped.
+     * @throws IllegalArgumentException if the request is null
+     */
+    public OAuthServletRequest(HttpServletRequest request, MultivaluedMap<String, String> formParams) {
+      super(request);
+      this.formParams = formParams;
+    }
+
+    @Override
+    public Enumeration<String> getParameterNames() {
+      return Collections.enumeration(formParams.keySet());
+    }
+
+    @Override
+    public String getParameter(String name) {
+      return formParams.getFirst(name);
+    }
+
+    @Override
+    public String[] getParameterValues(String name) {
+      return formParams.get(name).toArray(new String[0]);
+    }
+  }
+
 }
