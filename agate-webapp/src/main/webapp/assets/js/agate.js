@@ -335,14 +335,14 @@ var agatejs = (function() {
     });
   };
 
-  const agateSignout = function() {
+  const agateSignout = function(redirectUrl) {
     const removeAgateSession = function() {
       $.ajax({
         type: 'DELETE',
         url: normalizeUrl('/ws/auth/session/_current')
       })
         .always(function() {
-          var redirect = normalizeUrl('/');
+          var redirect = redirectUrl ? redirectUrl : normalizeUrl('/');
           $.redirect(redirect, {}, 'GET');
         });
     };
