@@ -171,6 +171,53 @@ public class OAuthResource {
     });
   }
 
+  @POST
+  @Consumes("application/x-www-form-urlencoded")
+  @Produces("application/json")
+  @Path("/token")
+  public Response access(@Context HttpServletRequest servletRequest, MultivaluedMap<String, String> formParams) throws OAuthSystemException {
+    try {
+      HttpServletRequest requestWrapper = new OAuthServletRequest(servletRequest, formParams);
+      OAuthTokenRequest oAuthRequest = new OAuthTokenRequest(requestWrapper);
+      GrantType type = GrantType.valueOf(oAuthRequest.getParam(OAuth.OAUTH_GRANT_TYPE).toUpperCase());
+
+      switch (type) {
+        case AUTHORIZATION_CODE:
+          return accessAuthorizationCodeGrant(requestWrapper, oAuthRequest);
+        case PASSWORD:
+          return accessPasswordGrant(requestWrapper, oAuthRequest);
+        default:
+          OAuthResponse res = OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST).buildJSONMessage();
+          return Response.status(res.getResponseStatus()).entity(res.getBody()).build();
+      }
+    } catch (OAuthProblemException e) {
+      OAuthResponse res = OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST).error(e).buildJSONMessage();
+      return Response.status(res.getResponseStatus()).entity(res.getBody()).build();
+    } catch (Exception e) {
+      OAuthResponse res = OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST) //
+          .setError(e.getClass().getSimpleName()) //
+          .setErrorDescription(e.getMessage()) //
+          .buildJSONMessage();
+      return Response.status(res.getResponseStatus()).entity(res.getBody()).build();
+    }
+  }
+
+  @GET
+  @Path("/logout")
+  public Response logout(@QueryParam("post_logout_redirect_uri") String postLogoutRedirectUri) {
+    // redirect to the sign-out page
+    try {
+      String signoutPagePath = "../../../signout" + (Strings.isNullOrEmpty(postLogoutRedirectUri) ? "" : "?post_logout_redirect_uri=" + postLogoutRedirectUri);
+      return Response.temporaryRedirect(new URI(signoutPagePath)).build();
+    } catch (URISyntaxException e) {
+      return Response.status(Response.Status.BAD_REQUEST).build();
+    }
+  }
+
+  //
+  // Private methods
+  //
+
   private Authorization doAuthorization(OAuthRequestData data) throws OAuthSystemException {
     OAuthIssuer oAuthIssuer = new OAuthIssuerImpl(new MD5Generator());
     User user = userService.getCurrentUser();
@@ -211,41 +258,6 @@ public class OAuthResource {
     OAuthResponse response = builder.buildQueryMessage();
     return Response.status(response.getResponseStatus()).location(new URI(response.getLocationUri())).build();
   }
-
-  @POST
-  @Consumes("application/x-www-form-urlencoded")
-  @Produces("application/json")
-  @Path("/token")
-  public Response access(@Context HttpServletRequest servletRequest, MultivaluedMap<String, String> formParams) throws OAuthSystemException {
-    try {
-      HttpServletRequest requestWrapper = new OAuthServletRequest(servletRequest, formParams);
-      OAuthTokenRequest oAuthRequest = new OAuthTokenRequest(requestWrapper);
-      GrantType type = GrantType.valueOf(oAuthRequest.getParam(OAuth.OAUTH_GRANT_TYPE).toUpperCase());
-
-      switch (type) {
-        case AUTHORIZATION_CODE:
-          return accessAuthorizationCodeGrant(requestWrapper, oAuthRequest);
-        case PASSWORD:
-          return accessPasswordGrant(requestWrapper, oAuthRequest);
-        default:
-          OAuthResponse res = OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST).buildJSONMessage();
-          return Response.status(res.getResponseStatus()).entity(res.getBody()).build();
-      }
-    } catch (OAuthProblemException e) {
-      OAuthResponse res = OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST).error(e).buildJSONMessage();
-      return Response.status(res.getResponseStatus()).entity(res.getBody()).build();
-    } catch (Exception e) {
-      OAuthResponse res = OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST) //
-          .setError(e.getClass().getSimpleName()) //
-          .setErrorDescription(e.getMessage()) //
-          .buildJSONMessage();
-      return Response.status(res.getResponseStatus()).entity(res.getBody()).build();
-    }
-  }
-
-  //
-  // Private methods
-  //
 
   private Response tryBuildResponse(HttpServletRequest servletRequest, Function<OAuthRequestData, Response> responseBuilder)
       throws URISyntaxException, OAuthSystemException {

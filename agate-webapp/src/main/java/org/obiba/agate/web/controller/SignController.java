@@ -16,9 +16,10 @@ import org.apache.shiro.subject.Subject;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.obiba.agate.config.ClientConfiguration;
-import org.obiba.agate.domain.RealmUsage;
+import org.obiba.agate.domain.*;
 import org.obiba.agate.security.OidcAuthConfigurationProvider;
 import org.obiba.agate.service.ConfigurationService;
+import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.controller.domain.AuthConfiguration;
 import org.obiba.agate.web.controller.domain.OidcProvider;
 import org.obiba.agate.web.support.URLUtils;
@@ -31,7 +32,10 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.stream.Collectors;
+
+import static org.springframework.web.servlet.i18n.CookieLocaleResolver.LOCALE_REQUEST_ATTRIBUTE_NAME;
 
 @Controller
 public class SignController {
@@ -44,6 +48,9 @@ public class SignController {
 
   @Inject
   private OidcAuthConfigurationProvider oidcAuthConfigurationProvider;
+
+  @Inject
+  private UserService userService;
 
   @GetMapping("/signin")
   public ModelAndView signin(HttpServletRequest request,
@@ -100,6 +107,26 @@ public class SignController {
       return mv;
     }
     return new ModelAndView("redirect:/signup");
+  }
+
+  @GetMapping("/signout")
+  public ModelAndView signout(@RequestParam(value = "post_logout_redirect_uri", required = false) String postLogoutRedirectUri) {
+    Subject subject = SecurityUtils.getSubject();
+    if (!subject.isAuthenticated()) {
+      if (!Strings.isNullOrEmpty(postLogoutRedirectUri)) {
+        return new ModelAndView("redirect:" + postLogoutRedirectUri);
+      }
+      // for consistency
+      return new ModelAndView("redirect:signin?redirect=" + configurationService.getContextPath() + "/signout");
+    }
+
+    try {
+      ModelAndView mv = new ModelAndView("signout");
+      mv.getModel().put("postLogoutRedirectUri", postLogoutRedirectUri);
+      return mv;
+    } catch (Exception e) {
+      return new ModelAndView("redirect:" + configurationService.getContextPath() + "/");
+    }
   }
 
   @GetMapping("/just-registered")

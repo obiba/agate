@@ -52,6 +52,7 @@ public class OIDCConfigurationFilter extends OncePerRequestFilter {
     oidcConfig.put("issuer", tokenUtils.getIssuerID());
     oidcConfig.put("authorization_endpoint", baseURL + "/ws/oauth2/authorize");
     oidcConfig.put("token_endpoint", baseURL + "/ws/oauth2/token");
+    oidcConfig.put("end_session_endpoint", baseURL + "/ws/oauth2/logout");
     oidcConfig.put("userinfo_endpoint", baseURL + "/ws/oauth2/userinfo");
     oidcConfig.put("scopes_supported", new String[]{"openid", "email", "profile"});
     oidcConfig.put("id_token_signing_alg_values_supported", new String[]{tokenUtils.getSignatureAlgorithm()});
