@@ -11,7 +11,7 @@
 package org.obiba.agate.service;
 
 import com.google.common.collect.Lists;
-import org.obiba.agate.config.Profiles;
+import org.obiba.agate.config.Constants;
 import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.Group;
 import org.obiba.agate.domain.User;
@@ -45,7 +45,7 @@ public class UserGroupSeed implements ApplicationListener<ContextRefreshedEvent>
   @Override
   public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
     seedGroups();
-    if(Lists.newArrayList(env.getActiveProfiles()).contains(Profiles.DEV)) {
+    if(Lists.newArrayList(env.getActiveProfiles()).contains(Constants.SPRING_PROFILE_DEVELOPMENT)) {
       seedUsers();
       seedConfiguration();
     }
