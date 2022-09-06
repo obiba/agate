@@ -108,6 +108,8 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
   }
 
   private void customizeSsl(Server server) {
+    if (httpsPort <= 0) return;
+    
     SslContextFactory jettySsl = new SslContextFactory() {
 
       @Override
