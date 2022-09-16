@@ -23,7 +23,7 @@
       </#if>
     </li>
     <li class="nav-item">
-      <a class="btn btn-outline-danger" href="#" onclick="agatejs.signout();"><@message "sign-out"/></a>
+      <a class="btn btn-outline-danger" href="${contextPath}/signout"><@message "sign-out"/></a>
     </li>
   <#elseif config??>
     <#if config.locales?size != 1>

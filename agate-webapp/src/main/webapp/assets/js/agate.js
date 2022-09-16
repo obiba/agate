@@ -335,6 +335,15 @@ var agatejs = (function() {
     });
   };
 
+  const agateRedirect = function(redirectUrl) {
+    if (redirectUrl && redirectUrl.startsWith('http')) {
+      window.location = redirectUrl;
+    } else {
+      var redirect = normalizeUrl('/');
+      $.redirect(redirect, {}, 'GET');
+    }
+  }
+
   const agateSignout = function(redirectUrl) {
     const removeAgateSession = function() {
       $.ajax({
@@ -342,8 +351,7 @@ var agatejs = (function() {
         url: normalizeUrl('/ws/auth/session/_current')
       })
         .always(function() {
-          var redirect = redirectUrl ? redirectUrl : normalizeUrl('/');
-          $.redirect(redirect, {}, 'GET');
+          agateRedirect(redirectUrl);
         });
     };
 
@@ -390,6 +398,7 @@ var agatejs = (function() {
     'normalizeUrl': normalizeUrl,
     'signin': agateSignin,
     'signout': agateSignout,
+    'redirect': agateRedirect,
     'signup': agateSignup,
     'forgotPassword': agateForgotPassword,
     'resetPassword': agateResetPassword,
