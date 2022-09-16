@@ -11,6 +11,11 @@ spring:
           size: 50
         thread-name-prefix: agate-executor-
 
+server:
+  error:
+    whitelabel:
+      enabled: false
+
 metrics:
     jmx.enabled: true
     graphite:
