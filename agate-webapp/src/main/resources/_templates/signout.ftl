@@ -8,35 +8,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body id="confirm-page" class="hold-transition login-page">
-<div class="login-box">
-  <div class="login-logo">
-    <a href=".."><b>${config.name!""}</b></a>
-  </div>
-  <!-- /.login-logo -->
-  <div class="card">
-    <div class="card-body login-card-body">
-      <p class="login-box-msg"><@message "confirm-sign-out"/></p>
-      <div>
-        <a class="btn btn-outline-danger" href="#" onclick="agatejs.signout('${postLogoutRedirectUri!""}');"><@message "sign-out"/></a>
-        <a class="btn btn-outline-info ml-2" href="${postLogoutRedirectUri!"/"}"><@message "keep-signed-in"/></a>
-      </div>
+
+<#if confirm>
+  <div class="login-box">
+    <div class="login-logo">
+      <a href=".."><b>${config.name!""}</b></a>
     </div>
-    <!-- /.login-card-body -->
+    <!-- /.login-logo -->
+    <div class="card">
+      <div class="card-body login-card-body">
+        <p class="login-box-msg"><@message "confirm-sign-out"/></p>
+        <div>
+          <a class="btn btn-outline-danger" href="#" onclick="agatejs.signout('${postLogoutRedirectUri!""}');"><@message "sign-out"/></a>
+          <a class="btn btn-outline-info ml-2" href="${postLogoutRedirectUri!"/"}"><@message "keep-signed-in"/></a>
+        </div>
+      </div>
+      <!-- /.login-card-body -->
+    </div>
   </div>
-</div>
-<!-- /.login-box -->
+  <!-- /.login-box -->
+</#if>
 
 <#include "libs/scripts.ftl">
-
-<script>
-  agatejs.confirmAndSetPassword("#form", function (errorKey) {
-    var alertId = "#alert" + errorKey;
-    $(alertId).removeClass("d-none");
-    setTimeout(function() {
-      $(alertId).addClass("d-none");
-    }, 5000);
-  });
-</script>
+<#include "libs/signout-scripts.ftl">
 
 </body>
 </html>

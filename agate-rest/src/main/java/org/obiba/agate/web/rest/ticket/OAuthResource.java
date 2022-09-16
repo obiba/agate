@@ -53,7 +53,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -69,6 +69,8 @@ public class OAuthResource {
   private static final Logger log = LoggerFactory.getLogger(OAuthResource.class);
 
   private final List<String> AGATE_SCOPES = Lists.newArrayList("openid", "email", "profile");
+
+  private final String APPLICATION_ATTRIBUTE = "application";
 
   @Inject
   private ConfigurationService configurationService;
@@ -105,6 +107,7 @@ public class OAuthResource {
         redirectURI = validateClientApplication(clientId, oAuthRequest.getParam(OAuth.OAUTH_REDIRECT_URI));
         // check user has access to the application
         authorizationValidator.validateApplication(servletRequest, user, clientId);
+        SecurityUtils.getSubject().getSession().setAttribute(APPLICATION_ATTRIBUTE, clientId);
         validateScope(oAuthRequest.getScopes());
         OAuthRequestData data = new OAuthRequestData(clientId, redirectURI, oAuthRequest);
         Authorization authorization = authorizationService.find(user.getName(), data.getClientId());
@@ -205,11 +208,14 @@ public class OAuthResource {
   @GET
   @Path("/logout")
   public Response logout(@QueryParam("post_logout_redirect_uri") String postLogoutRedirectUri) {
-    // redirect to the sign-out page
+    // Redirect to the sign-out page
     try {
-      String signoutPagePath = "../../../signout" + (Strings.isNullOrEmpty(postLogoutRedirectUri) ? "" : "?post_logout_redirect_uri=" + postLogoutRedirectUri);
-      return Response.temporaryRedirect(new URI(signoutPagePath)).build();
-    } catch (URISyntaxException e) {
+      UriBuilder builder = UriBuilder.fromUri(configurationService.getPublicUrl() + "/signout");
+      if (!Strings.isNullOrEmpty(postLogoutRedirectUri)) {
+        builder.queryParam("post_logout_redirect_uri", postLogoutRedirectUri);
+      }
+      return Response.temporaryRedirect(builder.build()).build();
+    } catch (Exception e) {
       return Response.status(Response.Status.BAD_REQUEST).build();
     }
   }

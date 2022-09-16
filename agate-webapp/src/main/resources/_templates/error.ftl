@@ -39,16 +39,16 @@
           <div class="error-content">
             <h3><i class="fas fa-exclamation-triangle text-warning"></i>
               <#if msg??>
-                  ${msg}
+                  <@message msg/>
               <#else >
-                  "Not found"
+                  <@message "not-found"/>
               </#if>
             </h3>
 
             <p>
-              We could not access the page you were looking for.
-              Meanwhile, you may <a href="${contextPath}/">return to home</a>.
+              <@message "error-text"/>
             </p>
+            <a href="${contextPath}/" class="btn btn-outline-info"><i class="fa fa-home"></i> <@message "error-back-home"/></a>
           </div>
           <!-- /.error-content -->
         </div><!-- /.container-fluid -->
