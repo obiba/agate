@@ -338,9 +338,10 @@ var agatejs = (function() {
   const agateRedirect = function(redirectUrl) {
     if (redirectUrl && redirectUrl.startsWith('http')) {
       window.location = redirectUrl;
+    } else if (redirectUrl) {
+      $.redirect(normalizeUrl(redirectUrl), {}, 'GET');
     } else {
-      var redirect = normalizeUrl('/');
-      $.redirect(redirect, {}, 'GET');
+      $.redirect(normalizeUrl('/'), {}, 'GET');
     }
   }
 
