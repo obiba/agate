@@ -10,15 +10,14 @@
 
 package org.obiba.agate.web.rest.notification;
 
+import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import org.apache.commons.lang.LocaleUtils;
 import org.obiba.agate.domain.User;
-import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.MailService;
 import org.obiba.agate.service.ReCaptchaService;
 import org.obiba.agate.service.UserService;
@@ -33,14 +32,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -71,19 +67,19 @@ public class NotificationsResource extends ApplicationAwareResource {
    * having access to the requesting application. If no user names and no groups are specified, all active users having
    * access to the application will be notified.
    *
-   * @param servletRequest
-   * @param usernames
-   * @param groups
-   * @param subject
-   * @param body           body of the message if the message template is not specified
-   * @param template       template name to be used
+   * @param formParams
    * @param authHeader
    * @return
    */
   @POST
-  public Response notify(@Context HttpServletRequest servletRequest, @FormParam("username") List<String> usernames,
-                         @FormParam("group") List<String> groups, @FormParam("subject") String subject, @FormParam("body") String body,
-                         @FormParam("template") String template, @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) {
+  public Response notify(MultivaluedMap<String, String> formParams, @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) {
+    List<String> usernames = formParams.get("username");
+    List<String> groups = formParams.get("group");
+    String subject = formParams.getFirst("subject");
+    // body of the message if the message template is not specified
+    String body = formParams.getFirst("body");
+    // template name to be used
+    String template = formParams.getFirst("template");
     if (Strings.isNullOrEmpty(subject) && Strings.isNullOrEmpty(body)) return Response.noContent().build();
 
     validateApplication(authHeader);
@@ -100,7 +96,14 @@ public class NotificationsResource extends ApplicationAwareResource {
     }
 
     if (Strings.isNullOrEmpty(template)) sendPlainEmail(subject, body, recipients);
-    else sendTemplateEmail(subject, template, servletRequest.getParameterMap(), recipients);
+    else {
+      List<String> reservedKeys = Lists.newArrayList("username", "group", "subject", "body", "template");
+      Map<String, String[]> context = Maps.newHashMap();
+      formParams.entrySet().stream()
+          .filter(entry -> !reservedKeys.contains(entry.getKey()))
+          . forEach(entry -> context.put(entry.getKey(), entry.getValue().toArray(new String[0])));
+      sendTemplateEmail(subject, template, context, recipients);
+    }
 
     return Response.noContent().build();
   }
