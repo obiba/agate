@@ -17,6 +17,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
+import com.google.common.base.CaseFormat;
 import org.hibernate.validator.constraints.Email;
 import org.joda.time.DateTime;
 import org.obiba.agate.security.Roles;
@@ -305,6 +306,10 @@ public class User extends AbstractAuditableDocument {
     return new Builder();
   }
 
+  public static Builder newBuilder(String username) {
+    return new Builder(username);
+  }
+
   public void setSecret(String secret) {
     this.secret = secret;
   }
@@ -325,6 +330,27 @@ public class User extends AbstractAuditableDocument {
       user = new User();
       active();
       realm(AgateRealm.AGATE_USER_REALM.getName());
+    }
+
+    private Builder(String username) {
+      this();
+      if (!Strings.isNullOrEmpty(username)) {
+        String uname = username;
+        if (username.contains("@")) {
+          uname = username.split("@")[0];
+        }
+        name(uname);
+        email(username);
+        String[] parts = uname.split("\\.");
+        if (parts.length>0)
+          firstName(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_CAMEL, parts[0].toLowerCase()));
+        else
+          firstName(uname);
+        if (parts.length>1)
+          lastName(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_CAMEL, parts[1].toLowerCase()));
+        else
+          lastName("");
+      }
     }
 
     public Builder id(String id) {

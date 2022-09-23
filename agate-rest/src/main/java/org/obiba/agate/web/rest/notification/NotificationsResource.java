@@ -11,6 +11,7 @@
 package org.obiba.agate.web.rest.notification;
 
 import com.beust.jcommander.internal.Lists;
+import com.google.common.base.CaseFormat;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -181,7 +182,12 @@ public class NotificationsResource extends ApplicationAwareResource {
       User user = userService.findActiveUser(username);
       if (user == null) user = userService.findActiveUserByEmail(username);
 
-      if (user != null && applicationUsernames.contains(user.getName())) recipients.add(user);
+      if (user != null && applicationUsernames.contains(user.getName()))
+        recipients.add(user);
+      else if (user == null && username.contains("@")) {
+        // this is an email address of a user that has not registered yet
+        recipients.add(User.newBuilder(username).inactive().build());
+      }
     });
   }
 

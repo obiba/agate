@@ -15,8 +15,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UserTest {
 
@@ -74,6 +73,23 @@ public class UserTest {
     assertFalse(user.hasApplication("application2"));
     user = User.newBuilder().name("foo").build();
     assertFalse(user.hasApplication("application1"));
+  }
+
+  @Test
+  public void testBuilderFromEmail() {
+    String email = "andy.warhol@factory.org";
+    User user = User.newBuilder(email).build();
+    assertEquals(email, user.getEmail());
+    assertEquals("andy.warhol", user.getName());
+    assertEquals("Andy", user.getFirstName());
+    assertEquals("Warhol", user.getLastName());
+
+    email = "andy@factory.org";
+    user = User.newBuilder(email).build();
+    assertEquals(email, user.getEmail());
+    assertEquals("andy", user.getName());
+    assertEquals("Andy", user.getFirstName());
+    assertEquals("", user.getLastName());
   }
 
 }
