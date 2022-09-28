@@ -10,11 +10,8 @@
 
 package org.obiba.agate.web.rest.user;
 
-import java.util.HashMap;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.BadRequestException;
-
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Rule;
@@ -31,18 +28,14 @@ import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.ReCaptchaService;
 import org.obiba.agate.service.UserService;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.*;
 
 public class UsersJoinResourceTests {
 
@@ -67,7 +60,7 @@ public class UsersJoinResourceTests {
 
     Configuration conf = new Configuration();
     conf.setUserAttributes(Lists.newArrayList(
-      new AttributeConfiguration("att1", AttributeConfiguration.Type.INTEGER, true, Lists.newArrayList())));
+        new AttributeConfiguration("att1", AttributeConfiguration.Type.INTEGER, true, Lists.newArrayList())));
 
     doReturn(conf).when(configurationService).getConfiguration();
 
@@ -84,19 +77,14 @@ public class UsersJoinResourceTests {
   @Test
   public void testUsersJoinWithAttributes() {
     HttpServletRequest request = mock(HttpServletRequest.class);
-    when(request.getParameterMap()).thenReturn(new HashMap<String, String[]>() {
-      {
-        put("att1", new String[] { "1" });
-        put("att2", new String[] { "foo" });
-      }
-    });
 
     ArgumentCaptor<User> user = ArgumentCaptor.forClass(User.class);
 
-    resource
-      .create("un", "fn", "ln", "test@localhost.domain", "fr",
-        Lists.newArrayList("app"), Lists.newArrayList("g1", "g2"), "password",
-        null, "recaptchacode", null, request);
+    MultivaluedMap<String, String> params = getParameters();
+    params.put("att1", Lists.newArrayList("1"));
+    params.put("att2", Lists.newArrayList("foo"));
+
+    resource.create(request, params);
     verify(userService).createUser(user.capture(), eq("password"));
     assertEquals("id", user.getValue().getId());
     assertEquals("test@localhost.domain", user.getValue().getEmail());
@@ -109,17 +97,26 @@ public class UsersJoinResourceTests {
   @Test
   public void testUsersJoinMissingAttribute() {
     HttpServletRequest request = mock(HttpServletRequest.class);
-    when(request.getParameterMap()).thenReturn(new HashMap<String, String[]>() {
-      {
-        put("att2", new String[] { "foo" });
-      }
-    });
 
     exception.expect(BadRequestException.class);
     exception.expectMessage(Matchers.containsString("att1"));
-    resource
-      .create("un", "fn", "ln", "test@localhost.domain", "fr",
-        Lists.newArrayList("app"), Lists.newArrayList("g1", "g2"), null,
-        null, "recaptchacode", null, request);
+
+    MultivaluedMap<String, String> params = getParameters();
+    params.put("att2", Lists.newArrayList("foo"));
+    resource.create(request, params);
+  }
+
+  private MultivaluedMap<String, String> getParameters() {
+    MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
+    params.put("username", Lists.newArrayList("un"));
+    params.put("firstname", Lists.newArrayList("fn"));
+    params.put("lastname", Lists.newArrayList("ln"));
+    params.put("email", Lists.newArrayList("test@localhost.domain"));
+    params.put("locale", Lists.newArrayList("fr"));
+    params.put("application", Lists.newArrayList("app"));
+    params.put("group", Lists.newArrayList("g1", "g2"));
+    params.put("password", Lists.newArrayList("password"));
+    params.put("g-recaptcha-response", Lists.newArrayList("recaptchacode"));
+    return params;
   }
 }
