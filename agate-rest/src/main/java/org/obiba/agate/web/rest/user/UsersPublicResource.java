@@ -14,6 +14,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -36,6 +37,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
@@ -159,19 +161,25 @@ public class UsersPublicResource {
 
   @POST
   @Path("/_join")
-  public Response create(@FormParam("username") String username, @FormParam("firstname") String firstName,
-                         @FormParam("lastname") String lastName, @FormParam("email") String email, @FormParam("locale") String preferredLanguage,
-                         @FormParam("application") List<String> applications, @FormParam("group") List<String> groups,
-                         @FormParam("password") String password, @FormParam("realm") String realm,
-                         @FormParam("g-recaptcha-response") String reCaptchaResponse,
-                         @FormParam("reCaptchaResponse") String reCaptchaResponse2,
-                         @Context HttpServletRequest request) {
-
+  @Consumes("application/x-www-form-urlencoded")
+  public Response create(@Context HttpServletRequest request, MultivaluedMap<String, String> formParams) {
     String applicationName = getRequestingApplication(request);
 
     if (!configurationService.getConfiguration().isJoinPageEnabled() && Strings.isNullOrEmpty(applicationName)) {
       throw new BadRequestException("Direct self join is not enabled");
     }
+
+    String username = formParams.getFirst("username");
+    String firstName = formParams.getFirst("firstname");
+    String lastName = formParams.getFirst("lastname");
+    String email = formParams.getFirst("email");
+    String preferredLanguage = formParams.getFirst("locale");
+    String password = formParams.getFirst("password");
+    String realm = formParams.getFirst("realm");
+    List<String> applications = formParams.containsKey("application") ? formParams.get("application") : Lists.newArrayList();
+    List<String> groups = formParams.containsKey("group") ? formParams.get("group") : Lists.newArrayList();
+    String reCaptchaResponse = formParams.getFirst("g-recaptcha-response");
+    String reCaptchaResponse2 = formParams.getFirst("reCaptchaResponse");
 
     if (Strings.isNullOrEmpty(email)) throw new BadRequestException("Email cannot be empty");
 
@@ -217,7 +225,7 @@ public class UsersPublicResource {
       .firstName(firstName).lastName(lastName).email(email).preferredLanguage(preferredLanguage).build();
     user.setGroups(Sets.newHashSet(groups));
     user.setApplications(Sets.newHashSet(applications));
-    user.setAttributes(extractAttributes(request));
+    user.setAttributes(extractAttributes(formParams));
 
     if (!Strings.isNullOrEmpty(applicationName)) {
       Application application = applicationService.findByIdOrName(applicationName);
@@ -240,10 +248,9 @@ public class UsersPublicResource {
       .created(UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(UserResource.class).build(user.getId())).build();
   }
 
-  private Map<String, String> extractAttributes(HttpServletRequest request) {
+  private Map<String, String> extractAttributes(MultivaluedMap<String, String> params) {
     final Map<String, AttributeConfiguration> attributes = configurationService.getConfiguration().getUserAttributes()
-      .stream().collect(Collectors.toMap(a -> a.getName(), a -> a));
-    final Map<String, String[]> params = request.getParameterMap();
+      .stream().collect(Collectors.toMap(AttributeConfiguration::getName, a -> a));
     final Set<String> extraParams = Sets.difference(params.keySet(), Sets.newHashSet(Arrays.asList(BUILTIN_PARAMS)));
 
     Map<String, String> res = Maps.newHashMap();
@@ -255,17 +262,17 @@ public class UsersPublicResource {
     });
 
     for (String param : extraParams) {
-      String[] values = params.get(param);
+      List<String> values = params.get(param);
 
-      if (values.length > 1) {
+      if (values.size() > 1) {
         throw new BadRequestException("Invalid repeated parameter " + param);
       }
 
       if (attributes.containsKey(param)) {
         AttributeConfiguration attribute = attributes.get(param);
-        res.put(attribute.getName(), getParsedAttribute(attribute, values[0]));
+        res.put(attribute.getName(), getParsedAttribute(attribute, values.get(0)));
       } else {
-        res.put(param, params.get(param)[0]);
+        res.put(param, params.get(param).get(0));
       }
     }
 
