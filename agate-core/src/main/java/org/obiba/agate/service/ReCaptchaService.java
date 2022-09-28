@@ -10,29 +10,28 @@
 
 package org.obiba.agate.service;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.annotation.JsonSetter;
-import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
+import javax.inject.Inject;
+import java.util.List;
 
 @Component
 public class ReCaptchaService {
 
   private static final Logger log = LoggerFactory.getLogger(ReCaptchaService.class);
-
-  @Inject
-  private RestTemplate restTemplate;
 
   @Inject
   private Environment env;
@@ -43,11 +42,21 @@ public class ReCaptchaService {
     map.add("secret", env.getProperty("recaptcha.secret"));
     map.add("response", reCaptchaResponse);
 
-    ReCaptchaVerifyResponse recaptchaVerifyResponse = restTemplate
-      .postForObject(env.getProperty("recaptcha.verifyUrl"), map, ReCaptchaVerifyResponse.class);
+    // #495 http client that supports redirect on POST
+    HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+    HttpClient httpClient = HttpClientBuilder.create()
+        .setRedirectStrategy(new LaxRedirectStrategy())
+        .build();
+    factory.setHttpClient(httpClient);
 
-    if(!recaptchaVerifyResponse.isSuccess() && (recaptchaVerifyResponse.getErrorCodes().contains("invalid-input-secret") ||
-      recaptchaVerifyResponse.getErrorCodes().contains("missing-input-secret"))) {
+    RestTemplate restTemplate = new RestTemplate();
+    restTemplate.setRequestFactory(factory);
+
+    ReCaptchaVerifyResponse recaptchaVerifyResponse = restTemplate
+        .postForObject(env.getProperty("recaptcha.verifyUrl"), map, ReCaptchaVerifyResponse.class);
+
+    if (!recaptchaVerifyResponse.isSuccess() && (recaptchaVerifyResponse.getErrorCodes().contains("invalid-input-secret") ||
+        recaptchaVerifyResponse.getErrorCodes().contains("missing-input-secret"))) {
       log.error("Error verifying recaptcha: " + reCaptchaResponse);
       throw new RuntimeException("Error verifying recaptcha.");
     }
