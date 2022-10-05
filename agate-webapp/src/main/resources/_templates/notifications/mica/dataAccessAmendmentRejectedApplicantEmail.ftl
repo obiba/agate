@@ -4,37 +4,37 @@
   <title></title>
 </head>
 <body
-  style="margin: 0;font-family: 'Lato','Helvetica Neue',Helvetica,Arial,sans-serif;font-size: 15px;line-height: 1.5;color: #2c3e50;background-color: #ffffff;">
+  style="margin: 0;font-family:'Nunito',arial,sans-serif;line-height:1.5;font-size:18px;color: #2c3e50;background-color: #ffffff;">
 
 <div
-  style="min-height: 20px;padding: 19px;margin-bottom: 20px;background-color: #ecf0f1;border: 1px solid transparent;border-radius: 4px;-webkit-box-shadow: none;box-shadow: none;">
-  <div style="margin: auto;max-width: 700px;">
+  style="min-height: 20px;padding: 30px;margin-bottom: 20px;background-color: #ecf0f1;border-radius: 10px;-webkit-box-shadow: none;box-shadow: none;">
+  <div style="margin: auto;max-width: 600px;">
     <div
-      style="margin-bottom: 21px;background-color: #ffffff;border-radius: 4px;-webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.05);box-shadow: 0 1px 1px rgba(0,0,0,0.05);border: 1px solid gainsboro;">
+      style="margin-bottom: 21px;background-color: #ffffff;border-radius: 10px;-webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.05);box-shadow: 0 1px 1px rgba(0,0,0,0.05);">
       <div
-        style="padding: 10px 15px;border-top-right-radius: 3px;border-top-left-radius: 3px;background-color: gainsboro;border-color: gainsboro;">
-        <h3 style="font-family: 'Lato','Helvetica Neue',Helvetica,Arial,sans-serif;font-weight: 400;line-height: 1.1;color: inherit;margin-top: 0;margin-bottom: 0;font-size: 17px;">
+        style="padding: 20px 30px;border-top-right-radius: 10px;border-top-left-radius: 10px;background-color: gainsboro;">
+        <div style="font-size:22px !important;font-weight: bold;color: inherit;margin-top: 0;margin-bottom: 0;font-size: 17px;">
           ${msg("mica.email.dataAccessRequestAmendmentRejectedApplicant.title", organization)}
-        </h3>
+        </div>
       </div>
-      <div style="padding: 15px;">
-        <p style="margin: 0 0 10px;">
+      <div style="padding: 30px;">
+        <p style="margin: 0 0 30px;">
           ${msg("email.generic.presentation", user.firstName!"", user.lastName!"")}
         </p>
-        <p style="margin: 0 0 10px;">
+        <p style="margin: 0 0 30px;">
           ${msg("mica.email.dataAccessRequestAmendmentRejectedApplicant.body", title)}
         </p>
-        <p style="margin: 0 0 10px;">
+        <p style="margin: 0 0 30px;">
           ${msg("mica.email.dataAccessRequestAmendmentRejectedApplicant.details")}
         </p>
-        <p style="margin: 0 0 10px;">
+        <p style="margin: 0 0 30px;">
         </p><p style="margin: auto;text-align: center;">
         <a href="${publicUrl}/data-access-amendment-form/${id}" target="_blank"
-          style="color: #ffffff;text-decoration: none;display: inline-block;margin-bottom: 0;font-weight: normal;text-align: center;vertical-align: middle;-ms-touch-action: manipulation;touch-action: manipulation;cursor: pointer;background: #2c3e50 none;white-space: nowrap;padding: 10px 15px;font-size: 15px;line-height: 1.5;border-radius: 4px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;border: 1px solid #2c3e50;">${msg("mica.email.dataAccessRequestAmendmentRejectedApplicant.link")}</a>
+          style="color:#1f2d3d;font-weight:bold;background-color:#ffc107;padding:10px 20px;border-radius:15px;text-decoration:none;display: inline-block;margin-bottom: 0;font-weight: normal;text-align: center;vertical-align: middle;-ms-touch-action: manipulation;touch-action: manipulation;cursor: pointer;white-space: nowrap;padding: 10px 15px;border-radius: 10px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;">${msg("mica.email.dataAccessRequestAmendmentRejectedApplicant.link")}</a>
       </p>
       </div>
     </div>
-    <p style="display: block;margin: 5px 0 10px;color: #597ea2;">
+    <p style="display: block;margin: 5px 0 10px;font-size:14px;line-height:2;color:#aaa;">
       ${msg("email.generic.message")}
     </p>
   </div>
