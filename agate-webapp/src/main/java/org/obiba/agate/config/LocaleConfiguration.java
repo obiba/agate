@@ -27,6 +27,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
 import javax.inject.Inject;
+import java.util.Locale;
 
 @Configuration
 public class LocaleConfiguration extends WebMvcConfigurerAdapter implements EnvironmentAware {
@@ -49,8 +50,9 @@ public class LocaleConfiguration extends WebMvcConfigurerAdapter implements Envi
 
   @Bean(name = "localeResolver")
   public LocaleResolver localeResolver() {
-    AngularCookieLocaleResolver cookieLocaleResolver = new AngularCookieLocaleResolver();
+    AngularCookieLocaleResolver cookieLocaleResolver = new AngularCookieLocaleResolver(configurationService);
     cookieLocaleResolver.setCookieName("NG_TRANSLATE_LANG_KEY");
+    //cookieLocaleResolver.setDefaultLocale(Locale.ENGLISH);
     return cookieLocaleResolver;
   }
 
