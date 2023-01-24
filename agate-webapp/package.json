@@ -9,7 +9,8 @@
     "bootstrap-datepicker": "^1.9.0",
     "jquery.redirect": "^1.1.4",
     "js-cookie": "^2.2.1",
-    "moment": "^2.29.4"
+    "moment": "^2.29.4",
+    "moment-timezone": "^0.5.40"
   },
   "devDependencies": {
     "grunt": "1.0.1",
