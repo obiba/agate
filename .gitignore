@@ -18,5 +18,4 @@ spring_loaded
 .vagrant
 .work
 .vscode
-package-lock.json
 agate_home
