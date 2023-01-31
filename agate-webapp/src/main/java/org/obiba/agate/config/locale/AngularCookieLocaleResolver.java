@@ -10,8 +10,10 @@
 
 package org.obiba.agate.config.locale;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -40,8 +42,14 @@ public class AngularCookieLocaleResolver extends CookieLocaleResolver {
   }
 
   @Override
-  protected Locale getDefaultLocale() {
-    return configurationService.getConfiguration().getLocales().stream().findFirst().orElse(Locale.ENGLISH);
+  protected Locale determineDefaultLocale(HttpServletRequest request) {
+    Locale defaultLocale = super.determineDefaultLocale(request);
+    // validate default locale, which could come from the Accept-Language header
+    List<Locale> configLocales = configurationService.getConfiguration().getLocales();
+    List<Locale> languageLocales = configLocales.stream()
+        .filter(locale -> locale.getLanguage().equalsIgnoreCase(defaultLocale.getLanguage()))
+        .collect(Collectors.toList());
+    return languageLocales.isEmpty() ? configLocales.stream().findFirst().orElse(Locale.ENGLISH) : languageLocales.get(0);
   }
 
   @Override
