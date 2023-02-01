@@ -298,6 +298,7 @@
      */
     public User save(@NotNull User user) {
       User saved = user;
+      UserStatus prevStatus = null;
 
       boolean uNew = false;
       if (user.isNew()) {
@@ -308,6 +309,7 @@
         if (saved == null) {
           saved = user;
         } else {
+          prevStatus = saved.getStatus();
           updateUserCredentials(saved, user);
           BeanUtils.copyProperties(user, saved, "id", "name", "version", "createdBy", "createdDate", "lastModifiedBy",
               "lastModifiedDate");
@@ -331,6 +333,9 @@
           if (group == null) groupService.save(new Group(groupName));
         }
       }
+
+      if (UserStatus.APPROVED.equals(user.getStatus()) && (prevStatus == null || !prevStatus.equals(user.getStatus())))
+        eventBus.post(new UserApprovedEvent(user));
 
       return saved;
     }
@@ -385,13 +390,8 @@
     }
 
     public void updateUserStatus(User user, UserStatus status) {
-      UserStatus prevStatus = user.getStatus();
-
       user.setStatus(status);
       save(user);
-
-      if (prevStatus == UserStatus.PENDING && user.getStatus() == UserStatus.APPROVED)
-        eventBus.post(new UserApprovedEvent(user));
     }
 
     public void confirmUser(@NotNull User user, String password) {

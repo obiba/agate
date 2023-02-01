@@ -162,8 +162,12 @@ var agatejs = (function() {
             $.redirect(redirect, values, 'GET');
           })
           .catch(handle => {
-            console.dir(handle);
-            onFailure('Failure', handle.response.data);
+            var data = handle.response.data;
+            if (data && data.messageTemplate === 'server.error.password.too-weak') {
+              onFailure('PasswordTooWeak');
+            } else {
+              onFailure('Failure', data);
+            }
           });
     });
   };

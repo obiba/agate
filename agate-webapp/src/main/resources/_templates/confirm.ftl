@@ -27,6 +27,10 @@
           <small><@message "password-too-short"/></small>
         </div>
 
+        <div id="alertPasswordTooWeak" class="alert alert-danger d-none">
+          <small><@message "server.error.password.too-weak"/></small>
+        </div>
+
         <div id="alertPasswordNoMatch" class="alert alert-danger d-none">
           <small><@message "password-no-match"/></small>
         </div>
@@ -58,7 +62,7 @@
 
             </div>
             <!-- /.col -->
-            <div class="col-4">
+            <div class="col-6">
               <button type="submit" class="btn btn-primary btn-block"><@message "submit"/></button>
             </div>
             <!-- /.col -->
@@ -77,16 +81,7 @@
 <!-- /.login-box -->
 
 <#include "libs/scripts.ftl">
-
-<script>
-  agatejs.confirmAndSetPassword("#form", function (errorKey) {
-    var alertId = "#alert" + errorKey;
-    $(alertId).removeClass("d-none");
-    setTimeout(function() {
-      $(alertId).addClass("d-none");
-    }, 5000);
-  });
-</script>
+<#include "libs/confirm-scripts.ftl">
 
 </body>
 </html>
