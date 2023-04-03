@@ -165,10 +165,6 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
 
   /**
    * Depending on the specified action as part of the request parameters, sign in/up client.
-   *
-   * @param session
-   * @param credentials
-   * @param response
    */
   @Override
   protected void onAuthenticationSuccess(OIDCSession session, OIDCCredentials credentials, HttpServletResponse response) {

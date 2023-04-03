@@ -96,7 +96,6 @@ public final class GZipResponseUtil {
 
   /**
    * Adds the gzip HTTP header to the response.
-   * <p/>
    * <p>
    * This is need when a gzipped body is returned so that browsers can properly decompress it.
    * </p>

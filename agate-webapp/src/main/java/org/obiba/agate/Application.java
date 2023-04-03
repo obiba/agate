@@ -38,7 +38,7 @@ public class Application {
    * Initializes agate.
    * <p>
    * Spring profiles can be configured with a program arguments --spring.profiles.active=your-active-profile
-   * <p>
+   * </p>
    */
   @PostConstruct
   public void initApplication() throws IOException {
