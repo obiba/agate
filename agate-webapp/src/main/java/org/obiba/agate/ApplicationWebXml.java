@@ -31,7 +31,6 @@ public class ApplicationWebXml extends SpringBootServletInitializer {
 
   /**
    * Set a default profile if it has not been set.
-   * <p/>
    * <p>
    * Please use -Dspring.profiles.active=prod
    * </p>

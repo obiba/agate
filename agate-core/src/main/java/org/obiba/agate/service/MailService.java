@@ -28,11 +28,7 @@ import org.springframework.stereotype.Service;
 import com.google.common.base.Strings;
 
 /**
- * Service for sending e-mails.
- * <p/>
- * <p>
- * We use the @Async annotation to send e-mails asynchronously.
- * </p>
+ * Service for sending e-mails. We use the @Async annotation to send e-mails asynchronously.
  */
 @Service
 public class MailService {
