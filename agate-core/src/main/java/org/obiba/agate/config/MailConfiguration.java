@@ -95,11 +95,7 @@ public class MailConfiguration implements EnvironmentAware {
     sendProperties.setProperty(PROP_SMTP_AUTH, auth.toString());
     sendProperties.setProperty(PROP_STARTTLS, tls.toString());
     sendProperties.setProperty(PROP_TRANSPORT_PROTO, protocol);
-    
-    if (tls) {
-      sendProperties.setProperty(PROP_MAIL_PROTOCOLS, mailProtocols);
-    }
-
+    sendProperties.setProperty(PROP_MAIL_PROTOCOLS, mailProtocols);
     sender.setJavaMailProperties(sendProperties);
     return sender;
   }
