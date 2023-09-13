@@ -61,4 +61,24 @@ agate.user
         attributeConfig:'='
       }
     };
+  }])
+
+  .directive('asDate', ['dateFilter', function (dateFilter) {
+    return {
+      require: '^ngModel',
+      restrict: 'A',
+      link: function (scope, element, attrs, ctrl) {
+        ctrl.$formatters.push(function (modelValue) {
+          if (!modelValue) {
+            return;
+          }
+
+          var d = new Date(modelValue);
+          return new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds(), d.getUTCMilliseconds());
+        });
+        ctrl.$parsers.push(function (modelValue) {
+          return dateFilter(modelValue, 'yyyy-MM-dd');
+        });
+      }
+    }
   }]);

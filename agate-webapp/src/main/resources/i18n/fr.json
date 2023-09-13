@@ -230,7 +230,8 @@
         "STRING":"Texte",
         "INTEGER":"Entier",
         "NUMBER":"Nombre",
-        "BOOLEAN":"Booléen"
+        "BOOLEAN":"Booléen",
+        "DATE": "Date"
       },
       "name": "Nom",
       "description": "Description",

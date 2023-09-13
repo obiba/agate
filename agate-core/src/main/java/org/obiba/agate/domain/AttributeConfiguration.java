@@ -19,7 +19,6 @@ import javax.validation.constraints.NotNull;
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import org.json.JSONException;
 import org.springframework.data.annotation.Id;
 
 /**
@@ -124,6 +123,7 @@ public class AttributeConfiguration implements Serializable {
   public String getInputType() {
     if (Type.INTEGER.equals(type) || Type.NUMBER.equals(type)) return "number";
     if (Type.BOOLEAN.equals(type)) return "checkbox";
+    if (Type.DATE.equals(type)) return "date";
     return "text";
   }
 
@@ -137,6 +137,6 @@ public class AttributeConfiguration implements Serializable {
   }
 
   public enum Type {
-    STRING, INTEGER, NUMBER, BOOLEAN
+    STRING, INTEGER, NUMBER, BOOLEAN, DATE
   }
 }

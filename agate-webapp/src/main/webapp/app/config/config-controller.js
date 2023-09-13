@@ -103,7 +103,8 @@ agate.config
         {name: 'STRING', label: $filter('translate')('config.attributes.types.STRING')},
         {name: 'INTEGER', label: $filter('translate')('config.attributes.types.INTEGER')},
         {name: 'NUMBER', label: $filter('translate')('config.attributes.types.NUMBER')},
-        {name: 'BOOLEAN', label: $filter('translate')('config.attributes.types.BOOLEAN')}
+        {name: 'BOOLEAN', label: $filter('translate')('config.attributes.types.BOOLEAN')},
+        {name: 'DATE', label: $filter('translate')('config.attributes.types.DATE')}
       ];
 
       var index = -1;

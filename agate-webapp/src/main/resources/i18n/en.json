@@ -230,7 +230,8 @@
         "STRING": "String",
         "INTEGER": "Integer",
         "NUMBER": "Number",
-        "BOOLEAN": "Boolean"
+        "BOOLEAN": "Boolean",
+        "DATE": "Date"
       },
       "name": "Name",
       "description": "Description",

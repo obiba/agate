@@ -207,9 +207,7 @@
           </button>
         </div>
         <div class="modal-body">
-          <div id="alertProfileFailure" class="alert alert-danger d-none">
-
-          </div>
+          <div id="alertProfileFailure" class="alert alert-danger d-none"></div>
 
           <form id="profile-form" method="post">
             <div class="form-group mb-3">

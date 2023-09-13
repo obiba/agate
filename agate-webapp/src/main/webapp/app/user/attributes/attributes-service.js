@@ -124,6 +124,9 @@ agate.user
             case 'BOOLEAN':
                 template = booleanTemplate(required);
               break;
+            case 'DATE':
+                template = dateTemplate(required);
+              break;
             case 'NUMBER':
             case 'INTEGER':
             case 'STRING':
@@ -234,6 +237,14 @@ agate.user
       function booleanTemplate(required) {
         var requiredAttr = required ? 'required="true"' : '';
         return '<div form-checkbox name="{{attribute.name}}" model="attribute.boolValue" label="{{attribute.name}}" help="{{attribute.description}}" '+ requiredAttr + '></div>';
+      }
+
+      function dateTemplate(required) {
+        var requiredAttr = required ? 'required' : '';
+        var requiredMarker = required ? '*' : '';
+        return '<div class="form-group"> <label for="attribute.name" class="control-label"> <span translate>{{attribute.name}}</span> ' + requiredMarker + ' </label>' +
+          '<input id="attribute.name" name="attribute.name" type="date" as-date class="form-control" ng-model="attribute.value" ' + requiredAttr + '/>' +
+          '<div class="help-block" translate>{{attribute.description}}</div></div>';
       }
 
     }]);
