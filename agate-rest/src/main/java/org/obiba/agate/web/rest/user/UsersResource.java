@@ -10,6 +10,8 @@
 
 package org.obiba.agate.web.rest.user;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -17,10 +19,12 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
+import com.codahale.metrics.annotation.Timed;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import org.apache.shiro.authz.annotation.RequiresRoles;
@@ -28,6 +32,7 @@ import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.domain.UserStatus;
+import org.obiba.agate.service.UserCsvService;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.model.Agate;
 import org.obiba.agate.web.model.Dtos;
@@ -48,6 +53,9 @@ public class UsersResource {
 
   @Inject
   private Dtos dtos;
+
+  @Inject
+  private UserCsvService userCsvService;
 
   @GET
   public List<Agate.UserDto> get(@QueryParam("status") String status) {
@@ -98,5 +106,16 @@ public class UsersResource {
 
     return Response
       .created(UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(UserResource.class).build(user.getId())).build();
+  }
+
+  @GET
+  @Timed
+  @Path("/_csv")
+  @Produces("text/csv")
+  public Response csv(@QueryParam("status") String status) throws IOException {
+    List<User> users = status != null ? userService.findUsers(UserStatus.valueOf(status.toUpperCase())) : userService.findUsers();
+
+    ByteArrayOutputStream csvOutput = userCsvService.toCsv(users);
+    return Response.ok(csvOutput.toByteArray(), "text/csv").header("Content-Disposition", "attachment; filename=\"users.csv\"").build();
   }
 }

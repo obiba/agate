@@ -18,6 +18,10 @@
     <i class="fa fa-plus"></i> <span translate>user.add</span>
   </a>
 
+  <a ng-href="ws/users/_csv" target="_blank" class="btn btn-info" download="users.csv">
+    <i class="fa fa-download"></i> <span translate>download</span>
+  </a>
+
   <p class="help-block" ng-if="users.length == 0 && !loading">
     <span translate>user.none</span>
   </p>
