@@ -14,7 +14,7 @@ import com.google.common.base.Strings;
 import org.obiba.agate.domain.LocalizedString;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Collections;

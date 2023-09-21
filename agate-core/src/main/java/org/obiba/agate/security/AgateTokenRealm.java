@@ -32,8 +32,8 @@ import org.obiba.agate.service.UserService;
 import org.obiba.shiro.authc.TicketAuthenticationToken;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;

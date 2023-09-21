@@ -16,8 +16,8 @@ import org.obiba.agate.service.NotOrphanRealmException;
 import org.obiba.jersey.exceptionmapper.AbstractErrorDtoExceptionMapper;
 import org.obiba.web.model.ErrorDtos;
 
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.ext.Provider;
+import jakarta.ws.rs.core.Response.Status;
+import jakarta.ws.rs.ext.Provider;
 
 @Provider
 public class NotOrphanApplicationExceptionMapper extends AbstractErrorDtoExceptionMapper<NotOrphanApplicationException> {
@@ -28,7 +28,7 @@ public class NotOrphanApplicationExceptionMapper extends AbstractErrorDtoExcepti
   }
 
   @Override
-  protected GeneratedMessage.ExtendableMessage<?> getErrorDto(NotOrphanApplicationException e) {
+  protected ErrorDtos.ClientErrorDto getErrorDto(NotOrphanApplicationException e) {
     return ErrorDtos.ClientErrorDto.newBuilder() //
         .setCode(getStatus().getStatusCode()) //
         .setMessageTemplate("server.error.application.not-orphan") //

@@ -46,10 +46,10 @@
   import org.springframework.transaction.annotation.Transactional;
   import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
-  import javax.annotation.Nullable;
-  import javax.inject.Inject;
+  import jakarta.annotation.Nullable;
+  import jakarta.inject.Inject;
   import javax.validation.constraints.NotNull;
-  import javax.ws.rs.BadRequestException;
+  import jakarta.ws.rs.BadRequestException;
   import java.io.IOException;
   import java.util.*;
   import java.util.function.Function;

@@ -10,7 +10,7 @@
 
 package org.obiba.agate.service;
 
-import javax.ws.rs.BadRequestException;
+import jakarta.ws.rs.BadRequestException;
 
 public class NotOrphanRealmException extends BadRequestException {
 

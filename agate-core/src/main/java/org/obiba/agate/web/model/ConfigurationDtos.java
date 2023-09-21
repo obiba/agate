@@ -10,7 +10,7 @@
 
 package org.obiba.agate.web.model;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.LocaleUtils;

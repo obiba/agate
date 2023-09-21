@@ -18,8 +18,8 @@ import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.util.Optional;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.validation.constraints.NotNull;
 

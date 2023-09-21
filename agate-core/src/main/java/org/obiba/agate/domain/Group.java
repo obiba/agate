@@ -13,7 +13,7 @@ package org.obiba.agate.domain;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
 import org.obiba.mongodb.domain.AbstractAuditableDocument;

@@ -23,7 +23,7 @@ import org.obiba.oidc.OIDCConfiguration;
 import org.obiba.web.model.AuthDtos;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
 

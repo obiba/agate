@@ -11,7 +11,7 @@
 package org.obiba.agate.web.rest.ticket;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.PrincipalCollection;

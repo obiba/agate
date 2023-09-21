@@ -10,7 +10,7 @@
 
 package org.obiba.agate.web.rest.security;
 
-import javax.ws.rs.ForbiddenException;
+import jakarta.ws.rs.ForbiddenException;
 
 public class InvalidRealmException extends ForbiddenException {
 

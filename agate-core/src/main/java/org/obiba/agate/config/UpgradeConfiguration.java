@@ -13,7 +13,7 @@ package org.obiba.agate.config;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.obiba.agate.upgrade.AgateVersionModifier;
 import org.obiba.agate.upgrade.RuntimeVersionProvider;

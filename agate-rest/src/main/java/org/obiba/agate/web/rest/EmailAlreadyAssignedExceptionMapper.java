@@ -10,8 +10,8 @@
 
 package org.obiba.agate.web.rest;
 
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.Provider;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.Provider;
 
 import org.obiba.agate.service.EmailAlreadyAssignedException;
 import org.obiba.jersey.exceptionmapper.AbstractErrorDtoExceptionMapper;
@@ -28,7 +28,7 @@ public class EmailAlreadyAssignedExceptionMapper extends AbstractErrorDtoExcepti
   }
 
   @Override
-  protected GeneratedMessage.ExtendableMessage<?> getErrorDto(EmailAlreadyAssignedException e) {
+  protected ErrorDtos.ClientErrorDto getErrorDto(EmailAlreadyAssignedException e) {
     return ErrorDtos.ClientErrorDto.newBuilder() //
       .setCode(getStatus().getStatusCode()) //
       .addArguments(e.getEmail()) //

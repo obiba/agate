@@ -10,7 +10,7 @@
 
 package org.obiba.agate.service;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.obiba.agate.domain.Application;
 import org.springframework.context.ApplicationListener;

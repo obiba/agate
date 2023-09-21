@@ -13,9 +13,9 @@ package org.obiba.agate.service;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.LaxRedirectStrategy;
+
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
@@ -25,7 +25,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.List;
 
 @Component
@@ -44,10 +44,10 @@ public class ReCaptchaService {
 
     // #495 http client that supports redirect on POST
     HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-    HttpClient httpClient = HttpClientBuilder.create()
-        .setRedirectStrategy(new LaxRedirectStrategy())
-        .build();
-    factory.setHttpClient(httpClient);
+//    HttpClient httpClient = HttpClientBuilder.create()
+//        .setRedirectStrategy(new LaxRedirectStrategy())
+//        .build();
+//    factory.setHttpClient(httpClient);
 
     RestTemplate restTemplate = new RestTemplate();
     restTemplate.setRequestFactory(factory);

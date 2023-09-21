@@ -29,9 +29,9 @@ import org.obiba.agate.service.ReCaptchaService;
 import org.obiba.agate.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.core.MultivaluedHashMap;
+import jakarta.ws.rs.core.MultivaluedMap;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.*;

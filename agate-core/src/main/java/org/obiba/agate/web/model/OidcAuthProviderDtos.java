@@ -16,7 +16,7 @@ import org.obiba.oidc.OIDCConfiguration;
 import org.obiba.web.model.OIDCDtos;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import java.util.Map;
 

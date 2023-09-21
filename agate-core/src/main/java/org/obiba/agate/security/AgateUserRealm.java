@@ -12,8 +12,8 @@ package org.obiba.agate.security;
 import java.util.Collection;
 import java.util.Collections;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 
 import com.google.common.base.Strings;
 import org.apache.shiro.authc.AccountException;

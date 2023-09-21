@@ -13,7 +13,7 @@ package org.obiba.agate.domain;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
 import com.google.common.base.Objects;

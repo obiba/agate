@@ -17,8 +17,8 @@ import org.obiba.web.model.AuthDtos;
 import org.obiba.web.model.OIDCDtos;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
-import javax.inject.Inject;
+import jakarta.annotation.Nullable;
+import jakarta.inject.Inject;
 import javax.validation.constraints.NotNull;
 
 @Component

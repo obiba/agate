@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 @Configuration
 public class WebMvcConfiguration extends WebMvcConfigurerAdapter {

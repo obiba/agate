@@ -10,10 +10,10 @@
 
 package org.obiba.agate.web.rest.ticket;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.*;
 
 import io.jsonwebtoken.lang.Strings;
 import org.apache.shiro.SecurityUtils;
@@ -37,7 +37,7 @@ import org.springframework.stereotype.Component;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 /**
  *

@@ -16,26 +16,28 @@ import org.obiba.runtime.Version;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.data.mongodb.core.convert.CustomConversions;
+import org.springframework.data.convert.CustomConversions;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
-@Configuration
-@EnableMongoRepositories("org.obiba.agate.repository")
+import java.util.Arrays;
+import java.util.List;
+
+//@Configuration
+//@EnableMongoRepositories("org.obiba.agate.repository")
 public class MongoDbConfiguration {
-
-  @Bean
-  public CustomConversions customConversions() {
-    return new CustomConversions(
-      Lists.newArrayList(new VersionReadConverter()));
-  }
-
-  public static class VersionReadConverter implements Converter<DBObject, Version> {
-
-    @Override
-    public Version convert(DBObject dbObject) {
-      return new Version((int)dbObject.get("major"), (int)dbObject.get("minor"), (int)dbObject.get("micro"), (String)dbObject.get("qualifier"));
-    }
-  }
+//
+//  @Bean
+//  public CustomConversions customConversions() {
+//    List<VersionReadConverter> customConverters = Arrays.asList(new VersionReadConverter());
+//  }
+//
+//  public static class VersionReadConverter implements Converter<DBObject, Version> {
+//
+//    @Override
+//    public Version convert(DBObject dbObject) {
+//      return new Version((int)dbObject.get("major"), (int)dbObject.get("minor"), (int)dbObject.get("micro"), (String)dbObject.get("qualifier"));
+//    }
+//  }
 
 }
 

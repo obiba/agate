@@ -21,8 +21,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.Profiles;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
-import javax.ws.rs.ApplicationPath;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.ApplicationPath;
 
 @Component
 @ApplicationPath(JerseyConfiguration.WS_ROOT)

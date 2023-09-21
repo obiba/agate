@@ -26,9 +26,9 @@ import org.obiba.shiro.web.filter.AbstractAuthenticationExecutor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Component
 public class AuthenticationExecutorImpl extends AbstractAuthenticationExecutor {

@@ -10,8 +10,8 @@
 
 package org.obiba.agate.web.rest;
 
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.Provider;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.Provider;
 
 import org.obiba.agate.service.InvalidTokenException;
 import org.obiba.jersey.exceptionmapper.AbstractErrorDtoExceptionMapper;
@@ -28,7 +28,7 @@ public class InvalidTokenExceptionMapper extends AbstractErrorDtoExceptionMapper
   }
 
   @Override
-  protected GeneratedMessage.ExtendableMessage<?> getErrorDto(InvalidTokenException e) {
+  protected ErrorDtos.ClientErrorDto getErrorDto(InvalidTokenException e) {
     return ErrorDtos.ClientErrorDto.newBuilder() //
       .setCode(getStatus().getStatusCode()) //
       .setMessageTemplate("server.error.invalid-token") //
