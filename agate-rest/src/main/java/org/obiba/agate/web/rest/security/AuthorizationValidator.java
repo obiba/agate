@@ -23,8 +23,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import jakarta.inject.Inject;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Component
 public class AuthorizationValidator {
