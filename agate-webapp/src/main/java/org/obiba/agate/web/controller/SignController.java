@@ -171,6 +171,7 @@ public class SignController {
             if (!Strings.isNullOrEmpty(logoutRedirect)) {
               oidcLogoutURIBuilder.queryParam("post_logout_redirect_uri", logoutRedirect);
             }
+            oidcLogoutURIBuilder.queryParam("client_id", oidcConfig.getClientId());
             newPostLogoutRedirectUri = oidcLogoutURIBuilder.build().toString();
           }
         } catch (Exception e) {
