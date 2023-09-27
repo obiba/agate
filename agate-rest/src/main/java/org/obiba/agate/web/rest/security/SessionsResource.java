@@ -10,7 +10,7 @@
 package org.obiba.agate.web.rest.security;
 
 import jakarta.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;

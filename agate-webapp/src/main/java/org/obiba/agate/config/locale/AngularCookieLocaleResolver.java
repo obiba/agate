@@ -15,9 +15,9 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.obiba.agate.service.ConfigurationService;
 import org.springframework.context.i18n.LocaleContext;

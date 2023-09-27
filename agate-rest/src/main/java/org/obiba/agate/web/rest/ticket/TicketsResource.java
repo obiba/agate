@@ -39,7 +39,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import jakarta.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
 import java.util.List;

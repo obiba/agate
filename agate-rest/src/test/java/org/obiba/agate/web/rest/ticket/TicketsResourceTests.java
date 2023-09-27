@@ -10,7 +10,7 @@
 
 package org.obiba.agate.web.rest.ticket;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.core.Response;
 
 import org.apache.shiro.SecurityUtils;

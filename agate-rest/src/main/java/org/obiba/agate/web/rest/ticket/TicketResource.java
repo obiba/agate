@@ -11,7 +11,7 @@
 package org.obiba.agate.web.rest.ticket;
 
 import jakarta.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
 

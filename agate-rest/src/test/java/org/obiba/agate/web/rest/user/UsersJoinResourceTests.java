@@ -28,7 +28,7 @@ import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.ReCaptchaService;
 import org.obiba.agate.service.UserService;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.core.MultivaluedHashMap;
 import jakarta.ws.rs.core.MultivaluedMap;
