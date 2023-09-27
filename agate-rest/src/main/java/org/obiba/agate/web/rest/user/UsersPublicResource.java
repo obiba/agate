@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import jakarta.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MultivaluedMap;
@@ -197,7 +197,7 @@ public class UsersPublicResource {
         name = new ObjectId().toString();
       }
     }
-    
+
     if (!reCaptchaService.verify(Strings.isNullOrEmpty(reCaptchaResponse) ? reCaptchaResponse2 : reCaptchaResponse))
       throw new BadRequestException("Invalid reCaptcha response");
 
