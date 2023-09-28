@@ -19,6 +19,8 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.obiba.agate.service.ConfigurationService;
 import org.springframework.context.i18n.LocaleContext;
 import org.springframework.context.i18n.TimeZoneAwareLocaleContext;
@@ -36,6 +38,8 @@ import org.springframework.web.util.WebUtils;
 public class AngularCookieLocaleResolver extends CookieLocaleResolver {
 
   private final ConfigurationService configurationService;
+
+  private static final Log logger = LogFactory.getLog(AngularCookieLocaleResolver.class);
 
   public AngularCookieLocaleResolver(ConfigurationService configurationService) {
     this.configurationService = configurationService;
@@ -74,16 +78,15 @@ public class AngularCookieLocaleResolver extends CookieLocaleResolver {
     };
   }
 
-  @Override
   public void addCookie(HttpServletResponse response, String cookieValue) {
     // Mandatory cookie modification for angular to support the locale switching on the server side.
-    super.addCookie(response, "%22" + cookieValue + "%22");
+    // super.addCookie(response, "%22" + cookieValue + "%22");
   }
 
   private void parseLocaleCookieIfNecessary(HttpServletRequest request) {
     if(request.getAttribute(LOCALE_REQUEST_ATTRIBUTE_NAME) == null) {
       // Retrieve and parse cookie value.
-      Cookie cookie = WebUtils.getCookie(request, getCookieName());
+      Cookie cookie = WebUtils.getCookie(request, CookieLocaleResolver.DEFAULT_COOKIE_NAME);
       Locale locale = null;
       TimeZone timeZone = null;
       if(cookie != null) {
