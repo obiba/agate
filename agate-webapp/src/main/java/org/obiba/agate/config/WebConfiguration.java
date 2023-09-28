@@ -50,6 +50,8 @@ import jakarta.servlet.ServletContext;
 import java.util.Arrays;
 import java.util.Collections;
 
+import javax.net.ssl.SSLParameters;
+
 /**
  * Configuration of web application with Servlet 3.0 APIs.
  */
@@ -121,11 +123,14 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
         super.doStart();
       }
     };
-    jettySsl.setWantClientAuth(true);
-    jettySsl.setNeedClientAuth(false);
+
+    SSLParameters sslParams = new SSLParameters();
+    sslParams.setWantClientAuth(true);
+    sslParams.setNeedClientAuth(false);
+    jettySsl.customize(sslParams);
     jettySsl.addExcludeProtocols("SSL", "SSLv2", "SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.1");
 
-    ServerConnector sslConnector = new ServerConnector(server, jettySsl);
+    ServerConnector sslConnector = new ServerConnector(server);
     sslConnector.setHost(serverAddress);
     sslConnector.setPort(httpsPort);
     sslConnector.setIdleTimeout(MAX_IDLE_TIME);

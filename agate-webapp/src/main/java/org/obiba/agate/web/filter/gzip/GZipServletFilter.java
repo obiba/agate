@@ -14,14 +14,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.zip.GZIPOutputStream;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,7 +112,7 @@ public class GZipServletFilter implements Filter {
    * Checks if the request uri is an include. These cannot be gzipped.
    */
   private boolean isIncluded(HttpServletRequest request) {
-    String uri = (String) request.getAttribute("javax.servlet.include.request_uri");
+    String uri = (String) request.getAttribute("jakarta.servlet.include.request_uri");
     boolean includeRequest = !(uri == null);
 
     if(includeRequest && log.isDebugEnabled()) {

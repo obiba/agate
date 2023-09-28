@@ -16,7 +16,7 @@ import com.google.common.collect.Lists;
 import org.obiba.core.util.StringUtil;
 
 import jakarta.annotation.Nullable;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.text.Normalizer;
 import java.util.List;
 import java.util.Locale;

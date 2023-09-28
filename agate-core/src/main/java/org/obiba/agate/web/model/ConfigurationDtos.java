@@ -11,14 +11,13 @@
 package org.obiba.agate.web.model;
 
 import jakarta.inject.Inject;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.apache.commons.lang.LocaleUtils;
 import org.obiba.agate.domain.AttributeConfiguration;
 import org.obiba.agate.domain.Configuration;
 import org.springframework.stereotype.Component;
 
-import java.util.Locale;
 
 @Component
 class ConfigurationDtos {

@@ -14,12 +14,11 @@ import java.io.Serializable;
 import java.util.List;
 
 import jakarta.annotation.Nullable;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import org.json.JSONException;
 import org.springframework.data.annotation.Id;
 
 /**

@@ -50,7 +50,7 @@ import org.springframework.stereotype.Component;
 
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.security.Key;

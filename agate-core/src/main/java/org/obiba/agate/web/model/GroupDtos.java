@@ -13,7 +13,7 @@ package org.obiba.agate.web.model;
 import org.obiba.agate.domain.Group;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @Component
 @SuppressWarnings("StaticMethodOnlyUsedInOneClass")

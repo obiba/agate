@@ -21,7 +21,7 @@ import java.util.Optional;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 import javax.security.auth.callback.CallbackHandler;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.bouncycastle.openssl.PEMWriter;
 import org.obiba.security.KeyStoreManager;

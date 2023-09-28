@@ -16,7 +16,7 @@ import org.obiba.agate.web.model.Agate.RealmConfigDto;
 import org.springframework.stereotype.Component;
 
 import jakarta.inject.Inject;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

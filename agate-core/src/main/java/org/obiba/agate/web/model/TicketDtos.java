@@ -11,7 +11,7 @@
 package org.obiba.agate.web.model;
 
 import jakarta.inject.Inject;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.obiba.agate.domain.Application;
 import org.obiba.agate.domain.Authorization;

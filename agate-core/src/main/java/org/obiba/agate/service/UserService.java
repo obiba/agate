@@ -48,7 +48,7 @@
 
   import jakarta.annotation.Nullable;
   import jakarta.inject.Inject;
-  import javax.validation.constraints.NotNull;
+  import jakarta.validation.constraints.NotNull;
   import jakarta.ws.rs.BadRequestException;
   import java.io.IOException;
   import java.util.*;

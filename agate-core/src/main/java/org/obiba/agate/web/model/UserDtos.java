@@ -14,7 +14,6 @@ import com.google.common.base.Strings;
 import org.joda.time.DateTime;
 import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.User;
-import org.obiba.agate.security.AgateUserRealm;
 import org.obiba.agate.security.OidcAuthConfigurationProvider;
 import org.obiba.agate.service.GroupService;
 import org.obiba.agate.service.RealmConfigService;
@@ -24,7 +23,7 @@ import org.obiba.web.model.AuthDtos;
 import org.springframework.stereotype.Component;
 
 import jakarta.inject.Inject;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.util.Optional;
 
 @Component

@@ -10,7 +10,6 @@
 
 package org.obiba.agate.service;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -25,7 +24,7 @@ import org.obiba.agate.domain.User;
 import org.springframework.stereotype.Component;
 
 import jakarta.inject.Inject;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;

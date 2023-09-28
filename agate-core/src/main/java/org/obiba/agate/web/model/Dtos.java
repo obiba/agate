@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 
 import jakarta.annotation.Nullable;
 import jakarta.inject.Inject;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @Component
 @SuppressWarnings("OverlyCoupledClass")

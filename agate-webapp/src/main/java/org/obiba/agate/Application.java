@@ -22,7 +22,7 @@ import org.springframework.core.env.SimpleCommandLinePropertySource;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.Arrays;
 

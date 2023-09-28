@@ -12,7 +12,7 @@ package org.obiba.agate.web.model;
 
 import java.util.stream.Collectors;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.obiba.agate.domain.Application;
 import org.springframework.stereotype.Component;
