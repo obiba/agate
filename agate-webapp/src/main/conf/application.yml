@@ -6,7 +6,9 @@ https:
     port: 8444
 
 spring:
-    profiles: prod
+    config:
+        activate:
+            on-profile: prod
     data:
         mongodb:
             uri: mongodb://localhost:27017/agate

@@ -71,14 +71,19 @@
     </dependency>
 
     <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-servlets</artifactId>
+      <groupId>jakarta.xml.bind</groupId>
+      <artifactId>jakarta.xml.bind-api</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>net.logstash.logback</groupId>
-      <artifactId>logstash-logback-encoder</artifactId>
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-runtime</artifactId>
       <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-servlets</artifactId>
     </dependency>
 
     <dependency>
@@ -279,7 +284,7 @@
             <artifactId>spring-boot-maven-plugin</artifactId>
             <configuration>
               <arguments>
-                <argument>--spring.profiles.active=dev</argument>
+                <argument>--spring.config.activate.on-profile=dev</argument>
               </arguments>
             </configuration>
           </plugin>
@@ -312,7 +317,7 @@
             <artifactId>spring-boot-maven-plugin</artifactId>
             <configuration>
               <arguments>
-                <argument>--spring.profiles.active=prod</argument>
+                <argument>--spring.config.activate.on-profile=prod</argument>
               </arguments>
             </configuration>
           </plugin>

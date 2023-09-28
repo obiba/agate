@@ -75,7 +75,7 @@ run-prod:
 
 debug:
 	cd agate-webapp && \
-	${mvn_exec} spring-boot:run -Pdev -Dspring-boot.run.jvmArguments="-Xmx2G -agentlib:jdwp=transport=dt_socket,server=y,address=8001,suspend=n -Dspring.profiles.active=dev -DAGATE_HOME='${agate_home}' -DAGATE_LOG='${agate_log}'"
+	${mvn_exec} spring-boot:run -Pdev -Dspring-boot.run.jvmArguments="-Xmx2G -agentlib:jdwp=transport=dt_socket,server=y,address=8001,suspend=n -Dspring.config.activate.on-profile=dev -DAGATE_HOME='${agate_home}' -DAGATE_LOG='${agate_log}'"
 
 run-python:
 	cd ../agate-python-client/target/agate-python/bin && \

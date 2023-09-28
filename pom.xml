@@ -53,8 +53,8 @@
     <json-smart.version>2.3.1</json-smart.version>
     <jsr305.version>3.0.0</jsr305.version>
     <lang-tag.version>1.4.4</lang-tag.version>
-    <logback.version>1.2.9</logback.version>
-    <logstash-logback.version>6.6</logstash-logback.version>
+    <logback.version>1.4.11</logback.version>
+    <logstash-logback.version>7.4</logstash-logback.version>
     <mariabd.version>3.0.7</mariabd.version>
     <metrics-spring.version>3.0.0</metrics-spring.version>
     <mongodb-driver.version>4.7.2</mongodb-driver.version>
@@ -136,7 +136,7 @@
       <dependency>
         <groupId>org.ehcache</groupId>
         <artifactId>ehcache</artifactId>
-        <version>3.8.1</version>
+        <version>3.10.8</version>
       </dependency>
       <dependency>
         <groupId>org.apache.httpcomponents.client5</groupId>
@@ -324,6 +324,19 @@
         <version>${jersey.version}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>jakarta.xml.bind</groupId>
+        <artifactId>jakarta.xml.bind-api</artifactId>
+        <version>4.0.1</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.glassfish.jaxb</groupId>
+        <artifactId>jaxb-runtime</artifactId>
+        <version>4.0.3</version>
+        <scope>runtime</scope>
       </dependency>
 
       <dependency>
@@ -533,11 +546,6 @@
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-access</artifactId>
         <version>${logback.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>net.logstash.logback</groupId>
-        <artifactId>logstash-logback-encoder</artifactId>
-        <version>${logstash-logback.version}</version>
       </dependency>
 
     </dependencies>
