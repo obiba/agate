@@ -181,11 +181,12 @@ public class UsersPublicResource {
     String reCaptchaResponse = formParams.getFirst("g-recaptcha-response");
     String reCaptchaResponse2 = formParams.getFirst("reCaptchaResponse");
 
-    if (Strings.isNullOrEmpty(email)) throw new BadRequestException("Email cannot be empty");
+    if (email == null || Strings.isNullOrEmpty(email.trim())) throw new BadRequestException("Email cannot be empty");
+    email = email.trim();
 
     if (!new EmailValidator().isValid(email, null)) throw new BadRequestException("Not a valid email address");
 
-    String name = username;
+    String name = username == null ? null : username.trim();
 
     if (Strings.isNullOrEmpty(username)) {
       if (configurationService.getConfiguration().isJoinWithUsername())
