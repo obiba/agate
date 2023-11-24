@@ -132,7 +132,7 @@ class UserDtos {
   @NotNull
   User fromDto(@NotNull Agate.UserDto dto) {
     User.Builder builder = User.newBuilder()
-      .name(dto.getName())
+      .name(dto.getName().trim())
       .realm(dto.getRealm())
       .role(dto.getRole())
       .status(dto.getStatus());
@@ -158,7 +158,7 @@ class UserDtos {
     }
 
     if (dto.hasEmail()) {
-      builder.email(dto.getEmail());
+      builder.email(dto.getEmail().trim());
     }
 
     if (dto.getGroupsCount() > 0) {

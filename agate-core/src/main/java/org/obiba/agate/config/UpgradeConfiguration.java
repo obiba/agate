@@ -10,22 +10,17 @@
 
 package org.obiba.agate.config;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.obiba.agate.upgrade.AgateVersionModifier;
 import org.obiba.agate.upgrade.RuntimeVersionProvider;
 import org.obiba.runtime.upgrade.UpgradeManager;
 import org.obiba.runtime.upgrade.UpgradeStep;
 import org.obiba.runtime.upgrade.support.DefaultUpgradeManager;
 import org.obiba.runtime.upgrade.support.NullVersionNewInstallationDetectionStrategy;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.google.common.collect.Lists;
+import java.util.ArrayList;
+import java.util.List;
 
 @Configuration
 public class UpgradeConfiguration {
@@ -45,10 +40,5 @@ public class UpgradeConfiguration {
     upgradeManager.setNewInstallationDetectionStrategy(newInstallationDetectionStrategy);
 
     return upgradeManager;
-  }
-
-  @Bean(name = "upgradeSteps")
-  public List<UpgradeStep> upgradeSteps(ApplicationContext applicationContext) {
-    return Lists.newArrayList();
   }
 }

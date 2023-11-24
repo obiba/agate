@@ -72,10 +72,10 @@
 
     static final Pattern PWD_PATTERN = Pattern.compile(
         "^(?=.*[0-9])"       // a digit must occur at least once
-        + "(?=.*[a-z])"      // a lower case alphabet must occur at least once
-        + "(?=.*[A-Z])"      // a upper case alphabet must occur at least once
-        + "(?=.*[@#$%^&+=!])" // a special character that must occur at least once
-        + "(?=\\S+$).{" + PWD_MINIMUM_LENGTH + "," + PWD_MAXIMUM_LENGTH + "}$");
+            + "(?=.*[a-z])"      // a lower case alphabet must occur at least once
+            + "(?=.*[A-Z])"      // a upper case alphabet must occur at least once
+            + "(?=.*[@#$%^&+=!])" // a special character that must occur at least once
+            + "(?=\\S+$).{" + PWD_MINIMUM_LENGTH + "," + PWD_MAXIMUM_LENGTH + "}$");
 
     private final UserRepository userRepository;
 
@@ -383,10 +383,6 @@
     public UserCredentials save(@NotNull UserCredentials userCredentials) {
       userCredentialsRepository.save(userCredentials);
       return userCredentials;
-    }
-
-    public User createUser(User user) {
-      return createUser(user, null);
     }
 
     public void updateUserStatus(User user, UserStatus status) {

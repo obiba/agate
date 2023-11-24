@@ -85,7 +85,7 @@ public class UsersResource {
   @POST
   public Response create(Agate.UserCreateFormDto userCreateFormDto) {
     Agate.UserDto userDto = userCreateFormDto.getUser();
-    String username = userDto.getName();
+    String username = userDto.getName().trim();
 
     if (new EmailValidator().isValid(username, null)) throw new BadRequestException("username can not be an email address.");
 
@@ -93,7 +93,7 @@ public class UsersResource {
 
     if(user != null) throw new BadRequestException("User already exists: " + username);
 
-    user = userService.findUserByEmail(userDto.getEmail());
+    user = userService.findUserByEmail(userDto.getEmail().trim());
 
     if(user != null) throw new BadRequestException("Email already in use: " + user.getEmail());
 
