@@ -67,7 +67,7 @@
     <postgres.version>42.5.1</postgres.version>
     <protobuf.version>2.5.0</protobuf.version>
     <protobuf-java-format.version>1.2.1-obiba</protobuf-java-format.version>
-    <shiro.version>1.10.0</shiro.version>
+    <shiro.version>1.12.0</shiro.version>
     <shiro-extras.version>1.1.0</shiro-extras.version>
     <totp.version>1.7.1</totp.version>
 
