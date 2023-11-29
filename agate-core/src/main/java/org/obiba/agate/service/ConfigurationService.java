@@ -122,10 +122,14 @@ public class ConfigurationService {
     String baseURL;
     if (Strings.isNullOrEmpty(host))
       baseURL = getPublicUrl();
-    else if (Strings.isNullOrEmpty(getContextPath()))
-      baseURL = String.format("%s://%s", request.getScheme(), host);
-    else
-      baseURL = String.format("%s://%s%s", request.getScheme(), host, getContextPath());
+    else {
+      // enforce https scheme for non localhost connection
+      String scheme = host.startsWith("localhost:") || host.startsWith("127.0.0.1:") ? request.getScheme() : "https";
+      if (Strings.isNullOrEmpty(getContextPath()))
+        baseURL = String.format("%s://%s", scheme, host);
+      else
+        baseURL = String.format("%s://%s%s", scheme, host, getContextPath());
+    }
     return baseURL;
   }
 
