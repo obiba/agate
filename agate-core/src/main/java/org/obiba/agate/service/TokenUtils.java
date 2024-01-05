@@ -146,7 +146,7 @@ public class TokenUtils {
   public Claims buildClaims(String subject, @NotNull List<String> scopes) {
     User user = userService.findUser(subject);
     Claims claims = Jwts.claims().setSubject(subject).setIssuer(getIssuerID());
-    if (!scopes.isEmpty()) putUserClaims(claims, user, scopes);
+    putUserClaims(claims, user, scopes);
 
     return claims;
   }
