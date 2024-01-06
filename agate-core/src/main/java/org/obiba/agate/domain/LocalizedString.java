@@ -13,11 +13,10 @@ package org.obiba.agate.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import jakarta.annotation.Nonnull;
 import org.obiba.core.util.StringUtil;
-import sun.util.locale.LanguageTag;
 
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
+import jakarta.annotation.Nullable;
 import java.text.Normalizer;
 import java.util.List;
 import java.util.Locale;
@@ -32,9 +31,11 @@ public class LocalizedString extends TreeMap<String, String> {
 
   private static final long serialVersionUID = 5813178087884887246L;
 
+  private static final String UNDETERMINED = "und";
+
   public LocalizedString() {}
 
-  public LocalizedString(@NotNull Locale locale, @NotNull String str) {
+  public LocalizedString(@Nonnull Locale locale, @Nonnull String str) {
     this();
     put(locale, str);
   }
@@ -42,12 +43,12 @@ public class LocalizedString extends TreeMap<String, String> {
   @Override
   public String put(@Nullable String locale, String value) {
     if(Strings.isNullOrEmpty(value)) return null;
-    return super.put(locale == null ? LanguageTag.UNDETERMINED : Locale.forLanguageTag(locale).toLanguageTag(), value);
+    return super.put(locale == null ? UNDETERMINED : Locale.forLanguageTag(locale).toLanguageTag(), value);
   }
 
-  public String put(@NotNull Locale locale, @NotNull String str) {
+  public String put(@Nullable Locale locale, @Nonnull String str) {
     if(Strings.isNullOrEmpty(str)) return null;
-    return super.put(locale == null ? LanguageTag.UNDETERMINED : locale.toLanguageTag(), str);
+    return super.put(locale == null ? UNDETERMINED : locale.toLanguageTag(), str);
   }
 
   /**
@@ -58,23 +59,23 @@ public class LocalizedString extends TreeMap<String, String> {
   @JsonIgnore
   @Nullable
   public String getUndetermined() {
-    return get(LanguageTag.UNDETERMINED);
+    return get(UNDETERMINED);
   }
 
-  public LocalizedString forLocale(@NotNull Locale locale, @NotNull String str) {
+  public LocalizedString forLocale(@Nonnull Locale locale, @Nonnull String str) {
     put(locale.toLanguageTag(), str);
     return this;
   }
 
-  public LocalizedString forLanguageTag(@Nullable String locale, @NotNull String str) {
+  public LocalizedString forLanguageTag(@Nullable String locale, @Nonnull String str) {
     return forLocale(locale == null ? Locale.forLanguageTag("und") : Locale.forLanguageTag(locale), str);
   }
 
-  public LocalizedString forEn(@NotNull String str) {
+  public LocalizedString forEn(@Nonnull String str) {
     return forLocale(Locale.ENGLISH, str);
   }
 
-  public LocalizedString forFr(@NotNull String str) {
+  public LocalizedString forFr(@Nonnull String str) {
     return forLocale(Locale.FRENCH, str);
   }
 
@@ -133,11 +134,11 @@ public class LocalizedString extends TreeMap<String, String> {
   // Static methods
   //
 
-  public static LocalizedString en(@NotNull String str) {
+  public static LocalizedString en(@Nonnull String str) {
     return new LocalizedString(Locale.ENGLISH, str);
   }
 
-  public static LocalizedString fr(@NotNull String str) {
+  public static LocalizedString fr(@Nonnull String str) {
     return new LocalizedString(Locale.FRENCH, str);
   }
 
@@ -154,7 +155,7 @@ public class LocalizedString extends TreeMap<String, String> {
    * @param str
    * @return
    */
-  public static LocalizedString from(@NotNull List<Locale> locales, @NotNull String str) {
+  public static LocalizedString from(@Nonnull List<Locale> locales, @Nonnull String str) {
     LocalizedString string = new LocalizedString();
     locales.stream().forEach(locale -> string.put(locale, str));
     return string;

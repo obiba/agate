@@ -10,14 +10,11 @@
 
 package org.obiba.agate.web.rest;
 
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.ext.Provider;
-
+import jakarta.ws.rs.core.Response.Status;
+import jakarta.ws.rs.ext.Provider;
 import org.obiba.jersey.exceptionmapper.AbstractErrorDtoExceptionMapper;
 import org.obiba.web.model.ErrorDtos;
 import org.springframework.dao.DuplicateKeyException;
-
-import com.google.protobuf.GeneratedMessage;
 
 @Provider
 public class DuplicateKeyExceptionMapper extends AbstractErrorDtoExceptionMapper<DuplicateKeyException> {
@@ -28,7 +25,7 @@ public class DuplicateKeyExceptionMapper extends AbstractErrorDtoExceptionMapper
   }
 
   @Override
-  protected GeneratedMessage.ExtendableMessage<?> getErrorDto(DuplicateKeyException e) {
+  protected ErrorDtos.ClientErrorDto getErrorDto(DuplicateKeyException e) {
     return ErrorDtos.ClientErrorDto.newBuilder() //
         .setCode(getStatus().getStatusCode()) //
         .setMessageTemplate("server.error.duplicate-key") //

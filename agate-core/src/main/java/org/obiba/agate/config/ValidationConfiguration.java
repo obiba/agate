@@ -10,7 +10,7 @@
 
 package org.obiba.agate.config;
 
-import javax.validation.Validator;
+import jakarta.validation.Validator;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

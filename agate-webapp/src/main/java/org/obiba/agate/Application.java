@@ -10,9 +10,11 @@
 
 package org.obiba.agate;
 
+import jakarta.annotation.Nonnull;
 import org.obiba.agate.config.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,14 +22,11 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.SimpleCommandLinePropertySource;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-import java.io.IOException;
 import java.util.Arrays;
 
 @SpringBootApplication(exclude = { SecurityAutoConfiguration.class }, scanBasePackages = "org.obiba")
-public class Application {
+public class Application implements InitializingBean {
 
   private static final Logger log = LoggerFactory.getLogger(Application.class);
 
@@ -40,8 +39,8 @@ public class Application {
    * Spring profiles can be configured with a program arguments --spring.profiles.active=your-active-profile
    * </p>
    */
-  @PostConstruct
-  public void initApplication() throws IOException {
+  @Override
+  public void afterPropertiesSet() {
     if(env.getActiveProfiles().length == 0) {
       log.warn("No Spring profile configured, running with default configuration");
     } else {
@@ -71,7 +70,7 @@ public class Application {
     app.run(args);
   }
 
-  private static void checkSystemProperty(@NotNull String... properties) {
+  private static void checkSystemProperty(@Nonnull String... properties) {
     for(String property : properties) {
       if(System.getProperty(property) == null) {
         throw new IllegalStateException("System property \"" + property + "\" must be defined.");

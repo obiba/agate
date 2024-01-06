@@ -10,7 +10,6 @@
 
 package org.obiba.agate.service;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -18,6 +17,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
+import jakarta.annotation.Nonnull;
 import org.joda.time.DateTime;
 import org.obiba.agate.domain.Authorization;
 import org.obiba.agate.domain.Ticket;
@@ -25,7 +25,6 @@ import org.obiba.agate.domain.User;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -74,11 +73,11 @@ public class TokenUtils {
    * @param ticket
    * @return
    */
-  public String makeAccessToken(@NotNull Ticket ticket) {
+  public String makeAccessToken(@Nonnull Ticket ticket) {
     return makeAccessToken(ticket, null);
   }
 
-  public String makeAccessToken(@NotNull Ticket ticket, String clientId) {
+  public String makeAccessToken(@Nonnull Ticket ticket, String clientId) {
     User user = userService.findUser(ticket.getUsername());
 
     DateTime expires = ticketService.getExpirationDate(ticket);
@@ -111,7 +110,7 @@ public class TokenUtils {
    * @param token
    * @param application Application name requesting validation
    */
-  public void validateAccessToken(@NotNull String token, @NotNull String application) {
+  public void validateAccessToken(@Nonnull String token, @Nonnull String application) {
     try {
       Claims claims = Jwts.parser().setSigningKey(configurationService.getConfiguration().getSecretKey().getBytes())
         .parseClaimsJws(token).getBody();
@@ -130,7 +129,7 @@ public class TokenUtils {
    * @param authorization
    * @return
    */
-  public String makeIDToken(@NotNull Authorization authorization, @NotNull List<String> scopes) {
+  public String makeIDToken(@Nonnull Authorization authorization, @Nonnull List<String> scopes) {
     if (!authorization.hasScope(OPENID_SCOPE)) return "";
 
     DateTime expires = authorizationService.getExpirationDate(authorization);
@@ -143,7 +142,7 @@ public class TokenUtils {
       .signWith(SignatureAlgorithm.HS256, configurationService.getConfiguration().getSecretKey().getBytes()).compact();
   }
 
-  public Claims buildClaims(String subject, @NotNull List<String> scopes) {
+  public Claims buildClaims(String subject, @Nonnull List<String> scopes) {
     User user = userService.findUser(subject);
     Claims claims = Jwts.claims().setSubject(subject).setIssuer(getIssuerID());
     putUserClaims(claims, user, scopes);

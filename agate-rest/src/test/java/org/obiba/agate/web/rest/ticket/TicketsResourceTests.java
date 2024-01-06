@@ -10,8 +10,8 @@
 
 package org.obiba.agate.web.rest.ticket;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.core.Response;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.PrincipalCollection;
@@ -32,10 +32,10 @@ import org.obiba.agate.web.rest.security.AuthorizationValidator;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import static org.easymock.EasyMock.anyObject;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 

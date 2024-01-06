@@ -10,19 +10,18 @@
 
 package org.obiba.agate.web.model;
 
-import java.util.stream.Collectors;
-
-import javax.validation.constraints.NotNull;
-
+import jakarta.annotation.Nonnull;
 import org.obiba.agate.domain.Application;
 import org.springframework.stereotype.Component;
+
+import java.util.stream.Collectors;
 
 @Component
 @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
 class ApplicationDtos {
 
-  @NotNull
-  Agate.ApplicationDto asDto(@NotNull Application application, boolean summary) {
+  @Nonnull
+  Agate.ApplicationDto asDto(@Nonnull Application application, boolean summary) {
     Agate.ApplicationDto.Builder builder = Agate.ApplicationDto.newBuilder();
     builder.setId(application.getId()) //
       .setName(application.getName()) //
@@ -39,12 +38,12 @@ class ApplicationDtos {
     return builder.build();
   }
 
-  private Agate.ApplicationDto.ScopeDto asDto(@NotNull Application.Scope scope) {
+  private Agate.ApplicationDto.ScopeDto asDto(@Nonnull Application.Scope scope) {
     return Agate.ApplicationDto.ScopeDto.newBuilder().setName(scope.getName()).setDescription(scope.getDescription()).build();
   }
 
-  @NotNull
-  Application fromDto(@NotNull Agate.ApplicationDto dto) {
+  @Nonnull
+  Application fromDto(@Nonnull Agate.ApplicationDto dto) {
     Application application = new Application(dto.getName());
 
     application.setDescription(dto.getDescription());
@@ -57,7 +56,7 @@ class ApplicationDtos {
     return application;
   }
 
-  private Application.Scope fromDto(@NotNull Agate.ApplicationDto.ScopeDto dto) {
+  private Application.Scope fromDto(@Nonnull Agate.ApplicationDto.ScopeDto dto) {
     return new Application.Scope(dto.getName(), dto.getDescription());
   }
 }

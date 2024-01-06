@@ -2,22 +2,15 @@ package org.obiba.agate.domain;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
-import java.util.HashMap;
-import java.util.Map;
 import org.obiba.mongodb.domain.AbstractAuditableDocument;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.validation.constraints.NotNull;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Document
 public class RealmConfig extends AbstractAuditableDocument {
 
-  @NotNull
   @Indexed(unique = true)
   private String name;
 

@@ -10,14 +10,10 @@
 
 package org.obiba.agate.domain;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
-
 import com.google.common.base.CaseFormat;
+import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.hibernate.validator.constraints.Email;
 import org.joda.time.DateTime;
 import org.obiba.agate.security.Roles;
@@ -25,10 +21,10 @@ import org.obiba.mongodb.domain.AbstractAuditableDocument;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import jakarta.annotation.Nullable;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A user, for any realm.
@@ -38,7 +34,6 @@ public class User extends AbstractAuditableDocument {
 
   private static final long serialVersionUID = 688200108221675323L;
 
-  @NotNull
   @Indexed(unique = true)
   private String name;
 

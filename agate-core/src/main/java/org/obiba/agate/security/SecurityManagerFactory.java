@@ -11,12 +11,6 @@ package org.obiba.agate.security;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
 import net.sf.ehcache.CacheManager;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
@@ -40,15 +34,21 @@ import org.obiba.agate.service.UserService;
 import org.obiba.shiro.SessionStorageEvaluator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.data.domain.Persistable;
 import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 @DependsOn("cacheConfiguration")
-public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManager> {
+public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManager>, DisposableBean {
 
   private static final Logger log = LoggerFactory.getLogger(SecurityManagerFactory.class);
 
@@ -104,8 +104,8 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
     return true;
   }
 
-  @PreDestroy
-  public void destroySecurityManager() {
+  @Override
+  public void destroy() throws Exception {
     log.debug("Shutdown SecurityManager");
     // Destroy the security manager.
     SecurityUtils.setSecurityManager(null);

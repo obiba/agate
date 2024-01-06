@@ -10,6 +10,7 @@
 
 package org.obiba.agate.web.rest.config;
 
+import jakarta.ws.rs.ApplicationPath;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.server.spring.scope.RequestContextFilter;
@@ -22,7 +23,6 @@ import org.springframework.core.env.Profiles;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import javax.ws.rs.ApplicationPath;
 
 @Component
 @ApplicationPath(JerseyConfiguration.WS_ROOT)

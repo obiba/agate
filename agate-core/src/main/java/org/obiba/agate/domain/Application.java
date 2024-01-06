@@ -10,27 +10,23 @@
 
 package org.obiba.agate.domain;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
-
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import jakarta.annotation.Nonnull;
 import org.obiba.mongodb.domain.AbstractAuditableDocument;
 import org.springframework.data.mongodb.core.index.Indexed;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Objects;
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
+import jakarta.annotation.Nullable;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class Application extends AbstractAuditableDocument {
 
   private static final long serialVersionUID = 4710884170897922907L;
 
-  @NotNull
+  @Nonnull
   @Indexed(unique = true)
   private String name;
 
@@ -136,7 +132,7 @@ public class Application extends AbstractAuditableDocument {
    * @param name
    * @param description
    */
-  public void addScope(@NotNull String name, String description) {
+  public void addScope(@Nonnull String name, String description) {
     Scope scope = getScope(name);
     if(scope == null) {
       if(scopes == null) scopes = Lists.newArrayList();

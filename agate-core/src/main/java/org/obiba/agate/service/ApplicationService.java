@@ -10,6 +10,7 @@
 
 package org.obiba.agate.service;
 
+import jakarta.annotation.Nonnull;
 import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.obiba.agate.domain.Application;
 import org.obiba.agate.domain.Group;
@@ -24,7 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,7 +49,7 @@ public class ApplicationService {
   @Inject
   private Environment env;
 
-  public Application getApplication(@NotNull String id) throws NoSuchApplicationException {
+  public Application getApplication(@Nonnull String id) throws NoSuchApplicationException {
     Optional<Application> application = applicationRepository.findById(id);
 
     if(!application.isPresent()) throw NoSuchApplicationException.withId(id);
@@ -57,7 +57,7 @@ public class ApplicationService {
     return application.get();
   }
 
-  public Application find(@NotNull String id) {
+  public Application find(@Nonnull String id) {
     return applicationRepository.findById(id).orElse(null);
   }
 
@@ -65,12 +65,12 @@ public class ApplicationService {
     return applicationRepository.findAll();
   }
 
-  public Application findByName(@NotNull String name) {
+  public Application findByName(@Nonnull String name) {
     List<Application> applications = applicationRepository.findByName(name);
     return applications == null || applications.isEmpty() ? null : applications.get(0);
   }
 
-  public Application findByIdOrName(@NotNull String idOrName) {
+  public Application findByIdOrName(@Nonnull String idOrName) {
     Application application = find(idOrName);
     if (application == null) {
       List<Application> applications = applicationRepository.findByName(idOrName);
@@ -87,7 +87,7 @@ public class ApplicationService {
     return applications != null && !applications.isEmpty();
   }
 
-  public void save(@NotNull Application application) {
+  public void save(@Nonnull Application application) {
     if(application.isNew()) {
       generateId(application);
       applicationRepository.insert(application);
@@ -95,7 +95,7 @@ public class ApplicationService {
       applicationRepository.save(application);
   }
 
-  public void delete(@NotNull String id) {
+  public void delete(@Nonnull String id) {
     Application application = getApplication(id);
     List<User> users = userRepository.findByApplications(application.getId());
     List<Group> groups = groupRepository.findByApplications(application.getId());
@@ -115,7 +115,7 @@ public class ApplicationService {
   // Private methods
   //
 
-  private void generateId(@NotNull Application application) {
+  private void generateId(@Nonnull Application application) {
     application.setNameAsId();
     String id = application.getId();
     Application found = find(id);

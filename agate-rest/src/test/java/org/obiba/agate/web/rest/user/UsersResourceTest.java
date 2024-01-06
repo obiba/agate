@@ -22,8 +22,8 @@ import org.obiba.agate.domain.UserStatus;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.UserService;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 

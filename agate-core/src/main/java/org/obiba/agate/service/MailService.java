@@ -10,14 +10,10 @@
 
 package org.obiba.agate.service;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-
+import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -25,13 +21,16 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import com.google.common.base.Strings;
+import javax.inject.Inject;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 
 /**
  * Service for sending e-mails. We use the @Async annotation to send e-mails asynchronously.
  */
 @Service
-public class MailService {
+public class MailService implements InitializingBean {
 
   private static final Logger log = LoggerFactory.getLogger(MailService.class);
 
@@ -46,8 +45,8 @@ public class MailService {
    */
   private String from;
 
-  @PostConstruct
-  public void init() {
+  @Override
+  public void afterPropertiesSet() {
     from = env.getProperty("spring.mail.from");
     if(Strings.isNullOrEmpty(from)) {
       from = "agate@example.org";
@@ -77,10 +76,8 @@ public class MailService {
       log.trace(text);
       javaMailSender.send(message);
       log.debug("Sent e-mail to User '{}'!", to);
-    } catch(MailException me) {
+    } catch(MailException | MessagingException me) {
       log.warn("E-mail could not be sent to user '{}', exception is: {}", to, me.getMessage());
-    } catch(MessagingException e) {
-      log.warn("E-mail could not be sent to user '{}', exception is: {}", to, e.getMessage());
     }
   }
 }

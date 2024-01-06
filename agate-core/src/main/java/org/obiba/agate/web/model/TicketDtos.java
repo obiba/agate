@@ -10,9 +10,8 @@
 
 package org.obiba.agate.web.model;
 
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-
+import com.google.common.base.Strings;
+import jakarta.annotation.Nonnull;
 import org.obiba.agate.domain.Application;
 import org.obiba.agate.domain.Authorization;
 import org.obiba.agate.domain.Ticket;
@@ -21,7 +20,7 @@ import org.obiba.agate.service.AuthorizationService;
 import org.obiba.agate.service.TicketService;
 import org.springframework.stereotype.Component;
 
-import com.google.common.base.Strings;
+import javax.inject.Inject;
 
 @Component
 @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
@@ -36,8 +35,8 @@ class TicketDtos {
   @Inject
   private ApplicationService applicationService;
 
-  @NotNull
-  Agate.TicketDto asDto(@NotNull Ticket ticket) {
+  @Nonnull
+  Agate.TicketDto asDto(@Nonnull Ticket ticket) {
     Agate.TicketDto.Builder builder = Agate.TicketDto.newBuilder();
     builder.setId(ticket.getId()) //
       .setUsername(ticket.getUsername()) //
@@ -63,8 +62,8 @@ class TicketDtos {
     return builder.build();
   }
 
-  @NotNull
-  Agate.AuthorizationDto asDto(@NotNull Authorization authorization) {
+  @Nonnull
+  Agate.AuthorizationDto asDto(@Nonnull Authorization authorization) {
     Agate.AuthorizationDto.Builder builder = Agate.AuthorizationDto.newBuilder();
 
     Application application = applicationService.find(authorization.getApplication());

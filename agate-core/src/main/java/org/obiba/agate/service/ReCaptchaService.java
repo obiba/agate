@@ -13,9 +13,9 @@ package org.obiba.agate.service;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.LaxRedirectStrategy;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.impl.DefaultRedirectStrategy;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
@@ -45,7 +45,7 @@ public class ReCaptchaService {
     // #495 http client that supports redirect on POST
     HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
     HttpClient httpClient = HttpClientBuilder.create()
-        .setRedirectStrategy(new LaxRedirectStrategy())
+        .setRedirectStrategy(new DefaultRedirectStrategy())
         .build();
     factory.setHttpClient(httpClient);
 
@@ -55,7 +55,7 @@ public class ReCaptchaService {
     ReCaptchaVerifyResponse recaptchaVerifyResponse = restTemplate
         .postForObject(env.getProperty("recaptcha.verifyUrl"), map, ReCaptchaVerifyResponse.class);
 
-    if (!recaptchaVerifyResponse.isSuccess() && (recaptchaVerifyResponse.getErrorCodes().contains("invalid-input-secret") ||
+    if (recaptchaVerifyResponse == null || !recaptchaVerifyResponse.isSuccess() && (recaptchaVerifyResponse.getErrorCodes().contains("invalid-input-secret") ||
         recaptchaVerifyResponse.getErrorCodes().contains("missing-input-secret"))) {
       log.error("Error verifying recaptcha: " + reCaptchaResponse);
       throw new RuntimeException("Error verifying recaptcha.");

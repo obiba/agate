@@ -18,6 +18,8 @@
   import com.google.common.eventbus.Subscribe;
   import freemarker.template.Configuration;
   import freemarker.template.Template;
+  import jakarta.annotation.Nonnull;
+  import jakarta.ws.rs.BadRequestException;
   import org.apache.commons.lang.LocaleUtils;
   import org.apache.shiro.SecurityUtils;
   import org.apache.shiro.authc.AuthenticationInfo;
@@ -46,10 +48,8 @@
   import org.springframework.transaction.annotation.Transactional;
   import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
-  import javax.annotation.Nullable;
+  import jakarta.annotation.Nullable;
   import javax.inject.Inject;
-  import javax.validation.constraints.NotNull;
-  import javax.ws.rs.BadRequestException;
   import java.io.IOException;
   import java.util.*;
   import java.util.function.Function;
@@ -144,7 +144,7 @@
      * @param group       any group if null or empty
      * @return
      */
-    public List<User> findActiveUsersByApplicationAndGroup(@NotNull String application, @Nullable String group) {
+    public List<User> findActiveUsersByApplicationAndGroup(@Nonnull String application, @Nullable String group) {
       List<String> groupNames = groupService.findByApplication(application).stream() //
           .map(Group::getName) //
           .collect(Collectors.toList());
@@ -156,11 +156,11 @@
           .collect(Collectors.toList());
     }
 
-    public List<User> findActiveUserByApplication(@NotNull String username, @NotNull String application) {
+    public List<User> findActiveUserByApplication(@Nonnull String username, @Nonnull String application) {
       return findActiveUserByApplicationAndGroup(username, application, null);
     }
 
-    public List<User> findActiveUserByApplicationAndGroup(@NotNull String username, @NotNull String application,
+    public List<User> findActiveUserByApplicationAndGroup(@Nonnull String username, @Nonnull String application,
                                                           @Nullable String group) {
       List<String> groupNames = groupService.findByApplication(application).stream() //
           .map(Group::getName) //
@@ -179,7 +179,7 @@
      * @param application
      * @return
      */
-    public List<User> findActiveUsersByApplication(@NotNull String application) {
+    public List<User> findActiveUsersByApplication(@Nonnull String application) {
       return findActiveUsersByApplicationAndGroup(application, null);
     }
 
@@ -190,32 +190,32 @@
      * @return null if not found
      */
     @Nullable
-    public User findUser(@NotNull String username) {
+    public User findUser(@Nonnull String username) {
       List<User> users = userRepository.findByName(username);
       return users == null || users.isEmpty() ? null : users.get(0);
     }
 
     @Nullable
-    public User findActiveUser(@NotNull String username) {
+    public User findActiveUser(@Nonnull String username) {
       List<User> users = userRepository.findByNameAndStatus(username, UserStatus.ACTIVE);
       return users == null || users.isEmpty() ? null : users.get(0);
     }
 
     @Nullable
-    public User findUserByEmail(@NotNull String email) {
+    public User findUserByEmail(@Nonnull String email) {
       List<User> users = userRepository.findByEmail(email);
       return users == null || users.isEmpty() ? null : users.get(0);
     }
 
     @Nullable
-    public User findActiveUserByEmail(@NotNull String email) {
+    public User findActiveUserByEmail(@Nonnull String email) {
       List<User> users = userRepository.findByEmailAndStatus(email, UserStatus.ACTIVE);
       return users == null || users.isEmpty() ? null : users.get(0);
     }
 
     public
     @Nullable
-    UserCredentials findUserCredentials(@NotNull String username) {
+    UserCredentials findUserCredentials(@Nonnull String username) {
       List<UserCredentials> users = userCredentialsRepository.findByName(username);
       return users == null || users.isEmpty() ? null : users.get(0);
     }
@@ -233,7 +233,7 @@
       log.debug("Changed information for User: {}", currentUser);
     }
 
-    public void updateUserPassword(@NotNull User user, @NotNull String password) {
+    public void updateUserPassword(@Nonnull User user, @Nonnull String password) {
       if (user == null) throw new BadRequestException("Invalid User");
       if (Strings.isNullOrEmpty(password)) throw new BadRequestException("User password cannot be empty");
       if (!user.getRealm().equals(AgateRealm.AGATE_USER_REALM.getName()))
@@ -257,7 +257,7 @@
       save(userCredentials);
     }
 
-    public User createUser(@NotNull User user, @Nullable String password) {
+    public User createUser(@Nonnull User user, @Nullable String password) {
       if (Strings.isNullOrEmpty(password)) {
         if (user.getRealm() == null) user.setRealm(AgateRealm.AGATE_USER_REALM.getName());
         else {
@@ -296,7 +296,7 @@
      * @param user
      * @return
      */
-    public User save(@NotNull User user) {
+    public User save(@Nonnull User user) {
       User saved = user;
       UserStatus prevStatus = null;
 
@@ -380,7 +380,7 @@
       return null;
     }
 
-    public UserCredentials save(@NotNull UserCredentials userCredentials) {
+    public UserCredentials save(@Nonnull UserCredentials userCredentials) {
       userCredentialsRepository.save(userCredentials);
       return userCredentials;
     }
@@ -390,7 +390,7 @@
       save(user);
     }
 
-    public void confirmUser(@NotNull User user, String password) {
+    public void confirmUser(@Nonnull User user, String password) {
       UserCredentials userCredentials = findUserCredentials(user.getName());
 
       if (userCredentials == null) {
@@ -407,7 +407,7 @@
       save(user);
     }
 
-    public void updateUserLastLogin(@NotNull String username) {
+    public void updateUserLastLogin(@Nonnull String username) {
       User user = findUser(username);
 
       if (user != null) {
@@ -497,7 +497,7 @@
      *
      * @param id
      */
-    public void delete(@NotNull String id) {
+    public void delete(@Nonnull String id) {
       Optional<User> toDelete = userRepository.findById(id);
       toDelete.ifPresent(this::delete);
     }
@@ -507,7 +507,7 @@
      *
      * @param user
      */
-    public void delete(@NotNull User user) {
+    public void delete(@Nonnull User user) {
       UserCredentials userCredentials = findUserCredentials(user.getName());
       if (userCredentials != null) userCredentialsRepository.delete(userCredentials);
       userRepository.delete(user);

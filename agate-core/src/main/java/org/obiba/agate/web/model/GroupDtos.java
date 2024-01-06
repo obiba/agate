@@ -10,17 +10,16 @@
 
 package org.obiba.agate.web.model;
 
+import jakarta.annotation.Nonnull;
 import org.obiba.agate.domain.Group;
 import org.springframework.stereotype.Component;
-
-import javax.validation.constraints.NotNull;
 
 @Component
 @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
 class GroupDtos {
 
-  @NotNull
-  Agate.GroupDto.Builder asBuilderDto(@NotNull Group group) {
+  @Nonnull
+  Agate.GroupDto.Builder asBuilderDto(@Nonnull Group group) {
     Agate.GroupDto.Builder builder = Agate.GroupDto.newBuilder();
     builder.setId(group.getId()) //
         .setName(group.getName()) //
@@ -33,8 +32,8 @@ class GroupDtos {
     return builder;
   }
 
-  @NotNull
-  Group fromDto(@NotNull Agate.GroupDto dto) {
+  @Nonnull
+  Group fromDto(@Nonnull Agate.GroupDto dto) {
     Group group = new Group(dto.getName());
 
     if(dto.hasDescription()) group.setDescription(dto.getDescription());

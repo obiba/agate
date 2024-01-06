@@ -1,14 +1,9 @@
 package org.obiba.agate.web.model;
 
 import com.google.common.base.Strings;
+import jakarta.annotation.Nonnull;
 import org.json.JSONException;
-import org.obiba.agate.domain.ActiveDirectoryRealmConfig;
-import org.obiba.agate.domain.AgateRealm;
-import org.obiba.agate.domain.JdbcRealmConfig;
-import org.obiba.agate.domain.LdapRealmConfig;
-import org.obiba.agate.domain.OidcRealmConfig;
-import org.obiba.agate.domain.RealmConfig;
-import org.obiba.agate.domain.RealmStatus;
+import org.obiba.agate.domain.*;
 import org.obiba.agate.repository.UserRepository;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.support.UserInfoFieldsComparator;
@@ -16,7 +11,6 @@ import org.obiba.agate.web.model.Agate.RealmConfigDto;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -35,7 +29,7 @@ public class RealmConfigDtos {
     this.userRepository = userRepository;
   }
 
-  @NotNull
+  @Nonnull
   RealmConfigDto.Builder asDtoBuilder(RealmConfig config) {
     RealmConfigDto.Builder builder = RealmConfigDto.newBuilder()
       .setId(config.getId())
@@ -69,7 +63,7 @@ public class RealmConfigDtos {
     return builder;
   }
 
-  @NotNull
+  @Nonnull
   RealmConfig fromDto(RealmConfigDto dto) {
     RealmConfig.Builder builder = RealmConfig.newBuilder();
     if (dto.hasId()) builder.id(dto.getId());
@@ -107,7 +101,7 @@ public class RealmConfigDtos {
     return builder.build();
   }
 
-  @NotNull
+  @Nonnull
   Agate.RealmConfigSummaryDto asSummaryDto(RealmConfig config) {
     Agate.RealmConfigSummaryDto.Builder builder = Agate.RealmConfigSummaryDto.newBuilder()
       .setId(config.getId())

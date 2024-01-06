@@ -14,17 +14,16 @@ import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import io.jsonwebtoken.Claims;
-import org.apache.oltu.oauth2.as.issuer.MD5Generator;
-import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
-import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
-import org.apache.oltu.oauth2.as.request.OAuthAuthzRequest;
-import org.apache.oltu.oauth2.as.request.OAuthTokenRequest;
-import org.apache.oltu.oauth2.as.response.OAuthASResponse;
-import org.apache.oltu.oauth2.common.OAuth;
-import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
-import org.apache.oltu.oauth2.common.message.OAuthResponse;
-import org.apache.oltu.oauth2.common.message.types.GrantType;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.annotation.RequiresRoles;
@@ -37,23 +36,24 @@ import org.obiba.agate.domain.Authorization;
 import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.service.*;
+import org.obiba.agate.web.oauth2.as.issuer.MD5Generator;
+import org.obiba.agate.web.oauth2.as.issuer.OAuthIssuer;
+import org.obiba.agate.web.oauth2.as.issuer.OAuthIssuerImpl;
+import org.obiba.agate.web.oauth2.as.request.OAuthAuthzRequest;
+import org.obiba.agate.web.oauth2.as.request.OAuthTokenRequest;
+import org.obiba.agate.web.oauth2.as.response.OAuthASResponse;
+import org.obiba.agate.web.oauth2.common.OAuth;
+import org.obiba.agate.web.oauth2.common.exception.OAuthProblemException;
+import org.obiba.agate.web.oauth2.common.exception.OAuthSystemException;
+import org.obiba.agate.web.oauth2.common.message.OAuthResponse;
+import org.obiba.agate.web.oauth2.common.message.types.GrantType;
 import org.obiba.agate.web.rest.security.AuthorizationValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -376,7 +376,7 @@ public class OAuthResource {
     return getAccessResponse(ticket, null, clientId);
   }
 
-  private Response getAccessResponse(@NotNull Ticket ticket, @Nullable Authorization authorization, String clientId) throws OAuthSystemException {
+  private Response getAccessResponse(@Nonnull Ticket ticket, @Nullable Authorization authorization, String clientId) throws OAuthSystemException {
     String token = tokenUtils.makeAccessToken(ticket, clientId);
     long expiresIn = ticketService.getExpirationDate(ticket).getMillis() - DateTime.now().getMillis();
 

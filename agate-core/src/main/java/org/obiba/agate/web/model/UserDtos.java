@@ -11,10 +11,10 @@
 package org.obiba.agate.web.model;
 
 import com.google.common.base.Strings;
+import jakarta.annotation.Nonnull;
 import org.joda.time.DateTime;
 import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.User;
-import org.obiba.agate.security.AgateUserRealm;
 import org.obiba.agate.security.OidcAuthConfigurationProvider;
 import org.obiba.agate.service.GroupService;
 import org.obiba.agate.service.RealmConfigService;
@@ -24,7 +24,6 @@ import org.obiba.web.model.AuthDtos;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 @Component
@@ -44,8 +43,8 @@ class UserDtos {
     this.oidcAuthConfigurationProvider = oidcAuthConfigurationProvider;
   }
 
-  @NotNull
-  Agate.UserDto asDto(@NotNull User user) {
+  @Nonnull
+  Agate.UserDto asDto(@Nonnull User user) {
     Agate.UserDto.Builder builder = Agate.UserDto.newBuilder();
     builder.setId(user.getId())
       .setName(user.getName())
@@ -91,7 +90,7 @@ class UserDtos {
     return builder.build();
   }
 
-  @NotNull
+  @Nonnull
   Agate.UserSummaryDto asSummaryDto(User user) {
     Agate.UserSummaryDto.Builder builder =
       Agate.UserSummaryDto.newBuilder()
@@ -105,7 +104,7 @@ class UserDtos {
     return builder.build();
   }
 
-  AuthDtos.SubjectDto asDto(@NotNull User user, boolean withAttributes) {
+  AuthDtos.SubjectDto asDto(@Nonnull User user, boolean withAttributes) {
     AuthDtos.SubjectDto.Builder builder = AuthDtos.SubjectDto.newBuilder().setUsername(user.getName());
     if(!user.getGroups().isEmpty()) builder.addAllGroups(user.getGroups());
 
@@ -129,8 +128,8 @@ class UserDtos {
     return builder.build();
   }
 
-  @NotNull
-  User fromDto(@NotNull Agate.UserDto dto) {
+  @Nonnull
+  User fromDto(@Nonnull Agate.UserDto dto) {
     User.Builder builder = User.newBuilder()
       .name(dto.getName().trim())
       .realm(dto.getRealm())

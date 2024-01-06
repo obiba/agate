@@ -49,8 +49,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.security.Key;

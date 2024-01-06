@@ -30,9 +30,9 @@ import org.obiba.agate.service.TicketService;
 import org.obiba.agate.service.TokenUtils;
 import org.obiba.agate.service.UserService;
 import org.obiba.shiro.authc.TicketAuthenticationToken;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.Collection;
 import java.util.List;
@@ -43,7 +43,7 @@ import java.util.Optional;
  * Realm for users defined in Agate's database accessing using an OAuth2 token (ticket).
  */
 @Component
-public class AgateTokenRealm extends AuthorizingRealm {
+public class AgateTokenRealm extends AuthorizingRealm implements InitializingBean {
   @Inject
   private UserService userService;
 
@@ -53,8 +53,8 @@ public class AgateTokenRealm extends AuthorizingRealm {
   @Inject
   private TokenUtils tokenUtils;
 
-  @PostConstruct
-  public void postConstruct() {
+  @Override
+  public void afterPropertiesSet() throws Exception {
     setCacheManager(new MemoryConstrainedCacheManager());
     setCredentialsMatcher(new AllowAllCredentialsMatcher());
   }

@@ -10,16 +10,12 @@
 
 package org.obiba.agate.service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.ForbiddenException;
-
 import com.google.common.base.Strings;
+import com.google.common.eventbus.Subscribe;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureException;
+import jakarta.annotation.Nonnull;
 import org.joda.time.DateTime;
 import org.obiba.agate.domain.Authorization;
 import org.obiba.agate.domain.Ticket;
@@ -32,11 +28,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.google.common.eventbus.Subscribe;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureException;
+import javax.inject.Inject;
+import jakarta.validation.Valid;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TicketService {
@@ -124,8 +120,8 @@ public class TicketService {
    * @return
    * @throws NoSuchTicketException
    */
-  @NotNull
-  public Ticket getTicket(@NotNull String idOrToken) throws NoSuchTicketException {
+  @Nonnull
+  public Ticket getTicket(@Nonnull String idOrToken) throws NoSuchTicketException {
     if(isToken(idOrToken)) return getTicketByToken(idOrToken);
 
     Optional<Ticket> ticket = ticketRepository.findById(idOrToken);
@@ -139,7 +135,7 @@ public class TicketService {
    * @param token
    * @return null if not found
    */
-  public Ticket findByToken(@NotNull String token) {
+  public Ticket findByToken(@Nonnull String token) {
     try {
       Claims claims = Jwts.parser().setSigningKey(configurationService.getConfiguration().getSecretKey().getBytes())
         .parseClaimsJws(token).getBody();
@@ -155,7 +151,7 @@ public class TicketService {
    * @param username
    * @return
    */
-  public List<Ticket> findByUsername(@NotNull String username) {
+  public List<Ticket> findByUsername(@Nonnull String username) {
     return ticketRepository.findByUsername(username);
   }
 
@@ -185,7 +181,7 @@ public class TicketService {
    *
    * @param ticket
    */
-  public void save(@NotNull @Valid Ticket ticket) {
+  public void save(@Nonnull @Valid Ticket ticket) {
     ticketRepository.save(ticket);
   }
 
@@ -194,7 +190,7 @@ public class TicketService {
    *
    * @param idOrToken
    */
-  public void delete(@NotNull String idOrToken) {
+  public void delete(@Nonnull String idOrToken) {
     if(isToken(idOrToken)) {
       Ticket ticket = findByToken(idOrToken);
       if(ticket != null) deleteById(ticket.getId());
@@ -258,7 +254,7 @@ public class TicketService {
    * @return
    * @throws NoSuchTicketException
    */
-  private Ticket getTicketByToken(@NotNull String token) {
+  private Ticket getTicketByToken(@Nonnull String token) {
     Ticket ticket = findByToken(token);
     if(ticket == null) throw NoSuchTicketException.withToken(token);
     return ticket;
@@ -274,7 +270,7 @@ public class TicketService {
       : created.plusHours(configurationService.getConfiguration().getShortTimeout());
   }
 
-  private void deleteById(@NotNull String id) {
+  private void deleteById(@Nonnull String id) {
     if(!Strings.isNullOrEmpty(id))
       ticketRepository.deleteById(id);
   }

@@ -10,6 +10,15 @@
 
 package org.obiba.agate.service;
 
+import jakarta.annotation.Nonnull;
+import org.bouncycastle.openssl.PEMWriter;
+import org.obiba.security.KeyStoreManager;
+import org.obiba.security.KeyStoreRepository;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.stereotype.Service;
+
+import javax.inject.Inject;
+import javax.security.auth.callback.CallbackHandler;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -18,18 +27,8 @@ import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.util.Optional;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.security.auth.callback.CallbackHandler;
-import javax.validation.constraints.NotNull;
-
-import org.bouncycastle.openssl.PEMWriter;
-import org.obiba.security.KeyStoreManager;
-import org.obiba.security.KeyStoreRepository;
-import org.springframework.stereotype.Service;
-
 @Service
-public class KeyStoreService {
+public class KeyStoreService implements InitializingBean {
 
   public static final String SYSTEM_KEY_STORE = "system";
 
@@ -45,8 +44,8 @@ public class KeyStoreService {
   @Inject
   private ConfigurationService configurationService;
 
-  @PostConstruct
-  public void init() {
+  @Override
+  public void afterPropertiesSet() {
     if(keystoresRoot == null) {
       keystoresRoot = new File(PATH_KEYSTORE.replace("${AGATE_HOME}", System.getProperty("AGATE_HOME")));
     }
@@ -54,22 +53,22 @@ public class KeyStoreService {
     keyStoreRepository.setCallbackHandler(callbackHandler);
   }
 
-  @NotNull
+  @Nonnull
   public KeyStoreManager getSystemKeyStore() {
     return keyStoreRepository.getOrCreateKeyStore(SYSTEM_KEY_STORE);
   }
 
-  public void saveKeyStore(@NotNull KeyStoreManager keyStore) {
+  public void saveKeyStore(@Nonnull KeyStoreManager keyStore) {
     keyStoreRepository.saveKeyStore(keyStore);
   }
 
-  @NotNull
-  public KeyStoreManager getKeyStore(@NotNull String name) {
+  @Nonnull
+  public KeyStoreManager getKeyStore(@Nonnull String name) {
     return keyStoreRepository.getOrCreateKeyStore(name);
   }
 
-  @NotNull
-  public String getPEMCertificate(@NotNull String name, String alias) throws KeyStoreException, IOException {
+  @Nonnull
+  public String getPEMCertificate(@Nonnull String name, String alias) throws KeyStoreException, IOException {
     Certificate[] certificates = getKeyStore(name).getKeyStore().getCertificateChain(alias);
     if (certificates == null || certificates.length == 0) throw new IllegalArgumentException("Cannot find certificate for alias: " + alias);
 

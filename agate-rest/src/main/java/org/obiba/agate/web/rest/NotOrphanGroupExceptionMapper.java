@@ -10,14 +10,11 @@
 
 package org.obiba.agate.web.rest;
 
-import com.google.protobuf.GeneratedMessage;
+import jakarta.ws.rs.core.Response.Status;
+import jakarta.ws.rs.ext.Provider;
 import org.obiba.agate.service.NotOrphanGroupException;
-import org.obiba.agate.service.NotOrphanRealmException;
 import org.obiba.jersey.exceptionmapper.AbstractErrorDtoExceptionMapper;
 import org.obiba.web.model.ErrorDtos;
-
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.ext.Provider;
 
 @Provider
 public class NotOrphanGroupExceptionMapper extends AbstractErrorDtoExceptionMapper<NotOrphanGroupException> {
@@ -28,7 +25,7 @@ public class NotOrphanGroupExceptionMapper extends AbstractErrorDtoExceptionMapp
   }
 
   @Override
-  protected GeneratedMessage.ExtendableMessage<?> getErrorDto(NotOrphanGroupException e) {
+  protected ErrorDtos.ClientErrorDto getErrorDto(NotOrphanGroupException e) {
     return ErrorDtos.ClientErrorDto.newBuilder() //
         .setCode(getStatus().getStatusCode()) //
         .setMessageTemplate("server.error.group.not-orphan") //

@@ -16,7 +16,7 @@ import org.obiba.runtime.Version;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.data.mongodb.core.convert.CustomConversions;
+import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @Configuration
@@ -24,8 +24,8 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 public class MongoDbConfiguration {
 
   @Bean
-  public CustomConversions customConversions() {
-    return new CustomConversions(
+  public MongoCustomConversions customConversions() {
+    return new MongoCustomConversions(
       Lists.newArrayList(new VersionReadConverter()));
   }
 
