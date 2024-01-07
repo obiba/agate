@@ -12,12 +12,15 @@ package org.obiba.agate.config;
 
 import com.google.common.collect.Lists;
 import com.mongodb.DBObject;
+import org.joda.time.DateTime;
 import org.obiba.runtime.Version;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+
+import java.util.Date;
 
 @Configuration
 @EnableMongoRepositories("org.obiba.agate.repository")
@@ -26,7 +29,17 @@ public class MongoDbConfiguration {
   @Bean
   public MongoCustomConversions customConversions() {
     return new MongoCustomConversions(
-      Lists.newArrayList(new VersionReadConverter()));
+      Lists.newArrayList(
+          new DateConverter(),
+          new VersionReadConverter()));
+  }
+
+  public static class DateConverter implements Converter<Date, DateTime> {
+
+    @Override
+    public DateTime convert(Date source) {
+      return new DateTime(source);
+    }
   }
 
   public static class VersionReadConverter implements Converter<DBObject, Version> {
