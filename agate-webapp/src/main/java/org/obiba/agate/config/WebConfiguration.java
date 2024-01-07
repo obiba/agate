@@ -14,6 +14,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.google.common.base.Strings;
 import io.dropwizard.metrics.servlet.InstrumentedFilter;
 import io.dropwizard.metrics.servlets.MetricsServlet;
+import jakarta.servlet.ServletContext;
 import org.apache.shiro.web.env.EnvironmentLoaderListener;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
@@ -43,7 +44,6 @@ import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 
 import javax.inject.Inject;
-import jakarta.servlet.ServletContext;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -110,7 +110,7 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
   private void customizeSsl(Server server) {
     if (httpsPort <= 0) return;
     
-    SslContextFactory jettySsl = new SslContextFactory() {
+    SslContextFactory.Server jettySsl = new SslContextFactory.Server() {
 
       @Override
       protected void doStart() throws Exception {
@@ -300,7 +300,5 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
 
     return bean;
   }
-
-
 
 }
