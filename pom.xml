@@ -55,8 +55,8 @@
     <json-smart.version>2.3.1</json-smart.version>
     <jsr305.version>3.0.0</jsr305.version>
     <lang-tag.version>1.4.4</lang-tag.version>
-    <logback.version>1.2.9</logback.version>
-    <logstash-logback.version>6.6</logstash-logback.version>
+    <logback.version>1.4.14</logback.version>
+    <logstash-logback.version>7.4</logstash-logback.version>
     <mariabd.version>3.0.7</mariabd.version>
     <metrics-spring.version>3.0.0</metrics-spring.version>
     <mongodb-driver.version>4.7.2</mongodb-driver.version>
@@ -180,14 +180,14 @@
       </dependency>
 
       <dependency>
-        <groupId>jakarta.servlet</groupId>
-        <artifactId>jakarta.servlet-api</artifactId>
-        <version>${servlet-api.version}</version>
-      </dependency>
-      <dependency>
         <groupId>jakarta.json</groupId>
         <artifactId>jakarta.json-api</artifactId>
         <version>2.1.3</version>
+      </dependency>
+      <dependency>
+        <groupId>jakarta.servlet</groupId>
+        <artifactId>jakarta.servlet-api</artifactId>
+        <version>${servlet-api.version}</version>
       </dependency>
       <dependency>
         <groupId>javax.inject</groupId>
