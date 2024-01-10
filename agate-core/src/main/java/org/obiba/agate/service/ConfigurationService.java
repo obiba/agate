@@ -18,10 +18,11 @@ import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.apache.shiro.codec.CodecSupport;
 import org.apache.shiro.codec.Hex;
 import org.apache.shiro.crypto.AesCipherService;
-import org.apache.shiro.crypto.PaddingScheme;
 import org.apache.shiro.util.ByteSource;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,8 +50,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.security.Key;
@@ -97,9 +96,7 @@ public class ConfigurationService {
     this.env = env;
     this.applicationContext = applicationContext;
     this.objectMapper = objectMapper;
-
     this.cipherService = new AesCipherService();
-    this.cipherService.setPaddingScheme(PaddingScheme.PKCS5);
   }
 
   /**
