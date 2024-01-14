@@ -131,6 +131,10 @@
       <classifier>jakarta</classifier>
     </dependency>
     <dependency>
+      <groupId>org.ehcache.integrations.shiro</groupId>
+      <artifactId>shiro-ehcache3</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-aop</artifactId>
     </dependency>

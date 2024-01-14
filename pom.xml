@@ -41,6 +41,8 @@
     <dropwizard-metrics.version>4.2.23</dropwizard-metrics.version>
     <commons-io.version>2.7</commons-io.version>
     <commons-lang.version>2.6</commons-lang.version>
+    <easymock.version>5.2.0</easymock.version>
+    <ehcache.version>3.10.8</ehcache.version>
     <embed-mongo.version>1.50.0</embed-mongo.version>
     <esapi.version>2.3.0.0</esapi.version>
     <freemarker.version>2.3.29</freemarker.version>
@@ -131,6 +133,12 @@
         <groupId>io.dropwizard.metrics</groupId>
         <artifactId>metrics-ehcache</artifactId>
         <version>${dropwizard-metrics.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>io.dropwizard.metrics</groupId>
@@ -252,7 +260,7 @@
       <dependency>
         <groupId>org.easymock</groupId>
         <artifactId>easymock</artifactId>
-        <version>5.2.0</version>
+        <version>${easymock.version}</version>
         <scope>test</scope>
       </dependency>
 
@@ -417,6 +425,18 @@
       </dependency>
 
       <dependency>
+        <groupId>org.ehcache</groupId>
+        <artifactId>ehcache</artifactId>
+        <version>${ehcache.version}</version>
+        <classifier>jakarta</classifier>
+      </dependency>
+      <dependency>
+        <groupId>org.ehcache.integrations.shiro</groupId>
+        <artifactId>shiro-ehcache3</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+
+      <dependency>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-core</artifactId>
         <version>${shiro.version}</version>
@@ -448,6 +468,12 @@
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-ehcache</artifactId>
         <version>${shiro.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache-core</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>eu.flatwhite.shiro</groupId>
@@ -548,9 +574,8 @@
       <artifactId>spring-boot-starter-cache</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.ehcache</groupId>
-      <artifactId>ehcache</artifactId>
-      <classifier>jakarta</classifier>
+      <groupId>javax.cache</groupId>
+      <artifactId>cache-api</artifactId>
     </dependency>
 
     <dependency>

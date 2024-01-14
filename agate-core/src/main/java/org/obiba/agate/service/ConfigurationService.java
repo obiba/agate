@@ -79,6 +79,7 @@ public class ConfigurationService {
 
   private final AesCipherService cipherService;
 
+  private Configuration cachedConfiguration;
 
   private final LegacyAesCipherService legacyCipherService = new LegacyAesCipherService();
 
@@ -130,15 +131,15 @@ public class ConfigurationService {
     return baseURL;
   }
 
-  @Cacheable(value = "agateConfig", key = "#root.methodName")
   public Configuration getConfiguration() {
-    Configuration configuration = getOrCreateConfiguration();
-    configuration.setContextPath(getContextPath());
-    if (configuration.getLocales().size() == 0) configuration.getLocales().add(Configuration.DEFAULT_LOCALE);
-    return configuration;
+    if (cachedConfiguration == null) {
+      cachedConfiguration = getOrCreateConfiguration();
+      cachedConfiguration.setContextPath(getContextPath());
+      if (cachedConfiguration.getLocales().isEmpty()) cachedConfiguration.getLocales().add(Configuration.DEFAULT_LOCALE);
+    }
+    return cachedConfiguration;
   }
 
-  @CacheEvict(value = "agateConfig", allEntries = true)
   public void save(@Valid Configuration configuration) {
     Configuration savedConfiguration = getOrCreateConfiguration();
     BeanUtils
@@ -146,6 +147,7 @@ public class ConfigurationService {
         "lastModifiedDate", "secretKey", "agateVersion");
     if(configuration.getAgateVersion() != null) savedConfiguration.setAgateVersion(configuration.getAgateVersion());
     agateConfigRepository.save(savedConfiguration);
+    cachedConfiguration = null;
     eventBus.post(new AgateConfigUpdatedEvent(savedConfiguration));
   }
 

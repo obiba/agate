@@ -11,7 +11,8 @@ package org.obiba.agate.security;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import net.sf.ehcache.CacheManager;
+import org.apache.shiro.ShiroException;
+import org.ehcache.CacheManager;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
 import org.apache.shiro.authz.ModularRealmAuthorizer;
@@ -25,6 +26,8 @@ import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
 import org.apache.shiro.util.LifecycleUtils;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
+import org.ehcache.config.builders.CacheManagerBuilder;
+import org.ehcache.integrations.shiro.EhcacheShiroManager;
 import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.domain.RealmStatus;
 import org.obiba.agate.event.RealmConfigActivatedOrUpdatedEvent;
@@ -41,6 +44,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -56,7 +60,6 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
 
   private SessionsSecurityManager securityManager;
 
-  private final CacheManager cacheManager;
 
   private final Set<Realm> realms;
 
@@ -71,13 +74,11 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
   @Inject
   @Lazy
   public SecurityManagerFactory(
-    CacheManager cacheManager,
     Set<Realm> realms,
     RealmConfigService realmConfigService,
     UserService userService,
     AgateRealmFactory agateRealmFactory,
     EventBus eventBus) {
-    this.cacheManager = cacheManager;
     this.realms = realms;
     this.realmConfigService = realmConfigService;
     this.userService = userService;
@@ -161,8 +162,8 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
 
   private void initializeCacheManager(DefaultWebSecurityManager dsm) {
     if(dsm.getCacheManager() == null) {
-      EhCacheManager ehCacheManager = new EhCacheManager();
-      ehCacheManager.setCacheManager(cacheManager);
+      EhcacheShiroManager ehCacheManager = new EhCache3ShiroManager();
+      ehCacheManager.setCacheManagerConfigFile("classpath:ehcache.xml");
       dsm.setCacheManager(ehCacheManager);
     }
   }
