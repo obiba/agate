@@ -23,7 +23,9 @@ import jakarta.ws.rs.core.NewCookie;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.obiba.agate.service.ConfigurationService;
+import org.springframework.stereotype.Component;
 
+@Component
 @Priority(Integer.MIN_VALUE)
 public class AuthenticationInterceptor implements ContainerResponseFilter {
 

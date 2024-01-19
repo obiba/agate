@@ -18,13 +18,13 @@ import org.obiba.agate.config.Constants;
 import org.obiba.agate.web.rest.security.AuditInterceptor;
 import org.obiba.agate.web.rest.security.AuthenticationInterceptor;
 import org.obiba.agate.web.rest.security.CSRFInterceptor;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.Profiles;
-import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 
-@Component
+@Configuration
 @ApplicationPath(JerseyConfiguration.WS_ROOT)
 public class JerseyConfiguration extends ResourceConfig {
 

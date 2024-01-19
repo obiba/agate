@@ -10,27 +10,11 @@
 
 package org.obiba.agate.web.rest.config;
 
-import java.io.IOException;
-import java.security.KeyStoreException;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import jakarta.ws.rs.DefaultValue;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.HeaderParam;
-import jakarta.ws.rs.PUT;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
-import jakarta.ws.rs.WebApplicationException;
+import com.codahale.metrics.annotation.Timed;
+import com.google.common.base.Strings;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-
-import com.google.common.base.Strings;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.json.JSONException;
@@ -40,13 +24,21 @@ import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.KeyStoreService;
 import org.obiba.agate.web.model.Agate;
 import org.obiba.agate.web.model.Dtos;
-
-import com.codahale.metrics.annotation.Timed;
 import org.obiba.agate.web.rest.security.AuthorizationValidator;
 import org.obiba.shiro.realm.ObibaRealm;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
+import java.io.IOException;
+import java.security.KeyStoreException;
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
+@Component
 @Path("/config")
 public class ConfigurationResource {
 
