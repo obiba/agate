@@ -11,6 +11,7 @@
 package org.obiba.agate.config;
 
 import com.google.common.collect.Lists;
+import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import org.joda.time.DateTime;
 import org.obiba.runtime.Version;
@@ -31,7 +32,9 @@ public class MongoDbConfiguration {
     return new MongoCustomConversions(
       Lists.newArrayList(
           new DateConverter(),
-          new VersionReadConverter()));
+          new DateTimeConverter(),
+          new VersionReadConverter(),
+          new VersionWriteConverter()));
   }
 
   public static class DateConverter implements Converter<Date, DateTime> {
@@ -42,11 +45,32 @@ public class MongoDbConfiguration {
     }
   }
 
+  public static class DateTimeConverter implements Converter<DateTime, Date> {
+
+    @Override
+    public Date convert(DateTime source) {
+      return source.toDate();
+    }
+  }
+
   public static class VersionReadConverter implements Converter<DBObject, Version> {
 
     @Override
     public Version convert(DBObject dbObject) {
       return new Version((int)dbObject.get("major"), (int)dbObject.get("minor"), (int)dbObject.get("micro"), (String)dbObject.get("qualifier"));
+    }
+  }
+
+  public static class VersionWriteConverter implements Converter<Version, DBObject> {
+
+    @Override
+    public DBObject convert(Version version) {
+      DBObject dbObject = new BasicDBObject();
+      dbObject.put("major", version.getMajor());
+      dbObject.put("minor", version.getMinor());
+      dbObject.put("micro", version.getMicro());
+      dbObject.put("qualifier", version.getQualifier());
+      return dbObject;
     }
   }
 
