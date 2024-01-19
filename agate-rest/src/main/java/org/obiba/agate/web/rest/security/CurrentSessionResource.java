@@ -16,6 +16,7 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.obiba.agate.domain.AgateRealm;
+import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.security.AgateTokenRealm;
 import org.obiba.agate.security.Roles;
 import org.obiba.agate.service.ConfigurationService;
@@ -39,6 +40,9 @@ import java.util.function.Consumer;
 public class CurrentSessionResource {
 
   @Inject
+  private ConfigurationService configurationService;
+
+  @Inject
   private TicketService ticketService;
 
   @DELETE
@@ -60,7 +64,10 @@ public class CurrentSessionResource {
     } catch (InvalidSessionException e) {
       // Ignore
     }
-    return Response.ok().build();
+    Configuration configuration = getConfiguration();
+    return Response.noContent().header(HttpHeaders.SET_COOKIE,
+        new NewCookie(TicketsResource.TICKET_COOKIE_NAME, null, "/", configuration.getDomain(),
+            "Obiba session deleted", 0, true, true)).build();
   }
 
   @GET
@@ -87,5 +94,8 @@ public class CurrentSessionResource {
     return Response.ok(SecurityUtils.getSubject().getPrincipal().toString()).build();
   }
 
+  private Configuration getConfiguration() {
+    return configurationService.getConfiguration();
+  }
 }
 

@@ -87,9 +87,16 @@ public class TicketService {
    */
   public Ticket create(Authorization authorization) {
     Optional<Ticket> ticketOptional = ticketRepository.findByAuthorization(authorization.getId()).stream().findFirst();
-    Ticket ticket;
-    if(ticketOptional.isPresent()) ticket = ticketOptional.get();
-    else {
+    Ticket ticket = null;
+    if(ticketOptional.isPresent()) {
+      ticket = ticketOptional.get();
+      DateTime expires = getExpirationDate(ticket);
+      if (expires.isBefore(DateTime.now())) {
+        ticketRepository.delete(ticket);
+        ticket = null;
+      }
+    }
+    if (ticket == null) {
       ticket = new Ticket();
       ticket.setUsername(authorization.getUsername());
       ticket.setRemembered(false);
@@ -136,7 +143,7 @@ public class TicketService {
     try {
       Claims claims = Jwts.parser().setSigningKey(configurationService.getConfiguration().getSecretKey().getBytes())
         .parseClaimsJws(token).getBody();
-      return ticketRepository.findById(claims.getId()).get();
+      return ticketRepository.findById(claims.getId()).orElseGet(() -> null);
     } catch(SignatureException e) {
       return null;
     }

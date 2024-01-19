@@ -350,29 +350,13 @@ var agatejs = (function() {
   }
 
   const agateSignout = function(redirectUrl) {
-    const removeAgateSession = function() {
-      $.ajax({
-        type: 'DELETE',
-        url: normalizeUrl('/ws/auth/session/_current')
-      })
+    $.ajax({
+      type: 'DELETE',
+      url: normalizeUrl('/ws/auth/session/_current')
+    })
         .always(function() {
           agateRedirect(redirectUrl);
         });
-    };
-
-    var obibaid = Cookies.get('obibaid');
-    if (obibaid) {
-      console.log('Removing ' + obibaid);
-      $.ajax({
-        type: 'DELETE',
-        url: normalizeUrl('/ws/ticket/' + obibaid)
-      })
-        .always(function() {
-          removeAgateSession();
-        });
-    } else {
-      removeAgateSession();
-    }
   };
 
   const agateChangeLanguage = function(lang) {
