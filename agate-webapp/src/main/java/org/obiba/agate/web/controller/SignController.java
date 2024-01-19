@@ -17,9 +17,11 @@ import org.apache.shiro.subject.Subject;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.obiba.agate.config.ClientConfiguration;
+import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.Application;
 import org.obiba.agate.domain.RealmUsage;
 import org.obiba.agate.domain.User;
+import org.obiba.agate.security.AgateTokenRealm;
 import org.obiba.agate.security.OidcAuthConfigurationProvider;
 import org.obiba.agate.service.ApplicationService;
 import org.obiba.agate.service.ConfigurationService;
@@ -44,6 +46,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 import java.util.Collection;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Controller
@@ -137,22 +140,29 @@ public class SignController {
       return mv;
     }
 
-    // Validate redirect uri if there is an associated application
-    Object appAttr = SecurityUtils.getSubject().getSession().getAttribute("application");
-    String appName = appAttr == null ? null : appAttr.toString();
-    if (!Strings.isNullOrEmpty(appName)) {
-      Application application = applicationService.findByIdOrName(appName);
-      if (application == null || (!Strings.isNullOrEmpty(postLogoutRedirectUri) && application.getRedirectURIs().stream().noneMatch(postLogoutRedirectUri::startsWith))) {
-        ModelAndView mv = new ModelAndView("redirect:error");
-        mv.getModel().put("error", "400");
-        mv.getModel().put("message", "invalid-redirect");
-        return mv;
-      }
-    }
-
     String newPostLogoutRedirectUri = postLogoutRedirectUri;
     try {
       User user = userService.getCurrentUser();
+
+      // Validate redirect uri against user's associated applications
+      if (!Strings.isNullOrEmpty(postLogoutRedirectUri)) {
+        Set<String> appNames = userService.getUserApplications(user);
+        boolean redirectIsValid = false;
+        for (String appName : appNames) {
+          Application application = applicationService.findByIdOrName(appName);
+          if (application != null && application.getRedirectURIs().stream().noneMatch(postLogoutRedirectUri::startsWith)) {
+            redirectIsValid = true;
+            break;
+          }
+        }
+        if (!redirectIsValid) {
+          ModelAndView mv = new ModelAndView("redirect:error");
+          mv.getModel().put("error", "400");
+          mv.getModel().put("message", "invalid-redirect");
+          return mv;
+        }
+      }
+
       OIDCConfiguration oidcConfig = oidcAuthConfigurationProvider.getConfiguration(user.getRealm());
       if (oidcConfig != null) {
         try {
