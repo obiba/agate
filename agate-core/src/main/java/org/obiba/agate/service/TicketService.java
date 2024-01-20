@@ -29,7 +29,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
+
 import jakarta.validation.Valid;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -55,14 +57,14 @@ public class TicketService {
    * Create or reuse a ticket for the given username.
    *
    * @param username
-   * @param renew delete any existing tickets (created for the application) of the user before creating a new one
+   * @param renew       delete any existing tickets (created for the application) of the user before creating a new one
    * @param rememberMe
    * @param application application name issuing the login event
    * @return
    */
   public Ticket create(String username, boolean renew, boolean rememberMe, String application) {
     List<Ticket> tickets = findByUsername(username);
-    if(renew) deleteAll(tickets.stream()
+    if (renew) deleteAll(tickets.stream()
         .filter(t -> application.equals(t.getEvents().get(0).getApplication()))
         .collect(Collectors.toList()));
 
@@ -84,7 +86,7 @@ public class TicketService {
   public Ticket create(Authorization authorization) {
     Optional<Ticket> ticketOptional = ticketRepository.findByAuthorization(authorization.getId()).stream().findFirst();
     Ticket ticket = null;
-    if(ticketOptional.isPresent()) {
+    if (ticketOptional.isPresent()) {
       ticket = ticketOptional.get();
       DateTime expires = getExpirationDate(ticket);
       if (expires.isBefore(DateTime.now())) {
@@ -122,10 +124,10 @@ public class TicketService {
    */
   @Nonnull
   public Ticket getTicket(@Nonnull String idOrToken) throws NoSuchTicketException {
-    if(isToken(idOrToken)) return getTicketByToken(idOrToken);
+    if (isToken(idOrToken)) return getTicketByToken(idOrToken);
 
     Optional<Ticket> ticket = ticketRepository.findById(idOrToken);
-    if(!ticket.isPresent()) throw NoSuchTicketException.withId(idOrToken);
+    if (!ticket.isPresent()) throw NoSuchTicketException.withId(idOrToken);
     return ticket.get();
   }
 
@@ -137,10 +139,12 @@ public class TicketService {
    */
   public Ticket findByToken(@Nonnull String token) {
     try {
-      Claims claims = Jwts.parser().setSigningKey(configurationService.getConfiguration().getSecretKey().getBytes())
-        .parseClaimsJws(token).getBody();
+      Claims claims = Jwts.parser()
+          .verifyWith(configurationService.getSecretKeyJWT())
+          .build()
+          .parseSignedClaims(token).getPayload();
       return ticketRepository.findById(claims.getId()).orElseGet(() -> null);
-    } catch(SignatureException e) {
+    } catch (Exception e) {
       return null;
     }
   }
@@ -161,8 +165,8 @@ public class TicketService {
    * @param tickets
    */
   public void deleteAll(List<Ticket> tickets) {
-    if(tickets == null || tickets.isEmpty()) return;
-    for(Ticket ticket : tickets) {
+    if (tickets == null || tickets.isEmpty()) return;
+    for (Ticket ticket : tickets) {
       deleteById(ticket.getId());
     }
   }
@@ -191,9 +195,9 @@ public class TicketService {
    * @param idOrToken
    */
   public void delete(@Nonnull String idOrToken) {
-    if(isToken(idOrToken)) {
+    if (isToken(idOrToken)) {
       Ticket ticket = findByToken(idOrToken);
-      if(ticket != null) deleteById(ticket.getId());
+      if (ticket != null) deleteById(ticket.getId());
     } else {
       deleteById(idOrToken);
     }
@@ -230,7 +234,7 @@ public class TicketService {
   @Scheduled(cron = "0 0 0 * * *")
   public void removeExpiredRemembered() {
     removeExpired(ticketRepository.findByCreatedDateBeforeAndRemembered(
-      DateTime.now().minusHours(configurationService.getConfiguration().getLongTimeout()), true));
+        DateTime.now().minusHours(configurationService.getConfiguration().getLongTimeout()), true));
   }
 
   /**
@@ -240,7 +244,7 @@ public class TicketService {
   @Scheduled(cron = "0 0/15 * * * *")
   public void removeExpiredNotRemembered() {
     removeExpired(ticketRepository.findByCreatedDateBeforeAndRemembered(
-      DateTime.now().minusHours(configurationService.getConfiguration().getShortTimeout()), false));
+        DateTime.now().minusHours(configurationService.getConfiguration().getShortTimeout()), false));
   }
 
   //
@@ -256,7 +260,7 @@ public class TicketService {
    */
   private Ticket getTicketByToken(@Nonnull String token) {
     Ticket ticket = findByToken(token);
-    if(ticket == null) throw NoSuchTicketException.withToken(token);
+    if (ticket == null) throw NoSuchTicketException.withToken(token);
     return ticket;
   }
 
@@ -266,17 +270,17 @@ public class TicketService {
 
   private DateTime getExpirationDate(DateTime created, boolean remembered) {
     return remembered
-      ? created.plusHours(configurationService.getConfiguration().getLongTimeout())
-      : created.plusHours(configurationService.getConfiguration().getShortTimeout());
+        ? created.plusHours(configurationService.getConfiguration().getLongTimeout())
+        : created.plusHours(configurationService.getConfiguration().getShortTimeout());
   }
 
   private void deleteById(@Nonnull String id) {
-    if(!Strings.isNullOrEmpty(id))
+    if (!Strings.isNullOrEmpty(id))
       ticketRepository.deleteById(id);
   }
 
   private void removeExpired(List<Ticket> tickets) {
-    for(Ticket ticket : tickets) {
+    for (Ticket ticket : tickets) {
       // TODO deactivate instead of delete
       ticketRepository.delete(ticket);
     }

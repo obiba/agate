@@ -143,7 +143,7 @@ public class OAuthResource {
     Subject subject = SecurityUtils.getSubject();
     String username = subject.getPrincipal().toString();
 
-    return tokenUtils.buildClaims(username, getSupportedOpenIdScopes(subject::hasRole));
+    return tokenUtils.buildClaims(username, getSupportedOpenIdScopes(subject::hasRole)).build();
   }
 
   @GET
