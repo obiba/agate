@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.0.13</version>
+    <version>3.1.8</version>
   </parent>
 
   <modules>
@@ -62,7 +62,7 @@
     <logstash-logback.version>7.4</logstash-logback.version>
     <mariabd.version>3.0.7</mariabd.version>
     <metrics-spring.version>3.0.0</metrics-spring.version>
-    <mongodb-driver.version>4.8.2</mongodb-driver.version>
+    <mongodb-driver.version>4.9.1</mongodb-driver.version>
     <mysql.version>8.0.30</mysql.version>
     <nimbus-jose-jwt.version>9.35</nimbus-jose-jwt.version>
     <nosqlunit.version>0.7.9</nosqlunit.version>
