@@ -9,20 +9,9 @@
  */
 package org.obiba.agate.security;
 
-import java.util.Collection;
-import java.util.Collections;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
 import com.google.common.base.Strings;
-import org.apache.shiro.authc.AccountException;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.AuthenticationInfo;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.SimpleAuthenticationInfo;
-import org.apache.shiro.authc.UnknownAccountException;
-import org.apache.shiro.authc.UsernamePasswordToken;
+import com.google.common.collect.ImmutableSet;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
@@ -40,16 +29,19 @@ import org.obiba.agate.service.TotpService;
 import org.obiba.agate.service.UserService;
 import org.obiba.shiro.NoSuchOtpException;
 import org.obiba.shiro.authc.UsernamePasswordOtpToken;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.ImmutableSet;
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Realm for users defined in opal's own users database.
  */
 @Component
-public class AgateUserRealm extends AuthorizingRealm {
+public class AgateUserRealm extends AuthorizingRealm implements InitializingBean {
 
 //  public static final String AGATE_REALM = "agate-user-realm";
 
@@ -72,9 +64,8 @@ public class AgateUserRealm extends AuthorizingRealm {
 
   private String salt;
 
-  @PostConstruct
-  public void postConstruct() {
-
+  @Override
+  public void afterPropertiesSet() {
     setCacheManager(new MemoryConstrainedCacheManager());
 
     nbHashIterations = env.getProperty("shiro.password.nbHashIterations", Integer.class, 10000);

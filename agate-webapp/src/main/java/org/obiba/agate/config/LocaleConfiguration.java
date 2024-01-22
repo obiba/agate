@@ -23,14 +23,14 @@ import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
 import javax.inject.Inject;
 import java.util.Locale;
 
 @Configuration
-public class LocaleConfiguration extends WebMvcConfigurerAdapter implements EnvironmentAware {
+public class LocaleConfiguration implements WebMvcConfigurer, EnvironmentAware {
 
   private Environment environment;
 
@@ -51,7 +51,6 @@ public class LocaleConfiguration extends WebMvcConfigurerAdapter implements Envi
   @Bean(name = "localeResolver")
   public LocaleResolver localeResolver() {
     AngularCookieLocaleResolver cookieLocaleResolver = new AngularCookieLocaleResolver(configurationService);
-    cookieLocaleResolver.setCookieName("NG_TRANSLATE_LANG_KEY");
     //cookieLocaleResolver.setDefaultLocale(Locale.ENGLISH);
     return cookieLocaleResolver;
   }

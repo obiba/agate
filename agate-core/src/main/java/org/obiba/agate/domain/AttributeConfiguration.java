@@ -10,17 +10,15 @@
 
 package org.obiba.agate.domain;
 
-import java.io.Serializable;
-import java.util.List;
-
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import org.json.JSONException;
+import jakarta.annotation.Nonnull;
 import org.springframework.data.annotation.Id;
+
+import jakarta.annotation.Nullable;
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * Specifications for an attribute.
@@ -42,8 +40,6 @@ public class AttributeConfiguration implements Serializable {
   @Id
   private String id;
 
-
-  @NotNull
   private String name;
 
   private String description;
@@ -62,7 +58,7 @@ public class AttributeConfiguration implements Serializable {
     return name;
   }
 
-  public void setName(@NotNull String name) {
+  public void setName(@Nonnull String name) {
     this.name = name;
   }
 

@@ -23,15 +23,15 @@ import org.obiba.agate.service.UserService;
 import org.obiba.shiro.NoSuchOtpException;
 import org.obiba.shiro.authc.TicketAuthenticationToken;
 import org.obiba.shiro.web.filter.AbstractAuthenticationExecutor;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Component
-public class AuthenticationExecutorImpl extends AbstractAuthenticationExecutor {
+public class AuthenticationExecutorImpl extends AbstractAuthenticationExecutor implements InitializingBean {
 
   @Value("${login.maxTry:3}")
   private int maxTry;
@@ -50,8 +50,8 @@ public class AuthenticationExecutorImpl extends AbstractAuthenticationExecutor {
 
   private TotpService totpService;
 
-  @PostConstruct
-  public void configure() {
+  @Override
+  public void afterPropertiesSet() {
     configureBan(maxTry, trialTime, banTime);
   }
 

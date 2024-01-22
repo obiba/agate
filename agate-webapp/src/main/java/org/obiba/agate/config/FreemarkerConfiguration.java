@@ -14,9 +14,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
 @Configuration
 public class FreemarkerConfiguration {
 

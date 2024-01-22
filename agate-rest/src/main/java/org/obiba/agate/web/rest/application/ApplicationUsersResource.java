@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import javax.ws.rs.*;
+import jakarta.ws.rs.*;
 import java.util.List;
 import java.util.stream.Collectors;
 

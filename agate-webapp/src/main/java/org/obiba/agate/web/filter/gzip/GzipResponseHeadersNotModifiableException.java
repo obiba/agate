@@ -10,7 +10,7 @@
 
 package org.obiba.agate.web.filter.gzip;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 
 public class GzipResponseHeadersNotModifiableException extends ServletException {
 

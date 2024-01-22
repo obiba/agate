@@ -10,7 +10,7 @@ Package: agate
 Architecture: all
 Pre-Depends: debconf, coreutils (>= 6.10)
 Depends: ${shlibs:Depends}, ${misc:Depends}, adduser
-Recommends: oracle-java8-installer | openjdk-8-jdk | openjdk-8-jdk-headless | openjdk-8-jre | openjdk-8-jre-headless
+Recommends: openjdk-17-jdk | openjdk-17-jdk-headless | openjdk-17-jre | openjdk-17-jre-headless
 Description: OBiBa user portal for biobanks
  Agate.
  .

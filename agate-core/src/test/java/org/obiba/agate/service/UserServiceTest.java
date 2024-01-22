@@ -10,6 +10,7 @@
 
 package org.obiba.agate.service;
 
+import com.google.common.eventbus.EventBus;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -25,19 +26,12 @@ import org.obiba.agate.event.UserJoinedEvent;
 import org.obiba.agate.repository.RealmConfigRepository;
 import org.obiba.agate.repository.UserCredentialsRepository;
 import org.obiba.agate.repository.UserRepository;
+import org.springframework.core.env.Environment;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.matches;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import org.springframework.core.env.Environment;
-
-import com.google.common.eventbus.EventBus;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 public class UserServiceTest {
 

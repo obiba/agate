@@ -12,6 +12,7 @@ package org.obiba.agate.service;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import jakarta.annotation.Nonnull;
 import org.joda.time.DateTime;
 import org.obiba.agate.domain.Authorization;
 import org.obiba.agate.event.ApplicationDeletedEvent;
@@ -21,9 +22,8 @@ import org.obiba.agate.repository.AuthorizationRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,7 +62,7 @@ public class AuthorizationService {
    * @return
    * @throws NoSuchAuthorizationException
    */
-  public Authorization get(@NotNull String id) {
+  public Authorization get(@Nonnull String id) {
     Optional<Authorization> authorization = authorizationRepository.findById(id);
     if(!authorization.isPresent()) throw NoSuchAuthorizationException.withId(id);
     return authorization.get();
@@ -75,7 +75,7 @@ public class AuthorizationService {
    * @return
    * @throws NoSuchAuthorizationException
    */
-  public Authorization getByCode(@NotNull String code) {
+  public Authorization getByCode(@Nonnull String code) {
     Optional<Authorization> authorization = authorizationRepository.findByCode(code).stream().findFirst();
     if(!authorization.isPresent()) throw NoSuchAuthorizationException.withCode(code);
     return authorization.get();
@@ -89,7 +89,7 @@ public class AuthorizationService {
    * @return
    * @throws NoSuchAuthorizationException
    */
-  public Authorization get(@NotNull String username, @NotNull String application) {
+  public Authorization get(@Nonnull String username, @Nonnull String application) {
     Authorization authorization = find(username, application);
     if(authorization == null) throw NoSuchAuthorizationException.withUsernameAndApplication(username, application);
     return authorization;
@@ -101,7 +101,7 @@ public class AuthorizationService {
    * @param username
    * @return
    */
-  public List<Authorization> list(@NotNull String username) {
+  public List<Authorization> list(@Nonnull String username) {
     return authorizationRepository.findByUsername(username);
   }
 
@@ -112,7 +112,7 @@ public class AuthorizationService {
    * @return
    */
   @Nullable
-  public Authorization find(@NotNull String id) {
+  public Authorization find(@Nonnull String id) {
     return authorizationRepository.findById(id).get();
   }
 
@@ -124,7 +124,7 @@ public class AuthorizationService {
    * @return null if not found
    */
   @Nullable
-  public Authorization find(@NotNull String username, @NotNull String application) {
+  public Authorization find(@Nonnull String username, @Nonnull String application) {
     Optional<Authorization> authorization = authorizationRepository.findByUsernameAndApplication(username, application)
       .stream().findFirst();
     return authorization.orElse(null);
@@ -145,7 +145,7 @@ public class AuthorizationService {
    *
    * @param id
    */
-  public void delete(@NotNull String id) {
+  public void delete(@Nonnull String id) {
     delete(authorizationRepository.findById(id).get());
   }
 

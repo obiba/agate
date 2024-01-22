@@ -10,13 +10,9 @@
 
 package org.obiba.agate.domain;
 
-import javax.validation.constraints.NotNull;
-
 import org.obiba.mongodb.domain.AbstractAuditableDocument;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import com.google.common.base.Objects;
 
 /**
  * User credentials for the {@link org.obiba.agate.security.AgateUserRealm}.
@@ -26,7 +22,6 @@ public class UserCredentials extends AbstractAuditableDocument {
 
   private static final long serialVersionUID = 688200108221675323L;
 
-  @NotNull
   @Indexed(unique = true)
   private String name;
 

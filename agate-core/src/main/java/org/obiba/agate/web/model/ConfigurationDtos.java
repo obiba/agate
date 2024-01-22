@@ -10,15 +10,13 @@
 
 package org.obiba.agate.web.model;
 
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-
+import jakarta.annotation.Nonnull;
 import org.apache.commons.lang.LocaleUtils;
 import org.obiba.agate.domain.AttributeConfiguration;
 import org.obiba.agate.domain.Configuration;
 import org.springframework.stereotype.Component;
 
-import java.util.Locale;
+import javax.inject.Inject;
 
 @Component
 class ConfigurationDtos {
@@ -27,8 +25,8 @@ class ConfigurationDtos {
   @Inject
   private LocalizedStringDtos localizedStringDtos;
 
-  @NotNull
-  Agate.ConfigurationDto asDto(@NotNull Configuration configuration) {
+  @Nonnull
+  Agate.ConfigurationDto asDto(@Nonnull Configuration configuration) {
     Agate.ConfigurationDto.Builder builder = Agate.ConfigurationDto.newBuilder()
       .setName(configuration.getName())
       .setShortTimeout(configuration.getShortTimeout())
@@ -52,8 +50,8 @@ class ConfigurationDtos {
     return builder.build();
   }
 
-  @NotNull
-  Configuration fromDto(@NotNull Agate.ConfigurationDtoOrBuilder dto) {
+  @Nonnull
+  Configuration fromDto(@Nonnull Agate.ConfigurationDtoOrBuilder dto) {
     Configuration configuration = new Configuration();
     configuration.setName(dto.getName());
     if(dto.hasDomain()) configuration.setDomain(dto.getDomain());
@@ -72,7 +70,7 @@ class ConfigurationDtos {
     return configuration;
   }
 
-  @NotNull
+  @Nonnull
   Agate.AttributeConfigurationDto.Builder asDto(AttributeConfiguration config) {
     Agate.AttributeConfigurationDto.Builder builder = Agate.AttributeConfigurationDto.newBuilder()
       .setName(config.getName()).setRequired(config.isRequired()).setType(config.getType().toString())
@@ -85,7 +83,7 @@ class ConfigurationDtos {
     return builder;
   }
 
-  @NotNull
+  @Nonnull
   private AttributeConfiguration fromDto(Agate.AttributeConfigurationDto config) {
     AttributeConfiguration attributeConfiguration = new AttributeConfiguration();
     attributeConfiguration.setName(config.getName());

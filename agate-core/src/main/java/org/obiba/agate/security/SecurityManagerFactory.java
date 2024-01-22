@@ -11,13 +11,8 @@ package org.obiba.agate.security;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
-import net.sf.ehcache.CacheManager;
+import org.apache.shiro.ShiroException;
+import org.ehcache.CacheManager;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
 import org.apache.shiro.authz.ModularRealmAuthorizer;
@@ -31,6 +26,8 @@ import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
 import org.apache.shiro.util.LifecycleUtils;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
+import org.ehcache.config.builders.CacheManagerBuilder;
+import org.ehcache.integrations.shiro.EhcacheShiroManager;
 import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.domain.RealmStatus;
 import org.obiba.agate.event.RealmConfigActivatedOrUpdatedEvent;
@@ -40,15 +37,22 @@ import org.obiba.agate.service.UserService;
 import org.obiba.shiro.SessionStorageEvaluator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.data.domain.Persistable;
 import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 @DependsOn("cacheConfiguration")
-public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManager> {
+public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManager>, DisposableBean {
 
   private static final Logger log = LoggerFactory.getLogger(SecurityManagerFactory.class);
 
@@ -56,7 +60,6 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
 
   private SessionsSecurityManager securityManager;
 
-  private final CacheManager cacheManager;
 
   private final Set<Realm> realms;
 
@@ -71,13 +74,11 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
   @Inject
   @Lazy
   public SecurityManagerFactory(
-    CacheManager cacheManager,
     Set<Realm> realms,
     RealmConfigService realmConfigService,
     UserService userService,
     AgateRealmFactory agateRealmFactory,
     EventBus eventBus) {
-    this.cacheManager = cacheManager;
     this.realms = realms;
     this.realmConfigService = realmConfigService;
     this.userService = userService;
@@ -104,8 +105,8 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
     return true;
   }
 
-  @PreDestroy
-  public void destroySecurityManager() {
+  @Override
+  public void destroy() throws Exception {
     log.debug("Shutdown SecurityManager");
     // Destroy the security manager.
     SecurityUtils.setSecurityManager(null);
@@ -161,8 +162,8 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
 
   private void initializeCacheManager(DefaultWebSecurityManager dsm) {
     if(dsm.getCacheManager() == null) {
-      EhCacheManager ehCacheManager = new EhCacheManager();
-      ehCacheManager.setCacheManager(cacheManager);
+      EhcacheShiroManager ehCacheManager = new EhCache3ShiroManager();
+      ehCacheManager.setCacheManagerConfigFile("classpath:ehcache.xml");
       dsm.setCacheManager(ehCacheManager);
     }
   }

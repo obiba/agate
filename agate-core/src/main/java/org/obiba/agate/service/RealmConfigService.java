@@ -3,12 +3,8 @@ package org.obiba.agate.service;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
-import org.obiba.agate.domain.AgateRealm;
-import org.obiba.agate.domain.Group;
-import org.obiba.agate.domain.RealmConfig;
-import org.obiba.agate.domain.RealmStatus;
-import org.obiba.agate.domain.RealmUsage;
-import org.obiba.agate.domain.User;
+import jakarta.annotation.Nonnull;
+import org.obiba.agate.domain.*;
 import org.obiba.agate.event.RealmConfigActivatedOrUpdatedEvent;
 import org.obiba.agate.event.RealmConfigDeactivatedEvent;
 import org.obiba.agate.repository.RealmConfigRepository;
@@ -19,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,7 +46,7 @@ public class RealmConfigService {
     this.eventBus = eventBus;
   }
 
-  public RealmConfig save(@NotNull RealmConfig config) {
+  public RealmConfig save(@Nonnull RealmConfig config) {
     assert config != null;
 
     groupService.ensureGroupsByName(config.getGroups());
@@ -151,19 +146,19 @@ public class RealmConfigService {
       .collect(Collectors.toList());
   }
 
-  public RealmConfig findConfig(@NotNull String name) {
+  public RealmConfig findConfig(@Nonnull String name) {
     Assert.notNull(name, "Realm config name cannot be null.");
     return realmConfigRepository.findOneByName(name);
   }
 
-  public RealmConfig getConfig(@NotNull String name) {
+  public RealmConfig getConfig(@Nonnull String name) {
     Assert.notNull(name, "Realm config name cannot be null.");
     RealmConfig config = findConfig(name);
     if (config == null) throw NoSuchRealmConfigException.withName(name);
     return config;
   }
 
-  public void delete(@NotNull String name) {
+  public void delete(@Nonnull String name) {
     Assert.notNull(name, "Realm config name cannot be null.");
 
     List<String> usernames = getUsernames(name);
@@ -178,11 +173,11 @@ public class RealmConfigService {
     }
   }
 
-  public void activate(@NotNull String name) {
+  public void activate(@Nonnull String name) {
     updateStatus(name, RealmStatus.ACTIVE);
   }
 
-  public void deactivate(@NotNull String name) {
+  public void deactivate(@Nonnull String name) {
     updateStatus(name, RealmStatus.INACTIVE);
   }
 
@@ -199,7 +194,7 @@ public class RealmConfigService {
     }
   }
 
-  public void updateGroups(@NotNull String name, @NotNull Collection<String> groups) {
+  public void updateGroups(@Nonnull String name, @Nonnull Collection<String> groups) {
     Assert.notNull(name, "Realm config name cannot be null.");
     groupService.ensureGroupsByName(groups);
     RealmConfig config = getConfig(name);

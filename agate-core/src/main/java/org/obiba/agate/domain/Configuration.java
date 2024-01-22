@@ -57,6 +57,8 @@ public class Configuration extends AbstractAuditableDocument {
 
   private String secretKey;
 
+  private String secretKeyJWT;
+
   private Version agateVersion;
 
   private boolean joinPageEnabled = true;
@@ -146,6 +148,14 @@ public class Configuration extends AbstractAuditableDocument {
 
   public void setSecretKey(String secretKey) {
     this.secretKey = secretKey;
+  }
+
+  public String getSecretKeyJWT() {
+    return secretKeyJWT;
+  }
+
+  public void setSecretKeyJWT(String secretKeyJWT) {
+    this.secretKeyJWT = secretKeyJWT;
   }
 
   public boolean isJoinPageEnabled() {

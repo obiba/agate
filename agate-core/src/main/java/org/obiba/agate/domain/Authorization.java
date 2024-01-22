@@ -17,7 +17,6 @@ import org.obiba.mongodb.domain.AbstractAuditableDocument;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Set;
 
@@ -33,7 +32,6 @@ public class Authorization extends AbstractAuditableDocument {
   @Indexed
   private String application;
 
-  @NotNull
   @Indexed(unique = true)
   private String code;
 

@@ -10,14 +10,11 @@
 
 package org.obiba.agate.web.rest;
 
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.ext.Provider;
-
+import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.core.Response.Status;
+import jakarta.ws.rs.ext.Provider;
 import org.obiba.jersey.exceptionmapper.AbstractErrorDtoExceptionMapper;
 import org.obiba.web.model.ErrorDtos;
-
-import com.google.protobuf.GeneratedMessage;
 
 @Provider
 public class BadRequestExceptionMapper extends AbstractErrorDtoExceptionMapper<BadRequestException> {
@@ -28,7 +25,7 @@ public class BadRequestExceptionMapper extends AbstractErrorDtoExceptionMapper<B
   }
 
   @Override
-  protected GeneratedMessage.ExtendableMessage<?> getErrorDto(BadRequestException e) {
+  protected ErrorDtos.ClientErrorDto getErrorDto(BadRequestException e) {
     return ErrorDtos.ClientErrorDto.newBuilder() //
         .setCode(getStatus().getStatusCode()) //
         .setMessageTemplate("server.error.bad-request") //

@@ -10,21 +10,21 @@
 
 package org.obiba.agate.web.model;
 
+import jakarta.annotation.Nonnull;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.obiba.oidc.OIDCConfiguration;
 import org.obiba.web.model.OIDCDtos;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
+import jakarta.annotation.Nullable;
 import java.util.Map;
 
 @Component
 public class OidcAuthProviderDtos {
 
-  @NotNull
-  OIDCDtos.OIDCAuthProviderSummaryDto asSummaryDto(@NotNull OIDCConfiguration configuration, @Nullable String locale) {
+  @Nonnull
+  OIDCDtos.OIDCAuthProviderSummaryDto asSummaryDto(@Nonnull OIDCConfiguration configuration, @Nullable String locale) {
     String name = configuration.getName();
     Map<String, String> customParams = configuration.getCustomParams();
 

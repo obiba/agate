@@ -10,19 +10,16 @@
 
 package org.obiba.agate.domain;
 
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
-
+import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
+import jakarta.annotation.Nonnull;
 import org.obiba.mongodb.domain.AbstractAuditableDocument;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Strings;
-import com.google.common.collect.Sets;
+import jakarta.annotation.Nullable;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A group.
@@ -32,7 +29,6 @@ public class Group extends AbstractAuditableDocument {
 
   private static final long serialVersionUID = -2028848270265682755L;
 
-  @NotNull
   @Indexed(unique = true)
   private String name;
 
@@ -43,11 +39,11 @@ public class Group extends AbstractAuditableDocument {
   public Group() {
   }
 
-  public Group(@NotNull String name) {
+  public Group(@Nonnull String name) {
     this(name, null);
   }
 
-  public Group(@NotNull String name, @Nullable String description) {
+  public Group(@Nonnull String name, @Nullable String description) {
     this.name = name;
     this.description = description;
   }

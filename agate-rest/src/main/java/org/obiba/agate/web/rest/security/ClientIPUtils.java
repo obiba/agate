@@ -2,8 +2,8 @@ package org.obiba.agate.web.rest.security;
 
 import com.google.common.base.Strings;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.container.ContainerRequestContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.container.ContainerRequestContext;
 
 public class ClientIPUtils {
 

@@ -19,7 +19,7 @@
   <logger name="org.obiba" level="info"/>
   <!--logger name="org.obiba.agate.service" level="trace"/-->
 
-  <!--<logger name="com.codahale.metrics" level="warn"/>-->
+  <!--<logger name="io.dropwizard.metrics" level="warn"/>-->
   <!--<logger name="com.ryantenney" level="warn"/>-->
   <!--<logger name="com.zaxxer" level="warn"/>-->
   <!--<logger name="org.apache" level="info"/>-->

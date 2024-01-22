@@ -8,19 +8,16 @@
   ~ You should have received a copy of the GNU General Public License
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
+<config xmlns='http://www.ehcache.org/v3'>
 
-<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd"
-    name="CM1"
-    updateCheck="false"
-    maxBytesLocalHeap="16M">
+    <persistence directory="${java.io.tmpdir}/shiro-ehcache"/>
 
-  <diskStore path="java.io.tmpdir"/>
+    <cache-template name="myDefaults">
+        <key-type>java.lang.Long</key-type>
+        <value-type>java.lang.String</value-type>
+        <heap unit="entries">200</heap>
+    </cache-template>
 
-  <defaultCache
-      eternal="false"
-      overflowToDisk="false"
-      />
+    <cache alias="simpleCache" uses-template="myDefaults" />
 
-</ehcache>
-
+</config>

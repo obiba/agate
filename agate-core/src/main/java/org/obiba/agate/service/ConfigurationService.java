@@ -18,10 +18,15 @@ import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.io.Encoders;
+import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.apache.shiro.codec.CodecSupport;
 import org.apache.shiro.codec.Hex;
 import org.apache.shiro.crypto.AesCipherService;
-import org.apache.shiro.crypto.PaddingScheme;
 import org.apache.shiro.util.ByteSource;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,9 +53,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.security.Key;
@@ -80,30 +84,30 @@ public class ConfigurationService {
 
   private final AesCipherService cipherService;
 
+  private Configuration cachedConfiguration;
 
   private final LegacyAesCipherService legacyCipherService = new LegacyAesCipherService();
 
   @Inject
   public ConfigurationService(
-    AgateConfigRepository agateConfigRepository,
-    RealmConfigService realmConfigService,
-    EventBus eventBus,
-    Environment env,
-    ApplicationContext applicationContext,
-    ObjectMapper objectMapper) {
+      AgateConfigRepository agateConfigRepository,
+      RealmConfigService realmConfigService,
+      EventBus eventBus,
+      Environment env,
+      ApplicationContext applicationContext,
+      ObjectMapper objectMapper) {
     this.agateConfigRepository = agateConfigRepository;
     this.realmConfigService = realmConfigService;
     this.eventBus = eventBus;
     this.env = env;
     this.applicationContext = applicationContext;
     this.objectMapper = objectMapper;
-
     this.cipherService = new AesCipherService();
-    this.cipherService.setPaddingScheme(PaddingScheme.PKCS5);
   }
 
   /**
    * Get the http server context path, if configured.
+   *
    * @return
    */
   public String getContextPath() {
@@ -133,22 +137,24 @@ public class ConfigurationService {
     return baseURL;
   }
 
-  @Cacheable(value = "agateConfig", key = "#root.methodName")
   public Configuration getConfiguration() {
-    Configuration configuration = getOrCreateConfiguration();
-    configuration.setContextPath(getContextPath());
-    if (configuration.getLocales().size() == 0) configuration.getLocales().add(Configuration.DEFAULT_LOCALE);
-    return configuration;
+    if (cachedConfiguration == null) {
+      cachedConfiguration = getOrCreateConfiguration();
+      cachedConfiguration.setContextPath(getContextPath());
+      if (cachedConfiguration.getLocales().isEmpty())
+        cachedConfiguration.getLocales().add(Configuration.DEFAULT_LOCALE);
+    }
+    return cachedConfiguration;
   }
 
-  @CacheEvict(value = "agateConfig", allEntries = true)
   public void save(@Valid Configuration configuration) {
     Configuration savedConfiguration = getOrCreateConfiguration();
     BeanUtils
-      .copyProperties(configuration, savedConfiguration, "id", "version", "createdBy", "createdDate", "lastModifiedBy",
-        "lastModifiedDate", "secretKey", "agateVersion");
-    if(configuration.getAgateVersion() != null) savedConfiguration.setAgateVersion(configuration.getAgateVersion());
+        .copyProperties(configuration, savedConfiguration, "id", "version", "createdBy", "createdDate", "lastModifiedBy",
+            "lastModifiedDate", "secretKey", "agateVersion");
+    if (configuration.getAgateVersion() != null) savedConfiguration.setAgateVersion(configuration.getAgateVersion());
     agateConfigRepository.save(savedConfiguration);
+    cachedConfiguration = null;
     eventBus.post(new AgateConfigUpdatedEvent(savedConfiguration));
   }
 
@@ -160,13 +166,18 @@ public class ConfigurationService {
   public String getPublicUrl() {
     Configuration config = getConfiguration();
 
-    if(config.hasPublicUrl()) {
+    if (config.hasPublicUrl()) {
       return config.getPublicUrl();
     } else {
       String host = env.getProperty("server.address");
       String port = env.getProperty("https.port");
       return "https://" + host + ":" + port + getContextPath();
     }
+  }
+
+  public SecretKey getSecretKeyJWT() {
+    Configuration config = getConfiguration();
+    return asJWTSecretKey(config.getSecretKeyJWT());
   }
 
   /**
@@ -212,14 +223,14 @@ public class ConfigurationService {
   public JSONObject getJoinConfiguration(String locale, String application, boolean forEditing) throws JSONException, IOException {
     Configuration config = getConfiguration();
     List<RealmConfig> realms = Strings.isNullOrEmpty(application)
-      ? realmConfigService.findAllRealmsForSignup()
-      : realmConfigService.findAllRealmsForSignupAndApplication(application);
+        ? realmConfigService.findAllRealmsForSignup()
+        : realmConfigService.findAllRealmsForSignupAndApplication(application);
 
     JSONObject form = UserFormBuilder.newBuilder(config, locale, applicationContext.getResource("classpath:join/formDefinition.json"))
-      .realms(realms)
-      .attributes(config.getUserAttributes())
-      .addUsername(forEditing || config.isJoinWithUsername())
-      .build();
+        .realms(realms)
+        .attributes(config.getUserAttributes())
+        .addUsername(forEditing || config.isJoinWithUsername())
+        .build();
 
     return new TranslationUtils().translate(form, getTranslator(locale));
   }
@@ -236,9 +247,9 @@ public class ConfigurationService {
     List<RealmConfig> realms = realmConfigService.findAllRealmsForSignup();
 
     JSONObject form = UserFormBuilder.newBuilder(config, locale, applicationContext.getResource("classpath:join/formDefinition.json"))
-      .realms(realms)
-      .attributes(config.getUserAttributes())
-      .build();
+        .realms(realms)
+        .attributes(config.getUserAttributes())
+        .build();
 
     return new TranslationUtils().translate(form, getTranslator(locale));
   }
@@ -249,32 +260,32 @@ public class ConfigurationService {
     JSONObject form = new JSONObject();
 
     form.put(
-  "form",
-      translationUtils.translate(RealmConfigFormBuilder.newBuilder(forEditing).build(), translator).toString()
+        "form",
+        translationUtils.translate(RealmConfigFormBuilder.newBuilder(forEditing).build(), translator).toString()
     );
     form.put(
-  "userInfoMapping",
-      translationUtils.translate(RealmUserInfoFormBuilder.newBuilder(extractUserInfoFieldsToMap(forEditing)).build(), translator).toString()
+        "userInfoMapping",
+        translationUtils.translate(RealmUserInfoFormBuilder.newBuilder(extractUserInfoFieldsToMap(forEditing)).build(), translator).toString()
     );
     form.put(
-  "userInfoMappingDefaults",
-      UserInfoFieldsMappingDefaultsFactory.create()
+        "userInfoMappingDefaults",
+        UserInfoFieldsMappingDefaultsFactory.create()
     );
     form.put(
-      AgateRealm.AGATE_LDAP_REALM.getName(),
-      translationUtils.translate(LdapRealmConfigFormBuilder.newBuilder().build(), translator).toString()
+        AgateRealm.AGATE_LDAP_REALM.getName(),
+        translationUtils.translate(LdapRealmConfigFormBuilder.newBuilder().build(), translator).toString()
     );
     form.put(
-      AgateRealm.AGATE_JDBC_REALM.getName(),
-      translationUtils.translate(JdbcRealmConfigFormBuilder.newBuilder().build().toString(), translator)
+        AgateRealm.AGATE_JDBC_REALM.getName(),
+        translationUtils.translate(JdbcRealmConfigFormBuilder.newBuilder().build().toString(), translator)
     );
     form.put(
-      AgateRealm.AGATE_AD_REALM.getName(),
-      translationUtils.translate(ActiveDirectoryRealmConfigFormBuilder.newBuilder().build().toString(), translator)
+        AgateRealm.AGATE_AD_REALM.getName(),
+        translationUtils.translate(ActiveDirectoryRealmConfigFormBuilder.newBuilder().build().toString(), translator)
     );
     form.put(
-      AgateRealm.AGATE_OIDC_REALM.getName(),
-      translationUtils.translate(OidcRealmConfigFormBuilder.newBuilder().build().toString(), translator)
+        AgateRealm.AGATE_OIDC_REALM.getName(),
+        translationUtils.translate(OidcRealmConfigFormBuilder.newBuilder().build().toString(), translator)
     );
 
     return form;
@@ -287,7 +298,7 @@ public class ConfigurationService {
     for (int i = 0; i < names.length(); i++) {
       String name = names.optString(i);
       if (!Strings.isNullOrEmpty(name) && !exclusions.contains(name.toLowerCase())) {
-          fields.add(name);
+        fields.add(name);
       }
     }
 
@@ -303,7 +314,7 @@ public class ConfigurationService {
 
     LocalizedString translations = getConfiguration().getTranslations();
 
-    if (translations != null ) {
+    if (translations != null) {
       String customTranslations = translations.get(locale);
       if (customTranslations != null) {
         JsonNode customTranslationsParsed = objectMapper.readTree(customTranslations);
@@ -323,15 +334,30 @@ public class ConfigurationService {
     return Hex.encodeToString(key.getEncoded());
   }
 
+  private String generateJWTSecretKeyString() {
+    SecretKey key = Jwts.SIG.HS256.key().build(); //or HS384.key() or HS512.key()
+    return Encoders.BASE64.encode(key.getEncoded());
+  }
+
+  private SecretKey asJWTSecretKey(String key) {
+    return Keys.hmacShaKeyFor(Decoders.BASE64.decode(key));
+  }
+
   private Configuration getOrCreateConfiguration() {
-    if(agateConfigRepository.count() == 0) {
+    if (agateConfigRepository.count() == 0) {
       Configuration configuration = new Configuration();
       configuration.getLocales().add(Configuration.DEFAULT_LOCALE);
       configuration.setSecretKey(generateSecretKey());
+      configuration.setSecretKeyJWT(generateJWTSecretKeyString());
       agateConfigRepository.save(configuration);
       return getConfiguration();
     }
-    return agateConfigRepository.findAll().get(0);
+    Configuration configuration = agateConfigRepository.findAll().get(0);
+    if (configuration.getSecretKeyJWT() == null) {
+      configuration.setSecretKeyJWT(generateJWTSecretKeyString());
+      agateConfigRepository.save(configuration);
+    }
+    return configuration;
   }
 
   private byte[] getSecretKey() {
@@ -379,8 +405,7 @@ public class ConfigurationService {
       JsonNode jsonNode = mainNode.get(fieldName);
       if (jsonNode != null && jsonNode.isObject()) {
         mergeJson(jsonNode, updateNode.get(fieldName));
-      }
-      else {
+      } else {
         if (mainNode instanceof ObjectNode) {
           JsonNode value = updateNode.get(fieldName);
           ((ObjectNode) mainNode).replace(fieldName, value);

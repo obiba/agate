@@ -1,5 +1,6 @@
 package org.obiba.agate.service;
 
+import jakarta.annotation.Nonnull;
 import org.obiba.agate.domain.Group;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.repository.GroupRepository;
@@ -8,9 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -45,18 +45,18 @@ public class GroupService {
    * @return null if not found
    */
   @Nullable
-  public Group findGroup(@NotNull String name) {
+  public Group findGroup(@Nonnull String name) {
     Assert.notNull(name, "Group name cannot be null.");
     return groupRepository.findOneByName(name);
   }
 
   @Nullable
-  public List<Group> findByApplication(@NotNull String application) {
+  public List<Group> findByApplication(@Nonnull String application) {
     Assert.notNull(application, "Application name cannot be null.");
     return groupRepository.findByApplications(application);
   }
 
-  public void ensureGroupsByName(@NotNull Collection<String> names) {
+  public void ensureGroupsByName(@Nonnull Collection<String> names) {
     Assert.notNull(names, "Group names cannot be null.");
     names.forEach(this::getGroup);
   }
@@ -83,7 +83,7 @@ public class GroupService {
    * @param group
    * @return
    */
-  public Group save(@NotNull Group group) {
+  public Group save(@Nonnull Group group) {
     if(group.isNew()) {
       group.setNameAsId();
       groupRepository.insert(group);
@@ -97,7 +97,7 @@ public class GroupService {
    *
    * @param group
    */
-  public void delete(@NotNull Group group) {
+  public void delete(@Nonnull Group group) {
     for(User user : userRepository.findAll()) {
       if(user.getGroups().contains(group.getName())) {
         throw NotOrphanGroupException.withName(group.getName());

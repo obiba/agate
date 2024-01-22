@@ -12,8 +12,8 @@ package org.obiba.agate.web.filter;
 
 import org.apache.commons.lang.StringUtils;
 
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.*;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**

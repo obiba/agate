@@ -10,14 +10,11 @@
 
 package org.obiba.agate.service;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.*;
+import jakarta.annotation.Nonnull;
 import org.joda.time.DateTime;
 import org.obiba.agate.domain.Authorization;
 import org.obiba.agate.domain.Ticket;
@@ -25,7 +22,6 @@ import org.obiba.agate.domain.User;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -43,12 +39,12 @@ public class TokenUtils {
   public static final String OPENID_PHONE_SCOPE = "phone";
   public static final String OPENID_OFFLINE_ACCESS_SCOPE = "offline_access";
   public static final Set<String> OPENID_SCOPES = Sets.newHashSet(
-    OPENID_SCOPE,
-    OPENID_EMAIL_SCOPE,
-    OPENID_PROFILE_SCOPE,
-    OPENID_PHONE_SCOPE,
-    OPENID_ADDRESS_SCOPE,
-    OPENID_OFFLINE_ACCESS_SCOPE); // http://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims
+      OPENID_SCOPE,
+      OPENID_EMAIL_SCOPE,
+      OPENID_PROFILE_SCOPE,
+      OPENID_PHONE_SCOPE,
+      OPENID_ADDRESS_SCOPE,
+      OPENID_OFFLINE_ACCESS_SCOPE); // http://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims
   public static final String OPENID_TOKEN = "id_token";
 
   /**
@@ -74,20 +70,21 @@ public class TokenUtils {
    * @param ticket
    * @return
    */
-  public String makeAccessToken(@NotNull Ticket ticket) {
+  public String makeAccessToken(@Nonnull Ticket ticket) {
     return makeAccessToken(ticket, null);
   }
 
-  public String makeAccessToken(@NotNull Ticket ticket, String clientId) {
+  public String makeAccessToken(@Nonnull Ticket ticket, String clientId) {
     User user = userService.findUser(ticket.getUsername());
 
     DateTime expires = ticketService.getExpirationDate(ticket);
 
-    Claims claims = Jwts.claims().setSubject(ticket.getUsername()) //
-      .setIssuer(getIssuerID()) //
-      .setIssuedAt(ticket.getCreatedDate().toDate()) //
-      .setExpiration(expires.toDate()) //
-      .setId(ticket.getId());
+    ClaimsBuilder claims = Jwts.claims()
+        .subject(ticket.getUsername())
+        .issuer(getIssuerID())
+        .issuedAt(ticket.getCreatedDate().toDate())
+        .expiration(expires.toDate())
+        .id(ticket.getId());
 
     Authorization authorization = null;
     if (ticket.hasAuthorization()) {
@@ -97,8 +94,10 @@ public class TokenUtils {
     putAudienceClaim(claims, user, authorization, clientId);
     putContextClaim(claims, user, authorization);
 
-    return Jwts.builder().setClaims(claims)
-      .signWith(SignatureAlgorithm.HS256, configurationService.getConfiguration().getSecretKey().getBytes()).compact();
+    return Jwts.builder()
+        .claims(claims.build())
+        .signWith(configurationService.getSecretKeyJWT())
+        .compact();
   }
 
   public String getSignatureAlgorithm() {
@@ -111,15 +110,17 @@ public class TokenUtils {
    * @param token
    * @param application Application name requesting validation
    */
-  public void validateAccessToken(@NotNull String token, @NotNull String application) {
+  public void validateAccessToken(@Nonnull String token, @Nonnull String application) {
     try {
-      Claims claims = Jwts.parser().setSigningKey(configurationService.getConfiguration().getSecretKey().getBytes())
-        .parseClaimsJws(token).getBody();
+      Claims claims = Jwts.parser()
+          .verifyWith(configurationService.getSecretKeyJWT())
+          .build()
+          .parseSignedClaims(token).getPayload();
       if (!getIssuerID().equals(claims.getIssuer())) throw new InvalidTokenException("Token issuer is not valid");
       if (!claims.getAudience().contains(application)) {
         throw new InvalidTokenException("Token is not for '" + application + "'");
       }
-    } catch (SignatureException e) {
+    } catch (Exception e) {
       throw new InvalidTokenException("Token signature is not valid");
     }
   }
@@ -130,22 +131,22 @@ public class TokenUtils {
    * @param authorization
    * @return
    */
-  public String makeIDToken(@NotNull Authorization authorization, @NotNull List<String> scopes) {
+  public String makeIDToken(@Nonnull Authorization authorization, @Nonnull List<String> scopes) {
     if (!authorization.hasScope(OPENID_SCOPE)) return "";
 
     DateTime expires = authorizationService.getExpirationDate(authorization);
-    Claims claims = buildClaims(authorization.getUsername(), scopes);
-    claims.setIssuedAt(authorization.getCreatedDate().toDate()) //
-      .setExpiration(expires.toDate());
-    claims.put(Claims.AUDIENCE, authorization.getApplication());
+    ClaimsBuilder claims = buildClaims(authorization.getUsername(), scopes);
+    claims.issuedAt(authorization.getCreatedDate().toDate()) //
+        .expiration(expires.toDate());
+    claims.add(Claims.AUDIENCE, authorization.getApplication());
 
-    return Jwts.builder().setClaims(claims)
-      .signWith(SignatureAlgorithm.HS256, configurationService.getConfiguration().getSecretKey().getBytes()).compact();
+    return Jwts.builder().claims(claims.build())
+        .signWith(SignatureAlgorithm.HS256, configurationService.getConfiguration().getSecretKey().getBytes()).compact();
   }
 
-  public Claims buildClaims(String subject, @NotNull List<String> scopes) {
+  public ClaimsBuilder buildClaims(String subject, @Nonnull List<String> scopes) {
     User user = userService.findUser(subject);
-    Claims claims = Jwts.claims().setSubject(subject).setIssuer(getIssuerID());
+    ClaimsBuilder claims = Jwts.claims().subject(subject).issuer(getIssuerID());
     putUserClaims(claims, user, scopes);
 
     return claims;
@@ -153,8 +154,9 @@ public class TokenUtils {
 
   public Claims parseClaims(String token) {
     Claims claims = Jwts.parser()
-      .setSigningKey(configurationService.getConfiguration().getSecretKey().getBytes())
-      .parseClaimsJws(token).getBody();
+        .verifyWith(configurationService.getSecretKeyJWT())
+        .build()
+        .parseSignedClaims(token).getPayload();
 
     return claims;
   }
@@ -175,7 +177,7 @@ public class TokenUtils {
    * @param user
    * @param authorization
    */
-  private void putContextClaim(Claims claims, User user, Authorization authorization) {
+  private void putContextClaim(ClaimsBuilder claims, User user, Authorization authorization) {
     if (user == null) return;
 
     Map<String, Object> userMap = Maps.newHashMap();
@@ -197,7 +199,7 @@ public class TokenUtils {
     if (authorization != null && authorization.hasScopes()) {
       contextMap.put("scopes", authorization.getScopes());
     }
-    claims.put("context", contextMap);
+    claims.add("context", contextMap);
   }
 
   /**
@@ -206,7 +208,7 @@ public class TokenUtils {
    * @param claims
    * @param user
    */
-  private void putUserClaims(Claims claims, User user, List<String> scopes) {
+  private void putUserClaims(ClaimsBuilder claims, User user, List<String> scopes) {
     if (scopes.contains("profile")) {
       putProfileClaims(claims, user);
     }
@@ -216,29 +218,29 @@ public class TokenUtils {
     }
 
     if (user.hasGroups())
-      claims.put("groups", user.getGroups());
-    claims.put("locale", user.getPreferredLanguage());
+      claims.add("groups", user.getGroups());
+    claims.add("locale", user.getPreferredLanguage());
   }
 
-  private void putEmailClaims(Claims claims, User user) {
-    claims.put("email", user.getEmail());
+  private void putEmailClaims(ClaimsBuilder claims, User user) {
+    claims.add("email", user.getEmail());
     // TODO
-    claims.put("email_verified", false);//user.isEmailVerified());
+    claims.add("email_verified", false);//user.isEmailVerified());
   }
 
-  private void putProfileClaims(Claims claims, User user) {
+  private void putProfileClaims(ClaimsBuilder claims, User user) {
     String name = "";
 
     if (user.hasFirstName()) {
       name = user.getFirstName();
-      claims.put("given_name", user.getFirstName());
+      claims.add("given_name", user.getFirstName());
     }
     if (user.hasLastName()) {
       if (!Strings.isNullOrEmpty(name)) name += " ";
       name += user.getLastName();
-      claims.put("family_name", user.getLastName());
+      claims.add("family_name", user.getLastName());
     }
-    if (!Strings.isNullOrEmpty(name)) claims.put("name", name);
+    if (!Strings.isNullOrEmpty(name)) claims.add("name", name);
   }
 
   /**
@@ -250,15 +252,15 @@ public class TokenUtils {
    * @param authorization
    * @param clientId
    */
-  private void putAudienceClaim(Claims claims, User user, Authorization authorization, String clientId) {
+  private void putAudienceClaim(ClaimsBuilder claims, User user, Authorization authorization, String clientId) {
     if (user == null) return;
 
     Set<String> applications = userService.getUserApplications(user);
     if (authorization == null) {
       if (clientId == null) {
-        claims.put(Claims.AUDIENCE, applications);
+        claims.add(Claims.AUDIENCE, applications);
       } else {
-        claims.put(Claims.AUDIENCE, Sets.newHashSet(clientId));
+        claims.add(Claims.AUDIENCE, Sets.newHashSet(clientId));
       }
     } else {
       Set<String> audience = Sets.newTreeSet();
@@ -266,9 +268,9 @@ public class TokenUtils {
       audience.add(authorization.getApplication());
       if (authorization.hasScopes()) {
         authorization.getScopes().stream().map(this::scopeToApplication).filter(applications::contains)
-          .forEach(audience::add);
+            .forEach(audience::add);
       }
-      claims.put(Claims.AUDIENCE, audience);
+      claims.add(Claims.AUDIENCE, audience);
     }
   }
 

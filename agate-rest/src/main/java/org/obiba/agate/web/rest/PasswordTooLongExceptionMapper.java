@@ -10,13 +10,11 @@
 
 package org.obiba.agate.web.rest;
 
-import com.google.protobuf.GeneratedMessage;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.Provider;
 import org.obiba.agate.service.PasswordTooLongException;
 import org.obiba.jersey.exceptionmapper.AbstractErrorDtoExceptionMapper;
 import org.obiba.web.model.ErrorDtos;
-
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.Provider;
 
 
 @Provider
@@ -28,7 +26,7 @@ public class PasswordTooLongExceptionMapper extends AbstractErrorDtoExceptionMap
   }
 
   @Override
-  protected GeneratedMessage.ExtendableMessage<?> getErrorDto(PasswordTooLongException e) {
+  protected ErrorDtos.ClientErrorDto getErrorDto(PasswordTooLongException e) {
     return ErrorDtos.ClientErrorDto.newBuilder() //
         .setCode(getStatus().getStatusCode()) //
         .addArguments(e.getMaxSize() + "") //
