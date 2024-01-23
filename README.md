@@ -19,16 +19,18 @@ sudo npm install -g grunt-cli bower
 
 If you run agate for the first time, run `make npm-install`.
 
-Make sure you use **Java 8**:
+Make sure you use **Java 17**:
 
 ```
 sudo update-alternatives --config java
 sudo update-alternatives --config javac
 ```
 
-During development, run
+Or use [SDKMAN!](https://sdkman.io/).
 
-* `make all drop-mongo run` in one terminal to start a fresh empty agate REST server on [HTTP port 8081](http://localhost:8081) or [HTTPS port 8444](https://localhost:8444)
+During development, run in debug mode:
+
+* `make all debug` in one terminal to start a fresh empty agate REST server on [HTTP port 8081](http://localhost:8081) or [HTTPS port 8444](https://localhost:8444)
 * `make grunt` in another terminal to start Grunt server with live reload on port **9000**
 
 See `make help` for other targets.
