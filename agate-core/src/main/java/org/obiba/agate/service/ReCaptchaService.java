@@ -11,7 +11,7 @@
 package org.obiba.agate.service;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.Lists;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.impl.DefaultRedirectStrategy;
@@ -90,7 +90,7 @@ public class ReCaptchaService {
 
     @Override
     public String toString() {
-      return Objects.toStringHelper(this).add("success", success).add("errorCodes", errorCodes).toString();
+      return MoreObjects.toStringHelper(this).add("success", success).add("errorCodes", errorCodes).toString();
     }
   }
 }

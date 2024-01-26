@@ -10,13 +10,13 @@
 
 package org.obiba.agate.domain;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import org.springframework.data.annotation.Id;
 
-import jakarta.annotation.Nullable;
 import java.io.Serializable;
 import java.util.List;
 
@@ -125,7 +125,7 @@ public class AttributeConfiguration implements Serializable {
 
   @Override
   public final String toString() {
-    return Objects.toStringHelper(this).omitNullValues().add("name", name) //
+    return MoreObjects.toStringHelper(this).omitNullValues().add("name", name) //
       .add("description", description) //
       .add("required", required) //
       .add("type", type) //
