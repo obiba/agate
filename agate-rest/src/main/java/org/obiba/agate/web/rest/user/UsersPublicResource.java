@@ -165,7 +165,8 @@ public class UsersPublicResource {
   public Response create(@Context HttpServletRequest request, MultivaluedMap<String, String> formParams) {
     String applicationName = getRequestingApplication(request);
 
-    if (!configurationService.getConfiguration().isJoinPageEnabled() && Strings.isNullOrEmpty(applicationName)) {
+    Configuration config = configurationService.getConfiguration();
+    if (!config.isJoinPageEnabled() && Strings.isNullOrEmpty(applicationName)) {
       throw new BadRequestException("Direct self join is not enabled");
     }
 
@@ -186,10 +187,21 @@ public class UsersPublicResource {
 
     if (!new EmailValidator().isValid(email, null)) throw new BadRequestException("Not a valid email address");
 
-    String name = username == null ? null : username.trim();
+    if (!config.getJoinWhitelist().isEmpty()) {
+      if (config.getJoinWhitelist().stream().noneMatch(email::endsWith)) {
+        throw new ForbiddenException("Not an authorized email address");
+      }
+    }
+    if (!config.getJoinBlacklist().isEmpty()) {
+      if (config.getJoinBlacklist().stream().anyMatch(email::endsWith)) {
+        throw new ForbiddenException("Not an authorized email address");
+      }
+    }
+
+    String name = username == null ? null : username.trim().replaceAll(" ", "");
 
     if (Strings.isNullOrEmpty(username)) {
-      if (configurationService.getConfiguration().isJoinWithUsername())
+      if (config.isJoinWithUsername())
         throw new BadRequestException("User name cannot be empty");
 
       try {
