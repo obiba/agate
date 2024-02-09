@@ -12,7 +12,7 @@ package org.obiba.agate.web.model;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
-
+import com.google.common.base.Joiner;
 import org.apache.commons.lang.LocaleUtils;
 import org.obiba.agate.domain.AttributeConfiguration;
 import org.obiba.agate.domain.Configuration;
@@ -30,25 +30,28 @@ class ConfigurationDtos {
   @NotNull
   Agate.ConfigurationDto asDto(@NotNull Configuration configuration) {
     Agate.ConfigurationDto.Builder builder = Agate.ConfigurationDto.newBuilder()
-      .setName(configuration.getName())
-      .setShortTimeout(configuration.getShortTimeout())
-      .setLongTimeout(configuration.getLongTimeout())
-      .setInactiveTimeout(configuration.getInactiveTimeout())
-      .setJoinPageEnabled(configuration.isJoinPageEnabled())
-      .setJoinWithUsername(configuration.isJoinWithUsername());
+        .setName(configuration.getName())
+        .setShortTimeout(configuration.getShortTimeout())
+        .setLongTimeout(configuration.getLongTimeout())
+        .setInactiveTimeout(configuration.getInactiveTimeout())
+        .setJoinPageEnabled(configuration.isJoinPageEnabled())
+        .setJoinWithUsername(configuration.isJoinWithUsername())
+        .setJoinWhitelist(Joiner.on(" ").join(configuration.getJoinWhitelist()))
+        .setJoinBlacklist(Joiner.on(" ").join(configuration.getJoinBlacklist()));
 
     configuration.getLocales().forEach(locale -> builder.addLanguages(locale.getLanguage()));
 
-    if(configuration.hasDomain()) builder.setDomain(configuration.getDomain());
-    if(configuration.hasPublicUrl()) builder.setPublicUrl(configuration.getPublicUrl());
-    if(configuration.hasPortalUrl()) builder.setPortalUrl(configuration.getPortalUrl());
-    if(configuration.hasUserAttributes())
+    if (configuration.hasDomain()) builder.setDomain(configuration.getDomain());
+    if (configuration.hasPublicUrl()) builder.setPublicUrl(configuration.getPublicUrl());
+    if (configuration.hasPortalUrl()) builder.setPortalUrl(configuration.getPortalUrl());
+    if (configuration.hasUserAttributes())
       configuration.getUserAttributes().forEach(c -> builder.addUserAttributes(asDto(c)));
-    if(configuration.getAgateVersion() != null) {
+    if (configuration.getAgateVersion() != null) {
       builder.setVersion(configuration.getAgateVersion().toString());
     }
-    if(configuration.hasStyle()) builder.setStyle(configuration.getStyle());
-    if(configuration.hasTranslations()) builder.addAllTranslations(localizedStringDtos.asDto(configuration.getTranslations()));
+    if (configuration.hasStyle()) builder.setStyle(configuration.getStyle());
+    if (configuration.hasTranslations())
+      builder.addAllTranslations(localizedStringDtos.asDto(configuration.getTranslations()));
     return builder.build();
   }
 
@@ -56,29 +59,32 @@ class ConfigurationDtos {
   Configuration fromDto(@NotNull Agate.ConfigurationDtoOrBuilder dto) {
     Configuration configuration = new Configuration();
     configuration.setName(dto.getName());
-    if(dto.hasDomain()) configuration.setDomain(dto.getDomain());
-    if(dto.hasPublicUrl()) configuration.setPublicUrl(dto.getPublicUrl());
-    if(dto.hasPortalUrl()) configuration.setPortalUrl(dto.getPortalUrl());
+    if (dto.hasDomain()) configuration.setDomain(dto.getDomain());
+    if (dto.hasPublicUrl()) configuration.setPublicUrl(dto.getPublicUrl());
+    if (dto.hasPortalUrl()) configuration.setPortalUrl(dto.getPortalUrl());
     dto.getLanguagesList().forEach(lang -> configuration.getLocales().add(LocaleUtils.toLocale(lang)));
     configuration.setShortTimeout(dto.getShortTimeout());
     configuration.setLongTimeout(dto.getLongTimeout());
     configuration.setInactiveTimeout(dto.getInactiveTimeout());
     configuration.setJoinPageEnabled(dto.getJoinPageEnabled());
     configuration.setJoinWithUsername(dto.getJoinWithUsername());
-    if(dto.getUserAttributesCount() > 0)
+    configuration.setJoinWhitelist(dto.hasJoinWhitelist() ? dto.getJoinWhitelist() : "");
+    configuration.setJoinBlacklist(dto.hasJoinBlacklist() ? dto.getJoinBlacklist() : "");
+    if (dto.getUserAttributesCount() > 0)
       dto.getUserAttributesList().forEach(c -> configuration.addUserAttribute(fromDto(c)));
-    if(dto.hasStyle()) configuration.setStyle(dto.getStyle());
-    if(dto.getTranslationsCount() > 0) configuration.setTranslations(localizedStringDtos.fromDto(dto.getTranslationsList()));
+    if (dto.hasStyle()) configuration.setStyle(dto.getStyle());
+    if (dto.getTranslationsCount() > 0)
+      configuration.setTranslations(localizedStringDtos.fromDto(dto.getTranslationsList()));
     return configuration;
   }
 
   @NotNull
   Agate.AttributeConfigurationDto.Builder asDto(AttributeConfiguration config) {
     Agate.AttributeConfigurationDto.Builder builder = Agate.AttributeConfigurationDto.newBuilder()
-      .setName(config.getName()).setRequired(config.isRequired()).setType(config.getType().toString())
-      .addAllValues(config.getValues());
+        .setName(config.getName()).setRequired(config.isRequired()).setType(config.getType().toString())
+        .addAllValues(config.getValues());
 
-    if(config.hasDescription()) {
+    if (config.hasDescription()) {
       builder.setDescription(config.getDescription());
     }
 

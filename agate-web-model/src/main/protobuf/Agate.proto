@@ -67,6 +67,8 @@ message ConfigurationDto {
   repeated LocalizedStringDto translations = 12;
   optional string portalUrl = 13;
   required bool joinPageEnabled = 14;
+  optional string joinWhitelist = 15;
+  optional string joinBlacklist = 16;
 }
 
 message PublicConfigurationDto {

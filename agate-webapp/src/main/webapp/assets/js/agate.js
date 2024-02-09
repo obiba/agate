@@ -119,11 +119,11 @@ var agatejs = (function() {
           .catch(handle => {
             toggleSubmitButton(true);
             console.dir(handle);
-            if (handle.response.data.message.startsWith('Email already in use')) {
-              onFailure('server.error.email-already-assigned');
-            } else if (handle.response.data.message === 'Invalid reCaptcha response') {
+            if (handle.response.data?.message === 'Invalid reCaptcha response') {
               onFailure('server.error.bad-captcha');
-            }else if (handle.response.data.messageTemplate) {
+            } else if (handle.response.data?.message?.startsWith('Email already in use')) {
+              onFailure('server.error.email-already-assigned');
+            } else if (handle.response.data?.messageTemplate) {
               onFailure(handle.response.data.messageTemplate);
             } else {
               onFailure('server.error.bad-request');

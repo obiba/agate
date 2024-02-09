@@ -13,7 +13,10 @@ package org.obiba.agate.domain;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import org.hibernate.validator.constraints.NotBlank;
 import org.obiba.mongodb.domain.AbstractAuditableDocument;
@@ -63,6 +66,10 @@ public class Configuration extends AbstractAuditableDocument {
 
   private boolean joinWithUsername = true;
 
+  private List<String> joinWhitelist = Lists.newArrayList();
+
+  private List<String> joinBlacklist = Lists.newArrayList();
+
   private List<AttributeConfiguration> userAttributes;
 
   private String style;
@@ -103,7 +110,7 @@ public class Configuration extends AbstractAuditableDocument {
 
   public String getPublicUrl() {
     if (!Strings.isNullOrEmpty(publicUrl) && publicUrl.endsWith("/")) {
-      return publicUrl.substring(0, publicUrl.length() -1);
+      return publicUrl.substring(0, publicUrl.length() - 1);
     }
     return publicUrl;
   }
@@ -164,6 +171,30 @@ public class Configuration extends AbstractAuditableDocument {
     this.joinWithUsername = joinWithUsername;
   }
 
+  public List<String> getJoinWhitelist() {
+    return joinWhitelist == null ? joinWhitelist = Lists.newArrayList() : joinWhitelist;
+  }
+
+  public void setJoinWhitelist(List<String> joinWhitelist) {
+    this.joinWhitelist = joinWhitelist;
+  }
+
+  public void setJoinWhitelist(String joinWhitelistStr) {
+    this.joinWhitelist = splitToList(joinWhitelistStr);
+  }
+
+  public List<String> getJoinBlacklist() {
+    return joinBlacklist == null ? joinBlacklist = Lists.newArrayList() : joinBlacklist;
+  }
+
+  public void setJoinBlacklist(List<String> joinBlacklist) {
+    this.joinBlacklist = joinBlacklist;
+  }
+
+  public void setJoinBlacklist(String joinBlacklistStr) {
+    this.joinBlacklist = splitToList(joinBlacklistStr);
+  }
+
   public boolean hasUserAttributes() {
     return userAttributes != null && userAttributes.size() > 0;
   }
@@ -177,7 +208,7 @@ public class Configuration extends AbstractAuditableDocument {
   }
 
   public void addUserAttribute(AttributeConfiguration config) {
-    if(userAttributes == null) userAttributes = Lists.newArrayList();
+    if (userAttributes == null) userAttributes = Lists.newArrayList();
     userAttributes.add(config);
   }
 
@@ -253,5 +284,20 @@ public class Configuration extends AbstractAuditableDocument {
 
   public boolean hasOtpStrategy() {
     return !Strings.isNullOrEmpty(otpStrategy);
+  }
+
+  /**
+   * Split a string space or comma separated into a list of tokens.
+   * @param str The input string that can be null or empty.
+   * @return a list of strings
+   */
+  private List<String> splitToList(String str) {
+    if (Strings.isNullOrEmpty(str)) {
+      return Lists.newArrayList();
+    }
+    return Splitter.on(" ").splitToList(str.replaceAll(",", " ")).stream()
+        .map(String::trim)
+        .filter(s -> !Strings.isNullOrEmpty(s))
+        .collect(Collectors.toList());
   }
 }
