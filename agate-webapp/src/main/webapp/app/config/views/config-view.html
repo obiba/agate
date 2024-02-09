@@ -17,8 +17,13 @@
   </h2>
 
   <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-12">
       <h3 translate>config.title</h3>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
       <table class="table table-bordered table-striped">
         <tbody>
         <tr>
@@ -70,6 +75,16 @@
           </td>
           <td>{{agateConfig.inactiveTimeout / 24}}</td>
         </tr>
+        </tbody>
+      </table>
+
+      <a href="#/admin/general/edit" class="btn btn-primary">
+        <i class="fa fa-pencil-square-o"></i> <span translate>edit</span>
+      </a>
+    </div>
+    <div class="col-md-6">
+      <table class="table table-bordered table-striped">
+        <tbody>
         <tr>
           <td>
             <span translate>config.languages</span>
@@ -103,13 +118,26 @@
             <i class="fa fa-square-o" ng-hide="agateConfig.joinWithUsername"></i>
           </td>
         </tr>
+        <tr>
+          <td>
+            <span translate>config.joinWhitelist</span>
+            <span class="help-block" translate>config.joinWhitelist-help</span>
+          </td>
+          <td>{{agateConfig.joinWhitelist}}</td>
+        </tr>
+        <tr>
+          <td>
+            <span translate>config.joinBlacklist</span>
+            <span class="help-block" translate>config.joinBlacklist-help</span>
+          </td>
+          <td>{{agateConfig.joinBlacklist}}</td>
+        </tr>
         </tbody>
       </table>
-
-      <a href="#/admin/general/edit" class="btn btn-primary">
-        <i class="fa fa-pencil-square-o"></i> <span translate>edit</span>
-      </a>
     </div>
+  </div>
+
+  <div class="row">
     <div class="col-md-6">
       <h3 translate>config.encryption-keys</h3>
       <p class="help-block" translate>
@@ -129,6 +157,8 @@
       <a href="" class="btn btn-default" ng-click="downloadCertificate()">
         <i class="fa fa-download"></i> <span translate>config.downloadCertificate</span>
       </a>
+    </div>
+    <div class="col-md-6">
 
       <h3 translate>config.user-attributes</h3>
       <p class="help-block" translate>
@@ -180,8 +210,8 @@
           </table>
         </div>
       </div>
+
     </div>
   </div>
-
 
 </div>
