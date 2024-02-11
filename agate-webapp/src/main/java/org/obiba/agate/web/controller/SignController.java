@@ -17,11 +17,9 @@ import org.apache.shiro.subject.Subject;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.obiba.agate.config.ClientConfiguration;
-import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.Application;
 import org.obiba.agate.domain.RealmUsage;
 import org.obiba.agate.domain.User;
-import org.obiba.agate.security.AgateTokenRealm;
 import org.obiba.agate.security.OidcAuthConfigurationProvider;
 import org.obiba.agate.service.ApplicationService;
 import org.obiba.agate.service.ConfigurationService;
@@ -136,7 +134,7 @@ public class SignController {
       ModelAndView mv = new ModelAndView("signout");
       mv.getModel().put("authenticated", false);
       mv.getModel().put("confirm", false);
-      mv.getModel().put("postLogoutRedirectUri", postLogoutRedirectUri);
+      mv.getModel().put("postLogoutRedirectUri", ensurePostLogoutRedirectUri(postLogoutRedirectUri));
       return mv;
     }
 
@@ -195,9 +193,19 @@ public class SignController {
     ModelAndView mv = new ModelAndView("signout");
     mv.getModel().put("authenticated", true);
     mv.getModel().put("confirm", confirmLogout);
-    mv.getModel().put("postLogoutRedirectUri", newPostLogoutRedirectUri);
+    mv.getModel().put("postLogoutRedirectUri", ensurePostLogoutRedirectUri(newPostLogoutRedirectUri));
     return mv;
   }
+
+  private String ensurePostLogoutRedirectUri(String postLogoutRedirectUri) {
+    if (!Strings.isNullOrEmpty(postLogoutRedirectUri)) {
+      return postLogoutRedirectUri;
+    }
+    String url = configurationService.getConfiguration().getPortalUrl();
+    if (!Strings.isNullOrEmpty(url)) return url;
+    return configurationService.getConfiguration().hasPublicUrl() ? configurationService.getPublicUrl() : "/";
+  }
+
 
   @GetMapping("/just-registered")
   public ModelAndView justRegistered(@RequestParam(value = "signin", required = false, defaultValue = "false") boolean canSignin) {
