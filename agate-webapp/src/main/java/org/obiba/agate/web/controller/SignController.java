@@ -197,16 +197,6 @@ public class SignController {
     return mv;
   }
 
-  private String ensurePostLogoutRedirectUri(String postLogoutRedirectUri) {
-    if (!Strings.isNullOrEmpty(postLogoutRedirectUri)) {
-      return postLogoutRedirectUri;
-    }
-    String url = configurationService.getConfiguration().getPortalUrl();
-    if (!Strings.isNullOrEmpty(url)) return url;
-    return configurationService.getConfiguration().hasPublicUrl() ? configurationService.getPublicUrl() : "/";
-  }
-
-
   @GetMapping("/just-registered")
   public ModelAndView justRegistered(@RequestParam(value = "signin", required = false, defaultValue = "false") boolean canSignin) {
     ModelAndView mv = new ModelAndView("just-registered");
@@ -229,6 +219,15 @@ public class SignController {
     return oidcAuthConfigurationProvider.getConfigurations(usage).stream()
       .map(conf -> new OidcProvider(conf, locale, query, contextPath))
       .collect(Collectors.toList());
+  }
+
+  private String ensurePostLogoutRedirectUri(String postLogoutRedirectUri) {
+    if (!Strings.isNullOrEmpty(postLogoutRedirectUri)) {
+      return postLogoutRedirectUri;
+    }
+    String url = configurationService.getConfiguration().getPortalUrl();
+    if (!Strings.isNullOrEmpty(url)) return url;
+    return configurationService.getConfiguration().hasPublicUrl() ? configurationService.getPublicUrl() : "/";
   }
 
 }
