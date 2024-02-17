@@ -73,6 +73,7 @@
     <protobuf.version>3.24.3</protobuf.version>
     <protobuf-java-format.version>1.2.1-obiba</protobuf-java-format.version>
     <shiro.version>1.13.0</shiro.version>
+    <shiro-ehcache3.version>1.0.0</shiro-ehcache3.version>
     <shiro-extras.version>1.1.0</shiro-extras.version>
     <totp.version>1.7.1</totp.version>
 
@@ -441,8 +442,8 @@
       <dependency>
         <groupId>org.ehcache.integrations.shiro</groupId>
         <artifactId>shiro-ehcache3</artifactId>
-        <version>1.0.0</version>
-    </dependency>
+        <version>${shiro-ehcache3.version}</version>
+      </dependency>
 
       <dependency>
         <groupId>org.apache.shiro</groupId>
@@ -469,17 +470,6 @@
           <exclusion>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-web</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.shiro</groupId>
-        <artifactId>shiro-ehcache</artifactId>
-        <version>${shiro.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>net.sf.ehcache</groupId>
-            <artifactId>ehcache-core</artifactId>
           </exclusion>
         </exclusions>
       </dependency>

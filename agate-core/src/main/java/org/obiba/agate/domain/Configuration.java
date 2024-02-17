@@ -10,23 +10,20 @@
 
 package org.obiba.agate.domain;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
-
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import org.hibernate.validator.constraints.NotBlank;
 import org.obiba.mongodb.domain.AbstractAuditableDocument;
 import org.obiba.runtime.Version;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
 @Document
 public class Configuration extends AbstractAuditableDocument {
