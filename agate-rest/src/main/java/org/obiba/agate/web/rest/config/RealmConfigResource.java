@@ -8,9 +8,14 @@ import org.obiba.agate.web.model.Dtos;
 import javax.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Component
+@Scope("request")
 @Path("/config/realm/{name}")
 public class RealmConfigResource {
 
