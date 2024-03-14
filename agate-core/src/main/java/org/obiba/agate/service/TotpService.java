@@ -13,6 +13,7 @@ import dev.samstevens.totp.util.Utils;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import java.util.Random;
 
 @Component
 public class TotpService {
@@ -67,5 +68,12 @@ public class TotpService {
     CodeGenerator codeGenerator = new DefaultCodeGenerator(HashingAlgorithm.valueOf(DEFAULT_HASH_ALGORITHM), DEFAULT_DIGITS);
     CodeVerifier verifier = new DefaultCodeVerifier(codeGenerator, timeProvider);
     return verifier.isValidCode(configurationService.decrypt(secret), code);
+  }
+
+  public String generateRandomCode() {
+    Random random = new Random();
+    // Generates a random integer between 100000 and 999999
+    int code = random.nextInt(900000) + 100000;
+    return String.valueOf(code);
   }
 }

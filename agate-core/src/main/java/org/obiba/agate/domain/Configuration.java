@@ -80,6 +80,8 @@ public class Configuration extends AbstractAuditableDocument {
   // One time password strategy
   private String otpStrategy = "TOTP";
 
+  private boolean enforced2FA = false;
+
   @Transient
   private String contextPath;
 
@@ -291,6 +293,14 @@ public class Configuration extends AbstractAuditableDocument {
 
   public boolean hasOtpStrategy() {
     return !Strings.isNullOrEmpty(otpStrategy);
+  }
+
+  public void setEnforced2FA(boolean enforced2FA) {
+    this.enforced2FA = enforced2FA;
+  }
+
+  public boolean isEnforced2FA() {
+    return enforced2FA;
   }
 
   /**

@@ -102,6 +102,8 @@ public class TicketsResource extends ApplicationAwareResource {
         subject.login(makeUsernamePasswordToken(user.getName(), password, servletRequest));
         authorizationValidator.validateRealm(servletRequest, user, subject);
       } catch (NoSuchOtpException e) {
+        if (getConfiguration().isEnforced2FA() && !user.hasSecret())
+          userService.applyAndSendOtp(user);
         return Response.status(Response.Status.UNAUTHORIZED).header("WWW-Authenticate", e.getOtpHeader()).build();
       }
 

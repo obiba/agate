@@ -97,6 +97,8 @@
 
     private final RealmConfigRepository realmConfigRepository;
 
+    private final TotpService totpService;
+
     @Inject
     public UserService(
         UserRepository userRepository,
@@ -107,7 +109,8 @@
         Configuration freemarkerConfiguration,
         MessageSource messageSource, MailService mailService,
         ConfigurationService configurationService,
-        RealmConfigRepository realmConfigRepository) {
+        RealmConfigRepository realmConfigRepository,
+        TotpService totpService) {
       this.userRepository = userRepository;
       this.groupService = groupService;
       this.userCredentialsRepository = userCredentialsRepository;
@@ -118,6 +121,7 @@
       this.mailService = mailService;
       this.configurationService = configurationService;
       this.realmConfigRepository = realmConfigRepository;
+      this.totpService = totpService;
     }
 
     //
@@ -412,6 +416,7 @@
 
       if (user != null) {
         user.setLastLogin(DateTime.now());
+        user.setOtp(null);
         save(user);
       }
     }
@@ -661,6 +666,32 @@
           return Optional.of(r);
         }));
       return applications;
+    }
+
+    public boolean validateOtp(User user, String code) {
+      JSONObject otp = new JSONObject(configurationService.decrypt(user.getOtp()));
+      long now = DateTime.now().getMillis();
+      user.setOtp(null);
+      save(user);
+      return now < otp.getLong("expires") && code.equals(otp.getString("code"));
+    }
+
+    public void applyAndSendOtp(User user) {
+      String code = totpService.generateRandomCode();
+      long now = DateTime.now().getMillis();
+      JSONObject otp = new JSONObject();
+      int timeout = 5;  // 5 minutes
+      otp.put("code", code);
+      otp.put("expires", now + timeout*60*1000);
+      user.setOtp(configurationService.encrypt(otp.toString()));
+      save(user);
+
+      Map<String, Object> ctx = Maps.newHashMap();
+      String organization = configurationService.getConfiguration().getName();
+      ctx.put("code", code);
+      ctx.put("timeout", timeout);
+
+      sendEmail(user, "[" + organization + "] Code", "otpEmail", ctx);
     }
 
     private List<RealmConfig> getRealmConfigs(User user) {

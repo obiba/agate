@@ -11,6 +11,7 @@
 package org.obiba.agate.web.rest.security;
 
 import com.google.common.base.Strings;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
@@ -28,7 +29,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import jakarta.servlet.http.HttpServletRequest;
 
 @Component
 public class AuthenticationExecutorImpl extends AbstractAuthenticationExecutor implements InitializingBean {
@@ -78,12 +78,16 @@ public class AuthenticationExecutorImpl extends AbstractAuthenticationExecutor i
     try {
       User user = userService.findActiveUser(username);
       if(user == null) user = userService.findActiveUserByEmail(username);
-      if (user != null && user.hasSecret() && "TOTP".equals(strategy)) {
+      if (user != null && (user.hasSecret() || configurationService.getConfiguration().isEnforced2FA())) {
         if (Strings.isNullOrEmpty(code)) {
-          throw new NoSuchOtpException("X-Obiba-"+ strategy);
+          throw new NoSuchOtpException("X-Obiba-" + strategy);
         }
-        if (!totpService.validateCode(code, user.getSecret())) {
-          throw new AuthenticationException("Wrong TOTP");
+        if (user.hasSecret()) {
+          if (!totpService.validateCode(code, user.getSecret()))
+            throw new AuthenticationException("Wrong TOTP");
+        } else if (user.hasOtp()) {
+          if (!userService.validateOtp(user, code))
+            throw new AuthenticationException("Wrong TOTP");
         }
       } // else 2FA not activated
     } catch (NoSuchUserException e) {

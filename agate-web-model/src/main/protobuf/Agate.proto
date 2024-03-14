@@ -69,6 +69,7 @@ message ConfigurationDto {
   required bool joinPageEnabled = 14;
   optional string joinWhitelist = 15;
   optional string joinBlacklist = 16;
+  required bool enforced2FA = 17;
 }
 
 message PublicConfigurationDto {

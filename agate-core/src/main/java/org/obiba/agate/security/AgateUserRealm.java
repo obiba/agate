@@ -101,13 +101,17 @@ public class AgateUserRealm extends AuthorizingRealm implements InitializingBean
     UserCredentials userCredentials = userService.findUserCredentials(username);
     if(userCredentials == null) throw new UnknownAccountException("No account found for user [" + username + "]");
 
-    if (user.hasSecret()) {
+    if (user.hasSecret() || configurationService.getConfiguration().isEnforced2FA()) {
       String strategy = configurationService.getConfiguration().getOtpStrategy();
       if (strategy.equals("TOTP")) {
         String code = token instanceof UsernamePasswordOtpToken ? ((UsernamePasswordOtpToken) token).getOtp() : null;
         if (Strings.isNullOrEmpty(code)) throw new NoSuchOtpException("X-Obiba-" + strategy);
-        if (!totpService.validateCode(code, user.getSecret())) {
-          throw new AuthenticationException("Wrong TOTP");
+        if (user.hasSecret()) {
+          if (!totpService.validateCode(code, user.getSecret()))
+            throw new AuthenticationException("Wrong TOTP");
+        } else if (user.hasOtp()) {
+          if (!userService.validateOtp(user, code))
+            throw new AuthenticationException("Wrong TOTP");
         }
       }
     }
