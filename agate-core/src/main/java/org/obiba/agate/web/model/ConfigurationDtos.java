@@ -37,7 +37,8 @@ class ConfigurationDtos {
         .setJoinPageEnabled(configuration.isJoinPageEnabled())
         .setJoinWithUsername(configuration.isJoinWithUsername())
         .setJoinWhitelist(Joiner.on(" ").join(configuration.getJoinWhitelist()))
-        .setJoinBlacklist(Joiner.on(" ").join(configuration.getJoinBlacklist()));
+        .setJoinBlacklist(Joiner.on(" ").join(configuration.getJoinBlacklist()))
+        .setEnforced2FA(configuration.isEnforced2FA());
 
     configuration.getLocales().forEach(locale -> builder.addLanguages(locale.getLanguage()));
 
@@ -70,6 +71,7 @@ class ConfigurationDtos {
     configuration.setJoinWithUsername(dto.getJoinWithUsername());
     configuration.setJoinWhitelist(dto.hasJoinWhitelist() ? dto.getJoinWhitelist() : "");
     configuration.setJoinBlacklist(dto.hasJoinBlacklist() ? dto.getJoinBlacklist() : "");
+    configuration.setEnforced2FA(dto.getEnforced2FA());
     if (dto.getUserAttributesCount() > 0)
       dto.getUserAttributesList().forEach(c -> configuration.addUserAttribute(fromDto(c)));
     if (dto.hasStyle()) configuration.setStyle(dto.getStyle());

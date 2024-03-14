@@ -78,12 +78,16 @@ public class AuthenticationExecutorImpl extends AbstractAuthenticationExecutor {
     try {
       User user = userService.findActiveUser(username);
       if(user == null) user = userService.findActiveUserByEmail(username);
-      if (user != null && user.hasSecret() && "TOTP".equals(strategy)) {
+      if (user != null && (user.hasSecret() || configurationService.getConfiguration().isEnforced2FA())) {
         if (Strings.isNullOrEmpty(code)) {
-          throw new NoSuchOtpException("X-Obiba-"+ strategy);
+          throw new NoSuchOtpException("X-Obiba-" + strategy);
         }
-        if (!totpService.validateCode(code, user.getSecret())) {
-          throw new AuthenticationException("Wrong TOTP");
+        if (user.hasSecret()) {
+          if (!totpService.validateCode(code, user.getSecret()))
+            throw new AuthenticationException("Wrong TOTP");
+        } else if (user.hasOtp()) {
+          if (!userService.validateOtp(user, code))
+            throw new AuthenticationException("Wrong TOTP");
         }
       } // else 2FA not activated
     } catch (NoSuchUserException e) {

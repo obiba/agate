@@ -69,6 +69,9 @@ public class User extends AbstractAuditableDocument {
   // Encrypted 2FA secret key
   private String secret;
 
+  // encrypted short term otp
+  private String otp;
+
   public User() {
   }
 
@@ -320,6 +323,18 @@ public class User extends AbstractAuditableDocument {
 
   public boolean hasSecret() {
     return !Strings.isNullOrEmpty(secret);
+  }
+
+  public void setOtp(String otp) {
+    this.otp = otp;
+  }
+
+  public String getOtp() {
+    return otp;
+  }
+
+  public boolean hasOtp() {
+    return !Strings.isNullOrEmpty(otp);
   }
 
   public static class Builder {
