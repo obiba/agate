@@ -17,9 +17,9 @@
           <i class="fas fa-user"></i> ${user.displayName}
         </a>
       <#else>
-        <span class="nav-link">
+        <a href="${contextPath}/profile" class="nav-link">
           <i class="fas fa-user"></i> ${username}
-        </span>
+        </a>
       </#if>
     </li>
     <li class="nav-item">

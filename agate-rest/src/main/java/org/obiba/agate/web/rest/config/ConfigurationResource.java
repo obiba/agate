@@ -18,26 +18,21 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.google.common.base.Strings;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.subject.Subject;
 import org.json.JSONException;
 import org.obiba.agate.config.ClientConfiguration;
 import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.KeyStoreService;
+import org.obiba.agate.service.TotpService;
 import org.obiba.agate.web.model.Agate;
 import org.obiba.agate.web.model.Dtos;
 
@@ -60,17 +55,21 @@ public class ConfigurationResource {
 
   private final AuthorizationValidator authorizationValidator;
 
+  private final TotpService totpService;
+
   @Inject
   public ConfigurationResource(ConfigurationService configurationService,
                                KeyStoreService keyStoreService,
                                Dtos dtos,
                                ClientConfiguration clientConfiguration,
-                               AuthorizationValidator authorizationValidator) {
+                               AuthorizationValidator authorizationValidator,
+                               TotpService totpService) {
     this.configurationService = configurationService;
     this.keyStoreService = keyStoreService;
     this.dtos = dtos;
     this.clientConfiguration = clientConfiguration;
     this.authorizationValidator = authorizationValidator;
+    this.totpService = totpService;
   }
 
   @GET
@@ -149,8 +148,33 @@ public class ConfigurationResource {
   @Timed
   @RequiresRoles("agate-administrator")
   public Response create(@SuppressWarnings("TypeMayBeWeakened") Agate.ConfigurationDto dto) {
-    configurationService.save(dtos.fromDto(dto));
+    Configuration updatedConfiguration = dtos.fromDto(dto);
+    // reinstate the secret OTP property that
+    updatedConfiguration.setSecretOtp(configurationService.getConfiguration().getSecretOtp());
+    configurationService.save(updatedConfiguration);
     return Response.noContent().build();
+  }
+
+  @PUT
+  @Path("/otp")
+  @Produces("text/plain")
+  @RequiresRoles("agate-administrator")
+  public Response enableOtp() {
+    Configuration configuration = configurationService.getConfiguration();
+    configuration.setSecretOtp(totpService.generateSecret());
+    configurationService.save(configuration);
+    Subject subject = SecurityUtils.getSubject();
+    return Response.ok(totpService.getQrImageDataUri(subject.getPrincipal().toString(), configuration.getSecretOtp()), "text/plain").build();
+  }
+
+  @DELETE
+  @Path("/otp")
+  @RequiresRoles("agate-administrator")
+  public Response disableOtp() {
+    Configuration configuration = configurationService.getConfiguration();
+    configuration.setSecretOtp(null);
+    configurationService.save(configuration);
+    return Response.ok().build();
   }
 
   @PUT

@@ -33,5 +33,6 @@ public class ConfigurationInterceptor implements HandlerInterceptor {
   public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
     if (modelAndView == null) return;
     modelAndView.getModel().put("config", configurationService.getConfiguration());
+    modelAndView.getModel().put("otpEnabled", configurationService.getConfiguration().hasSecretOtp());
   }
 }

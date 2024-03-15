@@ -37,10 +37,12 @@ public class SessionInterceptor implements HandlerInterceptor {
       try {
         User user = userService.getCurrentUser();
         modelAndView.getModel().put("user", new UserProfile(user));
+        modelAndView.getModel().put("otpEnabled", user.hasSecret());
       } catch (Exception e) {
         // user from Ini realm
         log.debug("User {} is not a Agate regular user", username);
       }
+      modelAndView.getModel().put("realm", subject.getPrincipals().getRealmNames().stream().findFirst().orElse(null));
     }
   }
 

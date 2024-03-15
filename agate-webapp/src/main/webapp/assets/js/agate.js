@@ -291,6 +291,31 @@ var agatejs = (function() {
     });
   };
 
+  const agateEnableConfigOtp = function(onSuccess, onFailure) {
+    const url = '/ws/config/otp';
+    axios.put(normalizeUrl(url))
+        .then((response) => {
+          console.dir(response);
+          onSuccess(response.data);
+        })
+        .catch(handle => {
+          console.dir(handle);
+          onFailure('Failure', handle.response.data);
+        });
+  }
+
+  const agateDisableConfigOtp = function(onSuccess, onFailure) {
+    const url = '/ws/config/otp';
+    axios.delete(normalizeUrl(url))
+        .then(() => {
+          onSuccess();
+        })
+        .catch(handle => {
+          console.dir(handle);
+          onFailure('Failure', handle.response.data);
+        });
+  }
+
   const agateEnableOtp = function(onSuccess, onFailure) {
     const url = '/ws/user/_current/otp';
     axios.put(normalizeUrl(url))
@@ -396,6 +421,8 @@ var agatejs = (function() {
     'changeLanguage': agateChangeLanguage,
     'updateProfile': agateUpdateProfile,
     'enableOtp': agateEnableOtp,
-    'disableOtp': agateDisableOtp
+    'disableOtp': agateDisableOtp,
+    'enableConfigOtp': agateEnableConfigOtp,
+    'disableConfigOtp': agateDisableConfigOtp
   };
 }());

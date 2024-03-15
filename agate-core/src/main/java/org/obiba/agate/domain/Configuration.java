@@ -83,6 +83,9 @@ public class Configuration extends AbstractAuditableDocument {
 
   private boolean enforced2FA = false;
 
+  // Encrypted 2FA secret key
+  private String secretOtp;
+
   @Transient
   private String contextPath;
 
@@ -294,6 +297,18 @@ public class Configuration extends AbstractAuditableDocument {
 
   public boolean isEnforced2FA() {
     return enforced2FA;
+  }
+
+  public void setSecretOtp(String secretOtp) {
+    this.secretOtp = secretOtp;
+  }
+
+  public String getSecretOtp() {
+    return secretOtp;
+  }
+
+  public boolean hasSecretOtp() {
+    return !Strings.isNullOrEmpty(secretOtp);
   }
 
   /**

@@ -8,10 +8,7 @@ import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.OidcRealmConfig;
 import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.domain.User;
-import org.obiba.agate.service.AuthorizationService;
-import org.obiba.agate.service.ConfigurationService;
-import org.obiba.agate.service.RealmConfigService;
-import org.obiba.agate.service.UserService;
+import org.obiba.agate.service.*;
 import org.obiba.agate.web.controller.domain.AuthConfiguration;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -52,36 +49,45 @@ public class ProfileController {
       return new ModelAndView("redirect:signin?redirect=" + configurationService.getContextPath() + "/profile");
 
     try {
-      User user = userService.getCurrentUser();
-      ModelAndView mv = new ModelAndView("profile");
-      mv.getModel().put("applications", userService.getUserApplications(user));
-
-      RealmConfig realmConfig = realmConfigService.findConfig(user.getRealm());
-      if (realmConfig != null && realmConfig.getType().equals(AgateRealm.AGATE_OIDC_REALM)) {
-        mv.getModel().put("realmConfig", realmConfig);
-        OidcRealmConfig oidcRealmConfig = OidcRealmConfig.newBuilder(configurationService.decrypt(realmConfig.getContent()))
-            .setUserInfoMapping(realmConfig.getUserInfoMapping())
-            .build();
-        mv.getModel().put("providerUrl", oidcRealmConfig.getCustomParam("providerUrl"));
+      if (subject.getPrincipals().getRealmNames().contains("agate-ini-realm")) {
+        ModelAndView mv = new ModelAndView("profile-ini");
+        return mv;
+      } else {
+        return userProfile(request, locale, language);
       }
-
-      mv.getModel().put("authorizations", authorizationService.list(user.getName()));
-      mv.getModel().put("authConfig", new AuthConfiguration(configurationService.getConfiguration(), clientConfiguration));
-      mv.getModel().put("otpEnabled", user.hasSecret());
-
-      if (Strings.isNullOrEmpty(locale) && Strings.isNullOrEmpty(language)) {
-        try {
-          Locale localePref = Locale.forLanguageTag(user.getPreferredLanguage());
-          if (localePref != null)
-            request.setAttribute(LOCALE_REQUEST_ATTRIBUTE_NAME, localePref);
-        } catch (Exception e) {
-        }
-      }
-
-      return mv;
     } catch (Exception e) {
       return new ModelAndView("redirect:" + configurationService.getContextPath() + "/");
     }
+  }
+
+  private ModelAndView userProfile(HttpServletRequest request, String locale, String language) {
+    User user = userService.getCurrentUser();
+    ModelAndView mv = new ModelAndView("profile");
+    mv.getModel().put("applications", userService.getUserApplications(user));
+
+    RealmConfig realmConfig = realmConfigService.findConfig(user.getRealm());
+    if (realmConfig != null && realmConfig.getType().equals(AgateRealm.AGATE_OIDC_REALM)) {
+      mv.getModel().put("realmConfig", realmConfig);
+      OidcRealmConfig oidcRealmConfig = OidcRealmConfig.newBuilder(configurationService.decrypt(realmConfig.getContent()))
+          .setUserInfoMapping(realmConfig.getUserInfoMapping())
+          .build();
+      mv.getModel().put("providerUrl", oidcRealmConfig.getCustomParam("providerUrl"));
+    }
+
+    mv.getModel().put("authorizations", authorizationService.list(user.getName()));
+    mv.getModel().put("authConfig", new AuthConfiguration(configurationService.getConfiguration(), clientConfiguration));
+    mv.getModel().put("otpEnabled", user.hasSecret());
+
+    if (Strings.isNullOrEmpty(locale) && Strings.isNullOrEmpty(language)) {
+      try {
+        Locale localePref = Locale.forLanguageTag(user.getPreferredLanguage());
+        if (localePref != null)
+          request.setAttribute(LOCALE_REQUEST_ATTRIBUTE_NAME, localePref);
+      } catch (Exception e) {
+      }
+    }
+
+    return mv;
   }
 
 }
