@@ -13,6 +13,7 @@ package org.obiba.agate.web.model;
 import com.google.common.base.Strings;
 import org.joda.time.DateTime;
 import org.obiba.agate.domain.AgateRealm;
+import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.security.AgateUserRealm;
 import org.obiba.agate.security.OidcAuthConfigurationProvider;
@@ -31,6 +32,8 @@ import java.util.Optional;
 @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
 class UserDtos {
 
+  private final RealmConfigService realmConfigService;
+
   final UserService userService;
 
   final GroupService groupService;
@@ -41,6 +44,7 @@ class UserDtos {
   public UserDtos(UserService userService, GroupService groupService, RealmConfigService realmConfigService, OidcAuthConfigurationProvider oidcAuthConfigurationProvider) {
     this.userService = userService;
     this.groupService = groupService;
+    this.realmConfigService = realmConfigService;
     this.oidcAuthConfigurationProvider = oidcAuthConfigurationProvider;
   }
 
@@ -55,7 +59,7 @@ class UserDtos {
       .setTimestamps(TimestampsDtos.asDto(user))
       .setPreferredLanguage(user.getPreferredLanguage());
 
-    if (AgateRealm.AGATE_USER_REALM.getName().equals(user.getRealm()))
+    if (hasUserRealmOtpSupport(user))
       builder.setOtpEnabled(user.hasSecret());
 
     if(!Strings.isNullOrEmpty(user.getFirstName())) builder.setFirstName(user.getFirstName());
@@ -109,6 +113,7 @@ class UserDtos {
     AuthDtos.SubjectDto.Builder builder = AuthDtos.SubjectDto.newBuilder().setUsername(user.getName());
     if(!user.getGroups().isEmpty()) builder.addAllGroups(user.getGroups());
 
+    boolean otpSupport = hasUserRealmOtpSupport(user);
     if(withAttributes) {
       addAttribute(builder, "firstName", user.getFirstName());
       addAttribute(builder, "lastName", user.getLastName());
@@ -116,14 +121,14 @@ class UserDtos {
       addAttribute(builder, "locale", user.getPreferredLanguage());
       addAttribute(builder, "createdDate", user.getCreatedDate().toString());
       addAttribute(builder, "realm", user.getRealm());
-      if (user.getRealm().equals("agate-user-realm"))
+      if (otpSupport)
         addAttribute(builder, "otpEnabled", user.hasSecret() + "");
       DateTime lastLogin = user.getLastLogin();
       if (lastLogin != null) addAttribute(builder, "lastLogin", lastLogin.toString());
       user.getAttributes().forEach((n, v) -> addAttribute(builder, n, v));
     }
 
-    if (user.getRealm().equals(AgateRealm.AGATE_USER_REALM.getName()))
+    if (otpSupport)
       builder.setOtpEnabled(user.hasSecret());
 
     return builder.build();
@@ -179,6 +184,11 @@ class UserDtos {
   private void addAttribute(AuthDtos.SubjectDto.Builder builder, String key, String value) {
     builder
       .addAttributes(AuthDtos.SubjectDto.AttributeDto.newBuilder().setKey(key).setValue(value == null ? "" : value));
+  }
+
+  private boolean hasUserRealmOtpSupport(User user) {
+    RealmConfig realmConfig = realmConfigService.findConfig(user.getRealm());
+    return realmConfig == null || !AgateRealm.AGATE_OIDC_REALM.equals(realmConfig.getType());
   }
 
 }
