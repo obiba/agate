@@ -68,7 +68,7 @@
     <oauth-oidc-sdk.version>11.0</oauth-oidc-sdk.version>
     <obiba-commons.version>4.0-SNAPSHOT</obiba-commons.version>
     <parsson.version>1.1.5</parsson.version>
-    <postgres.version>42.5.1</postgres.version>
+    <postgres.version>42.7.2</postgres.version>
     <protobuf.version>3.24.3</protobuf.version>
     <protobuf-java-format.version>1.2.1-obiba</protobuf-java-format.version>
     <shiro.version>1.13.0</shiro.version>
