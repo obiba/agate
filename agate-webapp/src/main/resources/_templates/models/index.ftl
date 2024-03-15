@@ -10,6 +10,16 @@
     </div>
   </#if>
 
+  <#if realm?? && realm == "agate-ini-realm" && !otpEnabled>
+    <div class="alert alert-info">
+      <h5><i class="icon fas fa-lock"></i> <@message "security-info"/></h5>
+      <@message "2fa-info"/>
+      <a href="${contextPath}/profile">
+        <@message "2fa-enable"/>
+      </a>
+    </div>
+  </#if>
+
   <div class="row">
 
     <#if !user?? || user.role == "agate-administrator">
