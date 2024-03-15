@@ -1,5 +1,5 @@
 skipTests = false
-version=2.7-SNAPSHOT
+version=3.0-SNAPSHOT
 mvn_exec = mvn -Dmaven.test.skip=${skipTests}
 current_dir = $(shell pwd)
 agate_home = ${current_dir}/agate_home
