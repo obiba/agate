@@ -16,6 +16,7 @@ import org.apache.shiro.util.CollectionUtils;
 import org.json.JSONException;
 import org.obiba.agate.domain.*;
 import org.obiba.agate.service.ConfigurationService;
+import org.obiba.agate.service.TotpService;
 import org.obiba.agate.service.UserService;
 import org.obiba.oidc.shiro.realm.OIDCRealm;
 import org.slf4j.Logger;
@@ -59,6 +60,8 @@ public class AgateRealmFactory {
       throw new RuntimeException("No valid realm configuration");
     }
 
+    AgateRealmHelper helper = new AgateRealmHelper(configurationService, userService);
+
     AuthorizingRealm realm;
 
     try {
@@ -67,98 +70,31 @@ public class AgateRealmFactory {
 
         case AGATE_LDAP_REALM:
           LdapRealmConfig ldapConfig = LdapRealmConfig.newBuilder(configurationService.decrypt(realmConfig.getContent())).build();
-          DefaultLdapRealm ldapRealm = new DefaultLdapRealm() {
-            @Override
-            protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-              return getUserFromAvailablePrincipal(principals, principals.fromRealm(getName()));
-            }
-          };
-
           JndiLdapContextFactory jndiLdapContextFactory = createLdapContextFactory(realmConfig.getName(), ldapConfig.getUrl(), ldapConfig.getSystemUsername(), ldapConfig.getSystemPassword());
-
           if (jndiLdapContextFactory == null) throw new RuntimeException("Realm [" + realmConfig.getName() + "] not configurable");
-
-          ldapRealm.setName(realmConfig.getName());
-          ldapRealm.setContextFactory(jndiLdapContextFactory);
-          ldapRealm.setUserDnTemplate(ldapConfig.getUserDnTemplate());
-          ldapRealm.setPermissionResolver(new AgatePermissionResolver());
-          ldapRealm.init();
-
-          realm = ldapRealm;
+          realm = new AgateLdapRealm(realmConfig.getName(), ldapConfig, jndiLdapContextFactory, helper);
           break;
         case AGATE_JDBC_REALM:
           JdbcRealmConfig jdbcConfig = JdbcRealmConfig.newBuilder(configurationService.decrypt(realmConfig.getContent())).build();
-          JdbcRealm jdbcRealm = new JdbcRealm() {
-            @Override
-            protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-              return getUserFromAvailablePrincipal(principals, principals.fromRealm(getName()));
-            }
-
-            @Override
-            protected String getSaltForUser(String username) {
-              String externalSalt = jdbcConfig.getExternalSalt();
-              return Strings.isNullOrEmpty(externalSalt) ? super.getSaltForUser(username) : externalSalt;
-            }
-          };
-
           DataSource dataSource = createDataSource(realmConfig.getName(), jdbcConfig);
-
           if (dataSource == null) throw new RuntimeException("Realm [" + realmConfig.getName() + "] not configurable");
-
-          jdbcRealm.setName(realmConfig.getName());
-          jdbcRealm.setDataSource(dataSource);
-          jdbcRealm.setAuthenticationQuery(jdbcConfig.getAuthenticationQuery());
-          jdbcRealm.setSaltStyle(jdbcConfig.getSaltStyle());
-
-          if (jdbcConfig.getSaltStyle() != SaltStyle.NO_SALT) {
-            HashedCredentialsMatcher hashedCredentialsMatcher = new HashedCredentialsMatcher();
-            hashedCredentialsMatcher.setHashAlgorithmName(jdbcConfig.getAlgorithmName());
-
-            jdbcRealm.setCredentialsMatcher(hashedCredentialsMatcher);
-          }
-
-          jdbcRealm.setPermissionsLookupEnabled(false);
-
-          realm = jdbcRealm;
+          realm = new AgateJdbcRealm(realmConfig.getName(), jdbcConfig, dataSource, helper);
           break;
         case AGATE_AD_REALM:
-
           ActiveDirectoryRealmConfig activeDirectoryRealmConfig = ActiveDirectoryRealmConfig.newBuilder(configurationService.decrypt(realmConfig.getContent())).build();
-          ActiveDirectoryRealm activeDirectoryRealm = new ActiveDirectoryRealm() {
-            @Override
-            protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-              return getUserFromAvailablePrincipal(principals, principals.fromRealm(getName()));
-            }
-          };
-
-          activeDirectoryRealm.setName(realmConfig.getName());
           String username = activeDirectoryRealmConfig.getSystemUsername();
           if (!Strings.isNullOrEmpty(activeDirectoryRealmConfig.getPrincipalSuffix()))
             username = username + activeDirectoryRealmConfig.getPrincipalSuffix();
           JndiLdapContextFactory ldapContextFactory = createLdapContextFactory(realmConfig.getName(), activeDirectoryRealmConfig.getUrl(),
               username, activeDirectoryRealmConfig.getSystemPassword());
-
-          activeDirectoryRealm.setLdapContextFactory(ldapContextFactory);
-          activeDirectoryRealm.setSearchFilter(activeDirectoryRealmConfig.getSearchFilter());
-          activeDirectoryRealm.setSearchBase(activeDirectoryRealmConfig.getSearchBase());
-          activeDirectoryRealm.setPrincipalSuffix(activeDirectoryRealmConfig.getPrincipalSuffix());
-          activeDirectoryRealm.setPermissionResolver(new AgatePermissionResolver());
-          activeDirectoryRealm.init();
-
-          realm = activeDirectoryRealm;
+          realm = new AgateActiveDirectoryRealm(realmConfig.getName(), activeDirectoryRealmConfig, ldapContextFactory, helper);
           break;
 
         case AGATE_OIDC_REALM:
           OidcRealmConfig oidcRealmConfig = OidcRealmConfig.newBuilder(configurationService.decrypt(realmConfig.getContent()))
               .setUserInfoMapping(realmConfig.getUserInfoMapping())
               .build();
-          OIDCRealm oidcRealm = new OIDCRealm(oidcRealmConfig) {
-            @Override
-            protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-              return getUserFromAvailablePrincipal(principals, principals.fromRealm(getName()));
-            }
-          };
-          realm = oidcRealm;
+          realm = new AgateOidcRealm(realmConfig.getName(), oidcRealmConfig, helper);
           break;
 
         default:

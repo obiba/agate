@@ -11,14 +11,14 @@
 package org.obiba.agate.web.model;
 
 import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import org.obiba.agate.domain.*;
-import org.obiba.agate.service.TicketService;
+import org.obiba.agate.service.RealmConfigService;
 import org.obiba.oidc.OIDCConfiguration;
 import org.obiba.web.model.AuthDtos;
 import org.obiba.web.model.OIDCDtos;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
 import javax.inject.Inject;
 
 @Component
@@ -40,7 +40,7 @@ public class Dtos {
   private final OidcAuthProviderDtos oidcAuthProviderDtos;
 
   @Inject
-  public Dtos(TicketService ticketService,
+  public Dtos(RealmConfigService realmConfigService,
               TicketDtos ticketDtos,
               UserDtos userDtos,
               ApplicationDtos applicationDtos,

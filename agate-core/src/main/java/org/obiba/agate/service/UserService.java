@@ -668,6 +668,10 @@
       return applications;
     }
 
+    public boolean validateCode(User user, String code) {
+      return totpService.validateCode(code, user.getSecret());
+    }
+
     public boolean validateOtp(User user, String code) {
       JSONObject otp = new JSONObject(configurationService.decrypt(user.getOtp()));
       long now = DateTime.now().getMillis();
