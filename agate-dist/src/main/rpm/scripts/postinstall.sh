@@ -42,6 +42,13 @@ if [ ! -e /var/lib/agate/conf ] ; then
   ln -s /etc/agate /var/lib/agate/conf
 fi
 
+# Upgrade application.yml if necessary
+if grep -q "profiles:" /etc/agate/application.yml
+  then
+    cp /etc/agate/application.yml /etc/agate/application.yml.2.x
+    cat /etc/agate/application.yml.2.x | grep -v "profiles:" > /etc/agate/application.yml
+fi
+
 chown -R agate:adm /var/lib/agate /var/log/agate /etc/agate
 chmod -R 750      /var/lib/agate /var/log/agate /etc/agate
 find /etc/agate/ -type f -print0 | xargs -0 chmod 640
