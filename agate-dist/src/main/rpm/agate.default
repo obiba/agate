@@ -7,6 +7,11 @@ NAME=agate
 
 # location of java
 JAVA=/usr/bin/java
+JVM_DIR=`ls /usr/lib/jvm/ | grep java-1.8`
+if [ -n "$JVM_DIR" ]
+then
+	JAVA=/usr/lib/jvm/$JVM_DIR/bin/java
+fi
 
 # ulimit
 # Increase maximum open files for the agate server process
