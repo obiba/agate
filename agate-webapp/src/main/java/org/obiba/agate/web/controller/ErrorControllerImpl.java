@@ -13,7 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class ErrorControllerImpl implements ErrorController {
 
   @GetMapping("/error")
-  public ModelAndView error(@RequestParam(value = "error", required = false, defaultValue = "500") String status, @RequestParam(defaultValue = "") String message) {
+  public ModelAndView error(@RequestParam(value = "error", required = false, defaultValue = "404") String status, @RequestParam(defaultValue = "") String message) {
     return makeModelAndView(status, message);
   }
 
