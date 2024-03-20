@@ -205,7 +205,12 @@
     "joinBlacklist-help": "Un utilisateur peut s'inscrire uniquement si son son adresse courriel n'est pas dans les domaines listés.",
     "joinBlacklist-form-help": "Un utilisateur peut s'inscrire uniquement si son son adresse courriel n'est pas dans les domaines listés. Les noms de domaines sont séparés par des espaces ou des virgules (ex: \"gmail.com yahoo.com\").",
     "enforced2FA": "Imposer le 2FA",
-    "enforced2FA-help": "Impose les utilisateurs d'appliquer l'authentification à deux facteurs (un courriel est envoyé si le secret n'est pas enregistré dans l'app authenticator).",
+    "enforced2FA-help": "Impose les utilisateurs d'appliquer l'authentification à deux facteurs (selon la stratégie choisie, un courriel peut-être envoyé si le secret n'est pas enregistré dans l'app authentification).",
+    "enforced2FA-strategies": {
+      "NONE": "Aucune",
+      "APP": "App d'authentification uniquement",
+      "ANY": "App d'authentification ou code envoyé par courriel"
+    },
     "encryption-keys": "Clé d'encryption",
     "encryption-keys-help": "La connection HTTPS éxige qu'un clé privée et une clé publique (certificat) soient définies. Une paire de clés auto-signée est disponible par défaut. Vous pouvez fournir la vôtre.",
     "addKeyPair": "Ajout de clés",

@@ -15,6 +15,7 @@ import jakarta.annotation.Nonnull;
 import org.apache.commons.lang.LocaleUtils;
 import org.obiba.agate.domain.AttributeConfiguration;
 import org.obiba.agate.domain.Configuration;
+import org.obiba.agate.domain.Enforced2FAStrategy;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -37,7 +38,7 @@ class ConfigurationDtos {
         .setJoinWithUsername(configuration.isJoinWithUsername())
         .setJoinWhitelist(Joiner.on(" ").join(configuration.getJoinWhitelist()))
         .setJoinBlacklist(Joiner.on(" ").join(configuration.getJoinBlacklist()))
-        .setEnforced2FA(configuration.isEnforced2FA());
+        .setEnforced2FAStrategy(configuration.getEnforced2FAStrategy().toString());
 
     configuration.getLocales().forEach(locale -> builder.addLanguages(locale.getLanguage()));
 
@@ -70,7 +71,7 @@ class ConfigurationDtos {
     configuration.setJoinWithUsername(dto.getJoinWithUsername());
     configuration.setJoinWhitelist(dto.hasJoinWhitelist() ? dto.getJoinWhitelist() : "");
     configuration.setJoinBlacklist(dto.hasJoinBlacklist() ? dto.getJoinBlacklist() : "");
-    configuration.setEnforced2FA(dto.getEnforced2FA());
+    configuration.setEnforced2FAStrategy(Enforced2FAStrategy.valueOf(dto.getEnforced2FAStrategy().toUpperCase()));
     if (dto.getUserAttributesCount() > 0)
       dto.getUserAttributesList().forEach(c -> configuration.addUserAttribute(fromDto(c)));
     if (dto.hasStyle()) configuration.setStyle(dto.getStyle());

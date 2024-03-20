@@ -137,9 +137,8 @@
             <span translate>config.enforced2FA</span>
             <span class="help-block" translate>config.enforced2FA-help</span>
           </td>
-          <td>
-            <i class="fa fa-check-square-o" ng-hide="!agateConfig.enforced2FA"></i>
-            <i class="fa fa-square-o" ng-hide="agateConfig.enforced2FA"></i>
+          <td translate>
+            {{'config.enforced2FA-strategies.' + agateConfig.enforced2FAStrategy}}
           </td>
         </tr>
         </tbody>

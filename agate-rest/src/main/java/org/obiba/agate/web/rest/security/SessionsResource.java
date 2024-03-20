@@ -21,6 +21,7 @@ import jakarta.ws.rs.core.UriBuilder;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.json.JSONObject;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.TotpService;
@@ -79,8 +80,12 @@ public class SessionsResource {
     } catch(UserBannedException e) {
       throw e;
     } catch (NoSuchOtpException e) {
-      applyEnforcedOtpPolicy(username);
-      return Response.status(Response.Status.UNAUTHORIZED).header("WWW-Authenticate", e.getOtpHeader()).build();
+      JSONObject temp = applyEnforcedOtpPolicy(username);
+      Response.ResponseBuilder builder = Response.status(Response.Status.UNAUTHORIZED).header("WWW-Authenticate", e.getOtpHeader());
+      if (temp != null) {
+        builder.entity(temp.toString()).header("Content-type", "application/json");
+      }
+      return builder.build();
     } catch(AuthenticationException e) {
       log.info("Authentication failure of user '{}' at ip: '{}': {}", username, ClientIPUtils.getClientIP(servletRequest),
           e.getMessage());
@@ -89,14 +94,19 @@ public class SessionsResource {
     }
   }
 
-  private void applyEnforcedOtpPolicy(String username) {
-    if (!configurationService.getConfiguration().isEnforced2FA()) return;
-    // check whether user has own 2FA secret
+  private JSONObject applyEnforcedOtpPolicy(String username) {
+    if (!configurationService.getConfiguration().isEnforced2FA()) return null;
     User user = userService.findUser(username);
     if (user != null && !user.hasSecret()) {
-      // retry login with a code sent by email
-      userService.applyAndSendOtp(user);
+      if (configurationService.getConfiguration().isEnforced2FAWithEmail()) {
+        // retry login with a code sent by email
+        userService.applyAndSendOtp(user);
+      } else {
+        // retry login with a code generated from the returned QR image
+        return userService.applyTempSecret(user);
+      }
     }
+    return null;
   }
 
   private UsernamePasswordToken makeUsernamePasswordToken(String username, String password, HttpServletRequest request) {

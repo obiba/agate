@@ -80,7 +80,7 @@ public class Configuration extends AbstractAuditableDocument {
   // One time password strategy
   private String otpStrategy = "TOTP";
 
-  private boolean enforced2FA = false;
+  private Enforced2FAStrategy enforced2FAStrategy = Enforced2FAStrategy.NONE;
 
   // Encrypted 2FA secret key
   private String secretOtp;
@@ -298,12 +298,20 @@ public class Configuration extends AbstractAuditableDocument {
     return !Strings.isNullOrEmpty(otpStrategy);
   }
 
-  public void setEnforced2FA(boolean enforced2FA) {
-    this.enforced2FA = enforced2FA;
+  public void setEnforced2FAStrategy(Enforced2FAStrategy enforced2FAStrategy) {
+    this.enforced2FAStrategy = enforced2FAStrategy;
+  }
+
+  public Enforced2FAStrategy getEnforced2FAStrategy() {
+    return enforced2FAStrategy;
   }
 
   public boolean isEnforced2FA() {
-    return enforced2FA;
+    return !Enforced2FAStrategy.NONE.equals(enforced2FAStrategy);
+  }
+
+  public boolean isEnforced2FAWithEmail() {
+    return Enforced2FAStrategy.ANY.equals(enforced2FAStrategy);
   }
 
   public void setSecretOtp(String secretOtp) {

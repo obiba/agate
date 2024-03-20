@@ -64,6 +64,9 @@ public class User extends AbstractAuditableDocument {
   // Encrypted 2FA secret key
   private String secret;
 
+  // Encrypted temporary 2FA secret key
+  private String tempSecret;
+
   // encrypted short term otp
   private String otp;
 
@@ -318,6 +321,29 @@ public class User extends AbstractAuditableDocument {
 
   public boolean hasSecret() {
     return !Strings.isNullOrEmpty(secret);
+  }
+
+  public void setTempSecret(String tempSecret) {
+    this.tempSecret = tempSecret;
+  }
+
+  public String getTempSecret() {
+    return tempSecret;
+  }
+
+  public void confirmSecret() {
+    this.secret = this.tempSecret;
+    this.tempSecret = null;
+    this.otp = null;
+  }
+
+  public void resetSecret(String temp) {
+    this.secret = null;
+    this.tempSecret = temp;
+  }
+
+  public boolean hasTempSecret() {
+    return !Strings.isNullOrEmpty(tempSecret);
   }
 
   public void setOtp(String otp) {

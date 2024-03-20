@@ -47,7 +47,6 @@
 
   const enableOtp = function() {
       agatejs.enableOtp((data) => {
-          console.log(data);
           $("#qr-img").attr("src", data);
           $("#qr-panel").show();
           $("#disable-otp").show();

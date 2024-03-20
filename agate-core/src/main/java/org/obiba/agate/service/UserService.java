@@ -698,6 +698,17 @@
       sendEmail(user, "[" + organization + "] Code", "otpEmail", ctx);
     }
 
+    public JSONObject applyTempSecret(User user) {
+      String newSecret = totpService.generateSecret();
+      String newQrImage = totpService.getQrImageDataUri(user.getEmail(), newSecret);
+      user.resetSecret(newSecret);
+      user.setSecret(null);
+      save(user);
+      JSONObject otp = new JSONObject();
+      otp.put("image", newQrImage);
+      return otp;
+    }
+
     private List<RealmConfig> getRealmConfigs(User user) {
       return realmConfigRepository.findAll().stream().filter(realmConfig -> user.getRealm().equals(realmConfig.getName())).collect(Collectors.toList());
     }
