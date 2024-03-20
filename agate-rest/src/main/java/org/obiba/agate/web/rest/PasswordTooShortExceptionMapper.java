@@ -10,14 +10,12 @@
 
 package org.obiba.agate.web.rest;
 
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.Provider;
-
 import org.obiba.agate.service.PasswordTooShortException;
 import org.obiba.jersey.exceptionmapper.AbstractErrorDtoExceptionMapper;
 import org.obiba.web.model.ErrorDtos;
 
-import com.google.protobuf.GeneratedMessage;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.Provider;
 
 
 @Provider
@@ -29,7 +27,7 @@ public class PasswordTooShortExceptionMapper extends AbstractErrorDtoExceptionMa
   }
 
   @Override
-  protected GeneratedMessage.ExtendableMessage<?> getErrorDto(PasswordTooShortException e) {
+  protected ErrorDtos.ClientErrorDto getErrorDto(PasswordTooShortException e) {
     return ErrorDtos.ClientErrorDto.newBuilder() //
       .setCode(getStatus().getStatusCode()) //
       .addArguments(e.getMinSize() + "") //

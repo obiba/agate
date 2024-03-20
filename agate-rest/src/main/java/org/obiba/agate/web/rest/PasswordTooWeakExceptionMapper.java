@@ -10,8 +10,6 @@
 
 package org.obiba.agate.web.rest;
 
-import com.google.protobuf.GeneratedMessage;
-import org.obiba.agate.service.PasswordNotChangedException;
 import org.obiba.agate.service.PasswordTooWeakException;
 import org.obiba.jersey.exceptionmapper.AbstractErrorDtoExceptionMapper;
 import org.obiba.web.model.ErrorDtos;
@@ -29,7 +27,7 @@ public class PasswordTooWeakExceptionMapper extends AbstractErrorDtoExceptionMap
   }
 
   @Override
-  protected GeneratedMessage.ExtendableMessage<?> getErrorDto(PasswordTooWeakException e) {
+  protected ErrorDtos.ClientErrorDto getErrorDto(PasswordTooWeakException e) {
     return ErrorDtos.ClientErrorDto.newBuilder() //
       .setCode(getStatus().getStatusCode()) //
       .setMessageTemplate("server.error.password.too-weak") //
