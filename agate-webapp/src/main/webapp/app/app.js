@@ -76,13 +76,6 @@ agate
             authorizedRoles: [USER_ROLES.all]
           }
         })
-        .when('/join', {
-          templateUrl: 'app/views/join.html',
-          controller: 'JoinController',
-          access: {
-            authorizedRoles: [USER_ROLES.all]
-          }
-        })
         .when('/error', {
           templateUrl: 'app/views/error.html',
           controller: 'ErrorController',
@@ -100,34 +93,6 @@ agate
         .when('/profile', {
           templateUrl: 'app/views/profile/profile-view.html',
           controller: 'ProfileController',
-          access: {
-            authorizedRoles: [USER_ROLES.all]
-          }
-        })
-        .when('/profile/edit', {
-          templateUrl: 'app/views/profile/profile-form-modal.html',
-          controller: 'ProfileController',
-          access: {
-            authorizedRoles: [USER_ROLES.all]
-          }
-        })
-        .when('/confirm', {
-          templateUrl: 'app/views/public_password.html',
-          controller: 'ResetPasswordController',
-          access: {
-            authorizedRoles: [USER_ROLES.all]
-          }
-        })
-        .when('/reset_password', {
-          templateUrl: 'app/views/public_password.html',
-          controller: 'ResetPasswordController',
-          access: {
-            authorizedRoles: [USER_ROLES.all]
-          }
-        })
-        .when('/forgotten', {
-          templateUrl: 'app/views/forgotten.html',
-          controller: 'ForgotLoginDetailsController',
           access: {
             authorizedRoles: [USER_ROLES.all]
           }
@@ -243,15 +208,13 @@ agate
       // Call when the 401 response is returned by the server
       $rootScope.$on('event:auth-loginRequired', function () {
         Session.destroy();
-        if ($location.path() !== '/' && $location.path() !== '') {
-          $location.path('/login').replace();
-        }
+        $window.location.href = '../signin'
       });
 
       // Call when the 403 response is returned by the server
       $rootScope.$on('event:auth-notAuthorized', function () {
         if (!$rootScope.authenticated) {
-          $location.path('/login').replace();
+          $window.location.href = '../signin'
         } else {
           $rootScope.errorMessage = 'errors.403';
           $location.path('/error').replace();
@@ -266,7 +229,7 @@ agate
       // Call when the user logs out
       $rootScope.$on('event:auth-loginCancelled', function () {
         $rootScope.authenticated = undefined;
-        $location.path('/login');
+        $window.location.href = '../signin'
       });
 
       AuthenticationSharedService.initSession().finally(function() {

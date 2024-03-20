@@ -22,16 +22,16 @@
           translate translate-values="{username: '{{subject.login}}'}">
         main.logged.adminMessage
       </div>
-      <a href="#/join" class="btn btn-info" ng-if="!authenticated">
+      <a href="../signup" class="btn btn-info" ng-if="!authenticated">
         <span translate>join.form.button</span>
       </a>
-      <a href="#/login" class="btn btn-default" ng-if="!authenticated">
+      <a href="../signin" class="btn btn-default" ng-if="!authenticated">
         <span translate>login.form.button</span>
       </a>
-      <a href="#/profile" class="btn btn-info" ng-if="authenticated && hasProfile">
+      <a href="../profile" class="btn btn-info" ng-if="authenticated && hasProfile">
         <span translate>global.menu.myProfile</span>
       </a>
-      <a href="#/logout" class="btn btn-primary" ng-if="authenticated">
+      <a href="../signout" class="btn btn-primary" ng-if="authenticated">
         <span translate>global.menu.logout</span>
       </a>
     </div>
