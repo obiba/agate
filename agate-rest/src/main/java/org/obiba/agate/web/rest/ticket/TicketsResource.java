@@ -18,6 +18,7 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
 import org.joda.time.DateTime;
+import org.json.JSONObject;
 import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.Ticket;
 import org.obiba.agate.domain.User;
@@ -102,9 +103,19 @@ public class TicketsResource extends ApplicationAwareResource {
         subject.login(makeUsernamePasswordToken(user.getName(), password, servletRequest));
         authorizationValidator.validateRealm(servletRequest, user, subject);
       } catch (NoSuchOtpException e) {
-        if (getConfiguration().isEnforced2FA() && !user.hasSecret())
-          userService.applyAndSendOtp(user);
-        return Response.status(Response.Status.UNAUTHORIZED).header("WWW-Authenticate", e.getOtpHeader()).build();
+        JSONObject otp = null;
+        if (getConfiguration().isEnforced2FA() && !user.hasSecret()) {
+          if (getConfiguration().isEnforced2FAWithEmail()) {
+            userService.applyAndSendOtp(user);
+          } else {
+            otp = userService.applyTempSecret(user);
+          }
+        }
+        Response.ResponseBuilder builder = Response.status(Response.Status.BAD_REQUEST).header("WWW-Authenticate", e.getOtpHeader());
+        if (otp != null) {
+          builder.entity(otp.toString()).header("Content-type", "application/json");
+        }
+        return builder.build();
       }
 
       if (log.isDebugEnabled())
@@ -116,6 +127,7 @@ public class TicketsResource extends ApplicationAwareResource {
       NewCookie cookie = new NewCookie(TICKET_COOKIE_NAME, token, "/", configuration.getDomain(), null,
           timeout * 3600, true, true);
 
+      user = userService.getUser(user.getId()); // refresh after login
       user.setLastLogin(DateTime.now());
       userService.save(user);
 

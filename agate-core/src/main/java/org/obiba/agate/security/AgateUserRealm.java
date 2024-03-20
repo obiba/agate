@@ -118,6 +118,17 @@ public class AgateUserRealm extends AuthorizingRealm {
         if (user.hasSecret()) {
           if (!totpService.validateCode(code, user.getSecret()))
             throw new AuthenticationException("Wrong TOTP");
+        } else if (user.hasTempSecret()) {
+          if (totpService.validateCode(code, user.getTempSecret())) {
+            // confirm secret
+            user.confirmSecret();
+            userService.save(user);
+          } else {
+            // reset failing temp secret
+            user.resetSecret(null);
+            userService.save(user);
+            throw new AuthenticationException("Wrong TOTP");
+          }
         } else if (user.hasOtp()) {
           if (!userService.validateOtp(user, code))
             throw new AuthenticationException("Wrong TOTP");

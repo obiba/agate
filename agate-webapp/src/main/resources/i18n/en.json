@@ -205,7 +205,12 @@
     "joinBlacklist-help": "User allowed to sign up must not have an email address in the black listed domains.",
     "joinBlacklist-form-help": "User allowed to sign up must not have an email address in the black listed domains. The domain names are space or comma separated (ex: \"gmail.com yahoo.com\").",
     "enforced2FA": "Enforce 2FA",
-    "enforced2FA-help": "Enforce users to use two-factor authentication (an email is sent if the secret is not stored in an authenticator app).",
+    "enforced2FA-help": "Enforce users to use two-factor authentication (depending on the strategy chosen, an email can be sent if the secret is not stored in an authenticator app).",
+    "enforced2FA-strategies": {
+      "NONE": "None",
+      "APP": "Authenticator app only",
+      "ANY": "Authenticator app or code sent by email"
+    },
     "encryption-keys": "Encryption Keys",
     "encryption-keys-help": "HTTPS connection requires to have a private key and a public key (certificate) defined. A self-signed key-pair is available by default. You can provide your own.",
     "addKeyPair": "Add Keys",

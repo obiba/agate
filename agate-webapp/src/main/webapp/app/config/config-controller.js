@@ -176,9 +176,9 @@ agate.config
       };
     }])
 
-  .controller('ConfigurationEditController', ['$scope', '$resource', '$window', '$location', '$log', 'ConfigurationResource', 'FormServerValidation',
+  .controller('ConfigurationEditController', ['$scope', '$resource', '$window', '$location', '$log', '$filter', 'ConfigurationResource', 'FormServerValidation',
 
-    function ($scope, $resource, $window, $location, $log, ConfigurationResource, FormServerValidation) {
+    function ($scope, $resource, $window, $location, $log, $filter, ConfigurationResource, FormServerValidation) {
       $scope.agateConfig = ConfigurationResource.get(function() {
         $scope.inactiveTimeoutDays = $scope.agateConfig.inactiveTimeout / 24;
       });
@@ -193,6 +193,20 @@ agate.config
       });
 
       $scope.availableLanguages = $resource(contextPath + '/ws/config/languages').get();
+      $scope.enforced2FAStrategies = [
+        {
+          label: $filter('translate')('config.enforced2FA-strategies.NONE'),
+          value: 'NONE'
+        },
+        {
+          label: $filter('translate')('config.enforced2FA-strategies.APP'),
+          value: 'APP'
+        },
+        {
+          label: $filter('translate')('config.enforced2FA-strategies.ANY'),
+          value: 'ANY'
+        }
+      ];
 
       $scope.save = function () {
 
