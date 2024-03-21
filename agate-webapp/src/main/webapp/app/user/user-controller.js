@@ -245,6 +245,8 @@ agate.user
           return attributeConfigPair.attribute;
         });
 
+        $scope.profile.confirmPassword = undefined;
+
         UsersResource.save($scope.profile,
           function (resource, getResponseHeaders) {
             var parts = getResponseHeaders().location.split('/');
