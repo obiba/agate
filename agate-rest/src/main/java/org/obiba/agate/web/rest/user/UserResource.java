@@ -101,8 +101,14 @@ public class UserResource {
    * Updates user properties
    */
   @PUT
-  public Response updateUser(Agate.UserDto userDto) {
-    userService.save(dtos.fromDto(userDto));
+  public Response updateUser(@PathParam("id") String id, Agate.UserDto userDto) {
+    User user = userService.getUser(id);
+    User updatedUser = dtos.fromDto(userDto);
+    if (Strings.isNullOrEmpty(updatedUser.getId()) || !updatedUser.getId().equals(id))
+      throw new BadRequestException("Unexpected user identifier");
+    // make sure secret is not modified by this update
+    updatedUser.setSecret(user.getSecret());
+    userService.save(updatedUser);
     return Response.noContent().build();
   }
 
