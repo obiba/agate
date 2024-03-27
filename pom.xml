@@ -63,7 +63,7 @@
     <metrics-spring.version>3.0.0</metrics-spring.version>
     <mongodb-driver.version>4.9.1</mongodb-driver.version>
     <mysql.version>8.0.30</mysql.version>
-    <nimbus-jose-jwt.version>9.35</nimbus-jose-jwt.version>
+    <nimbus-jose-jwt.version>9.37.2</nimbus-jose-jwt.version>
     <nosqlunit.version>0.7.9</nosqlunit.version>
     <oauth-oidc-sdk.version>11.0</oauth-oidc-sdk.version>
     <obiba-commons.version>4.0-SNAPSHOT</obiba-commons.version>
