@@ -10,7 +10,7 @@ Package: agate
 Architecture: all
 Pre-Depends: debconf, coreutils (>= 6.10)
 Depends: ${shlibs:Depends}, ${misc:Depends}, adduser
-Recommends: openjdk-17-jdk | openjdk-17-jdk-headless | openjdk-17-jre | openjdk-17-jre-headless
+Recommends: openjdk-21-jdk | openjdk-21-jdk-headless | openjdk-21-jre | openjdk-21-jre-headless
 Description: OBiBa user portal for biobanks
  Agate.
  .
