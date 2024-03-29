@@ -12,7 +12,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.obiba.agate</groupId>
   <artifactId>agate</artifactId>
-  <version>3.0-SNAPSHOT</version>
+  <version>3.0.0</version>
   <packaging>pom</packaging>
 
   <parent>
@@ -825,7 +825,7 @@
     <connection>scm:git:https://github.com/obiba/agate.git</connection>
     <developerConnection>scm:git:https://github.com/obiba/agate.git</developerConnection>
     <url>https://github.com/obiba/agate</url>
-    <tag>agate-3.0.x</tag>
+    <tag>3.0.0</tag>
   </scm>
 
   <issueManagement>
