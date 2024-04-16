@@ -85,6 +85,10 @@ public class Configuration extends AbstractAuditableDocument {
   // Encrypted 2FA secret key
   private String secretOtp;
 
+  private boolean groupsSeeded = false;
+
+  private boolean applicationsSeeded = false;
+
   @Transient
   private String contextPath;
 
@@ -324,6 +328,22 @@ public class Configuration extends AbstractAuditableDocument {
 
   public boolean hasSecretOtp() {
     return !Strings.isNullOrEmpty(secretOtp);
+  }
+
+  public void setGroupsSeeded(boolean groupsSeeded) {
+    this.groupsSeeded = groupsSeeded;
+  }
+
+  public boolean isGroupsSeeded() {
+    return groupsSeeded;
+  }
+
+  public void setApplicationsSeeded(boolean applicationsSeeded) {
+    this.applicationsSeeded = applicationsSeeded;
+  }
+
+  public boolean isApplicationsSeeded() {
+    return applicationsSeeded;
   }
 
   /**
