@@ -45,10 +45,14 @@ public class UserGroupSeed implements ApplicationListener<ContextRefreshedEvent>
   @Override
   public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
     seedGroups();
-    if(Lists.newArrayList(env.getActiveProfiles()).contains(Constants.SPRING_PROFILE_DEVELOPMENT)) {
+    if (isDevProfile()) {
       seedUsers();
       seedConfiguration();
     }
+  }
+
+  private boolean isDevProfile() {
+    return Lists.newArrayList(env.getActiveProfiles()).contains(Constants.SPRING_PROFILE_DEVELOPMENT);
   }
 
   private void seedConfiguration() {
@@ -59,6 +63,8 @@ public class UserGroupSeed implements ApplicationListener<ContextRefreshedEvent>
   }
 
   private void seedGroups() {
+    Configuration config = configurationService.getConfiguration();
+    if (!isDevProfile() && config.isGroupsSeeded()) return;
     save(Group.newBuilder().name("mica-administrator").description("Administrate Mica").applications("mica").build());
     save(Group.newBuilder().name("mica-reviewer").description("Edit and publish any Mica content")
       .applications("opal", "mica").build());
@@ -68,6 +74,8 @@ public class UserGroupSeed implements ApplicationListener<ContextRefreshedEvent>
       .applications("mica").build());
     save(Group.newBuilder().name("mica-user").description("Can submit data access requests in Mica").applications("mica").build());
     save(Group.newBuilder().name("opal-administrator").description("Administrate Opal").applications("opal").build());
+    config.setGroupsSeeded(true);
+    configurationService.save(config);
   }
 
   private void save(Group group) {
