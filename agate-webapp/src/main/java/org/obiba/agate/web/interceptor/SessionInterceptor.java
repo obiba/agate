@@ -1,10 +1,12 @@
 package org.obiba.agate.web.interceptor;
 
+import com.google.common.base.Strings;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.domain.User;
+import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.RealmConfigService;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.web.controller.domain.UserProfile;
@@ -29,10 +31,13 @@ public class SessionInterceptor implements HandlerInterceptor {
 
   private final RealmConfigService realmConfigService;
 
+  private final ConfigurationService configurationService;
+
   @Inject
-  public SessionInterceptor(UserService userService, RealmConfigService realmConfigService) {
+  public SessionInterceptor(UserService userService, RealmConfigService realmConfigService, ConfigurationService configurationService) {
     this.userService = userService;
     this.realmConfigService = realmConfigService;
+    this.configurationService = configurationService;
   }
 
   @Override
@@ -40,7 +45,7 @@ public class SessionInterceptor implements HandlerInterceptor {
     if (modelAndView == null) return;
     Subject subject = SecurityUtils.getSubject();
     boolean otpSupport = true;
-    if (subject.isAuthenticated()) {
+    if (subject.isAuthenticated() && (Strings.isNullOrEmpty(modelAndView.getViewName()) || !modelAndView.getViewName().startsWith("redirect:"))) {
       String username = subject.getPrincipal().toString();
       modelAndView.getModel().put("username", username);
       try {
@@ -57,6 +62,7 @@ public class SessionInterceptor implements HandlerInterceptor {
       } catch (Exception e) {
         // user from Ini realm
         log.debug("User {} is not a Agate regular user", username);
+        modelAndView.getModel().put("otpEnabled", configurationService.getConfiguration().hasSecretOtp());
         modelAndView.getModel().put("realmType", String.join(",", subject.getPrincipals().getRealmNames()));
       }
       modelAndView.getModel().put("otpSupport", otpSupport);
