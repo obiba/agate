@@ -151,9 +151,7 @@ public class ConfigurationResource {
   @RequiresRoles("agate-administrator")
   public Response create(@SuppressWarnings("TypeMayBeWeakened") Agate.ConfigurationDto dto) {
     Configuration updatedConfiguration = dtos.fromDto(dto);
-    // reinstate the secret OTP property that
-    updatedConfiguration.setSecretOtp(configurationService.getConfiguration().getSecretOtp());
-    configurationService.save(updatedConfiguration);
+    configurationService.save(configurationService.applyInternalSettings(updatedConfiguration));
     return Response.noContent().build();
   }
 
