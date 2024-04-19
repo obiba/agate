@@ -420,4 +420,17 @@ public class ConfigurationService {
     return applicationContext.getResource(String.format("classpath:/i18n/%s.json", locale));
   }
 
+  /**
+   * Apply settings that are modified only internally.
+   *
+   * @param updatedConfig
+   * @return
+   */
+  public Configuration applyInternalSettings(Configuration updatedConfig) {
+    Configuration savedConfig = getConfiguration();
+    updatedConfig.setSecretOtp(savedConfig.getSecretOtp());
+    updatedConfig.setGroupsSeeded(savedConfig.isGroupsSeeded());
+    updatedConfig.setApplicationsSeeded(savedConfig.isApplicationsSeeded());
+    return updatedConfig;
+  }
 }
