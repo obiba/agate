@@ -236,7 +236,7 @@ public class SignController {
 
   private String ensurePostLogoutRedirectUri(String postLogoutRedirectUri) {
     if (!Strings.isNullOrEmpty(postLogoutRedirectUri)) {
-      return postLogoutRedirectUri;
+      return verifyRedirect(postLogoutRedirectUri);
     }
     String url = configurationService.getConfiguration().getPortalUrl();
     if (!Strings.isNullOrEmpty(url)) return url;
