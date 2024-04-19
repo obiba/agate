@@ -70,19 +70,32 @@ public class SignController {
   @Value("${logout.confirm:false}")
   private boolean confirmLogout;
 
+  /**
+   * Controller for redirect URL.
+   *
+   * @param redirect
+   * @return
+   */
+  @GetMapping("/check")
+  public ModelAndView check(@RequestParam(value = "redirect", required = false) String redirect) {
+    String verifiedRedirect = verifyRedirect(redirect);
+    return new ModelAndView("redirect:" + (Strings.isNullOrEmpty(verifiedRedirect) ? configurationService.getContextPath() + "/" : verifiedRedirect));
+  }
+
   @GetMapping("/signin")
   public ModelAndView signin(HttpServletRequest request,
                              @CookieValue(value = "NG_TRANSLATE_LANG_KEY", required = false, defaultValue = "en") String locale,
                              @RequestParam(value = "language", required = false) String language,
                              @RequestParam(value = "redirect", required = false) String redirect) {
     Subject subject = SecurityUtils.getSubject();
+    String verifiedRedirect = verifyRedirect(redirect);
     if (subject.isAuthenticated())
-      return new ModelAndView("redirect:" + (Strings.isNullOrEmpty(redirect) ? configurationService.getContextPath() + "/" : redirect));
+      return new ModelAndView("redirect:" + (Strings.isNullOrEmpty(verifiedRedirect) ? configurationService.getContextPath() + "/" : verifiedRedirect));
 
     ModelAndView mv = new ModelAndView("signin");
 
     mv.getModel().put("oidcProviders", getOidcProviders(RealmUsage.ALL, getLang(language, locale),
-      "redirect=" + (Strings.isNullOrEmpty(redirect) ? configurationService.getContextPath() + "/" : URLUtils.encode(redirect)) + "&signin_error=" + configurationService.getContextPath() + "/signup-with",
+      "redirect=" + (Strings.isNullOrEmpty(verifiedRedirect) ? configurationService.getContextPath() + "/" : URLUtils.encode(verifiedRedirect)) + "&signin_error=" + configurationService.getContextPath() + "/signup-with",
       configurationService.getContextPath()));
     return mv;
   }
@@ -228,6 +241,13 @@ public class SignController {
     String url = configurationService.getConfiguration().getPortalUrl();
     if (!Strings.isNullOrEmpty(url)) return url;
     return configurationService.getConfiguration().hasPublicUrl() ? configurationService.getPublicUrl() : "/";
+  }
+
+  private String verifyRedirect(String redirect) {
+    if (Strings.isNullOrEmpty(redirect) || redirect.startsWith("/")) return redirect;
+    if (!redirect.startsWith("http")) return "";
+    boolean isAppRedirect = applicationService.findAll().stream().anyMatch((app) -> app.hasRedirectURI() && app.getRedirectURIs().stream().anyMatch(redirect::startsWith));
+    return isAppRedirect ? redirect : "";
   }
 
 }

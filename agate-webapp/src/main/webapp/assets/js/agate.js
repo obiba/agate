@@ -38,7 +38,8 @@ var agatejs = (function() {
           let redirect = normalizeUrl('/');
           const q = new URLSearchParams(window.location.search);
           if (q.get('redirect')) {
-            redirect = q.get('redirect');
+            // verify redirect
+            redirect = normalizeUrl('/check?redirect=') + q.get('redirect');
           }
           window.location = redirect;
         })
@@ -105,7 +106,7 @@ var agatejs = (function() {
             let values = {};
             const q = new URLSearchParams(window.location.search);
             if (q.get('redirect')) {
-              redirect = q.get('redirect');
+              redirect = normalizeUrl('/check?redirect=') + q.get('redirect');
               window.location = redirect;
             } else if (realmField) {
               redirect = normalizeUrl('/just-registered');
@@ -200,7 +201,7 @@ var agatejs = (function() {
             let redirect = normalizeUrl('/');
             const q = new URLSearchParams(window.location.search);
             if (q.get('redirect')) {
-              redirect = q.get('redirect');
+              redirect = normalizeUrl('/check?redirect=') + q.get('redirect');
             }
             window.location = redirect;
           })
