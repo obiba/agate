@@ -247,7 +247,9 @@ public class SignController {
     if (Strings.isNullOrEmpty(redirect) || redirect.startsWith("/")) return redirect;
     if (!redirect.startsWith("http")) return "";
     boolean isAppRedirect = applicationService.findAll().stream().anyMatch((app) -> app.hasRedirectURI() && app.getRedirectURIs().stream().anyMatch(redirect::startsWith));
-    return isAppRedirect ? redirect : "";
+    if (isAppRedirect) return redirect;
+    String publicUrl = configurationService.getPublicUrl();
+    return redirect.startsWith(publicUrl) ? redirect : "";
   }
 
 }
