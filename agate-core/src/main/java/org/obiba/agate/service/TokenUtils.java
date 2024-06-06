@@ -14,6 +14,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.Nonnull;
 import org.joda.time.DateTime;
 import org.obiba.agate.domain.Authorization;
@@ -129,6 +130,7 @@ public class TokenUtils {
    * Make ID token (json web token) for the authorization.
    *
    * @param authorization
+   * @param scopes 
    * @return
    */
   public String makeIDToken(@Nonnull Authorization authorization, @Nonnull List<String> scopes) {
@@ -140,8 +142,10 @@ public class TokenUtils {
         .expiration(expires.toDate());
     claims.add(Claims.AUDIENCE, authorization.getApplication());
 
-    return Jwts.builder().claims(claims.build())
-        .signWith(SignatureAlgorithm.HS256, configurationService.getConfiguration().getSecretKey().getBytes()).compact();
+    return Jwts.builder()
+        .claims(claims.build())
+        .signWith(configurationService.getSecretKeyJWT())
+        .compact();
   }
 
   public ClaimsBuilder buildClaims(String subject, @Nonnull List<String> scopes) {
@@ -153,12 +157,10 @@ public class TokenUtils {
   }
 
   public Claims parseClaims(String token) {
-    Claims claims = Jwts.parser()
+    return Jwts.parser()
         .verifyWith(configurationService.getSecretKeyJWT())
         .build()
         .parseSignedClaims(token).getPayload();
-
-    return claims;
   }
 
   public String getIssuerID() {
