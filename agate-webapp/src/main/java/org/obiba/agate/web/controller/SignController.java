@@ -12,6 +12,8 @@ package org.obiba.agate.web.controller;
 
 import com.google.common.base.Strings;
 import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.core.UriBuilder;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.json.JSONException;
@@ -40,8 +42,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.inject.Inject;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.ws.rs.core.UriBuilder;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Set;
@@ -95,8 +95,8 @@ public class SignController {
     ModelAndView mv = new ModelAndView("signin");
 
     mv.getModel().put("oidcProviders", getOidcProviders(RealmUsage.ALL, getLang(language, locale),
-      "redirect=" + (Strings.isNullOrEmpty(verifiedRedirect) ? configurationService.getContextPath() + "/" : URLUtils.encode(verifiedRedirect)) + "&signin_error=" + configurationService.getContextPath() + "/signup-with",
-      configurationService.getContextPath()));
+        "redirect=" + (Strings.isNullOrEmpty(verifiedRedirect) ? configurationService.getContextPath() + "/" : URLUtils.encode(verifiedRedirect)) + "&signin_error=" + configurationService.getContextPath() + "/signup-with",
+        configurationService.getContextPath()));
     return mv;
   }
 
@@ -113,8 +113,8 @@ public class SignController {
     ModelAndView mv = new ModelAndView("signup");
     mv.getModel().put("authConfig", new AuthConfiguration(configurationService.getConfiguration(), clientConfiguration));
     mv.getModel().put("oidcProviders", getOidcProviders(RealmUsage.SIGNUP, getLang(language, locale),
-      "signin_error=" + configurationService.getContextPath() + "/signup-with",
-      configurationService.getContextPath()));
+        "signin_error=" + configurationService.getContextPath() + "/signup-with",
+        configurationService.getContextPath()));
     return mv;
   }
 
@@ -230,8 +230,8 @@ public class SignController {
 
   private Collection<OidcProvider> getOidcProviders(RealmUsage usage, String locale, String query, String contextPath) {
     return oidcAuthConfigurationProvider.getConfigurations(usage).stream()
-      .map(conf -> new OidcProvider(conf, locale, query, contextPath))
-      .collect(Collectors.toList());
+        .map(conf -> new OidcProvider(conf, locale, query, contextPath))
+        .collect(Collectors.toList());
   }
 
   private String ensurePostLogoutRedirectUri(String postLogoutRedirectUri) {
@@ -246,10 +246,27 @@ public class SignController {
   private String verifyRedirect(String redirect) {
     if (Strings.isNullOrEmpty(redirect) || redirect.startsWith("/")) return redirect;
     if (!redirect.startsWith("http")) return "";
+    // redirect to itself
+    String publicUrl = configurationService.getPublicUrl();
+    if (redirect.startsWith(publicUrl)) return redirect;
+    // redirect to a registered application
     boolean isAppRedirect = applicationService.findAll().stream().anyMatch((app) -> app.hasRedirectURI() && app.getRedirectURIs().stream().anyMatch(redirect::startsWith));
     if (isAppRedirect) return redirect;
-    String publicUrl = configurationService.getPublicUrl();
-    return redirect.startsWith(publicUrl) ? redirect : "";
+    // redirect to a OIDC service, assumption is that host name is same as the one from the discovery url
+    try {
+      URI redirectURI = URI.create(redirect);
+      boolean hasMatch = oidcAuthConfigurationProvider.getConfigurations().stream().anyMatch(conf -> {
+        try {
+          URI discoveryURI = URI.create(conf.getDiscoveryURI());
+          return discoveryURI.getHost().equals(redirectURI.getHost());
+        } catch (Exception e) {
+          return false;
+        }
+      });
+      return hasMatch ? redirect : "";
+    } catch (Exception e) {
+      return "";
+    }
   }
 
 }
