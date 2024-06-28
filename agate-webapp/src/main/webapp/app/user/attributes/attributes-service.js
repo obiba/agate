@@ -141,11 +141,22 @@ agate.user
 
         'mergeConfigPairAttributes': function(attributes, attributeConfigPairs) {
           var pairedAttributes = (attributeConfigPairs || []).map(function(attributeConfigPair){
-            return attributeConfigPair.attribute;
+            return {
+              name: attributeConfigPair.attribute.name,
+              value: attributeConfigPair.attribute.value
+            };
           });
 
           if (attributes && attributes.length > 0) {
-            return attributes.concat(this.findNewAttributes(attributes, pairedAttributes));
+            let rawAttributes = attributes
+                .map((attr) => {
+                  return {
+                    name: attr.name,
+                    value: attr.value
+                  }
+                });
+            return rawAttributes
+                .concat(this.findNewAttributes(rawAttributes, pairedAttributes));
           }
 
           return pairedAttributes;
