@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.3.0</version>
+    <version>3.3.4</version>
   </parent>
 
   <modules>
@@ -56,16 +56,17 @@
     <json-smart.version>2.4.9</json-smart.version>
     <jsr305.version>3.0.0</jsr305.version>
     <lang-tag.version>1.4.4</lang-tag.version>
-    <logback.version>1.5.6</logback.version>
+    <logback.version>1.5.8</logback.version>
     <logstash-logback.version>7.4</logstash-logback.version>
     <mariabd.version>3.0.7</mariabd.version>
     <metrics-spring.version>3.0.0</metrics-spring.version>
-    <mongodb-driver.version>5.0.1</mongodb-driver.version>
-    <mysql.version>8.0.30</mysql.version>
+    <mongodb-driver.version>5.1.3</mongodb-driver.version>
+    <mysql.version>8.4.0</mysql.version>
+    <mysql-connector-j.version>8.4.0</mysql-connector-j.version>
     <nimbus-jose-jwt.version>9.37.3</nimbus-jose-jwt.version>
     <nosqlunit.version>0.7.9</nosqlunit.version>
     <oauth-oidc-sdk.version>11.12</oauth-oidc-sdk.version>
-    <obiba-commons.version>4.1.0</obiba-commons.version>
+    <obiba-commons.version>4.2.0</obiba-commons.version>
     <parsson.version>1.1.5</parsson.version>
     <postgres.version>42.7.2</postgres.version>
     <protobuf.version>3.25.5</protobuf.version>
@@ -236,9 +237,9 @@
       </dependency>
 
       <dependency>
-        <groupId>mysql</groupId>
-        <artifactId>mysql-connector-java</artifactId>
-        <version>${mysql.version}</version>
+        <groupId>com.mysql</groupId>
+        <artifactId>mysql-connector-j</artifactId>
+        <version>${mysql-connector-j.version}</version>
       </dependency>
       <dependency>
         <groupId>org.mariadb.jdbc</groupId>
@@ -320,6 +321,10 @@
           <exclusion>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
           </exclusion>
         </exclusions>
       </dependency>

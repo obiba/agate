@@ -132,17 +132,17 @@ public class RealmConfigService {
                                                                         String application) {
 
     if (Strings.isNullOrEmpty(application)) return Lists.newArrayList();
-    List<String> groupsForAppication = groupService.findByApplication(application)
+    List<String> groupsForApplication = groupService.findByApplication(application)
       .stream()
       .map(Group::getName)
-      .collect(Collectors.toList());
+      .toList();
 
     List<RealmConfig> realmConfigs = RealmUsage.ALL == usage
       ? realmConfigRepository.findAllByStatusAndType(status, agateRealm.name())
       : realmConfigRepository.findAllByStatusAndTypeAndForSignupTrue(status, agateRealm.name());
 
     return realmConfigs.stream()
-      .filter(realmConfig -> realmConfig.getGroups().stream().anyMatch(groupsForAppication::contains))
+      .filter(realmConfig -> realmConfig.getGroups().stream().anyMatch(groupsForApplication::contains))
       .collect(Collectors.toList());
   }
 
