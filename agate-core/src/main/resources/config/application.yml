@@ -44,3 +44,4 @@ login:
   maxTry: 3
   trialTime: 300
   banTime: 300
+  otpTimeout: 300

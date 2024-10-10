@@ -41,6 +41,7 @@
   import org.slf4j.Logger;
   import org.slf4j.LoggerFactory;
   import org.springframework.beans.BeanUtils;
+  import org.springframework.beans.factory.annotation.Value;
   import org.springframework.context.MessageSource;
   import org.springframework.core.env.Environment;
   import org.springframework.scheduling.annotation.Scheduled;
@@ -76,6 +77,9 @@
             + "(?=.*[A-Z])"      // a upper case alphabet must occur at least once
             + "(?=.*[@#$%^&+=!])" // a special character that must occur at least once
             + "(?=\\S+$).{" + PWD_MINIMUM_LENGTH + "," + PWD_MAXIMUM_LENGTH + "}$");
+
+    @Value("${login.otpTimeout:300}")
+    private int otpTimeout;
 
     private final UserRepository userRepository;
 
@@ -684,16 +688,15 @@
       String code = totpService.generateRandomCode();
       long now = DateTime.now().getMillis();
       JSONObject otp = new JSONObject();
-      int timeout = 5;  // 5 minutes
       otp.put("code", code);
-      otp.put("expires", now + timeout*60*1000);
+      otp.put("expires", now + otpTimeout*1000); // millis
       user.setOtp(configurationService.encrypt(otp.toString()));
       save(user);
 
       Map<String, Object> ctx = Maps.newHashMap();
       String organization = configurationService.getConfiguration().getName();
       ctx.put("code", code);
-      ctx.put("timeout", timeout);
+      ctx.put("timeout", otpTimeout/60); // minutes
 
       sendEmail(user, "[" + organization + "] Code", "otpEmail", ctx);
     }
