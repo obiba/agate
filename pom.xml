@@ -42,7 +42,7 @@
     <commons-lang.version>2.6</commons-lang.version>
     <easymock.version>5.2.0</easymock.version>
     <ehcache.version>3.10.8</ehcache.version>
-    <esapi.version>2.5.3.1</esapi.version>
+    <esapi.version>2.6.0.0</esapi.version>
     <freemarker.version>2.3.29</freemarker.version>
     <guava.version>33.2.1-jre</guava.version>
     <javax.inject.version>1</javax.inject.version>
