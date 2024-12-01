@@ -7,7 +7,7 @@ before_install:
   - sudo apt-get install -y nodejs devscripts
   - nvm install lts/gallium
   - node --version
-  - npm install -g grunt-cli bower
+  - npm install -g grunt-cli
 addons:
   apt:
     packages:

@@ -198,13 +198,12 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
 
     bean.setFilter(new StaticResourcesProductionFilter());
     bean.addUrlPatterns("/favicon.ico");
-    bean.addUrlPatterns("/robots.txt");
     bean.addUrlPatterns("/index.html");
     bean.addUrlPatterns("/images/*");
     bean.addUrlPatterns("/fonts/*");
     bean.addUrlPatterns("/scripts/*");
     bean.addUrlPatterns("/styles/*");
-    bean.addUrlPatterns("/views/*");
+    bean.addUrlPatterns("/admin/*");
     bean.setAsyncSupported(true);
 
     return bean;

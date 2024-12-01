@@ -74,6 +74,14 @@
       </excludes>
     </fileSet>
 
+    <fileSet>
+      <directory>../agate-ui/dist/spa</directory>
+      <outputDirectory>webapp/admin</outputDirectory>
+      <includes>
+        <include>**/*.*</include>
+      </includes>
+    </fileSet>
+
   </fileSets>
   <dependencySets>
 
