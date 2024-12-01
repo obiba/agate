@@ -25,6 +25,7 @@
     <module>agate-web-model</module>
     <module>agate-core</module>
     <module>agate-rest</module>
+    <module>agate-ui</module>
     <module>agate-webapp</module>
     <module>agate-dist</module>
   </modules>
@@ -77,6 +78,7 @@
     <totp.version>1.7.1</totp.version>
 
     <!-- maven plugins -->
+    <frontend-maven-plugin.version>1.15.0</frontend-maven-plugin.version>
     <github-release-plugin.version>1.6.0</github-release-plugin.version>
     <maven-assertj-generator-plugin.version>1.2.0</maven-assertj-generator-plugin.version>
     <maven-dependency-plugin.version>3.1.0</maven-dependency-plugin.version>

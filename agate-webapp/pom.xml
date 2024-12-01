@@ -147,9 +147,6 @@
             <fileset>
               <directory>node_modules</directory>
             </fileset>
-            <fileset>
-              <directory>src/main/webapp/bower_components</directory>
-            </fileset>
           </filesets>
         </configuration>
       </plugin>
@@ -162,19 +159,6 @@
             <phase>generate-sources</phase>
             <configuration>
               <executable>npm</executable>
-              <arguments>
-                <argument>install</argument>
-              </arguments>
-            </configuration>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>exec-bower-install</id>
-            <phase>generate-sources</phase>
-            <configuration>
-              <executable>bower</executable>
               <arguments>
                 <argument>install</argument>
               </arguments>
@@ -202,12 +186,7 @@
   <profiles>
 
     <profile>
-      <id>generate-node-bower-modules</id>
-      <activation>
-        <file>
-          <missing>src/main/webapp/bower_components</missing>
-        </file>
-      </activation>
+      <id>generate-node-modules</id>
       <build>
         <plugins>
           <plugin>
@@ -219,19 +198,6 @@
                 <phase>generate-sources</phase>
                 <configuration>
                   <executable>npm</executable>
-                  <arguments>
-                    <argument>install</argument>
-                  </arguments>
-                </configuration>
-                <goals>
-                  <goal>exec</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>exec-bower-install</id>
-                <phase>generate-sources</phase>
-                <configuration>
-                  <executable>bower</executable>
                   <arguments>
                     <argument>install</argument>
                   </arguments>
