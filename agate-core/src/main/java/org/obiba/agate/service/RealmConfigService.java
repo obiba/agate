@@ -32,6 +32,8 @@ public class RealmConfigService {
 
   private final GroupService groupService;
 
+  private final ApplicationService applicationService;
+
   private final EventBus eventBus;
 
   @Inject
@@ -39,10 +41,12 @@ public class RealmConfigService {
     RealmConfigRepository realmConfigRepository,
     UserRepository userRepository,
     GroupService groupService,
+    ApplicationService applicationService,
     EventBus eventBus) {
     this.realmConfigRepository = realmConfigRepository;
     this.userRepository = userRepository;
     this.groupService = groupService;
+    this.applicationService = applicationService;
     this.eventBus = eventBus;
   }
 
@@ -100,14 +104,16 @@ public class RealmConfigService {
 
   public List<RealmConfig> findAllRealmsForSignupAndApplication(String application) {
     if (Strings.isNullOrEmpty(application)) return Lists.newArrayList();
-    List<String> groupsForAppication = groupService.findByApplication(application)
+    List<String> groupsForApplication = groupService.findByApplication(application)
       .stream()
       .map(Group::getName)
-      .collect(Collectors.toList());
+      .toList();
+
+    Application app = applicationService.findByIdOrName(application);
 
     return realmConfigRepository.findAllByStatusAndForSignupTrue(RealmStatus.ACTIVE)
       .stream()
-      .filter(realmConfig -> realmConfig.getGroups().stream().anyMatch(groupsForAppication::contains))
+      .filter(realmConfig -> app.hasRealmGroup(realmConfig.getName()) || realmConfig.getGroups().stream().anyMatch(groupsForApplication::contains))
       .collect(Collectors.toList());
   }
 
@@ -137,12 +143,14 @@ public class RealmConfigService {
       .map(Group::getName)
       .toList();
 
+    Application app = applicationService.findByName(application);
+
     List<RealmConfig> realmConfigs = RealmUsage.ALL == usage
       ? realmConfigRepository.findAllByStatusAndType(status, agateRealm.name())
       : realmConfigRepository.findAllByStatusAndTypeAndForSignupTrue(status, agateRealm.name());
 
     return realmConfigs.stream()
-      .filter(realmConfig -> realmConfig.getGroups().stream().anyMatch(groupsForApplication::contains))
+      .filter(realmConfig -> app.hasRealmGroup(realmConfig.getName()) || realmConfig.getGroups().stream().anyMatch(groupsForApplication::contains))
       .collect(Collectors.toList());
   }
 

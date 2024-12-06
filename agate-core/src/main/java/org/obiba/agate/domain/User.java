@@ -32,8 +32,6 @@ import java.util.Set;
 @Document
 public class User extends AbstractAuditableDocument {
 
-  private static final long serialVersionUID = 688200108221675323L;
-
   @Indexed(unique = true)
   private String name;
 
@@ -228,6 +226,14 @@ public class User extends AbstractAuditableDocument {
 
   public void setGroups(Set<String> groups) {
     this.groups = groups;
+  }
+
+  public void addGroups(Set<String> groupsToAdd) {
+    if (groupsToAdd == null) return;
+    if (this.groups == null) {
+      this.groups = Sets.newHashSet();
+    }
+    this.groups.addAll(groupsToAdd);
   }
 
   public Set<String> getApplications() {

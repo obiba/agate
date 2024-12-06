@@ -18,13 +18,14 @@ import org.obiba.mongodb.domain.AbstractAuditableDocument;
 import org.springframework.data.mongodb.core.index.Indexed;
 
 import jakarta.annotation.Nullable;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Application extends AbstractAuditableDocument {
-
-  private static final long serialVersionUID = 4710884170897922907L;
 
   @Nonnull
   @Indexed(unique = true)
@@ -39,6 +40,8 @@ public class Application extends AbstractAuditableDocument {
   private List<Scope> scopes;
 
   private boolean autoApproval = true;
+
+  private Map<String, String> realmGroups = new HashMap<>();
 
   public Application() {
   }
@@ -102,6 +105,31 @@ public class Application extends AbstractAuditableDocument {
   public void setRedirectURI(String redirectURI) {
     this.redirectURI = redirectURI;
   }
+
+  public Map<String, String> getRealmGroups() {
+    return realmGroups != null ? realmGroups : new HashMap<>();
+  }
+
+  public void setRealmGroups(Map<String, String> realmGroups) {
+    this.realmGroups = realmGroups;
+  }
+
+  public boolean hasRealmGroup(String realm) {
+    return getRealmGroups().containsKey(realm) && !Strings.isNullOrEmpty(getRealmGroups().get(realm));
+  }
+
+  public String getRealmGroup(String realm) {
+    return getRealmGroups().get(realm);
+  }
+
+  public Application addRealmGroup(String realm, String group) {
+    if (realmGroups == null) {
+      realmGroups = new HashMap<>();
+    }
+    realmGroups.put(realm, group);
+    return this;
+  }
+
 
   public boolean hasScopes() {
     return scopes != null && !scopes.isEmpty();

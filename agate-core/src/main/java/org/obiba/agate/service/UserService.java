@@ -274,6 +274,7 @@
             RealmConfig realmConfig = foundConfigs.get(0);
             user.setStatus(UserStatus.ACTIVE);
 
+            user.addGroups(Sets.newHashSet(realmConfig.getGroups()));
             if (user.getGroups() != null) {
               user.getGroups().addAll(realmConfig.getGroups());
             } else {
