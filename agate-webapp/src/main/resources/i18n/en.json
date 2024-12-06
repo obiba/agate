@@ -167,7 +167,7 @@
     },
     "messages": {
       "success": "<strong>Session invalidated!</strong>",
-      "error": "<strong>An error has occured!</strong> The session could not be invalidated."
+      "error": "<strong>An error has occurred!</strong> The session could not be invalidated."
     }
   },
   "errors": {
@@ -287,6 +287,8 @@
     "redirectURI-help": "Callback URL to the application's server, required in the OAuth context. Use commas to separate multiple allowed callback URLs.",
     "autoApproval": "User Approved on Sign up",
     "autoApproval-help": "Automatically approve a user who signed up through the application. Otherwise the user will be in 'pending for approval' state, requiring manual action.",
+    "realmGroups": "Realms and groups",
+    "realmGroups-help": "Mapping between realm and group names. When defined, corresponding realms will be proposed for user signin/signup from the application. When a user joins though an application, using a realm, the corresponding group(s) will be automatically applied.",
     "confirmKey": "Confirm key",
     "changeKey": "Change Key",
     "delete-dialog": {
@@ -304,6 +306,14 @@
       "name-help": "Name of the permission, without spaces.",
       "description": "Description",
       "description-help": "Short description of the requested permission that will be shown to the user."
+    },
+    "realm-group": {
+      "add": "Add Realm-Group",
+      "edit": "Edit Realm-Group",
+      "realm": "Realm",
+      "realm-help": "A realm name.",
+      "group": "Group",
+      "group-help": "A group name (or comma separated group names), which members have access to the application. This group (or groups) will be applied to realm's users who join through this application."
     }
   },
   "groups": "Groups",

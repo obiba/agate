@@ -14,10 +14,9 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import org.obiba.mongodb.domain.AbstractAuditableDocument;
 import org.springframework.data.mongodb.core.index.Indexed;
-
-import jakarta.annotation.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -118,16 +117,16 @@ public class Application extends AbstractAuditableDocument {
     return getRealmGroups().containsKey(realm) && !Strings.isNullOrEmpty(getRealmGroups().get(realm));
   }
 
-  public String getRealmGroup(String realm) {
-    return getRealmGroups().get(realm);
+  public Iterable<String> getRealmGroups(String realm) {
+    return Splitter.on(",").trimResults().split(getRealmGroups().get(realm));
   }
 
-  public Application addRealmGroup(String realm, String group) {
+  public void addRealmGroup(String realm, String group) {
+    if (Strings.isNullOrEmpty(realm) || Strings.isNullOrEmpty(group)) return;
     if (realmGroups == null) {
       realmGroups = new HashMap<>();
     }
     realmGroups.put(realm, group);
-    return this;
   }
 
 

@@ -251,7 +251,7 @@ public class UsersPublicResource {
         else
           user.setStatus(UserStatus.PENDING);
         if (application.hasRealmGroup(userRealm)) {
-          user.addGroups(Sets.newHashSet(application.getRealmGroup(userRealm)));
+          user.addGroups(Sets.newHashSet(application.getRealmGroups(userRealm)));
         }
       } else {
         user.setStatus(UserStatus.PENDING);

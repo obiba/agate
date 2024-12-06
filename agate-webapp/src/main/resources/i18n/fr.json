@@ -287,6 +287,8 @@
     "redirectURI-help": "L'URL de rappel au serveur d'application, requise dans le context d'OAuth. Utiliser des virgules pour spécifier plusieurs URL autorisées.",
     "autoApproval": "Approuver les utilisateurs nouvellement inscrits",
     "autoApproval-help": "Approuver automatiquement les utilisateurs s'étant inscrits par l'application. Sinon l'utilisateur sera en attente d'approbation, nécessitant une intervention manuelle.",
+    "realmGroups": "Domaines et groupes",
+    "realmGroups-help": "Association entre noms de domaine et de groupe(s). Quand défini, les domaines correspondant seront proposés à l'identification des utilisateurs pour cette application. D'autre part le(s) groupe(s) du domaine utilisé pour créé un compte pour une application sera automatiquement appliqué.",
     "confirmKey": "Confirmer la clé",
     "changeKey": "Changer la clé",
     "delete-dialog": {
@@ -304,6 +306,14 @@
       "name-help": "Nom de la permission, sans espace.",
       "description": "Description",
       "description-help": "Description courte de la permission qui sera affichée à l'utilisateur."
+    },
+    "realm-group": {
+      "add": "Ajouter un domaine-groupe",
+      "edit": "Modification du un domaine-groupe",
+      "realm": "Domaine",
+      "realm-help": "Un nom de domaine.",
+      "group": "Groupe",
+      "group-help": "Un nom de groupe (ou plusieurs, séparés par des virgules), dont les membres ont accès à l'application. Ce(s) groupe(s) sera(ont) appliqué(s) automatiquement quand un utilisateur de ce domaine s'enregistre."
     }
   },
   "groups": "Groupes",

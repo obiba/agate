@@ -117,6 +117,49 @@
           </table>
         </div>
       </div>
+
+      <h3 translate>application.realmGroups</h3>
+      <p class="help-block">
+        <span translate>application.realmGroups-help</span>
+      </p>
+      <a href="" ng-click="editRealmGroup()" class="btn btn-info">
+        <i class="fa fa-plus"></i> <span translate>application.realm-group.add</span>
+      </a>
+
+      <div class="table-responsive">
+        <table class="table table-striped table-hover table-bordered"
+               ng-show="application.realmGroups && application.realmGroups.length > 0">
+          <thead>
+          <tr>
+            <th translate>application.realm-group.realm</th>
+            <th translate>application.realm-group.group</th>
+            <th translate>application.actions</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr dir-paginate="realmGroup in application.realmGroups | itemsPerPage: 20">
+            <td>
+              <code>{{realmGroup.realm}}</code>
+            </td>
+            <td>
+              {{realmGroup.group}}
+            </td>
+            <td>
+              <ul class="list-inline">
+                <li>
+                  <a href="" ng-click="editRealmGroup(realmGroup)" title="{{'edit' | translate}}"><i
+                          class="fa fa-pencil"></i></a>
+                </li>
+                <li>
+                  <a href="" ng-click="deleteRealmGroup(realmGroup)" title="{{'delete' | translate}}"><i
+                          class="fa fa-trash-o"></i></a>
+                </li>
+              </ul>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
