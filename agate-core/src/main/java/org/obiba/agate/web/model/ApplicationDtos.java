@@ -35,6 +35,12 @@ class ApplicationDtos {
 
     builder.setAutoApproval(application.isAutoApproval());
 
+    if (!application.getRealmGroups().isEmpty()) {
+      application.getRealmGroups().forEach((realm, groups) -> {
+        builder.addRealmGroups(Agate.ApplicationDto.RealmGroupsDto.newBuilder().setRealm(realm).addAllGroups(groups).build());
+      });
+    }
+
     return builder.build();
   }
 
@@ -52,6 +58,16 @@ class ApplicationDtos {
     application.setScopes(dto.getScopesList().stream().map(this::fromDto).collect(Collectors.toList()));
 
     if (dto.hasAutoApproval()) application.setAutoApproval(dto.getAutoApproval());
+
+    if (dto.getRealmGroupsCount() > 0) {
+      dto.getRealmGroupsList().forEach(realmGroup -> {
+        if (realmGroup.getGroupsCount() > 0) {
+          realmGroup.getGroupsList().forEach(group -> {
+            application.addRealmGroup(realmGroup.getRealm(), group);
+          });
+        }
+      });
+    }
 
     return application;
   }

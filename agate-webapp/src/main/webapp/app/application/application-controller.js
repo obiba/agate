@@ -70,6 +70,48 @@ agate.application
     function ($scope, $location, $routeParams, ApplicationResource, $uibModal, $log) {
       $scope.application = $routeParams.id ? ApplicationResource.get({id: $routeParams.id}) : {};
 
+      $scope.editRealmGroup = function (rg) {
+        $uibModal.open({
+          templateUrl: 'app/application/views/application-realm-group-modal-form.html',
+          controller: 'ApplicationRealmGroupModalController',
+          resolve: {
+            'realmGroup': function () {
+               return rg ? angular.copy(rg) : {};
+            }
+          }
+        }).result.then(function (realmGroup) {
+          var onSuccess = function () {
+            $scope.status = $scope.statusCodes.SUCCESS;
+            $location.path('/application' + ($scope.application.id ? '/' + $scope.application.id : '')).replace();
+          };
+
+          var onError = function() {
+            $log.debug('DEBUG', $scope, $scope.$parent);
+            $scope.status = $scope.statusCodes.ERROR;
+          };
+
+          if(!$scope.application.realmGroups) {
+            $scope.application.realmGroups = [];
+          }
+
+          var idx = $scope.application.realmGroups.findIndex((val) => val.realm === realmGroup.realm);
+          if(idx > -1) {
+            $scope.application.realmGroups[idx] = realmGroup;
+          } else {
+            $scope.application.realmGroups.push(realmGroup);
+          }
+          ApplicationResource.update({id: $scope.application.id}, $scope.application, onSuccess, onError);
+        });
+      };
+
+      $scope.deleteRealmGroup = function(rg) {
+        var idx = $scope.application.realmGroups.indexOf(rg);
+        if(idx > -1) {
+          $scope.application.realmGroups.splice(idx, 1);
+          ApplicationResource.update({id: $scope.application.id}, $scope.application);
+         }
+      };
+
       $scope.editScope = function (scp) {
         $uibModal.open({
           templateUrl: 'app/application/views/application-scope-modal-form.html',
@@ -191,4 +233,31 @@ agate.application
       $scope.cancel = function () {
         $uibModalInstance.dismiss('cancel');
       };
-    }]);
+    }])
+
+    .controller('ApplicationRealmGroupModalController', ['$scope', '$filter', '$uibModalInstance', 'GroupsResource', 'realmGroup',
+      function($scope, $filter, $uibModalInstance, GroupsResource, realmGroup) {
+        $scope.editMode = realmGroup && realmGroup.realm;
+        $scope.realmGroup = realmGroup;
+        if (!$scope.realmGroup.groups) {
+          $scope.realmGroup.groups = [];
+        }
+
+        $scope.groupList = [];
+        GroupsResource.query().$promise.then((groups) => {
+          $scope.groupList = groups.map((grp) => grp.name);
+        });
+
+        $scope.save = function (form) {
+          if (!form.$valid) {
+            form.saveAttempted = true;
+            return;
+          }
+
+          $uibModalInstance.close($scope.realmGroup);
+        };
+
+        $scope.cancel = function () {
+          $uibModalInstance.dismiss('cancel');
+        };
+      }]);

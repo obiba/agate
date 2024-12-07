@@ -161,7 +161,7 @@ public class SignController {
         boolean redirectIsValid = false;
         for (String appName : appNames) {
           Application application = applicationService.findByIdOrName(appName);
-          if (application != null && application.getRedirectURIs().stream().noneMatch(postLogoutRedirectUri::startsWith)) {
+          if (application != null && application.getRedirectURIs().stream().anyMatch(postLogoutRedirectUri::startsWith)) {
             redirectIsValid = true;
             break;
           }

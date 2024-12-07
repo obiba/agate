@@ -11,6 +11,8 @@
 package org.obiba.agate.web.rest.application;
 
 import javax.inject.Inject;
+
+import com.google.common.collect.Maps;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PUT;
@@ -60,6 +62,12 @@ public class ApplicationResource {
     dto.getScopesList().forEach(s -> application.addScope(s.getName(), s.getDescription()));
     if (dto.hasKey()) application.setKey(applicationService.hashKey(dto.getKey()));
     if (dto.hasAutoApproval()) application.setAutoApproval(dto.getAutoApproval());
+    application.setRealmGroups(Maps.newHashMap());
+    dto.getRealmGroupsList().forEach((realmGroup) -> {
+      realmGroup.getGroupsList().forEach((group) -> {
+        application.addRealmGroup(realmGroup.getRealm(), group);
+      });
+    });
 
     applicationService.save(application);
 

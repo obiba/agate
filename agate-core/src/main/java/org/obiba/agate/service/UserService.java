@@ -273,12 +273,7 @@
           if (foundConfigs.size() == 1) {
             RealmConfig realmConfig = foundConfigs.get(0);
             user.setStatus(UserStatus.ACTIVE);
-
-            if (user.getGroups() != null) {
-              user.getGroups().addAll(realmConfig.getGroups());
-            } else {
-              user.setGroups(Sets.newHashSet(realmConfig.getGroups()));
-            }
+            user.addGroups(Sets.newHashSet(realmConfig.getGroups()));
           } else {
             user.setRealm(AgateRealm.AGATE_USER_REALM.getName());
           }

@@ -12,19 +12,20 @@ package org.obiba.agate.domain;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import org.obiba.mongodb.domain.AbstractAuditableDocument;
 import org.springframework.data.mongodb.core.index.Indexed;
 
-import jakarta.annotation.Nullable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Application extends AbstractAuditableDocument {
-
-  private static final long serialVersionUID = 4710884170897922907L;
 
   @Nonnull
   @Indexed(unique = true)
@@ -39,6 +40,8 @@ public class Application extends AbstractAuditableDocument {
   private List<Scope> scopes;
 
   private boolean autoApproval = true;
+
+  private Map<String, List<String>> realmGroups = new HashMap<>();
 
   public Application() {
   }
@@ -102,6 +105,34 @@ public class Application extends AbstractAuditableDocument {
   public void setRedirectURI(String redirectURI) {
     this.redirectURI = redirectURI;
   }
+
+  public Map<String, List<String>> getRealmGroups() {
+    return realmGroups != null ? realmGroups : new HashMap<>();
+  }
+
+  public void setRealmGroups(Map<String, List<String>> realmGroups) {
+    this.realmGroups = realmGroups;
+  }
+
+  public boolean hasRealmGroups(String realm) {
+    return getRealmGroups().containsKey(realm) && !getRealmGroups().get(realm).isEmpty();
+  }
+
+  public Iterable<String> getRealmGroups(String realm) {
+    return hasRealmGroups(realm) ? ImmutableList.copyOf(getRealmGroups().get(realm)) : ImmutableList.of();
+  }
+
+  public void addRealmGroup(String realm, String group) {
+    if (Strings.isNullOrEmpty(realm) || Strings.isNullOrEmpty(group)) return;
+    if (realmGroups == null) {
+      realmGroups = new HashMap<>();
+    }
+    if (!realmGroups.containsKey(realm)) {
+      realmGroups.put(realm, Lists.newArrayList());
+    }
+    realmGroups.get(realm).add(group);
+  }
+
 
   public boolean hasScopes() {
     return scopes != null && !scopes.isEmpty();

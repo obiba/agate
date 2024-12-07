@@ -50,7 +50,6 @@ public class GroupService {
     return groupRepository.findOneByName(name);
   }
 
-  @Nullable
   public List<Group> findByApplication(@Nonnull String application) {
     Assert.notNull(application, "Application name cannot be null.");
     return groupRepository.findByApplications(application);

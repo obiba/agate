@@ -1,0 +1,57 @@
+<!--
+  ~ Copyright (c) 2024 OBiBa. All rights reserved.
+  ~
+  ~ This program and the accompanying materials
+  ~ are made available under the terms of the GNU Public License v3.0.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<div class="modal-content">
+  <form name="form" role="form" novalidate ng-submit="save(form)">
+
+    <div class="modal-header">
+      <button type="button" class="close" aria-hidden="true" ng-click="cancel()">&times;</button>
+      <h4 class="modal-title" id="myAttributeModal">
+        <span ng-if="!editMode" translate>application.realm-group.add</span>
+        <span ng-if="editMode" translate>application.realm-group.edit</span>
+      </h4>
+    </div>
+
+    <div class="modal-body">
+
+      <p class="alert alert-danger" ng-show="form.saveAttempted && form.$invalid" translate="">fix-error</p>
+
+      <div form-input name="realm" model="realmGroup.realm" label="application.realm-group.realm" help="application.realm-group.realm-help"
+          required="true" disabled="editMode"></div>
+
+      <div class="form-group">
+        <label class="control-label">
+          <span translate>application.realm-group.group</span>
+        </label>
+        <ui-select multiple theme="bootstrap" ng-model="realmGroup.groups" reset-search-input="true">
+          <ui-select-match><span ng-bind-html="$select.selected[$index]"></span></ui-select-match>
+          <ui-select-choices repeat="group in groupList">
+            {{group}}
+          </ui-select-choices>
+        </ui-select>
+        <p class="help-block" translate>
+          application.realm-group.group-help
+        </p>
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" ng-click="cancel()">
+        <span translate>cancel</span>
+      </button>
+      <button type="submit" class="btn btn-primary">
+        <span translate>save</span>
+      </button>
+    </div>
+
+  </form>
+
+</div>

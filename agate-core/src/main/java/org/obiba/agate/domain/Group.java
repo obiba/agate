@@ -27,8 +27,6 @@ import java.util.Set;
 @Document(collection = "userGroup") // group is a reserved word in mongodb
 public class Group extends AbstractAuditableDocument {
 
-  private static final long serialVersionUID = -2028848270265682755L;
-
   @Indexed(unique = true)
   private String name;
 
