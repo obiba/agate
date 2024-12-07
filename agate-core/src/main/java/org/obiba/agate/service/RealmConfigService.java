@@ -104,12 +104,15 @@ public class RealmConfigService {
 
   public List<RealmConfig> findAllRealmsForSignupAndApplication(String application) {
     if (Strings.isNullOrEmpty(application)) return Lists.newArrayList();
+    Application app = applicationService.findByIdOrName(application);
+    if (app == null) {
+      return Lists.newArrayList();
+    }
+
     List<String> groupsForApplication = groupService.findByApplication(application)
       .stream()
       .map(Group::getName)
       .toList();
-
-    Application app = applicationService.findByIdOrName(application);
 
     return realmConfigRepository.findAllByStatusAndForSignupTrue(RealmStatus.ACTIVE)
       .stream()
@@ -136,14 +139,16 @@ public class RealmConfigService {
                                                                         RealmStatus status,
                                                                         AgateRealm agateRealm,
                                                                         String application) {
-
     if (Strings.isNullOrEmpty(application)) return Lists.newArrayList();
+    Application app = applicationService.findByIdOrName(application);
+    if (app == null) {
+      return Lists.newArrayList();
+    }
+
     List<String> groupsForApplication = groupService.findByApplication(application)
       .stream()
       .map(Group::getName)
       .toList();
-
-    Application app = applicationService.findByName(application);
 
     List<RealmConfig> realmConfigs = RealmUsage.ALL == usage
       ? realmConfigRepository.findAllByStatusAndType(status, agateRealm.name())
