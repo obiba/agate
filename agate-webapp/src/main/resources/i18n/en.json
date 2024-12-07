@@ -308,12 +308,12 @@
       "description-help": "Short description of the requested permission that will be shown to the user."
     },
     "realm-group": {
-      "add": "Add Realm-Group",
-      "edit": "Edit Realm-Group",
+      "add": "Add Realm-Groups",
+      "edit": "Edit Realm-Groups",
       "realm": "Realm",
       "realm-help": "A realm name.",
-      "group": "Group",
-      "group-help": "A group name (or comma separated group names), which members have access to the application. This group (or groups) will be applied to realm's users who join through this application."
+      "group": "Groups",
+      "group-help": "One or more groups, which members have access to the application. This group (or groups) will be applied to realm's users who join through this application."
     }
   },
   "groups": "Groups",

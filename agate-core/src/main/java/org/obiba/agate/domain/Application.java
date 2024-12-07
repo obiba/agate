@@ -12,6 +12,7 @@ package org.obiba.agate.domain;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
@@ -40,7 +41,7 @@ public class Application extends AbstractAuditableDocument {
 
   private boolean autoApproval = true;
 
-  private Map<String, String> realmGroups = new HashMap<>();
+  private Map<String, List<String>> realmGroups = new HashMap<>();
 
   public Application() {
   }
@@ -105,20 +106,20 @@ public class Application extends AbstractAuditableDocument {
     this.redirectURI = redirectURI;
   }
 
-  public Map<String, String> getRealmGroups() {
+  public Map<String, List<String>> getRealmGroups() {
     return realmGroups != null ? realmGroups : new HashMap<>();
   }
 
-  public void setRealmGroups(Map<String, String> realmGroups) {
+  public void setRealmGroups(Map<String, List<String>> realmGroups) {
     this.realmGroups = realmGroups;
   }
 
-  public boolean hasRealmGroup(String realm) {
-    return getRealmGroups().containsKey(realm) && !Strings.isNullOrEmpty(getRealmGroups().get(realm));
+  public boolean hasRealmGroups(String realm) {
+    return getRealmGroups().containsKey(realm) && !getRealmGroups().get(realm).isEmpty();
   }
 
   public Iterable<String> getRealmGroups(String realm) {
-    return Splitter.on(",").trimResults().split(getRealmGroups().get(realm));
+    return hasRealmGroups(realm) ? ImmutableList.copyOf(getRealmGroups().get(realm)) : ImmutableList.of();
   }
 
   public void addRealmGroup(String realm, String group) {
@@ -126,7 +127,10 @@ public class Application extends AbstractAuditableDocument {
     if (realmGroups == null) {
       realmGroups = new HashMap<>();
     }
-    realmGroups.put(realm, group);
+    if (!realmGroups.containsKey(realm)) {
+      realmGroups.put(realm, Lists.newArrayList());
+    }
+    realmGroups.get(realm).add(group);
   }
 
 

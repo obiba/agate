@@ -113,7 +113,7 @@ public class RealmConfigService {
 
     return realmConfigRepository.findAllByStatusAndForSignupTrue(RealmStatus.ACTIVE)
       .stream()
-      .filter(realmConfig -> app.hasRealmGroup(realmConfig.getName()) || realmConfig.getGroups().stream().anyMatch(groupsForApplication::contains))
+      .filter(realmConfig -> app.hasRealmGroups(realmConfig.getName()) || realmConfig.getGroups().stream().anyMatch(groupsForApplication::contains))
       .collect(Collectors.toList());
   }
 
@@ -150,7 +150,7 @@ public class RealmConfigService {
       : realmConfigRepository.findAllByStatusAndTypeAndForSignupTrue(status, agateRealm.name());
 
     return realmConfigs.stream()
-      .filter(realmConfig -> app.hasRealmGroup(realmConfig.getName()) || realmConfig.getGroups().stream().anyMatch(groupsForApplication::contains))
+      .filter(realmConfig -> app.hasRealmGroups(realmConfig.getName()) || realmConfig.getGroups().stream().anyMatch(groupsForApplication::contains))
       .collect(Collectors.toList());
   }
 

@@ -308,12 +308,12 @@
       "description-help": "Description courte de la permission qui sera affichée à l'utilisateur."
     },
     "realm-group": {
-      "add": "Ajouter un domaine-groupe",
-      "edit": "Modification du un domaine-groupe",
+      "add": "Ajouter un domaine-groupes",
+      "edit": "Modification du domaine-groupes",
       "realm": "Domaine",
       "realm-help": "Un nom de domaine.",
       "group": "Groupe",
-      "group-help": "Un nom de groupe (ou plusieurs, séparés par des virgules), dont les membres ont accès à l'application. Ce(s) groupe(s) sera(ont) appliqué(s) automatiquement quand un utilisateur de ce domaine s'enregistre."
+      "group-help": "Un ou plusieurs groupes, dont les membres ont accès à l'application. Ce(s) groupe(s) sera(ont) appliqué(s) automatiquement quand un utilisateur de ce domaine s'enregistre."
     }
   },
   "groups": "Groupes",

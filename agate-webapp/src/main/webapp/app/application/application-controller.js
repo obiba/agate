@@ -76,7 +76,7 @@ agate.application
           controller: 'ApplicationRealmGroupModalController',
           resolve: {
             'realmGroup': function () {
-               return angular.copy(rg);
+               return rg ? angular.copy(rg) : {};
             }
           }
         }).result.then(function (realmGroup) {
@@ -235,10 +235,18 @@ agate.application
       };
     }])
 
-    .controller('ApplicationRealmGroupModalController', ['$scope', '$filter', '$uibModalInstance', 'realmGroup',
-      function($scope, $filter, $uibModalInstance, realmGroup) {
+    .controller('ApplicationRealmGroupModalController', ['$scope', '$filter', '$uibModalInstance', 'GroupsResource', 'realmGroup',
+      function($scope, $filter, $uibModalInstance, GroupsResource, realmGroup) {
         $scope.editMode = realmGroup && realmGroup.realm;
         $scope.realmGroup = realmGroup;
+        if (!$scope.realmGroup.groups) {
+          $scope.realmGroup.groups = [];
+        }
+
+        $scope.groupList = [];
+        GroupsResource.query().$promise.then((groups) => {
+          $scope.groupList = groups.map((grp) => grp.name);
+        });
 
         $scope.save = function (form) {
           if (!form.$valid) {

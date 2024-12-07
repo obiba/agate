@@ -138,9 +138,9 @@ message ApplicationDto {
     required string name = 1;
     optional string description = 2;
   }
-  message RealmGroupDto {
+  message RealmGroupsDto {
     required string realm = 1;
-    required string group = 2;
+    repeated string groups = 2;
   }
   optional string id = 1;
   required string name = 2;
@@ -150,7 +150,7 @@ message ApplicationDto {
   optional string redirectURI = 6;
   repeated ScopeDto scopes = 7;
   optional bool autoApproval = 8;
-  repeated RealmGroupDto realmGroups = 9;
+  repeated RealmGroupsDto realmGroups = 9;
 }
 
 message ConfirmForm {

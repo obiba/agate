@@ -63,7 +63,11 @@ public class ApplicationResource {
     if (dto.hasKey()) application.setKey(applicationService.hashKey(dto.getKey()));
     if (dto.hasAutoApproval()) application.setAutoApproval(dto.getAutoApproval());
     application.setRealmGroups(Maps.newHashMap());
-    dto.getRealmGroupsList().forEach((realmGroup) -> application.addRealmGroup(realmGroup.getRealm(), realmGroup.getGroup()));
+    dto.getRealmGroupsList().forEach((realmGroup) -> {
+      realmGroup.getGroupsList().forEach((group) -> {
+        application.addRealmGroup(realmGroup.getRealm(), group);
+      });
+    });
 
     applicationService.save(application);
 

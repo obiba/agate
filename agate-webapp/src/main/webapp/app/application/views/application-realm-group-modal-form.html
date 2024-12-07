@@ -26,8 +26,20 @@
       <div form-input name="realm" model="realmGroup.realm" label="application.realm-group.realm" help="application.realm-group.realm-help"
           required="true" disabled="editMode"></div>
 
-      <div form-input name="group" model="realmGroup.group" label="application.realm-group.group"
-           required="true" help="application.realm-group.group-help"></div>
+      <div class="form-group">
+        <label class="control-label">
+          <span translate>application.realm-group.group</span>
+        </label>
+        <ui-select multiple theme="bootstrap" ng-model="realmGroup.groups" reset-search-input="true">
+          <ui-select-match><span ng-bind-html="$select.selected[$index]"></span></ui-select-match>
+          <ui-select-choices repeat="group in groupList">
+            {{group}}
+          </ui-select-choices>
+        </ui-select>
+        <p class="help-block" translate>
+          application.realm-group.group-help
+        </p>
+      </div>
 
     </div>
 
