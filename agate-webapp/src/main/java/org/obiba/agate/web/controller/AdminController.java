@@ -7,7 +7,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+<<<<<<< HEAD
 import jakarta.inject.Inject;
+=======
+import javax.inject.Inject;
+>>>>>>> a49afd58 (maven resource plugin and admin.ftl)
 
 @Controller
 public class AdminController {
@@ -28,4 +32,8 @@ public class AdminController {
       return new ModelAndView("redirect:profile");
   }
 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> a49afd58 (maven resource plugin and admin.ftl)
