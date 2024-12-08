@@ -192,25 +192,6 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
 
   @Bean
   @Profile(Constants.SPRING_PROFILE_PRODUCTION)
-  public FilterRegistrationBean<StaticResourcesProductionFilter> staticResourcesProductionFilterRegistration() {
-    log.debug("Registering Static Resources Production Filter");
-    FilterRegistrationBean<StaticResourcesProductionFilter> bean = new FilterRegistrationBean<>();
-
-    bean.setFilter(new StaticResourcesProductionFilter());
-    bean.addUrlPatterns("/favicon.ico");
-    bean.addUrlPatterns("/index.html");
-    bean.addUrlPatterns("/images/*");
-    bean.addUrlPatterns("/fonts/*");
-    bean.addUrlPatterns("/scripts/*");
-    bean.addUrlPatterns("/styles/*");
-    bean.addUrlPatterns("/admin/*");
-    bean.setAsyncSupported(true);
-
-    return bean;
-  }
-
-  @Bean
-  @Profile(Constants.SPRING_PROFILE_PRODUCTION)
   public FilterRegistrationBean<CachingHttpHeadersFilter> cachingHttpHeadersFilterRegistration() {
     log.debug("Registering Caching Htpp Headers Filter");
     FilterRegistrationBean<CachingHttpHeadersFilter> bean = new FilterRegistrationBean<>();
