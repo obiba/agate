@@ -43,6 +43,10 @@ core:
 rest:
 	cd agate-rest && ${mvn_exec} clean install
 
+ui:
+	cd agate-ui && ${mvn_exec} clean install
+	cd agate-webapp && ${mvn_exec} clean
+
 model: proto
 
 proto:
