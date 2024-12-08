@@ -47,26 +47,18 @@
       </q-item>
       <q-item :to="`/realms`">
         <q-item-section avatar>
-          <q-icon name="splitscreen" />
+          <q-icon name="recent_actors" />
         </q-item-section>
         <q-item-section>
           <q-item-label>{{ $t('realms') }}</q-item-label>
         </q-item-section>
       </q-item>
-      <q-item :to="`/settings`">
+      <q-item v-if="authStore.isAdministrator" :to="`/settings`">
         <q-item-section avatar>
           <q-icon name="settings" />
         </q-item-section>
         <q-item-section>
           <q-item-label>{{ $t('settings') }}</q-item-label>
-        </q-item-section>
-      </q-item>
-      <q-item v-if="authStore.isAdministrator" to="/admin">
-        <q-item-section avatar>
-          <q-icon name="admin_panel_settings" />
-        </q-item-section>
-        <q-item-section>
-          <q-item-label>{{ $t('administration') }}</q-item-label>
         </q-item-section>
       </q-item>
       <q-item-label header>{{ $t('other_links') }}</q-item-label>

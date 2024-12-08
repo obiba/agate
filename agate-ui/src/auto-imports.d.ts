@@ -61,6 +61,7 @@ declare global {
   const toValue: typeof import('vue')['toValue']
   const triggerRef: typeof import('vue')['triggerRef']
   const unref: typeof import('vue')['unref']
+  const useApplicationStore: typeof import('./stores/application')['useApplicationStore']
   const useAppsStore: typeof import('./stores/apps')['useAppsStore']
   const useAttrs: typeof import('vue')['useAttrs']
   const useAuthStore: typeof import('./stores/auth')['useAuthStore']
@@ -73,6 +74,7 @@ declare global {
   const useDatashieldStore: typeof import('./stores/datashield')['useDatashieldStore']
   const useDatasourceStore: typeof import('./stores/datasource')['useDatasourceStore']
   const useFilesStore: typeof import('./stores/files')['useFilesStore']
+  const useGroupStore: typeof import('./stores/group')['useGroupStore']
   const useGroupsStore: typeof import('./stores/groups')['useGroupsStore']
   const useI18n: typeof import('vue-i18n')['useI18n']
   const useIdentifiersStore: typeof import('./stores/identifiers')['useIdentifiersStore']
@@ -84,6 +86,7 @@ declare global {
   const useProfilesStore: typeof import('./stores/profiles')['useProfilesStore']
   const useProjectsStore: typeof import('./stores/projects')['useProjectsStore']
   const useRStore: typeof import('./stores/r')['useRStore']
+  const useRealmStore: typeof import('./stores/realm')['useRealmStore']
   const useResourcesStore: typeof import('./stores/resources')['useResourcesStore']
   const useRoute: typeof import('vue-router')['useRoute']
   const useRouter: typeof import('vue-router')['useRouter']
@@ -94,6 +97,7 @@ declare global {
   const useTaxonomiesStore: typeof import('./stores/taxonomies')['useTaxonomiesStore']
   const useTokensStore: typeof import('./stores/tokens')['useTokensStore']
   const useTransientDatasourceStore: typeof import('./stores/transient-datasource')['useTransientDatasourceStore']
+  const useUserStore: typeof import('./stores/user')['useUserStore']
   const useUsersGroupsStore: typeof import('./stores/users-groups')['useUsersGroupsStore']
   const useUsersStore: typeof import('./stores/users')['useUsersStore']
   const watch: typeof import('vue')['watch']
@@ -166,16 +170,20 @@ declare module 'vue' {
     readonly toValue: UnwrapRef<typeof import('vue')['toValue']>
     readonly triggerRef: UnwrapRef<typeof import('vue')['triggerRef']>
     readonly unref: UnwrapRef<typeof import('vue')['unref']>
+    readonly useApplicationStore: UnwrapRef<typeof import('./stores/application')['useApplicationStore']>
     readonly useAttrs: UnwrapRef<typeof import('vue')['useAttrs']>
     readonly useAuthStore: UnwrapRef<typeof import('./stores/auth')['useAuthStore']>
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
+    readonly useGroupStore: UnwrapRef<typeof import('./stores/group')['useGroupStore']>
     readonly useI18n: UnwrapRef<typeof import('vue-i18n')['useI18n']>
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
+    readonly useRealmStore: UnwrapRef<typeof import('./stores/realm')['useRealmStore']>
     readonly useRoute: UnwrapRef<typeof import('vue-router')['useRoute']>
     readonly useRouter: UnwrapRef<typeof import('vue-router')['useRouter']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
     readonly useSystemStore: UnwrapRef<typeof import('./stores/system')['useSystemStore']>
+    readonly useUserStore: UnwrapRef<typeof import('./stores/user')['useUserStore']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchEffect: UnwrapRef<typeof import('vue')['watchEffect']>
     readonly watchPostEffect: UnwrapRef<typeof import('vue')['watchPostEffect']>
