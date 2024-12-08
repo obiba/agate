@@ -78,7 +78,7 @@ public class SignController {
    */
   @GetMapping("/check")
   public ModelAndView check(@RequestParam(value = "redirect", required = false) String redirect) {
-    String verifiedRedirect = verifyRedirect(redirect);
+    String verifiedRedirect = normalizeRedirect(verifyRedirect(redirect));
     return new ModelAndView("redirect:" + (Strings.isNullOrEmpty(verifiedRedirect) ? configurationService.getContextPath() + "/" : verifiedRedirect));
   }
 
@@ -88,7 +88,7 @@ public class SignController {
                              @RequestParam(value = "language", required = false) String language,
                              @RequestParam(value = "redirect", required = false) String redirect) {
     Subject subject = SecurityUtils.getSubject();
-    String verifiedRedirect = verifyRedirect(redirect);
+    String verifiedRedirect = normalizeRedirect(verifyRedirect(redirect));
     if (subject.isAuthenticated())
       return new ModelAndView("redirect:" + (Strings.isNullOrEmpty(verifiedRedirect) ? configurationService.getContextPath() + "/" : verifiedRedirect));
 
@@ -236,11 +236,20 @@ public class SignController {
 
   private String ensurePostLogoutRedirectUri(String postLogoutRedirectUri) {
     if (!Strings.isNullOrEmpty(postLogoutRedirectUri)) {
-      return verifyRedirect(postLogoutRedirectUri);
+      return normalizeRedirect(verifyRedirect(postLogoutRedirectUri));
     }
     String url = configurationService.getConfiguration().getPortalUrl();
     if (!Strings.isNullOrEmpty(url)) return url;
-    return configurationService.getConfiguration().hasPublicUrl() ? configurationService.getPublicUrl() : "/";
+
+    url = configurationService.getConfiguration().hasPublicUrl() ? configurationService.getPublicUrl() : "/";
+    String contextPath = configurationService.getContextPath();
+    return contextPath.equals("/") ? url : url + contextPath;
+  }
+
+  private String normalizeRedirect(String redirect) {
+    if (Strings.isNullOrEmpty(redirect)) return redirect;
+    String contextPath = configurationService.getContextPath();
+    return !redirect.equals("/") && redirect.startsWith(contextPath) ? redirect.replace(contextPath, "") : redirect;
   }
 
   private String verifyRedirect(String redirect) {
