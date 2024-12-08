@@ -8,12 +8,6 @@
         </q-btn>
         <q-space />
         <div class="q-gutter-sm row items-center no-wrap">
-          <q-btn v-if="authStore.isAdministrator" to="/admin" no-caps>
-            {{ $t('administration') }}
-          </q-btn>
-          <q-btn no-caps @click="onHelp">
-            {{ $t('help') }}
-          </q-btn>
           <q-btn-dropdown flat :label="locale">
             <q-list>
               <q-item
