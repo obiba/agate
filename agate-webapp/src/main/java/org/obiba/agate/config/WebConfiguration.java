@@ -43,7 +43,7 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -185,25 +185,6 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
 
     bean.setFilter(new ClickjackingHttpHeadersFilter());
     bean.addUrlPatterns("/*");
-    bean.setAsyncSupported(true);
-
-    return bean;
-  }
-
-  @Bean
-  @Profile(Constants.SPRING_PROFILE_PRODUCTION)
-  public FilterRegistrationBean<StaticResourcesProductionFilter> staticResourcesProductionFilterRegistration() {
-    log.debug("Registering Static Resources Production Filter");
-    FilterRegistrationBean<StaticResourcesProductionFilter> bean = new FilterRegistrationBean<>();
-
-    bean.setFilter(new StaticResourcesProductionFilter());
-    bean.addUrlPatterns("/favicon.ico");
-    bean.addUrlPatterns("/index.html");
-    bean.addUrlPatterns("/images/*");
-    bean.addUrlPatterns("/fonts/*");
-    bean.addUrlPatterns("/scripts/*");
-    bean.addUrlPatterns("/styles/*");
-    bean.addUrlPatterns("/admin/*");
     bean.setAsyncSupported(true);
 
     return bean;
