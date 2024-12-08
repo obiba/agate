@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import static jakarta.ws.rs.core.Cookie.DEFAULT_VERSION;
 import static jakarta.ws.rs.core.NewCookie.DEFAULT_MAX_AGE;

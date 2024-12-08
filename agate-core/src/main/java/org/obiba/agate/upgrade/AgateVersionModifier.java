@@ -12,7 +12,7 @@ package org.obiba.agate.upgrade;
 
 import java.util.Optional;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.service.ConfigurationService;

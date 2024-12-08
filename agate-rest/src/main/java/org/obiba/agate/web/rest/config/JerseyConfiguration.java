@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.Profiles;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 @Configuration
 @ApplicationPath(JerseyConfiguration.WS_ROOT)

@@ -10,7 +10,7 @@
 
 package org.obiba.agate.web.rest.application;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import com.google.common.collect.Maps;
 import jakarta.ws.rs.DELETE;

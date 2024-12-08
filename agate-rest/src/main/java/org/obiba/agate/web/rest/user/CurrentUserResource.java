@@ -17,7 +17,7 @@ import org.obiba.agate.service.TotpService;
 import org.obiba.agate.web.model.Agate;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;

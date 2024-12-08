@@ -50,7 +50,7 @@
   import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
   import jakarta.annotation.Nullable;
-  import javax.inject.Inject;
+  import jakarta.inject.Inject;
   import java.io.IOException;
   import java.util.*;
   import java.util.function.Function;

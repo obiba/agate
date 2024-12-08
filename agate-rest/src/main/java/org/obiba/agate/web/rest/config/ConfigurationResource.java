@@ -32,7 +32,7 @@ import org.obiba.agate.web.rest.security.AuthorizationValidator;
 import org.obiba.shiro.realm.ObibaRealm;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.io.IOException;
 import java.io.ObjectInputFilter;
 import java.security.KeyStoreException;

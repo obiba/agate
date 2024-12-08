@@ -20,7 +20,7 @@ import org.obiba.agate.service.AuthorizationService;
 import org.obiba.agate.service.TicketService;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 @Component
 @SuppressWarnings("StaticMethodOnlyUsedInOneClass")

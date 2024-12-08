@@ -18,7 +18,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Configuration;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 @Configuration("cacheConfiguration")
 @EnableCaching

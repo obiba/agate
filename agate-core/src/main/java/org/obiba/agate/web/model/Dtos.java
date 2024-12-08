@@ -19,7 +19,7 @@ import org.obiba.web.model.AuthDtos;
 import org.obiba.web.model.OIDCDtos;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 @Component
 @SuppressWarnings("OverlyCoupledClass")

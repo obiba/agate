@@ -10,7 +10,7 @@
 
 package org.obiba.agate.service;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import com.google.common.collect.Lists;
 import org.obiba.agate.config.Constants;

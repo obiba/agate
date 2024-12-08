@@ -25,7 +25,7 @@ import org.obiba.agate.web.model.Agate;
 import org.obiba.agate.web.rest.ticket.TicketsResource;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;

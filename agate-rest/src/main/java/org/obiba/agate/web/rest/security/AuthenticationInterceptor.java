@@ -13,7 +13,7 @@ package org.obiba.agate.web.rest.security;
 import java.io.IOException;
 
 import jakarta.annotation.Priority;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerResponseContext;
 import jakarta.ws.rs.container.ContainerResponseFilter;
