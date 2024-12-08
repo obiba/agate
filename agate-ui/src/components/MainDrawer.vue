@@ -4,7 +4,7 @@
       <span class="text-bold text-grey-6">{{ username }}</span>
     </div>
     <q-list>
-      <q-item to="/profile" v-if="authStore.isAuthenticated">
+      <q-item clickable @click="onProfile" v-if="authStore.isAuthenticated">
         <q-item-section avatar>
           <q-icon name="person" />
         </q-item-section>
@@ -83,7 +83,6 @@ export default defineComponent({
 import EssentialLink, { EssentialLinkProps } from 'components/EssentialLink.vue';
 import { t } from 'src/boot/i18n';
 
-const router = useRouter();
 const authStore = useAuthStore();
 
 const username = computed(() => authStore.session?.username || '?');
@@ -103,23 +102,11 @@ const essentialLinks: EssentialLinkProps[] = [
   },
 ];
 
+function onProfile() {
+  window.location.href = '../profile';
+}
+
 function onSignout() {
-  const logoutURL = '';// systemStore.generalConf.logoutURL;
-  authStore
-    .signout()
-    .then(() => {
-      if (logoutURL) {
-        window.location.href = logoutURL;
-        return;
-      }
-      router.push('/signin');
-    })
-    .catch(() => {
-      if (logoutURL) {
-        window.location.href = logoutURL;
-        return;
-      }
-      router.push('/signin');
-    });
+  window.location.href = '../signout';
 }
 </script>

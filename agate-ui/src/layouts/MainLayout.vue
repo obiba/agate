@@ -28,7 +28,7 @@
           </q-btn-dropdown>
           <q-btn-dropdown flat no-caps :label="username">
             <q-list>
-              <q-item clickable v-close-popup to="/profile" v-if="authStore.isAuthenticated">
+              <q-item clickable v-close-popup @click="onProfile" v-if="authStore.isAuthenticated">
                 <q-item-section>
                   <q-item-label>{{ $t('my_profile') }}</q-item-label>
                 </q-item-section>
@@ -110,27 +110,11 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
   cookies.set('locale', localeOpt.value);
 }
 
-function onSignout() {
-  const logoutURL = '';//systemStore.generalConf.logoutURL;
-  authStore
-    .signout()
-    .then(() => {
-      if (logoutURL) {
-        window.location.href = logoutURL;
-        return;
-      }
-      router.push('/signin');
-    })
-    .catch(() => {
-      if (logoutURL) {
-        window.location.href = logoutURL;
-        return;
-      }
-      router.push('/signin');
-    });
+function onProfile() {
+  window.location.href = '../profile';
 }
 
-function onHelp() {
-  window.open('https://agatedoc.obiba.org', '_blank');
+function onSignout() {
+  window.location.href = '../signout';
 }
 </script>
