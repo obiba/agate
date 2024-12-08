@@ -105,6 +105,10 @@
     "useSearchStore": true,
     "useCartStore": true,
     "AnalysisPluginPackages": true,
-    "useProfileActivityStore": true
+    "useProfileActivityStore": true,
+    "useUserStore": true,
+    "useGroupStore": true,
+    "useApplicationStore": true,
+    "useRealmStore": true
   }
 }

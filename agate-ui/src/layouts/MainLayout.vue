@@ -101,7 +101,7 @@ onMounted(() => {
     .catch(() => {
       //router.push('/signin');
     });
-  systemStore.init();
+  systemStore.initPub();
 });
 
 
