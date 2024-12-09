@@ -57,7 +57,7 @@
 <script setup lang="ts">
 import { useCookies } from 'vue3-cookies';
 import { locales } from 'boot/i18n';
-
+import { contextPath } from 'src/boot/api';
 import MainDrawer from 'src/components/MainDrawer.vue';
 
 const router = useRouter();
@@ -111,10 +111,10 @@ function onLocaleSelection(localeOpt: { label: string; value: string }) {
 }
 
 function onProfile() {
-  window.location.href = '../profile';
+  window.location.href = `..${contextPath === '/' ? '' : contextPath}/profile`;
 }
 
 function onSignout() {
-  window.location.href = '../signout';
+  window.location.href = `..${contextPath === '/' ? '' : contextPath}/signout`;
 }
 </script>
