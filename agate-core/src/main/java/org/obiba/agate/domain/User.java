@@ -379,11 +379,11 @@ public class User extends AbstractAuditableDocument {
       if (!Strings.isNullOrEmpty(username)) {
         String uname = username;
         if (username.contains("@")) {
-          uname = username.split("@")[0];
+          uname = username.replace("@", "_");
         }
         name(uname);
         email(username);
-        String[] parts = uname.split("\\.");
+        String[] parts = uname.split("_")[0].split("\\.");
         if (parts.length>0)
           firstName(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_CAMEL, parts[0].toLowerCase()));
         else

@@ -205,7 +205,7 @@ public class UsersPublicResource {
         throw new BadRequestException("User name cannot be empty");
 
       try {
-        name = email.split("@")[0];
+        name = email.replace("@", "_");
       } catch (Exception e) {
         name = new ObjectId().toString();
       }
