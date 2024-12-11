@@ -48,7 +48,7 @@ if grep -q "profiles:" /etc/agate/application.yml
     cp /etc/agate/application.yml /etc/agate/application.yml.2.x
     cat /etc/agate/application.yml.2.x | grep -v "profiles:" > /etc/agate/application.yml
 fi
-if [ -f /etc/agate/application.yml ] && [ ! -f /etc/agate/application-prod.yml ]
+if [ -f /etc/agate/application.yml ]
   then
   mv -f /etc/agate/application.yml /etc/agate/application-prod.yml
 fi
