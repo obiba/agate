@@ -80,14 +80,14 @@ public class UserTest {
     String email = "andy.warhol@factory.org";
     User user = User.newBuilder(email).build();
     assertEquals(email, user.getEmail());
-    assertEquals("andy.warhol_factory.org", user.getName());
+    assertEquals("andy.warhol@factory.org", user.getName());
     assertEquals("Andy", user.getFirstName());
     assertEquals("Warhol", user.getLastName());
 
     email = "andy@factory.org";
     user = User.newBuilder(email).build();
     assertEquals(email, user.getEmail());
-    assertEquals("andy_factory.org", user.getName());
+    assertEquals("andy@factory.org", user.getName());
     assertEquals("Andy", user.getFirstName());
     assertEquals("", user.getLastName());
   }

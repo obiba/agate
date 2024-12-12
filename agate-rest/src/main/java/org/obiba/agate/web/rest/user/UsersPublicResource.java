@@ -200,15 +200,10 @@ public class UsersPublicResource {
 
     String name = username == null ? null : username.trim().replaceAll(" ", "");
 
-    if (Strings.isNullOrEmpty(username)) {
+    if (Strings.isNullOrEmpty(name)) {
       if (config.isJoinWithUsername())
         throw new BadRequestException("User name cannot be empty");
-
-      try {
-        name = email.replace("@", "_");
-      } catch (Exception e) {
-        name = new ObjectId().toString();
-      }
+      name = email;
     }
     
     if (!reCaptchaService.verify(Strings.isNullOrEmpty(reCaptchaResponse) ? reCaptchaResponse2 : reCaptchaResponse))
