@@ -11,15 +11,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-<<<<<<< HEAD
 import jakarta.inject.Inject;
-=======
-import javax.inject.Inject;
-<<<<<<< HEAD
->>>>>>> a49afd58 (maven resource plugin and admin.ftl)
-=======
 import java.io.IOException;
->>>>>>> 5bc8842d (feat: removed static resources filter, made admin template dynamic)
 
 @Controller
 public class AdminController {
@@ -48,13 +41,6 @@ public class AdminController {
       return new ModelAndView("redirect:profile");
   }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-}
-=======
-}
->>>>>>> a49afd58 (maven resource plugin and admin.ftl)
-=======
   private void includeEntryPoints(ModelAndView mv) throws IOException {
     var resolver = new PathMatchingResourcePatternResolver();
     String folderPath = "classpath:/static/admin/assets/*";
@@ -76,4 +62,3 @@ public class AdminController {
   }
 
 }
->>>>>>> 5bc8842d (feat: removed static resources filter, made admin template dynamic)
