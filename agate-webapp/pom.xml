@@ -147,9 +147,6 @@
             <fileset>
               <directory>node_modules</directory>
             </fileset>
-            <fileset>
-              <directory>src/main/webapp/bower_components</directory>
-            </fileset>
           </filesets>
         </configuration>
       </plugin>
@@ -171,19 +168,6 @@
             </goals>
           </execution>
           <execution>
-            <id>exec-bower-install</id>
-            <phase>generate-sources</phase>
-            <configuration>
-              <executable>bower</executable>
-              <arguments>
-                <argument>install</argument>
-              </arguments>
-            </configuration>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-          </execution>
-          <execution>
             <id>exec-grunt</id>
             <phase>generate-sources</phase>
             <configuration>
@@ -195,6 +179,27 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy ui content</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>target/classes/static/admin</outputDirectory>
+              <overwrite>true</overwrite>
+              <resources>
+                <resource>
+                  <directory>../agate-ui/dist/spa</directory>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
 
   </build>
@@ -202,12 +207,7 @@
   <profiles>
 
     <profile>
-      <id>generate-node-bower-modules</id>
-      <activation>
-        <file>
-          <missing>src/main/webapp/bower_components</missing>
-        </file>
-      </activation>
+      <id>generate-node-modules</id>
       <build>
         <plugins>
           <plugin>
@@ -219,19 +219,6 @@
                 <phase>generate-sources</phase>
                 <configuration>
                   <executable>npm</executable>
-                  <arguments>
-                    <argument>install</argument>
-                  </arguments>
-                </configuration>
-                <goals>
-                  <goal>exec</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>exec-bower-install</id>
-                <phase>generate-sources</phase>
-                <configuration>
-                  <executable>bower</executable>
                   <arguments>
                     <argument>install</argument>
                   </arguments>

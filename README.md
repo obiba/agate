@@ -9,12 +9,12 @@ Central authentication server for OBiBa applications.
 
 ## For developers
 
-Install NodeJS, Grunt and Bower
+Install NodeJS, Grunt
 
 ```
 sudo add-apt-repository -y ppa:chris-lea/node.js
 sudo apt-get install -y nodejs
-sudo npm install -g grunt-cli bower
+sudo npm install -g grunt-cli
 ```
 
 If you run agate for the first time, run `make npm-install`.
