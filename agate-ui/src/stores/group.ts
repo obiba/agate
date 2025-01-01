@@ -7,15 +7,18 @@ export const useGroupStore = defineStore('group', () => {
 
     async function init() {
         return api.get('/groups').then((response) => {
-            if (response.status === 200) {
-                groups.value = response.data;
-            }
-            return response;
+            groups.value = response.data;
+            return response.data;
         });
+    }
+
+    async function remove(group: GroupDto) {
+        return api.delete(`/group/${group.id}`);
     }
 
     return {
         groups,
         init,
+        remove,
     };
 });

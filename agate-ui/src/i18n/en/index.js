@@ -5,6 +5,11 @@ export default {
     main: {
         powered_by: 'Powered by',
     },
+    group: {
+        remove: 'Remove group',
+        remove_confirm: 'Please confirm group removal. User members of this group will not be removed.'
+    },
+    add: 'Add',
     administration: 'Administration',
     content_management: 'Content Management',
     docs: 'Docs',
@@ -22,4 +27,6 @@ export default {
     my_profile: 'My Profile',
     help: 'Help',
     other_links: 'Other links',
+    name: 'Name',
+    description: 'Description'
 }

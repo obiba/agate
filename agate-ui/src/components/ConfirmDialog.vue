@@ -1,6 +1,6 @@
 <template>
   <q-dialog v-model="showDialog" persistent @hide="onHide">
-    <q-card>
+    <q-card class="dialog-sm">
       <q-card-section>
         <div class="text-h6">{{ props.title }}</div>
       </q-card-section>

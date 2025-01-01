@@ -7,16 +7,14 @@
     </q-breadcrumbs>
     </q-toolbar>
     <q-page class="q-pa-md">
-        <pre>{{ groupStore.groups }}</pre>
+        <groups-table />
     </q-page>
 </div>
 </template>
 
 <script setup lang="ts">
-const { t } = useI18n();
-const groupStore = useGroupStore();
+import GroupsTable from 'src/components/GroupsTable.vue';
 
-onMounted(() => {
-    groupStore.init();
-});
+const { t } = useI18n();
+
 </script>
