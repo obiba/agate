@@ -93,7 +93,7 @@ onMounted(() => {
       };
     })
     .catch(() => {
-      //router.push('/signin');
+      window.location.href = `..${contextPath === '/' ? '' : contextPath}/signin`;
     });
   systemStore.initPub();
 });

@@ -9,6 +9,7 @@
  */
 package org.obiba.agate.web.rest.security;
 
+import jakarta.ws.rs.NotFoundException;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.session.InvalidSessionException;
@@ -73,6 +74,9 @@ public class CurrentSessionResource {
   @GET
   public Agate.SessionDto get() {
     Subject subject = SecurityUtils.getSubject();
+    if (!subject.isAuthenticated()) {
+      throw new NotFoundException("Subject is not authenticated");
+    }
     Agate.SessionDto.Builder builder = Agate.SessionDto.newBuilder() //
       .setUsername(subject.getPrincipal().toString()) //
       .setRealm(subject.getPrincipals().getRealmNames().iterator().next());

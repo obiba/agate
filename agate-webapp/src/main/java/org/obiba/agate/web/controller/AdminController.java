@@ -50,7 +50,7 @@ public class AdminController {
 
     for (Resource resource : resources) {
       String fileName = resource.getFilename();
-      if (fileName != null && fileName.startsWith("index.")) {
+      if (fileName != null && fileName.startsWith("index-")) {
         log.info("Quasar entrypoint: {}", fileName);
         if (fileName.endsWith(".js")) {
           mv.getModel().put("entryPointJS", fileName);
