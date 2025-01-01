@@ -9,7 +9,7 @@
           <q-icon name="person" />
         </q-item-section>
         <q-item-section>
-          <q-item-label>{{ $t('my_profile') }}</q-item-label>
+          <q-item-label>{{ t('my_profile') }}</q-item-label>
         </q-item-section>
       </q-item>
       <q-item clickable @click="onSignout" v-if="authStore.isAuthenticated">
@@ -17,7 +17,7 @@
           <q-icon name="logout" />
         </q-item-section>
         <q-item-section>
-          <q-item-label>{{ $t('auth.signout') }}</q-item-label>
+          <q-item-label>{{ t('auth.signout') }}</q-item-label>
         </q-item-section>
       </q-item>
       <q-separator v-if="authStore.isAuthenticated" />
@@ -26,7 +26,7 @@
           <q-icon name="person" />
         </q-item-section>
         <q-item-section>
-          <q-item-label>{{ $t('users') }}</q-item-label>
+          <q-item-label>{{ t('users') }}</q-item-label>
         </q-item-section>
       </q-item>
       <q-item to="/groups">
@@ -34,7 +34,7 @@
           <q-icon name="people" />
         </q-item-section>
         <q-item-section>
-          <q-item-label>{{ $t('groups') }}</q-item-label>
+          <q-item-label>{{ t('groups') }}</q-item-label>
         </q-item-section>
       </q-item>
       <q-item :to="`/applications`">
@@ -42,7 +42,7 @@
           <q-icon name="splitscreen" />
         </q-item-section>
         <q-item-section>
-          <q-item-label>{{ $t('applications') }}</q-item-label>
+          <q-item-label>{{ t('applications') }}</q-item-label>
         </q-item-section>
       </q-item>
       <q-item :to="`/realms`">
@@ -50,7 +50,7 @@
           <q-icon name="recent_actors" />
         </q-item-section>
         <q-item-section>
-          <q-item-label>{{ $t('realms') }}</q-item-label>
+          <q-item-label>{{ t('realms') }}</q-item-label>
         </q-item-section>
       </q-item>
       <q-item v-if="authStore.isAdministrator" :to="`/settings`">
@@ -58,14 +58,14 @@
           <q-icon name="settings" />
         </q-item-section>
         <q-item-section>
-          <q-item-label>{{ $t('settings') }}</q-item-label>
+          <q-item-label>{{ t('settings') }}</q-item-label>
         </q-item-section>
       </q-item>
-      <q-item-label header>{{ $t('other_links') }}</q-item-label>
+      <q-item-label header>{{ t('other_links') }}</q-item-label>
       <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" />
       <q-item class="fixed-bottom text-caption">
         <div>
-          {{ $t('main.powered_by') }}
+          {{ t('main.powered_by') }}
           <a class="text-weight-bold" href="https://www.obiba.org/pages/products/agate" target="_blank">OBiBa Agate</a>
           <span class="q-ml-xs" style="font-size: smaller">{{ authStore.version }}</span>
         </div>
@@ -80,9 +80,10 @@ export default defineComponent({
 });
 </script>
 <script setup lang="ts">
-import EssentialLink, { EssentialLinkProps } from 'components/EssentialLink.vue';
-import { t } from 'src/boot/i18n';
+import EssentialLink from 'components/EssentialLink.vue';
+import type { EssentialLinkProps } from 'components/EssentialLink.vue';
 
+const { t } = useI18n();
 const authStore = useAuthStore();
 
 const username = computed(() => authStore.session?.username || '?');

@@ -46,6 +46,7 @@ declare global {
   const onServerPrefetch: typeof import('vue')['onServerPrefetch']
   const onUnmounted: typeof import('vue')['onUnmounted']
   const onUpdated: typeof import('vue')['onUpdated']
+  const onWatcherCleanup: typeof import('vue')['onWatcherCleanup']
   const provide: typeof import('vue')['provide']
   const reactive: typeof import('vue')['reactive']
   const readonly: typeof import('vue')['readonly']
@@ -77,9 +78,11 @@ declare global {
   const useGroupStore: typeof import('./stores/group')['useGroupStore']
   const useGroupsStore: typeof import('./stores/groups')['useGroupsStore']
   const useI18n: typeof import('vue-i18n')['useI18n']
+  const useId: typeof import('vue')['useId']
   const useIdentifiersStore: typeof import('./stores/identifiers')['useIdentifiersStore']
   const useIdentityProvidersStore: typeof import('./stores/identity-providers')['useIdentityProvidersStore']
   const useLink: typeof import('vue-router')['useLink']
+  const useModel: typeof import('vue')['useModel']
   const usePluginsStore: typeof import('./stores/plugins')['usePluginsStore']
   const useProfileAclsStore: typeof import('./stores/profile-acls')['useProfileAclsStore']
   const useProfileActivityStore: typeof import('./stores/profile-activity')['useProfileActivityStore']
@@ -95,6 +98,7 @@ declare global {
   const useSqlStore: typeof import('./stores/sql')['useSqlStore']
   const useSystemStore: typeof import('./stores/system')['useSystemStore']
   const useTaxonomiesStore: typeof import('./stores/taxonomies')['useTaxonomiesStore']
+  const useTemplateRef: typeof import('vue')['useTemplateRef']
   const useTokensStore: typeof import('./stores/tokens')['useTokensStore']
   const useTransientDatasourceStore: typeof import('./stores/transient-datasource')['useTransientDatasourceStore']
   const useUserStore: typeof import('./stores/user')['useUserStore']
@@ -108,7 +112,7 @@ declare global {
 // for type re-export
 declare global {
   // @ts-ignore
-  export type { Component, ComponentPublicInstance, ComputedRef, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, VNode, WritableComputedRef } from 'vue'
+  export type { Component, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
 }
 // for vue template auto import
@@ -155,6 +159,7 @@ declare module 'vue' {
     readonly onServerPrefetch: UnwrapRef<typeof import('vue')['onServerPrefetch']>
     readonly onUnmounted: UnwrapRef<typeof import('vue')['onUnmounted']>
     readonly onUpdated: UnwrapRef<typeof import('vue')['onUpdated']>
+    readonly onWatcherCleanup: UnwrapRef<typeof import('vue')['onWatcherCleanup']>
     readonly provide: UnwrapRef<typeof import('vue')['provide']>
     readonly reactive: UnwrapRef<typeof import('vue')['reactive']>
     readonly readonly: UnwrapRef<typeof import('vue')['readonly']>
@@ -177,12 +182,15 @@ declare module 'vue' {
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
     readonly useGroupStore: UnwrapRef<typeof import('./stores/group')['useGroupStore']>
     readonly useI18n: UnwrapRef<typeof import('vue-i18n')['useI18n']>
+    readonly useId: UnwrapRef<typeof import('vue')['useId']>
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
+    readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
     readonly useRealmStore: UnwrapRef<typeof import('./stores/realm')['useRealmStore']>
     readonly useRoute: UnwrapRef<typeof import('vue-router')['useRoute']>
     readonly useRouter: UnwrapRef<typeof import('vue-router')['useRouter']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
     readonly useSystemStore: UnwrapRef<typeof import('./stores/system')['useSystemStore']>
+    readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
     readonly useUserStore: UnwrapRef<typeof import('./stores/user')['useUserStore']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchEffect: UnwrapRef<typeof import('vue')['watchEffect']>

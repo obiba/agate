@@ -30,12 +30,12 @@
             <q-list>
               <q-item clickable v-close-popup @click="onProfile" v-if="authStore.isAuthenticated">
                 <q-item-section>
-                  <q-item-label>{{ $t('my_profile') }}</q-item-label>
+                  <q-item-label>{{ t('my_profile') }}</q-item-label>
                 </q-item-section>
               </q-item>
               <q-item clickable v-close-popup @click="onSignout" v-if="authStore.isAuthenticated">
                 <q-item-section>
-                  <q-item-label>{{ $t('auth.signout') }}</q-item-label>
+                  <q-item-label>{{ t('auth.signout') }}</q-item-label>
                 </q-item-section>
               </q-item>
             </q-list>
@@ -55,16 +55,16 @@
 </template>
 
 <script setup lang="ts">
-import { useCookies } from 'vue3-cookies';
+import { Cookies } from 'quasar';
 import { locales } from 'boot/i18n';
 import { contextPath } from 'src/boot/api';
 import MainDrawer from 'src/components/MainDrawer.vue';
 
+const { t } = useI18n();
 const router = useRouter();
 const authStore = useAuthStore();
 const systemStore = useSystemStore();
 
-const { cookies } = useCookies();
 const leftDrawerOpen = ref(false);
 const { locale } = useI18n({ useScope: 'global' });
 
@@ -107,7 +107,7 @@ function toggleLeftDrawer() {
 
 function onLocaleSelection(localeOpt: { label: string; value: string }) {
   locale.value = localeOpt.value;
-  cookies.set('locale', localeOpt.value);
+  Cookies.set('locale', localeOpt.value);
 }
 
 function onProfile() {

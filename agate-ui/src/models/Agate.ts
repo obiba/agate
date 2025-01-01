@@ -4,8 +4,6 @@
 //   protoc               v3.21.12
 // source: Agate.proto
 
-/* eslint-disable */
-
 export const protobufPackage = "obiba.agate";
 
 export enum KeyType {

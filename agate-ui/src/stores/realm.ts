@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { api } from 'src/boot/api';
-import { RealmConfigDto } from 'src/models/Agate';
+import type { RealmConfigDto } from 'src/models/Agate';
 
 export const useRealmStore = defineStore('realm', () => {
     const realms = ref<RealmConfigDto[]>([]);

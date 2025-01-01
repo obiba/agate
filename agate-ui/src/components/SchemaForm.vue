@@ -13,7 +13,7 @@
       </div>
     </form>
   </div>
-  <span v-if="!isFormValid" class="text-negative text-caption">{{ $t('validation.missing_required_fields') }}</span>
+  <span v-if="!isFormValid" class="text-negative text-caption">{{ t('validation.missing_required_fields') }}</span>
 </template>
 
 <script lang="ts">
@@ -22,9 +22,11 @@ export default defineComponent({
 });
 </script>
 <script setup lang="ts">
-import { FormObject, SchemaFormObject } from 'src/components/models';
+import type { FormObject, SchemaFormObject } from 'src/components/models';
 import SchemaFormItem from 'src/components/SchemaFormItem.vue';
 import { isEmpty } from 'src/utils/validations';
+
+const { t } = useI18n();
 
 interface Props {
   modelValue: FormObject | undefined;

@@ -109,6 +109,13 @@
     "useUserStore": true,
     "useGroupStore": true,
     "useApplicationStore": true,
-    "useRealmStore": true
+    "useRealmStore": true,
+    "DirectiveBinding": true,
+    "MaybeRef": true,
+    "MaybeRefOrGetter": true,
+    "onWatcherCleanup": true,
+    "useId": true,
+    "useModel": true,
+    "useTemplateRef": true
   }
 }

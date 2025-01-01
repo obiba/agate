@@ -1,5 +1,6 @@
 import { boot } from 'quasar/wrappers';
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import axios from 'axios';
+import type { AxiosInstance, AxiosResponse } from 'axios';
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
@@ -11,7 +12,7 @@ declare module '@vue/runtime-core' {
 // context path detection
 const locationContextPath = window.location.pathname.substring(0, window.location.pathname.indexOf('/', 2));
 
-const baseUrl = process.env.API.startsWith('/') ? locationContextPath + process.env.API : process.env.API;
+const baseUrl = process.env.API ? process.env.API.startsWith('/') ? locationContextPath + process.env.API : process.env.API : '';
 const contextPath = locationContextPath || '/';
 const PROFILE_PATH = '/auth/session/_current';
 const SAFE_PATHS = [PROFILE_PATH, '/auth/session', '/system/conf/general', '/resource-providers'];

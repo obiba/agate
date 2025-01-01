@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { api } from 'src/boot/api';
-import { ApplicationDto } from 'src/models/Agate';
+import type { ApplicationDto } from 'src/models/Agate';
 
 export const useApplicationStore = defineStore('application', () => {
     const applications = ref<ApplicationDto[]>([]);

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { api } from 'src/boot/api';
-import { PublicConfigurationDto, ConfigurationDto } from 'src/models/Agate';
+import type { PublicConfigurationDto, ConfigurationDto } from 'src/models/Agate';
 
 export const useSystemStore = defineStore('system', () => {
     const configurationPublic = ref<PublicConfigurationDto | null>(null);

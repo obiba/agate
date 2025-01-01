@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { api } from 'src/boot/api';
-import { UserDto } from 'src/models/Agate';
+import type { UserDto } from 'src/models/Agate';
 
 export const useUserStore = defineStore('user', () => {
     const users = ref<UserDto[]>([]);

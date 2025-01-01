@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { api } from 'src/boot/api';
-import { SessionDto } from 'src/models/Agate';
+import type { SessionDto } from 'src/models/Agate';
 
 export const useAuthStore = defineStore('auth', () => {
   const sid = ref('');
