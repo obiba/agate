@@ -4,7 +4,7 @@
   "private": true,
   "description": "Agate web UI",
   "dependencies": {
-    "admin-lte": "^3.0.5",
+    "admin-lte": "^4.0.0-beta2",
     "axios": "^0.21.1",
     "bootstrap-datepicker": "^1.9.0",
     "jquery.redirect": "^1.1.4",
