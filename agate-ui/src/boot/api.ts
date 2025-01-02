@@ -12,7 +12,11 @@ declare module '@vue/runtime-core' {
 // context path detection
 const locationContextPath = window.location.pathname.substring(0, window.location.pathname.indexOf('/', 2));
 
-const baseUrl = process.env.API ? process.env.API.startsWith('/') ? locationContextPath + process.env.API : process.env.API : '';
+const baseUrl = process.env.API
+  ? process.env.API.startsWith('/')
+    ? locationContextPath + process.env.API
+    : process.env.API
+  : '';
 const contextPath = locationContextPath || '/';
 const PROFILE_PATH = '/auth/session/_current';
 const SAFE_PATHS = [PROFILE_PATH, '/auth/session', '/system/conf/general', '/resource-providers'];
@@ -50,7 +54,7 @@ api.interceptors.response.use(
       });
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default boot(({ app }) => {

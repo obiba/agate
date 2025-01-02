@@ -57,7 +57,6 @@ function initDefaults() {
   });
 }
 
-
 // TODO needs a better validation handling, this is just a basic one
 function validate() {
   isFormValid.value = !!data.value;

@@ -52,8 +52,7 @@
             </q-card>
           </div>
         </div>
-        <div class="col-4 col-sm-4 col-xs-12">
-        </div>
+        <div class="col-4 col-sm-4 col-xs-12"></div>
       </div>
     </q-page>
   </div>

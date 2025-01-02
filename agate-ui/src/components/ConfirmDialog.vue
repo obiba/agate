@@ -44,7 +44,7 @@ watch(
   () => props.modelValue,
   (value) => {
     showDialog.value = value;
-  }
+  },
 );
 
 function onHide() {
