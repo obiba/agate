@@ -1,5 +1,5 @@
 import { Notify } from 'quasar';
-const t = useI18n().t;
+import { t } from 'src/boot/i18n';
 
 export function notifySuccess(message: string) {
   Notify.create({

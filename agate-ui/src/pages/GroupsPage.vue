@@ -1,22 +1,19 @@
 <template>
-<div>
+  <div>
     <q-toolbar class="bg-grey-3">
-    <q-breadcrumbs>
+      <q-breadcrumbs>
         <q-breadcrumbs-el icon="home" to="/" />
         <q-breadcrumbs-el :label="t('groups')" />
-    </q-breadcrumbs>
+      </q-breadcrumbs>
     </q-toolbar>
     <q-page class="q-pa-md">
-        <pre>{{ groupStore.groups }}</pre>
+      <groups-table />
     </q-page>
-</div>
+  </div>
 </template>
 
 <script setup lang="ts">
-const { t } = useI18n();
-const groupStore = useGroupStore();
+import GroupsTable from 'src/components/GroupsTable.vue';
 
-onMounted(() => {
-    groupStore.init();
-});
+const { t } = useI18n();
 </script>

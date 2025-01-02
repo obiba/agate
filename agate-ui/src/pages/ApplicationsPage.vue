@@ -1,15 +1,15 @@
 <template>
-<div>
+  <div>
     <q-toolbar class="bg-grey-3">
-    <q-breadcrumbs>
+      <q-breadcrumbs>
         <q-breadcrumbs-el icon="home" to="/" />
         <q-breadcrumbs-el :label="t('applications')" />
-    </q-breadcrumbs>
+      </q-breadcrumbs>
     </q-toolbar>
     <q-page class="q-pa-md">
-        <pre>{{ applicationStore.applications }}</pre>
+      <pre>{{ applicationStore.applications }}</pre>
     </q-page>
-</div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -17,6 +17,6 @@ const { t } = useI18n();
 const applicationStore = useApplicationStore();
 
 onMounted(() => {
-    applicationStore.init();
+  applicationStore.init();
 });
 </script>

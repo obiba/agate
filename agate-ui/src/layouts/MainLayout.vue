@@ -45,7 +45,7 @@
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-        <main-drawer />
+      <main-drawer />
     </q-drawer>
 
     <q-page-container>
@@ -76,7 +76,6 @@ const localeOptions = computed(() => {
 });
 const appName = computed(() => systemStore.configurationPublic?.name || 'Agate');
 
-
 onMounted(() => {
   router.beforeEach((to, from, next) => {
     if (to.path.startsWith('/admin') && !authStore.isAdministrator) {
@@ -90,14 +89,13 @@ onMounted(() => {
     .then(() => {
       if (!authStore.isAdministrator) {
         router.push('/');
-      };
+      }
     })
     .catch(() => {
       window.location.href = `..${contextPath === '/' ? '' : contextPath}/signin`;
     });
   systemStore.initPub();
 });
-
 
 const username = computed(() => authStore.session?.username || '?');
 

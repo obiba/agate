@@ -14,7 +14,6 @@ export interface FileObject extends Blob {
   readonly type: string;
 }
 
-
 export interface EnumOption {
   key: string;
   title: string;
@@ -46,3 +45,5 @@ export interface SchemaFormObject {
 export interface FormObject {
   [key: string]: boolean | number | string | FileObject | FormObject | Array<FormObject> | undefined;
 }
+
+export const DefaultAlignment: 'left' | 'right' | 'center' = 'left';
