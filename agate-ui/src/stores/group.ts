@@ -13,6 +13,7 @@ export const useGroupStore = defineStore('group', () => {
   }
 
   async function save(group: GroupDto) {
+    group.name = group.name.trim();
     return group.id ? api.put(`/group/${group.id}`, group) : api.post('/groups', group);
   }
 

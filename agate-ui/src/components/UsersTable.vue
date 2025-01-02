@@ -142,7 +142,7 @@
       :text="t('user.reject_confirm', { name: selected?.name })"
       @confirm="onDelete"
     />
-    <group-dialog v-model="showEdit" :group="selected" @saved="onSaved" />
+    <user-dialog v-model="showEdit" :user="selected" @saved="onSaved" />
   </div>
 </template>
 
@@ -153,7 +153,7 @@ export default defineComponent({
 </script>
 <script setup lang="ts">
 import type { UserDto } from 'src/models/Agate';
-import GroupDialog from 'src/components/GroupDialog.vue';
+import UserDialog from 'src/components/UserDialog.vue';
 import ConfirmDialog from 'src/components/ConfirmDialog.vue';
 import { DefaultAlignment } from 'src/components/models';
 import { notifyError, notifySuccess } from 'src/utils/notify';

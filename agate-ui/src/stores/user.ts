@@ -30,11 +30,17 @@ export const useUserStore = defineStore('user', () => {
     );
   }
 
+  async function save(user: UserDto) {
+    user.name = user.name.trim();
+    return user.id ? api.put(`/user/${user.id}`, user) : api.post('/users', { user });
+  }
+
   return {
     users,
     init,
     remove,
     resetPassword,
     approve,
+    save,
   };
 });
