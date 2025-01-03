@@ -24,6 +24,12 @@ export default {
     key_copied: 'Clé copiée',
     auto_approval: "Usager approuvé à l'inscription",
     auto_approval_hint: "Approuver automatiquement un usager qui s'est inscrit via l'application. Sinon, l'usager sera dans l'état \"En attente\", nécessitant une approbation manuelle.",
+    scopes: 'Permissions',
+    scopes_hint: 'Les permissions permettent de qualifier l\'accès d\'autorisation à l\'application qui est accordé dans le contexte OAuth. Les permissions sont optionnelles.',
+    add_scope: 'Ajouter une permission',
+    realms_groups: 'Domaines et groupes',
+    realms_groups_hint: 'Mapping entre des domaines et des groupes. Lorsque défini, les domaines correspondants seront proposés pour la connexion/inscription de l\'usager à partir de l\'application. Lorsqu\'un usager rejoint une application, en utilisant un domaine, le(s) groupe(s) correspondant(s) seront automatiquement appliqués.',
+    add_realm_groups: 'Ajouter un domaine',
   },
   group: {
     add: 'Ajouter un groupe',

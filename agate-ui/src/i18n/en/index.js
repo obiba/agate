@@ -24,6 +24,12 @@ export default {
     key_copied: 'Key copied',
     auto_approval: 'User approved on sign up',
     auto_approval_hint: 'Automatically approve a user who signed up through the application. Otherwise the user will be in "Pending" state, requiring manual approval.',
+    scopes: 'Permissions',
+    scopes_hint: 'Permissions allow to qualify the authorization access to the application that is granted in the OAuth context. Permissions are optional.',
+    add_scope: 'Add permission',
+    realms_groups: 'Realms and groups',
+    realms_groups_hint: 'Mapping between realm and group names. When defined, corresponding realms will be proposed for user signin/signup from the application. When a user joins though an application, using a realm, the corresponding group(s) will be automatically applied.',
+    add_realm_groups: 'Add realm groups',
   },
   group: {
     add: 'Add group',

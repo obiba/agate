@@ -47,9 +47,14 @@
           <q-td key="description" :props="props">
             <span>{{ props.row.description }}</span>
           </q-td>
-          <q-td key="applications" :props="props">
-            <template v-for="app in props.row.applications" :key="app">
-              <q-badge :label="getApplicationName(app)" class="on-left" />
+          <q-td key="scopes" :props="props">
+            <template v-for="scope in props.row.scopes" :key="scope.name">
+              <q-badge :label="scope.name" :title="scope.description" class="on-left" />
+            </template>
+          </q-td>
+          <q-td key="realmGroups" :props="props">
+            <template v-for="realmGroups in props.row.realmGroups" :key="realmGroups.realm">
+              <q-badge :label="realmGroups.realm" :title="realmGroups.groups.join(', ')" class="on-left" />
             </template>
           </q-td>
         </q-tr>
@@ -95,6 +100,8 @@ const columns = computed(() => [
   { name: 'id', label: 'ID', field: 'id', align: DefaultAlignment },
   { name: 'name', label: t('name'), field: 'name', align: DefaultAlignment },
   { name: 'description', label: t('description'), field: 'description', align: DefaultAlignment },
+  { name: 'scopes', label: t('application.scopes'), field: 'scopes', align: DefaultAlignment },
+  { name: 'realmGroups', label: t('application.realms_groups'), field: 'realmGroups', align: DefaultAlignment },
 ]);
 
 onMounted(() => {
@@ -137,7 +144,4 @@ function onSaved() {
   refresh();
 }
 
-function getApplicationName(id: string) {
-  return applicationStore.applications?.find((app) => app.id === id)?.name;
-}
 </script>
