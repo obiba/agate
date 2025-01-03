@@ -12,6 +12,7 @@
           <q-input
             v-model="selected.name"
             :label="t('name') + ' *'"
+            :hint="t('name_hint')"
             :disable="editMode"
             dense
             lazy-rules
@@ -56,14 +57,14 @@ const applicationStore = useApplicationStore();
 
 interface DialogProps {
   modelValue: boolean;
-  group: GroupDto;
+  group: GroupDto | undefined;
 }
 
 const props = defineProps<DialogProps>();
 const emit = defineEmits(['update:modelValue', 'saved', 'cancel']);
 
 const showDialog = ref(props.modelValue);
-const selected = ref<GroupDto>(props.group);
+const selected = ref<GroupDto>(props.group ?? ({} as GroupDto));
 const editMode = ref(false);
 
 const applicationOptions = computed(
