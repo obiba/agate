@@ -98,7 +98,7 @@ public class UsersResource {
 
     if(RESERVED_USER_NAMES.contains(username)) throw new BadRequestException("Reserved user name");
 
-    if (AgateRealm.AGATE_USER_REALM.name().equals(userDto.getRealm()) && Strings.isNullOrEmpty(userCreateFormDto.getPassword()))
+    if (AgateRealm.AGATE_USER_REALM.getName().equals(userDto.getRealm()) && Strings.isNullOrEmpty(userCreateFormDto.getPassword()))
       throw new BadRequestException("User requires a password");
 
     user = userService.createUser(dtos.fromDto(userDto), userCreateFormDto.getPassword());

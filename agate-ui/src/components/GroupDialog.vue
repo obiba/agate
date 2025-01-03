@@ -11,10 +11,14 @@
         <q-form>
           <q-input
             v-model="selected.name"
-            :label="t('name')"
+            :label="t('name') + ' *'"
             :disable="editMode"
             dense
-            :rules="[(val) => !!val || t('name_required')]"
+            lazy-rules
+            :rules="[
+              (val) => !!val || t('name_required'),
+              (val) => (val?.trim().length ?? 0) >= 3 || t('name_min_length', { min: 3 }),
+            ]"
           />
           <q-input v-model="selected.description" :label="t('description')" dense class="q-mb-md" />
           <q-select
@@ -36,17 +40,12 @@
 
       <q-card-actions align="right" class="bg-grey-3">
         <q-btn flat :label="t('cancel')" color="secondary" @click="onCancel" v-close-popup />
-        <q-btn flat :label="t('confirm')" color="primary" @click="onSave" />
+        <q-btn flat :label="t('save')" :disable="!isValid" color="primary" @click="onSave" />
       </q-card-actions>
     </q-card>
   </q-dialog>
 </template>
 
-<script lang="ts">
-export default defineComponent({
-  name: 'ConfirmDialog',
-});
-</script>
 <script setup lang="ts">
 import type { GroupDto } from 'src/models/Agate';
 import { notifyError, notifySuccess } from 'src/utils/notify';
@@ -70,6 +69,7 @@ const editMode = ref(false);
 const applicationOptions = computed(
   () => applicationStore.applications?.map((app) => ({ label: app.name, value: app.id })) ?? [],
 );
+const isValid = computed(() => selected.value.name && selected.value.name.trim().length >= 3);
 
 onMounted(() => {
   applicationStore.init();

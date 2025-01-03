@@ -4,23 +4,13 @@
       <div v-if="schema.title" class="text-help">{{ schema.title }}</div>
       <div v-if="schema.description" class="text-hint q-mb-sm">{{ schema.description }}</div>
       <div v-for="item in schema.items" :key="item.key">
-        <schema-form-item
-          v-model="data[item.key]"
-          :field="item"
-          :disable="disable"
-          @update:model-value="onUpdate(item.key)"
-        />
+        <schema-form-item v-model="data[item.key]" :field="item" :disable="disable" @update:model-value="onUpdate" />
       </div>
     </form>
   </div>
   <span v-if="!isFormValid" class="text-negative text-caption">{{ t('validation.missing_required_fields') }}</span>
 </template>
 
-<script lang="ts">
-export default defineComponent({
-  name: 'SchemaForm',
-});
-</script>
 <script setup lang="ts">
 import type { FormObject, SchemaFormObject } from 'src/components/models';
 import SchemaFormItem from 'src/components/SchemaFormItem.vue';
@@ -68,7 +58,7 @@ function validate() {
   return isFormValid.value;
 }
 
-function onUpdate(key: string) {
+function onUpdate() {
   validate();
   if (!isFormValid.value) emit('update:modelValue', undefined);
   else emit('update:modelValue', data.value);

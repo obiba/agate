@@ -7,16 +7,12 @@
       </q-breadcrumbs>
     </q-toolbar>
     <q-page class="q-pa-md">
-      <pre>{{ userStore.users }}</pre>
+      <users-table />
     </q-page>
   </div>
 </template>
 
 <script setup lang="ts">
+import UsersTable from 'src/components/UsersTable.vue';
 const { t } = useI18n();
-const userStore = useUserStore();
-
-onMounted(() => {
-  userStore.init();
-});
 </script>

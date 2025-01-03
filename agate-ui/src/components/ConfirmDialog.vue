@@ -21,11 +21,6 @@
   </q-dialog>
 </template>
 
-<script lang="ts">
-export default defineComponent({
-  name: 'ConfirmDialog',
-});
-</script>
 <script setup lang="ts">
 const { t } = useI18n();
 

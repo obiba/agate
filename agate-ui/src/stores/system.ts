@@ -3,8 +3,8 @@ import { api } from 'src/boot/api';
 import type { PublicConfigurationDto, ConfigurationDto } from 'src/models/Agate';
 
 export const useSystemStore = defineStore('system', () => {
-  const configurationPublic = ref<PublicConfigurationDto | null>(null);
-  const configuration = ref<ConfigurationDto | null>(null);
+  const configurationPublic = ref<PublicConfigurationDto>({} as PublicConfigurationDto);
+  const configuration = ref<ConfigurationDto>({} as ConfigurationDto);
 
   async function initPub() {
     return api.get('/config/_public').then((response) => {
