@@ -39,13 +39,14 @@
                 @click="onShowDelete(props.row)"
               />
               <q-btn
+                v-if="props.row.realm === 'agate-user-realm'"
                 rounded
                 dense
                 flat
                 size="sm"
                 color="secondary"
                 :title="t('user.reset_password')"
-                :icon="toolsVisible[props.row.name] ? 'lock_reset' : 'none'"
+                :icon="toolsVisible[props.row.name] ? 'send' : 'none'"
                 class="q-ml-xs"
                 @click="onShowResetPassword(props.row)"
               />
