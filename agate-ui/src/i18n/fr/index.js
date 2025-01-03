@@ -66,6 +66,7 @@ export default {
       INACTIVE: 'Usager désactivé.',
       PENDING: "Usager en attente d'approbation.",
     },
+    update_password: 'Mettre à jour le mot de passe',
   },
   add: 'ajouter',
   administration: 'Administration',

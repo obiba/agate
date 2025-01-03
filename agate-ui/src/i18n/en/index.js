@@ -66,6 +66,7 @@ export default {
       INACTIVE: 'User is disabled.',
       PENDING: 'User is pending approval.',
     },
+    update_password: 'Update password',
   },
   add: 'Add',
   administration: 'Administration',

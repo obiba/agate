@@ -69,11 +69,6 @@
   </div>
 </template>
 
-<script lang="ts">
-export default defineComponent({
-  name: 'GroupsTable',
-});
-</script>
 <script setup lang="ts">
 import type { GroupDto } from 'src/models/Agate';
 import GroupDialog from 'src/components/GroupDialog.vue';

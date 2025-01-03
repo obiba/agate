@@ -114,11 +114,6 @@
   </div>
 </template>
 
-<script lang="ts">
-export default defineComponent({
-  name: 'SchemaFormItem',
-});
-</script>
 <script setup lang="ts">
 import type { FileObject, FormObject, SchemaFormField, EnumOption } from 'src/components/models';
 

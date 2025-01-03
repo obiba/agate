@@ -74,11 +74,6 @@
   </div>
 </template>
 
-<script lang="ts">
-export default defineComponent({
-  name: 'MainDrawer',
-});
-</script>
 <script setup lang="ts">
 import EssentialLink from 'components/EssentialLink.vue';
 import type { EssentialLinkProps } from 'components/EssentialLink.vue';

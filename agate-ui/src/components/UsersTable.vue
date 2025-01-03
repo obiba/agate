@@ -45,11 +45,21 @@
                 flat
                 size="sm"
                 color="secondary"
-                :title="t('user.reset_password')"
-                :icon="toolsVisible[props.row.name] ? 'send' : 'none'"
+                :title="t('user.more_actions')"
+                :icon="toolsVisible[props.row.name] ? 'lock' : 'none'"
                 class="q-ml-xs"
-                @click="onShowResetPassword(props.row)"
-              />
+              >
+                <q-menu>
+                  <q-list style="min-width: 100px">
+                    <q-item clickable v-close-popup @click="onShowResetPassword(props.row)">
+                      <q-item-section>{{ t('user.reset_password') }}</q-item-section>
+                    </q-item>
+                    <q-item clickable v-close-popup @click="onShowUpdatePassword(props.row)">
+                      <q-item-section>{{ t('user.update_password') }}</q-item-section>
+                    </q-item>
+                  </q-list>
+                </q-menu>
+              </q-btn>
               <q-btn
                 v-if="props.row.status === 'PENDING'"
                 rounded
@@ -144,17 +154,14 @@
       @confirm="onDelete"
     />
     <user-dialog v-model="showEdit" :user="selected" @saved="onSaved" />
+    <update-password-dialog v-model="showUpdatePassword" :user="selected" />
   </div>
 </template>
 
-<script lang="ts">
-export default defineComponent({
-  name: 'UsersTable',
-});
-</script>
 <script setup lang="ts">
 import type { UserDto } from 'src/models/Agate';
 import UserDialog from 'src/components/UserDialog.vue';
+import UpdatePasswordDialog from 'src/components/UpdatePasswordDialog.vue';
 import ConfirmDialog from 'src/components/ConfirmDialog.vue';
 import { DefaultAlignment } from 'src/components/models';
 import { notifyError, notifySuccess } from 'src/utils/notify';
@@ -174,6 +181,7 @@ const initialPagination = ref({
 const showEdit = ref(false);
 const showDelete = ref(false);
 const showResetPassword = ref(false);
+const showUpdatePassword = ref(false);
 const showReject = ref(false);
 const selected = ref();
 
@@ -227,6 +235,11 @@ function onShowDelete(row: UserDto) {
 function onShowResetPassword(row: UserDto) {
   selected.value = row;
   showResetPassword.value = true;
+}
+
+function onShowUpdatePassword(row: UserDto) {
+  selected.value = row;
+  showUpdatePassword.value = true;
 }
 
 function onShowReject(row: UserDto) {
