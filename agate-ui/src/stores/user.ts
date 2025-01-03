@@ -30,6 +30,10 @@ export const useUserStore = defineStore('user', () => {
     );
   }
 
+  async function disableOTP(user: UserDto) {
+    return api.delete(`/user/${user.id}/otp`);
+  }
+
   async function approve(user: UserDto) {
     return api.put(
       `/user/${user.id}/status`,
@@ -85,5 +89,6 @@ export const useUserStore = defineStore('user', () => {
     save,
     generatePassword,
     updatePassword,
+    disableOTP,
   };
 });

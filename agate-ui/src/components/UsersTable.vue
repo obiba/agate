@@ -57,6 +57,9 @@
                     <q-item clickable v-close-popup @click="onShowUpdatePassword(props.row)">
                       <q-item-section>{{ t('user.update_password') }}</q-item-section>
                     </q-item>
+                    <q-item v-if="props.row.otpEnabled" clickable v-close-popup @click="onDisableOTP(props.row)">
+                      <q-item-section>{{ t('user.disable_2fa') }}</q-item-section>
+                    </q-item>
                   </q-list>
                 </q-menu>
               </q-btn>
@@ -99,7 +102,10 @@
             <span class="text-caption">{{ t(`user.role.${props.row.role}`) }}</span>
           </q-td>
           <q-td key="otpEnabled" :props="props">
-            <q-icon v-if="props.row.otpEnabled" name="done" />
+            <div v-if="props.row.realm === 'agate-user-realm'">
+              <q-icon v-if="props.row.otpEnabled" name="radio_button_checked" color="positive" />
+              <q-icon v-else name="radio_button_unchecked" color="negative" />
+            </div>
           </q-td>
           <q-td key="realm" :props="props">
             <q-chip size="sm">{{ props.row.realm }}</q-chip>
@@ -284,6 +290,14 @@ function onApprove(row: UserDto) {
     .approve(row)
     .then(() => notifySuccess(t('user.approved')))
     .catch(() => notifyError(t('user.approve_error')))
+    .finally(refresh);
+}
+
+function onDisableOTP(row: UserDto) {
+  userStore
+    .disableOTP(row)
+    .then(() => notifySuccess(t('user.otp_disabled')))
+    .catch(() => notifyError(t('user.otp_disable_error')))
     .finally(refresh);
 }
 </script>
