@@ -7,16 +7,14 @@
       </q-breadcrumbs>
     </q-toolbar>
     <q-page class="q-pa-md">
-      <pre>{{ systemStore.configuration }}</pre>
+      <div class="text-h6 q-mb-md">{{ t('properties') }}</div>
+      <system-properties />
     </q-page>
   </div>
 </template>
 
 <script setup lang="ts">
-const { t } = useI18n();
-const systemStore = useSystemStore();
+import SystemProperties from 'src/components/SystemProperties.vue';
 
-onMounted(() => {
-  systemStore.init();
-});
+const { t } = useI18n();
 </script>

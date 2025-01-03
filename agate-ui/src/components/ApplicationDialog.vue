@@ -93,7 +93,8 @@
               size="sm"
               :label="t('application.add_scope')"
               @click="onAddScope"
-              class="q-mt-md" />
+              class="q-mt-md"
+            />
           </div>
           <div class="q-mb-md">
             <div>{{ t('application.realms_groups') }}</div>
@@ -108,7 +109,8 @@
                       :options="realmOptions"
                       emit-value
                       map-options
-                      dense />
+                      dense
+                    />
                     <q-select
                       v-model="realmGroup.groups"
                       :label="t('groups')"
@@ -118,11 +120,19 @@
                       map-options
                       use-chips
                       dense
-                      style="min-width: 200px;" />
+                      style="min-width: 200px"
+                    />
                   </div>
                 </q-item-section>
                 <q-item-section side>
-                  <q-btn flat dense icon="delete" size="sm" color="negative" @click="removeRealmGroups(realmGroup.realm)" />
+                  <q-btn
+                    flat
+                    dense
+                    icon="delete"
+                    size="sm"
+                    color="negative"
+                    @click="removeRealmGroups(realmGroup.realm)"
+                  />
                 </q-item-section>
               </q-item>
             </q-list>
@@ -133,7 +143,8 @@
               size="sm"
               :label="t('application.add_realm_groups')"
               @click="onAddRealmGroups"
-              class="q-mt-md" />
+              class="q-mt-md"
+            />
           </div>
         </q-form>
       </q-card-section>
@@ -172,8 +183,8 @@ const editMode = ref(false);
 const key = ref('');
 
 const groupOptions = computed(() => groupStore.groups?.map((group) => ({ label: group.name, value: group.id })) ?? []);
-const realmOptions = computed(() => 
-  realmStore.realms?.map((realm) => ({ label: realm.name, value: realm.id || '' })) ?? []
+const realmOptions = computed(
+  () => realmStore.realms?.map((realm) => ({ label: realm.name, value: realm.id || '' })) ?? [],
 );
 const isValid = computed(
   () =>
@@ -258,7 +269,9 @@ function onAddRealmGroups() {
   if (!selected.value.realmGroups) {
     selected.value.realmGroups = [];
   }
-  const realm = realmOptions.value.find((rlm) => !selected.value.realmGroups.map((rlmGrps) => rlmGrps.realm).includes(rlm.value))?.value || '';
+  const realm =
+    realmOptions.value.find((rlm) => !selected.value.realmGroups.map((rlmGrps) => rlmGrps.realm).includes(rlm.value))
+      ?.value || '';
   if (!realm) {
     return;
   }
