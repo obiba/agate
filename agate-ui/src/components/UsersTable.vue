@@ -45,8 +45,8 @@
                 flat
                 size="sm"
                 color="secondary"
-                :title="t('user.more_actions')"
-                :icon="toolsVisible[props.row.name] ? 'lock' : 'none'"
+                :title="t('more_actions')"
+                :icon="toolsVisible[props.row.name] ? 'more_vert' : 'none'"
                 class="q-ml-xs"
               >
                 <q-menu>

@@ -193,14 +193,22 @@ const systemStore = useSystemStore();
 
 interface DialogProps {
   modelValue: boolean;
-  user: UserDto;
+  user: UserDto | undefined;
 }
 
 const props = defineProps<DialogProps>();
 const emit = defineEmits(['update:modelValue', 'saved', 'cancel']);
 
 const showDialog = ref(props.modelValue);
-const selected = ref<UserDto>(props.user);
+const selected = ref<UserDto>(
+  props.user ??
+    ({
+      realm: 'agate-user-realm',
+      role: 'agate-user',
+      status: 'INACTIVE',
+      preferredLanguage: '',
+    } as UserDto),
+);
 const editMode = ref(false);
 const password = ref('');
 const passwordVisible = ref(false);

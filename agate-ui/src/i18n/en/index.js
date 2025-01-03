@@ -91,6 +91,7 @@ export default {
   groups: 'Groups',
   help: 'Help',
   inherited_from: 'Inherited from: {parent}',
+  more_actions: 'More actions',
   my_profile: 'My Profile',
   name_hint: 'Name must be unique',
   name_min_length: 'Name must be at least {min} characters',

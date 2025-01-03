@@ -74,7 +74,7 @@ const userStore = useUserStore();
 
 interface DialogProps {
   modelValue: boolean;
-  user: UserDto;
+  user: UserDto | undefined;
 }
 
 const props = defineProps<DialogProps>();
@@ -103,6 +103,9 @@ function onCancel() {
 }
 
 function onSave() {
+  if (!props.user) {
+    return;
+  }
   userStore
     .updatePassword(props.user, password.value)
     .then(() => {
