@@ -14,8 +14,49 @@ export const useApplicationStore = defineStore('application', () => {
     });
   }
 
+  async function save(application: ApplicationDto) {
+    application.name = application.name.trim();
+    return application.id
+      ? api.put(`/application/${application.id}`, application)
+      : api.post('/applications', application);
+  }
+
+  async function remove(application: ApplicationDto) {
+    return api.delete(`/application/${application.id}`);
+  }
+
+  function generateKey(length: number = 30): string {
+    if (length < 24) {
+      throw new Error('Key length should be at least 24 characters for strength.');
+    }
+
+    const upperCase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const lowerCase = 'abcdefghijklmnopqrstuvwxyz';
+    const numbers = '0123456789';
+
+    const allChars = upperCase + lowerCase + numbers;
+
+    const getRandomChar = (chars: string) => chars[Math.floor(Math.random() * chars.length)];
+
+    // Ensure the key contains at least one of each character type
+    let key = [getRandomChar(upperCase), getRandomChar(lowerCase), getRandomChar(numbers)];
+
+    // Fill the rest of the key length with random characters from all types
+    for (let i = key.length; i < length; i++) {
+      key.push(getRandomChar(allChars));
+    }
+
+    // Shuffle the key to make it more random
+    key = key.sort(() => Math.random() - 0.5);
+
+    return key.join('');
+  }
+
   return {
     applications,
     init,
+    save,
+    remove,
+    generateKey,
   };
 });

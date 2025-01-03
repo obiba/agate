@@ -7,16 +7,13 @@
       </q-breadcrumbs>
     </q-toolbar>
     <q-page class="q-pa-md">
-      <pre>{{ applicationStore.applications }}</pre>
+      <applications-table />
     </q-page>
   </div>
 </template>
 
 <script setup lang="ts">
-const { t } = useI18n();
-const applicationStore = useApplicationStore();
+import ApplicationsTable from 'src/components/ApplicationsTable.vue';
 
-onMounted(() => {
-  applicationStore.init();
-});
+const { t } = useI18n();
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-table :rows="groups" flat row-key="name" :columns="columns" :pagination="initialPagination">
+    <q-table :rows="applications" flat row-key="name" :columns="columns" :pagination="initialPagination">
       <template v-slot:top-left>
         <q-btn size="sm" icon="add" color="primary" :label="t('add')" @click="onAdd" />
       </template>
@@ -13,6 +13,9 @@
       </template>
       <template v-slot:body="props">
         <q-tr :props="props" @mouseover="onOverRow(props.row)" @mouseleave="onLeaveRow(props.row)">
+          <q-td key="id" :props="props">
+            <code>{{ props.row.id }}</code>
+          </q-td>
           <q-td key="name" :props="props">
             <span class="text-primary">{{ props.row.name }}</span>
             <div class="float-right">
@@ -54,22 +57,21 @@
     </q-table>
     <confirm-dialog
       v-model="showDelete"
-      :title="t('group.remove')"
-      :text="t('group.remove_confirm', { name: selected?.name })"
+      :title="t('application.remove')"
+      :text="t('application.remove_confirm', { name: selected?.name })"
       @confirm="onDelete"
     />
-    <group-dialog v-model="showEdit" :group="selected" @saved="onSaved" />
+    <application-dialog v-model="showEdit" :application="selected" @saved="onSaved" />
   </div>
 </template>
 
 <script setup lang="ts">
-import type { GroupDto } from 'src/models/Agate';
-import GroupDialog from 'src/components/GroupDialog.vue';
+import type { ApplicationDto } from 'src/models/Agate';
+import ApplicationDialog from 'src/components/ApplicationDialog.vue';
 import ConfirmDialog from 'src/components/ConfirmDialog.vue';
 import { DefaultAlignment } from 'src/components/models';
 
 const { t } = useI18n();
-const groupStore = useGroupStore();
 const applicationStore = useApplicationStore();
 
 const filter = ref('');
@@ -83,16 +85,16 @@ const showEdit = ref(false);
 const showDelete = ref(false);
 const selected = ref();
 
-const groups = computed(
+const applications = computed(
   () =>
-    groupStore.groups?.filter((grp) =>
-      filter.value ? grp.name.toLowerCase().includes(filter.value.toLowerCase()) : true,
+    applicationStore.applications?.filter((app) =>
+      filter.value ? app.name.toLowerCase().includes(filter.value.toLowerCase()) : true,
     ) || [],
 );
 const columns = computed(() => [
+  { name: 'id', label: 'ID', field: 'id', align: DefaultAlignment },
   { name: 'name', label: t('name'), field: 'name', align: DefaultAlignment },
   { name: 'description', label: t('description'), field: 'description', align: DefaultAlignment },
-  { name: 'applications', label: t('applications'), field: 'applications', align: DefaultAlignment },
 ]);
 
 onMounted(() => {
@@ -101,29 +103,29 @@ onMounted(() => {
 });
 
 function refresh() {
-  groupStore.init();
+  applicationStore.init();
 }
 
-function onOverRow(row: GroupDto) {
+function onOverRow(row: ApplicationDto) {
   toolsVisible.value[row.name] = true;
 }
 
-function onLeaveRow(row: GroupDto) {
+function onLeaveRow(row: ApplicationDto) {
   toolsVisible.value[row.name] = false;
 }
 
-function onShowEdit(row: GroupDto) {
+function onShowEdit(row: ApplicationDto) {
   selected.value = row;
   showEdit.value = true;
 }
 
-function onShowDelete(row: GroupDto) {
+function onShowDelete(row: ApplicationDto) {
   selected.value = row;
   showDelete.value = true;
 }
 
 function onDelete() {
-  groupStore.remove(selected.value).finally(refresh);
+  applicationStore.remove(selected.value).finally(refresh);
 }
 
 function onAdd() {
