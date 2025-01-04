@@ -52,11 +52,17 @@ export const useApplicationStore = defineStore('application', () => {
     return key.join('');
   }
 
+
+  function getApplicationName(id: string | undefined) {
+    return applications.value?.find((app) => app.id === id)?.name;
+  }
+
   return {
     applications,
     init,
     save,
     remove,
     generateKey,
+    getApplicationName,
   };
 });
