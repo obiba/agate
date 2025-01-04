@@ -97,6 +97,22 @@ export default {
     },
     update_password: 'Mettre à jour le mot de passe',
   },
+  realm: {
+    activate: 'Activer',
+    add: 'Ajouter un domaine',
+    deactivate: 'Désactiver',
+    edit: 'Modifier le domaine',
+    realm: 'Domaine',
+    remove_confirm: 'Veuillez confirmer la suppression du domaine: {name}. Les applications, les groupes et les usagers associés à ce domaine ne seront pas supprimés.',
+    remove: 'Suppression du domaine',
+    user_count: 'Nombre d\'usagers',
+    type: {
+      'agate-ad-realm': 'Active Directory',
+      'agate-jdbc-realm': 'Base de données SQL',
+      'agate-ldap-realm': 'LDAP',
+      'agate-oidc-realm': 'OpenID Connect',
+    }
+  },
   system: {
     inactive_timeout_hint: "Délai d'expiration du compte utilisateur en jours.",
     inactive_timeout: "Délai d'expiration inactif (jours)",
@@ -168,7 +184,6 @@ export default {
   other_links: 'Autres liens',
   otpEnabled: '2FA',
   properties: 'Propriétés',
-  realm: 'Domaine',
   realms_caption: "Gérer les domaines, fédérer les fournisseurs d'identité externes",
   realms: 'Domaines',
   role: 'Rôle',
@@ -178,6 +193,7 @@ export default {
   source_code: 'Code source',
   status: 'Statut',
   tickets: 'Tickets',
+  type: 'Type',
   username: 'Nom d\'usager',
   users_caption: 'Gérer les utilisateurs, les rôles et les accès aux applications',
   users: 'Utilisateurs',

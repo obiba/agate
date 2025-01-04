@@ -60,7 +60,7 @@
             <div class="col">
               <q-select
                 v-model="selected.realm"
-                :label="t('realm')"
+                :label="t('realm.realm')"
                 :hint="t(`user.realm_hint`)"
                 :options="realmOptions"
                 dense

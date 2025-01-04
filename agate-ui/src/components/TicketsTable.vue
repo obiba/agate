@@ -14,7 +14,6 @@
             <span class="text-primary">{{ props.row.id }}</span>
             <div class="float-right">
               <q-btn
-                v-if="!props.row.hasDatasource"
                 rounded
                 dense
                 flat

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-table :rows="applications" flat row-key="name" :columns="columns" :pagination="initialPagination">
+    <q-table :rows="realms" flat row-key="name" :columns="columns" :pagination="initialPagination">
       <template v-slot:top-left>
         <q-btn size="sm" icon="add" color="primary" :label="t('add')" @click="onAdd" />
       </template>
@@ -13,9 +13,6 @@
       </template>
       <template v-slot:body="props">
         <q-tr :props="props" @mouseover="onOverRow(props.row)" @mouseleave="onLeaveRow(props.row)">
-          <q-td key="id" :props="props">
-            <code>{{ props.row.id }}</code>
-          </q-td>
           <q-td key="name" :props="props">
             <span class="text-primary">{{ props.row.name }}</span>
             <div class="float-right">
@@ -41,42 +38,49 @@
                 class="q-ml-xs"
                 @click="onShowDelete(props.row)"
               />
+              <q-btn
+                rounded
+                dense
+                flat
+                size="sm"
+                color="secondary"
+                :title="t(props.row.status === 'ACTIVE' ? 'realm.deactivate' : 'realm.activate')"
+                :icon="toolsVisible[props.row.name] ? (props.row.status === 'ACTIVE' ? 'pause' : 'play_arrow') : 'none'"
+                class="q-ml-xs"
+                @click="onToggleActivity(props.row)"
+              />
             </div>
           </q-td>
-          <q-td key="description" :props="props">
-            <span>{{ props.row.description }}</span>
+          <q-td key="status" :props="props">
+            <q-icon name="circle" size="sm" color="positive" v-if="props.row.status === 'ACTIVE'" />
+            <q-icon name="circle" size="sm" color="warning" v-if="props.row.status === 'INACTIVE'" />
+            <q-icon name="circle" size="sm" color="negative" v-if="props.row.status === 'UNRECOGNIZED'" />
           </q-td>
-          <q-td key="scopes" :props="props">
-            <template v-for="scope in props.row.scopes" :key="scope.name">
-              <q-badge :label="scope.name" :title="scope.description" class="on-left" />
-            </template>
+          <q-td key="type" :props="props">
+            <code>{{ t(`realm.type.${props.row.type}`) }}</code>
           </q-td>
-          <q-td key="realmGroups" :props="props">
-            <template v-for="realmGroups in props.row.realmGroups" :key="realmGroups.realm">
-              <q-badge :label="realmGroups.realm" :title="realmGroups.groups.join(', ')" class="on-left" />
-            </template>
+          <q-td key="userCount" :props="props">
+            <q-badge :label="props.row.userCount" color="accent" />
           </q-td>
         </q-tr>
       </template>
     </q-table>
     <confirm-dialog
       v-model="showDelete"
-      :title="t('application.remove')"
-      :text="t('application.remove_confirm', { name: selected?.name })"
+      :title="t('realm.remove')"
+      :text="t('realm.remove_confirm', { name: selected?.name })"
       @confirm="onDelete"
     />
-    <application-dialog v-model="showEdit" :application="selected" @saved="onSaved" />
   </div>
 </template>
 
 <script setup lang="ts">
-import type { ApplicationDto } from 'src/models/Agate';
-import ApplicationDialog from 'src/components/ApplicationDialog.vue';
+import type { RealmConfigSummaryDto } from 'src/models/Agate';
 import ConfirmDialog from 'src/components/ConfirmDialog.vue';
 import { DefaultAlignment } from 'src/components/models';
 
 const { t } = useI18n();
-const applicationStore = useApplicationStore();
+const realmStore = useRealmStore();
 
 const filter = ref('');
 const toolsVisible = ref<{ [key: string]: boolean }>({});
@@ -89,18 +93,17 @@ const showEdit = ref(false);
 const showDelete = ref(false);
 const selected = ref();
 
-const applications = computed(
+const realms = computed(
   () =>
-    applicationStore.applications?.filter((app) =>
-      filter.value ? app.name.toLowerCase().includes(filter.value.toLowerCase()) : true,
+  realmStore.realms?.filter((rlm) =>
+      filter.value ? rlm.name.toLowerCase().includes(filter.value.toLowerCase()) : true,
     ) || [],
 );
 const columns = computed(() => [
-  { name: 'id', label: 'ID', field: 'id', align: DefaultAlignment },
-  { name: 'name', label: t('name'), field: 'name', align: DefaultAlignment },
-  { name: 'description', label: t('description'), field: 'description', align: DefaultAlignment },
-  { name: 'scopes', label: t('application.scopes'), field: 'scopes', align: DefaultAlignment },
-  { name: 'realmGroups', label: t('application.realms_groups'), field: 'realmGroups', align: DefaultAlignment },
+{ name: 'name', label: t('name'), field: 'name', align: DefaultAlignment },
+  { name: 'status', label: t('status'), field: 'status', align: DefaultAlignment },
+  { name: 'type', label: t('type'), field: 'type', align: DefaultAlignment },
+  { name: 'userCount', label: t('realm.user_count'), field: 'userCount', align: DefaultAlignment },
 ]);
 
 onMounted(() => {
@@ -108,29 +111,29 @@ onMounted(() => {
 });
 
 function refresh() {
-  applicationStore.init();
+  realmStore.init();
 }
 
-function onOverRow(row: ApplicationDto) {
+function onOverRow(row: RealmConfigSummaryDto) {
   toolsVisible.value[row.name] = true;
 }
 
-function onLeaveRow(row: ApplicationDto) {
+function onLeaveRow(row: RealmConfigSummaryDto) {
   toolsVisible.value[row.name] = false;
 }
 
-function onShowEdit(row: ApplicationDto) {
+function onShowEdit(row: RealmConfigSummaryDto) {
   selected.value = row;
   showEdit.value = true;
 }
 
-function onShowDelete(row: ApplicationDto) {
+function onShowDelete(row: RealmConfigSummaryDto) {
   selected.value = row;
   showDelete.value = true;
 }
 
 function onDelete() {
-  applicationStore.remove(selected.value).finally(refresh);
+  realmStore.remove(selected.value).finally(refresh);
 }
 
 function onAdd() {
@@ -138,7 +141,7 @@ function onAdd() {
   showEdit.value = true;
 }
 
-function onSaved() {
-  refresh();
+function onToggleActivity(row: RealmConfigSummaryDto) {
+  realmStore.toggleActivity(row).finally(refresh);
 }
 </script>

@@ -97,6 +97,22 @@ export default {
     },
     update_password: 'Update password',
   },
+  realm: {
+    activate: 'Activate',
+    add: 'Add realm',
+    deactivate: 'Deactivate',
+    edit: 'Edit realm',
+    realm: 'Realm',
+    remove_confirm: 'Please confirm realm removal: {name}. Applications, groups and users associated to this realm will not be removed.',
+    remove: 'Remove realm',
+    user_count: 'User count',
+    type: {
+      'agate-ad-realm': 'Active Directory',
+      'agate-jdbc-realm': 'SQL Database',
+      'agate-ldap-realm': 'LDAP',
+      'agate-oidc-realm': 'OpenID Connect',
+    }
+  },
   system: {
     inactive_timeout_hint: 'User account expiration timeout in days.',
     inactive_timeout: 'Inactive timeout (days)',
@@ -168,7 +184,6 @@ export default {
   other_links: 'Other links',
   otpEnabled: '2FA',
   properties: 'Properties',
-  realm: 'Realm',
   realms_caption: 'Manage realms, federate external identity providers',
   realms: 'Realms',
   role: 'Role',
@@ -178,6 +193,7 @@ export default {
   source_code: 'Source Code',
   status: 'Status',
   tickets: 'Tickets',
+  type: 'Type',
   username: 'Username',
   users_caption: 'Manage users, assign role and groups to grant applications access',
   users: 'Users',

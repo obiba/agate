@@ -205,7 +205,7 @@ const columns = computed(() => [
   { name: 'status', label: t('status'), field: 'status', align: DefaultAlignment },
   { name: 'role', label: t('role'), field: 'role', align: DefaultAlignment },
   { name: 'otpEnabled', label: t('otpEnabled'), field: 'otpEnabled', align: DefaultAlignment },
-  { name: 'realm', label: t('realm'), field: 'realm', align: DefaultAlignment },
+  { name: 'realm', label: t('realm.realm'), field: 'realm', align: DefaultAlignment },
   { name: 'groups', label: t('groups'), field: 'groups', align: DefaultAlignment },
   { name: 'applications', label: t('applications'), field: 'applications', align: DefaultAlignment },
 ]);
