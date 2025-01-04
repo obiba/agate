@@ -228,7 +228,7 @@ const realmOptions = computed(() => [
   ...(realmStore.realms?.map((realm) => ({ label: realm.name, value: realm.id })) ?? []),
 ]);
 const languageOptions = computed(
-  () => systemStore.configurationPublic.languages?.map((lang) => ({ label: lang.toUpperCase(), value: lang })) ?? [],
+  () => systemStore.configurationPublic.languages?.map((lang) => ({ label: lang, value: lang })) ?? [],
 );
 const showPassword = computed(() => !editMode.value && selected.value.realm === 'agate-user-realm');
 const isValid = computed(

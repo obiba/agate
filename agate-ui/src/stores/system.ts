@@ -24,10 +24,18 @@ export const useSystemStore = defineStore('system', () => {
     });
   }
 
+  async function save(config: ConfigurationDto) {
+    return api.put('/config', config).then((response) => {
+      configuration.value = { ...config };
+      return response;
+    });
+  }
+
   return {
     configuration,
     configurationPublic,
     init,
     initPub,
+    save,
   };
 });
