@@ -131,6 +131,13 @@ export default {
       ANY: 'Email or mobile app',
     },
   },
+  ticket: {
+    events: 'Events',
+    expires: 'Expires',
+    login_app: 'Login application',
+    remove: 'Remove ticket',
+    remove_confirm: 'Please confirm ticket removal: {id} of {username}',
+  },
   add: 'Add',
   administration: 'Administration',
   applications_caption: 'Manage applications, identifications and identity providers',
@@ -171,6 +178,7 @@ export default {
   source_code: 'Source Code',
   status: 'Status',
   tickets: 'Tickets',
+  username: 'Username',
   users_caption: 'Manage users, assign role and groups to grant applications access',
   users: 'Users',
 };

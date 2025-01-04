@@ -46,7 +46,7 @@
           </q-td>
           <q-td key="applications" :props="props">
             <template v-for="app in props.row.applications" :key="app">
-              <q-badge :label="getApplicationName(app)" class="on-left" />
+              <q-badge :label="applicationStore.getApplicationName(app)" class="on-left" />
             </template>
           </q-td>
         </q-tr>
@@ -133,9 +133,5 @@ function onAdd() {
 
 function onSaved() {
   refresh();
-}
-
-function getApplicationName(id: string) {
-  return applicationStore.applications?.find((app) => app.id === id)?.name;
 }
 </script>

@@ -131,6 +131,13 @@ export default {
       ANY: 'Courriel ou application mobile',
     },
   },
+  ticket: {
+    events: 'Événements',
+    expires: 'Expire',
+    login_app: 'Application de connexion',
+    remove: 'Supprimer le ticket',
+    remove_confirm: 'Veuillez confirmer la suppression du ticket: {id} de {username}',
+  },
   add: 'ajouter',
   administration: 'Administration',
   applications_caption: "Gérer les applications, les identifications et les fournisseurs d'identité",
@@ -171,6 +178,7 @@ export default {
   source_code: 'Code source',
   status: 'Statut',
   tickets: 'Tickets',
+  username: 'Nom d\'usager',
   users_caption: 'Gérer les utilisateurs, les rôles et les accès aux applications',
   users: 'Utilisateurs',
 };
