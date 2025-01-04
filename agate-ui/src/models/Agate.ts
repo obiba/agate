@@ -4,18 +4,18 @@
 //   protoc               v3.21.12
 // source: Agate.proto
 
-export const protobufPackage = "obiba.agate";
+export const protobufPackage = 'obiba.agate';
 
 export enum KeyType {
-  KEY_PAIR = "KEY_PAIR",
-  CERTIFICATE = "CERTIFICATE",
-  UNRECOGNIZED = "UNRECOGNIZED",
+  KEY_PAIR = 'KEY_PAIR',
+  CERTIFICATE = 'CERTIFICATE',
+  UNRECOGNIZED = 'UNRECOGNIZED',
 }
 
 export enum RealmStatus {
-  INACTIVE = "INACTIVE",
-  ACTIVE = "ACTIVE",
-  UNRECOGNIZED = "UNRECOGNIZED",
+  INACTIVE = 'INACTIVE',
+  ACTIVE = 'ACTIVE',
+  UNRECOGNIZED = 'UNRECOGNIZED',
 }
 
 export interface SessionDto {
@@ -71,9 +71,7 @@ export interface LocalizedStringDto {
 
 export interface ConfigurationDto {
   name: string;
-  domain?:
-    | string
-    | undefined;
+  domain?: string | undefined;
   /** hours */
   shortTimeout: number;
   /** hours */

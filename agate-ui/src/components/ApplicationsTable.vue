@@ -143,5 +143,4 @@ function onAdd() {
 function onSaved() {
   refresh();
 }
-
 </script>

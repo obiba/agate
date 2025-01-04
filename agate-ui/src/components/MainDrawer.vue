@@ -53,6 +53,14 @@
           <q-item-label>{{ t('realms') }}</q-item-label>
         </q-item-section>
       </q-item>
+      <q-item :to="`/tickets`">
+        <q-item-section avatar>
+          <q-icon name="local_activity" />
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>{{ t('tickets') }}</q-item-label>
+        </q-item-section>
+      </q-item>
       <q-item v-if="authStore.isAdministrator" :to="`/settings`">
         <q-item-section avatar>
           <q-icon name="settings" />
