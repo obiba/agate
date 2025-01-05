@@ -71,12 +71,14 @@
       :text="t('realm.remove_confirm', { name: selected?.name })"
       @confirm="onDelete"
     />
+    <realm-dialog v-model="showEdit" :realmSummary="selected" @saved="refresh" />
   </div>
 </template>
 
 <script setup lang="ts">
 import type { RealmConfigSummaryDto } from 'src/models/Agate';
 import ConfirmDialog from 'src/components/ConfirmDialog.vue';
+import RealmDialog from 'src/components/RealmDialog.vue';
 import { DefaultAlignment } from 'src/components/models';
 
 const { t } = useI18n();
@@ -95,12 +97,12 @@ const selected = ref();
 
 const realms = computed(
   () =>
-  realmStore.realms?.filter((rlm) =>
+    realmStore.realms?.filter((rlm) =>
       filter.value ? rlm.name.toLowerCase().includes(filter.value.toLowerCase()) : true,
     ) || [],
 );
 const columns = computed(() => [
-{ name: 'name', label: t('name'), field: 'name', align: DefaultAlignment },
+  { name: 'name', label: t('name'), field: 'name', align: DefaultAlignment },
   { name: 'status', label: t('status'), field: 'status', align: DefaultAlignment },
   { name: 'type', label: t('type'), field: 'type', align: DefaultAlignment },
   { name: 'userCount', label: t('realm.user_count'), field: 'userCount', align: DefaultAlignment },

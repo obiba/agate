@@ -47,3 +47,17 @@ export interface FormObject {
 }
 
 export const DefaultAlignment: 'left' | 'right' | 'center' = 'left';
+
+export interface RealmForms {
+  'agate-ad-realm': string;
+  'agate-jdbc-realm': string;
+  'agate-ldap-realm': string;
+  'agate-oidc-realm': string;
+  form: string;
+  userInfoMapping: string;
+  userInfoMappingDefaults: {
+    'agate-oidc-realm': {
+      [key: string]: string;
+    };
+  };
+}

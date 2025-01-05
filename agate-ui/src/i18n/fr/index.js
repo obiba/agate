@@ -102,16 +102,28 @@ export default {
     add: 'Ajouter un domaine',
     deactivate: 'Désactiver',
     edit: 'Modifier le domaine',
+    for_signup: 'Pour inscription',
+    groups_hint: "Les usagers s'inscrivant via ce domaine seront automatiquement ajoutés aux groupes sélectionnés.",
+    public_url: 'URL publique',
+    public_url_hint: 'URL de base publique du domaine qui sera utilisée pour les liens dans les courriels de notification et les redirections OpenID Connect.',
     realm: 'Domaine',
     remove_confirm: 'Veuillez confirmer la suppression du domaine: {name}. Les applications, les groupes et les usagers associés à ce domaine ne seront pas supprimés.',
     remove: 'Suppression du domaine',
-    user_count: 'Nombre d\'usagers',
+    saved: 'Domaine enregistré',
+    save_failed: 'Échec de l\'enregistrement du domaine',
+    sso_domain: 'Domaine SSO',
+    sso_domain_hint: 'Domaine de connexion unique.',
+    user_count: "Nombre d'usagers",
+    status: {
+      ACTIVE: 'Actif',
+      INACTIVE: 'Inactif',
+    },
     type: {
       'agate-ad-realm': 'Active Directory',
       'agate-jdbc-realm': 'Base de données SQL',
       'agate-ldap-realm': 'LDAP',
       'agate-oidc-realm': 'OpenID Connect',
-    }
+    },
   },
   system: {
     inactive_timeout_hint: "Délai d'expiration du compte utilisateur en jours.",
@@ -139,7 +151,7 @@ export default {
     signup_whitelist_hint: "Les usagers autorisés à s'inscrire doivent avoir une adresse courriel dans les domaines de la liste blanche.",
     signup_whitelist_hint_form: "Les usagers autorisés à s'inscrire doivent avoir une adresse courriel dans les domaines de la liste blanche. Utilisez des virgules ou des espaces pour séparer plusieurs domaines.",
     signup_whitelist: "Liste blanche d'inscription",
-    sso_domain_hint: 'Domaine SSO utilisé.',
+    sso_domain_hint: 'Domaine de connexion unique.',
     sso_domain: 'Domaine SSO',
     otp_strategies: {
       NONE: 'Aucun',
@@ -194,7 +206,7 @@ export default {
   status: 'Statut',
   tickets: 'Tickets',
   type: 'Type',
-  username: 'Nom d\'usager',
+  username: "Nom d'usager",
   users_caption: 'Gérer les utilisateurs, les rôles et les accès aux applications',
   users: 'Utilisateurs',
 };

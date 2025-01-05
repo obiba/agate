@@ -1,0 +1,168 @@
+<template>
+  <q-dialog v-model="showDialog" persistent @hide="onHide">
+    <q-card class="dialog-md">
+      <q-card-section>
+        <div class="text-h6">{{ t(editMode ? 'realm.edit' : 'realm.add') }}</div>
+      </q-card-section>
+
+      <q-separator />
+
+      <q-card-section>
+        <q-form>
+          <q-input
+            v-model="selected.name"
+            :label="t('name') + ' *'"
+            :hint="t('name_hint')"
+            dense
+            lazy-rules
+            :rules="[
+              (val) => !!val || t('name_required'),
+              (val) => (val?.trim().length ?? 0) >= 3 || t('name_min_length', { min: 3 }),
+            ]"
+            class="q-mb-md"
+          />
+          <div class="row q-col-gutter-md q-mb-md">
+            <div class="col-12 col-sm-3">
+              <q-toggle
+                :label="t(`realm.status.${selected.status}`)"
+                color="positive"
+                false-value="INACTIVE"
+                true-value="ACTIVE"
+                v-model="selected.status"
+              />
+            </div>
+            <div class="col-12 col-sm-9">
+              <q-select
+                v-model="selected.type"
+                :label="t('type') + ' *'"
+                :options="typeOptions"
+                dense
+                emit-value
+                map-options
+                lazy-rules
+              />
+            </div>
+          </div>
+          <div class="row q-col-gutter-md q-mb-md">
+            <div class="col-12 col-sm-3">
+              <q-checkbox
+                v-model="selected.forSignup"
+                :label="t('realm.for_signup')"
+                @update:model-value="selected.groups = []"
+              />
+            </div>
+            <div class="col-12 col-sm-9">
+              <q-select
+                v-model="selected.groups"
+                :label="t('groups')"
+                :hint="t('realm.groups_hint')"
+                :disable="!selected.forSignup"
+                :options="groupOptions"
+                dense
+                emit-value
+                map-options
+                multiple
+                use-chips
+                lazy-rules
+              />
+            </div>
+          </div>
+          <q-input
+            v-model="selected.publicUrl"
+            :label="t('realm.public_url')"
+            :hint="t('realm.public_url_hint')"
+            dense
+            class="q-mb-md"
+          />
+          <q-input
+            v-model="selected.domain"
+            :label="t('realm.sso_domain')"
+            :hint="t('realm.sso_domain_hint')"
+            dense
+            class="q-mb-md"
+          />
+        </q-form>
+      </q-card-section>
+
+      <q-separator />
+
+      <q-card-actions align="right" class="bg-grey-3">
+        <q-btn flat :label="t('cancel')" color="secondary" @click="onCancel" v-close-popup />
+        <q-btn flat :label="t('save')" :disable="!isValid" color="primary" @click="onSave" />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+</template>
+
+<script setup lang="ts">
+import type { RealmConfigDto, RealmConfigSummaryDto } from 'src/models/Agate';
+import { notifyError, notifySuccess } from 'src/utils/notify';
+
+const { t } = useI18n();
+const groupStore = useGroupStore();
+const realmStore = useRealmStore();
+
+interface DialogProps {
+  modelValue: boolean;
+  realmSummary: RealmConfigSummaryDto | undefined;
+}
+
+const props = defineProps<DialogProps>();
+const emit = defineEmits(['update:modelValue', 'saved', 'cancel']);
+
+const showDialog = ref(props.modelValue);
+const selected = ref<RealmConfigDto>({} as RealmConfigDto);
+const editMode = ref(false);
+
+const typeOptions = computed(() =>
+  ['agate-oidc-realm', 'agate-ad-realm', 'agate-ldap-realm', 'agate-jdbc-realm'].map((type) => ({
+    label: t(`realm.type.${type}`),
+    value: type,
+  })),
+);
+const groupOptions = computed(() => groupStore.groups?.map((group) => ({ label: group.name, value: group.id })) ?? []);
+const isValid = computed(() => selected.value.name && selected.value.name.trim().length >= 3);
+
+onMounted(() => {
+  realmStore.initForms();
+  groupStore.init();
+});
+
+watch(
+  () => props.modelValue,
+  (value) => {
+    showDialog.value = value;
+    if (props.realmSummary) {
+      realmStore.getConfig(props.realmSummary.name).then((config) => {
+        selected.value = config;
+      });
+    } else {
+      selected.value = { type: typeOptions.value[0]?.value, status: 'INACTIVE', forSignup: false } as RealmConfigDto;
+    }
+    editMode.value = props.realmSummary !== undefined;
+  },
+);
+
+function onHide() {
+  emit('update:modelValue', false);
+}
+
+function onCancel() {
+  emit('cancel');
+}
+
+function onSave() {
+  realmStore
+    .save(selected.value)
+    .then(() => {
+      notifySuccess(t('realm.saved'));
+      emit('saved');
+    })
+    .catch(() => {
+      notifyError(t('realm.save_failed'));
+    })
+    .finally(() => {
+      emit('update:modelValue', false);
+    });
+}
+</script>
