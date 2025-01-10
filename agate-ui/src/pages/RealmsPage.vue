@@ -7,16 +7,12 @@
       </q-breadcrumbs>
     </q-toolbar>
     <q-page class="q-pa-md">
-      <pre>{{ realmStore.realms }}</pre>
+      <realms-table />
     </q-page>
   </div>
 </template>
 
 <script setup lang="ts">
+import RealmsTable from 'src/components/RealmsTable.vue';
 const { t } = useI18n();
-const realmStore = useRealmStore();
-
-onMounted(() => {
-  realmStore.init();
-});
 </script>

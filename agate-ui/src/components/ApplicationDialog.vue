@@ -105,7 +105,7 @@
                   <div class="row q-col-gutter-md">
                     <q-select
                       v-model="realmGroup.realm"
-                      :label="t('realm')"
+                      :label="t('realm.realm')"
                       :options="realmOptions"
                       emit-value
                       map-options

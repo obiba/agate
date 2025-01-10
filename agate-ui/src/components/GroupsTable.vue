@@ -28,7 +28,6 @@
                 @click="onShowEdit(props.row)"
               />
               <q-btn
-                v-if="!props.row.hasDatasource"
                 rounded
                 dense
                 flat
