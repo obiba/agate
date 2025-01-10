@@ -147,6 +147,9 @@
             <fileset>
               <directory>node_modules</directory>
             </fileset>
+            <fileset>
+              <directory>src/main/webapp/assets/libs/node_modules</directory>
+            </fileset>
           </filesets>
         </configuration>
       </plugin>
@@ -167,21 +170,41 @@
               <goal>exec</goal>
             </goals>
           </execution>
-          <execution>
-            <id>exec-grunt</id>
-            <phase>generate-sources</phase>
-            <configuration>
-              <executable>grunt</executable>
-            </configuration>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-          </execution>
         </executions>
       </plugin>
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
         <executions>
+          <execution>
+            <id>copy js deps</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>src/main/webapp/assets/libs/node_modules</outputDirectory>
+              <overwrite>true</overwrite>
+              <resources>
+                <resource>
+                  <directory>node_modules</directory>
+                  <includes>
+                    <include>admin-lte/dist/**</include>
+                    <include>admin-lte/plugins/bootstrap/**</include>
+                    <include>admin-lte/plugins/chart.js/**</include>
+                    <include>admin-lte/plugins/datatables/**</include>
+                    <include>admin-lte/plugins/datatables-bs4/**</include>
+                    <include>admin-lte/plugins/fontawesome-free/**</include>
+                    <include>admin-lte/plugins/jquery/**</include>
+                    <include>admin-lte/plugins/moment/**</include>
+                    <include>admin-lte/plugins/toastr/**</include>
+                    <include>axios/dist/**</include>
+                    <include>jquery.redirect/**</include>
+                    <include>js-cookie/**</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
           <execution>
             <id>copy ui content</id>
             <phase>generate-resources</phase>
@@ -222,16 +245,6 @@
                   <arguments>
                     <argument>install</argument>
                   </arguments>
-                </configuration>
-                <goals>
-                  <goal>exec</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>exec-grunt</id>
-                <phase>generate-resources</phase>
-                <configuration>
-                  <executable>grunt</executable>
                 </configuration>
                 <goals>
                   <goal>exec</goal>
@@ -318,26 +331,6 @@
       <build>
         <plugins>
           <plugin>
-            <groupId>com.github.trecloux</groupId>
-            <artifactId>yeoman-maven-plugin</artifactId>
-            <version>0.2</version>
-            <configuration>
-              <yeomanProjectDirectory>${project.basedir}</yeomanProjectDirectory>
-            </configuration>
-            <executions>
-              <execution>
-                <id>run-grunt</id>
-                <phase>generate-resources</phase>
-                <goals>
-                  <goal>build</goal>
-                </goals>
-                <configuration>
-                  <gruntBuildArgs>--force</gruntBuildArgs>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
             <artifactId>maven-clean-plugin</artifactId>
             <configuration>
               <filesets>
@@ -346,6 +339,9 @@
                 </fileset>
                 <fileset>
                   <directory>node_modules</directory>
+                </fileset>
+                <fileset>
+                  <directory>src/main/webapp/assets/libs/node_modules</directory>
                 </fileset>
               </filesets>
             </configuration>
