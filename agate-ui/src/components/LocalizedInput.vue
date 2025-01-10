@@ -2,7 +2,15 @@
   <div>
     <q-tab-panels v-model="tab">
       <q-tab-panel v-for="lang in languages" :key="lang" :name="lang" style="padding: 0">
-        <q-input v-model="values[lang]" :label="label" :hint="hint" dense @update:model-value="onUpdate" />
+        <q-input
+          v-model="values[lang]"
+          :label="label + (required ? ' *' : '')"
+          :hint="hint"
+          dense
+          lazy-rules
+          :rules="required ? [(val) => !!val || t('required')] : []"
+          @update:model-value="onUpdate"
+        />
       </q-tab-panel>
     </q-tab-panels>
     <div>
@@ -25,11 +33,13 @@
 import type { LocalizedStringDto } from 'src/models/Agate';
 
 const systemStore = useSystemStore();
+const { t } = useI18n();
 
 interface Props {
   modelValue: LocalizedStringDto[] | undefined;
   label: string;
-  hint: string | undefined;
+  hint?: string | undefined;
+  required?: boolean | undefined;
 }
 
 const props = defineProps<Props>();

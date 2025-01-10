@@ -26,6 +26,7 @@
             v-model="selected.title"
             :label="t('realm.title')"
             :hint="t('realm.title_hint')"
+            required
             class="q-mb-md"
           />
           <div class="row q-col-gutter-md q-mb-md">
