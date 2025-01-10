@@ -33,6 +33,17 @@
                 flat
                 size="sm"
                 color="secondary"
+                :icon="toolsVisible[props.row.name] ? 'content_copy' : 'none'"
+                :title="t('duplicate')"
+                class="q-ml-xs"
+                @click="onShowDuplicate(props.row)"
+              />
+              <q-btn
+                rounded
+                dense
+                flat
+                size="sm"
+                color="secondary"
                 :title="t('delete')"
                 :icon="toolsVisible[props.row.name] ? 'delete' : 'none'"
                 class="q-ml-xs"
@@ -71,7 +82,7 @@
       :text="t('realm.remove_confirm', { name: selected?.name })"
       @confirm="onDelete"
     />
-    <realm-dialog v-model="showEdit" :realmSummary="selected" @saved="refresh" />
+    <realm-dialog v-model="showEdit" :realmSummary="selected" :duplicate="duplicate" @saved="refresh" />
   </div>
 </template>
 
@@ -94,6 +105,7 @@ const initialPagination = ref({
 const showEdit = ref(false);
 const showDelete = ref(false);
 const selected = ref();
+const duplicate = ref(false);
 
 const realms = computed(
   () =>
@@ -126,6 +138,13 @@ function onLeaveRow(row: RealmConfigSummaryDto) {
 
 function onShowEdit(row: RealmConfigSummaryDto) {
   selected.value = row;
+  duplicate.value = false;
+  showEdit.value = true;
+}
+
+function onShowDuplicate(row: RealmConfigSummaryDto) {
+  selected.value = row;
+  duplicate.value = true;
   showEdit.value = true;
 }
 
@@ -140,6 +159,7 @@ function onDelete() {
 
 function onAdd() {
   selected.value = undefined;
+  duplicate.value = false;
   showEdit.value = true;
 }
 

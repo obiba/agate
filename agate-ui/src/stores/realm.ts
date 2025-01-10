@@ -35,10 +35,6 @@ export const useRealmStore = defineStore('realm', () => {
     return config.id ? api.put(`/config/realm/${config.id}`, config) : api.post('/config/realms', config);
   }
 
-  async function initForms() {
-    return api.get('/config/realm-form').then((response) => (realmForms.value = response.data));
-  }
-
   function asJSONObject(json: string | undefined) {
     return json ? JSON.parse(json) : {};
   }
@@ -47,7 +43,6 @@ export const useRealmStore = defineStore('realm', () => {
     realms,
     realmForms,
     init,
-    initForms,
     remove,
     toggleActivity,
     getConfig,

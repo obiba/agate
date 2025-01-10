@@ -13,6 +13,7 @@
             v-model="selected.name"
             :label="t('name') + ' *'"
             :hint="t('name_hint')"
+            :disable="editMode"
             dense
             lazy-rules
             :rules="[
@@ -40,6 +41,7 @@
                 emit-value
                 map-options
                 lazy-rules
+                @update:model-value="onTypeChange"
               />
             </div>
           </div>
@@ -81,6 +83,19 @@
             dense
             class="q-mb-md"
           />
+
+          <q-card bordered flat>
+            <q-card-section>
+              <oidc-form v-if="selected.type === 'agate-oidc-realm'" v-model="selected.content" />
+              <ldap-form v-if="selected.type === 'agate-ldap-realm'" v-model="selected.content" />
+              <ad-form v-if="selected.type === 'agate-ad-realm'" v-model="selected.content" />
+              <jdbc-form v-if="selected.type === 'agate-jdbc-realm'" v-model="selected.content" />
+              <user-info-mappings-form
+                v-if="selected.type === 'agate-oidc-realm'"
+                v-model="selected.userInfoMappings"
+              />
+            </q-card-section>
+          </q-card>
         </q-form>
       </q-card-section>
 
@@ -95,6 +110,11 @@
 </template>
 
 <script setup lang="ts">
+import OidcForm from 'src/components/realms/OidcForm.vue';
+import LdapForm from 'src/components/realms/LdapForm.vue';
+import AdForm from 'src/components/realms/AdForm.vue';
+import JdbcForm from 'src/components/realms/JdbcForm.vue';
+import UserInfoMappingsForm from 'src/components/realms/UserInfoMappingsForm.vue';
 import type { RealmConfigDto, RealmConfigSummaryDto } from 'src/models/Agate';
 import { notifyError, notifySuccess } from 'src/utils/notify';
 
@@ -105,6 +125,7 @@ const realmStore = useRealmStore();
 interface DialogProps {
   modelValue: boolean;
   realmSummary: RealmConfigSummaryDto | undefined;
+  duplicate: boolean;
 }
 
 const props = defineProps<DialogProps>();
@@ -124,7 +145,6 @@ const groupOptions = computed(() => groupStore.groups?.map((group) => ({ label: 
 const isValid = computed(() => selected.value.name && selected.value.name.trim().length >= 3);
 
 onMounted(() => {
-  realmStore.initForms();
   groupStore.init();
 });
 
@@ -135,11 +155,15 @@ watch(
     if (props.realmSummary) {
       realmStore.getConfig(props.realmSummary.name).then((config) => {
         selected.value = config;
+        if (props.duplicate) {
+          config.name = '';
+          delete config.id;
+        }
       });
     } else {
       selected.value = { type: typeOptions.value[0]?.value, status: 'INACTIVE', forSignup: false } as RealmConfigDto;
     }
-    editMode.value = props.realmSummary !== undefined;
+    editMode.value = props.realmSummary !== undefined && !props.duplicate;
   },
 );
 
@@ -149,6 +173,13 @@ function onHide() {
 
 function onCancel() {
   emit('cancel');
+}
+
+function onTypeChange() {
+  selected.value.content = '';
+  if (selected.value.type !== 'agate-oidc-realm') {
+    selected.value.userInfoMappings = [];
+  }
 }
 
 function onSave() {

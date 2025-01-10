@@ -61,3 +61,42 @@ export interface RealmForms {
     };
   };
 }
+
+export interface OIDCRealmConfig {
+  clientId: string;
+  secret: string;
+  discoveryURI: string;
+  scope?: string;
+  useNonce?: boolean;
+  connectTimeout?: number;
+  readTimeout?: number;
+  providerUrl?: string;
+  groupsClaim?: string;
+  groupsJS?: string;
+}
+
+export interface LDAPRealmConfig {
+  url: string;
+  systemUsername: string;
+  systemPassword: string;
+  userDnTemplate: string;
+}
+
+export interface ADRealmConfig {
+  url: string;
+  systemUsername: string;
+  systemPassword: string;
+  searchFilter: string;
+  searchBase?: string;
+  principalSuffix?: string;
+}
+
+export interface JDBCRealmConfig {
+  url: string;
+  username: string;
+  password: string;
+  authenticationQuery: string;
+  saltStyle?: string;
+  externalSalt?: string;
+  algorithmName?: string;
+}
