@@ -22,6 +22,12 @@
             ]"
             class="q-mb-md"
           />
+          <localized-input
+            v-model="selected.title"
+            :label="t('realm.title')"
+            :hint="t('realm.title_hint')"
+            class="q-mb-md"
+          />
           <div class="row q-col-gutter-md q-mb-md">
             <div class="col-12 col-sm-3">
               <q-toggle
@@ -110,6 +116,7 @@
 </template>
 
 <script setup lang="ts">
+import LocalizedInput from 'src/components/LocalizedInput.vue';
 import OidcForm from 'src/components/realms/OidcForm.vue';
 import LdapForm from 'src/components/realms/LdapForm.vue';
 import AdForm from 'src/components/realms/AdForm.vue';

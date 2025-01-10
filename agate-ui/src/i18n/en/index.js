@@ -113,6 +113,8 @@ export default {
     save_failed: 'Failed to save realm',
     sso_domain: 'Domain',
     sso_domain_hint: 'Single sign-on domain.',
+    title: 'Title',
+    title_hint: 'Title of the realm that will be displayed in the signin/signup pages.',
     user_count: 'User count',
     status: {
       ACTIVE: 'Active',

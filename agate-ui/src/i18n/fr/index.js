@@ -113,6 +113,8 @@ export default {
     save_failed: "Échec de l'enregistrement du domaine",
     sso_domain: 'Domaine SSO',
     sso_domain_hint: 'Domaine de connexion unique.',
+    title: 'Titre',
+    title_hint: "Le titre du domaine tel qu'il sera affiché à l'utilisateur dans la page d'identification.",
     user_count: "Nombre d'usagers",
     status: {
       ACTIVE: 'Actif',
