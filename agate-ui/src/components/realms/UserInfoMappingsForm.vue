@@ -42,6 +42,38 @@
       class="q-mb-md"
       @update:model-value="onUpdate"
     />
+    <q-list>
+      <q-item v-for="(entry, idx) in extras" :key="idx" class="q-pa-none">
+        <q-item-section>
+          <div class="row q-col-gutter-md">
+            <div class="col">
+              <q-input
+                v-model="entry.key"
+                :label="t('realm.mappings.agate_key')"
+                dense
+                lazy-rules
+                :rules="[(val) => !!val || t('required')]"
+                @update:model-value="onUpdate"
+              />
+            </div>
+            <div class="col">
+              <q-input
+                v-model="entry.value"
+                :label="t('realm.mappings.provider_key')"
+                dense
+                lazy-rules
+                :rules="[(val) => !!val || t('required')]"
+                @update:model-value="onUpdate"
+              />
+            </div>
+          </div>
+        </q-item-section>
+        <q-item-section side>
+          <q-btn flat icon="delete" color="accent" size="sm" @click="onEntryDelete(idx)" />
+        </q-item-section>
+      </q-item>
+    </q-list>
+    <q-btn color="primary" icon="add" size="sm" @click="extras.push({ key: '', value: '' })" />
   </div>
 </template>
 
@@ -60,6 +92,7 @@ const username = ref('preferred_username');
 const email = ref('email');
 const firstname = ref('given_name');
 const lastname = ref('family_name');
+const extras = ref<RealmConfigDto_UserInfoMappingDto[]>([]);
 
 watch(
   () => props.modelValue,
@@ -68,16 +101,28 @@ watch(
     email.value = props.modelValue?.find((m) => m.key === 'email')?.value || 'email';
     firstname.value = props.modelValue?.find((m) => m.key === 'firstname')?.value || 'given_name';
     lastname.value = props.modelValue?.find((m) => m.key === 'lastname')?.value || 'family_name';
+    extras.value = JSON.parse(
+      JSON.stringify(
+        props.modelValue?.filter((m) => !['username', 'email', 'firstname', 'lastname'].includes(m.key)) || [],
+      ),
+    );
   },
   { immediate: true },
 );
 
 function onUpdate() {
-  emits('update:modelValue', [
+  const mappings = [
     { key: 'username', value: username.value },
     { key: 'email', value: email.value },
     { key: 'firstname', value: firstname.value },
     { key: 'lastname', value: lastname.value },
-  ]);
+    ...extras.value,
+  ];
+  emits('update:modelValue', mappings);
+}
+
+function onEntryDelete(idx: number) {
+  extras.value.splice(idx, 1);
+  onUpdate();
 }
 </script>

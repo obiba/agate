@@ -187,6 +187,7 @@ export default {
       algorithm_name_hint: 'A cryptographic hash function used by the database (for example, SHA-256). Leave blank if none are used.',
     },
     mappings: {
+      agate_key: 'Agate key',
       title: 'Mappings',
       hint: 'Mapping between Agate user profile and the user information provided by the realm.',
       email: 'Email',
@@ -195,6 +196,7 @@ export default {
       firstname_hint: 'Field name to extract first name from UserInfo.',
       lastname: 'Last name',
       lastname_hint: 'Field name to extract last name from UserInfo.',
+      provider_key: 'Provider key',
       username: 'Username',
       username_hint: 'Field name to extract user name from UserInfo. If this field is not found, other fields will be looked up in the order: preferred_username, username, email, name and sub.',
     },

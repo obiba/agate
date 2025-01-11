@@ -187,6 +187,7 @@ export default {
       algorithm_name_hint: "Nom de l'algorithme utilisé pour hasher le mot de passe (par exemple, SHA-256). Laisser vide si aucun n'est utilisé.",
     },
     mappings: {
+      agate_key: 'Agate key',
       title: 'Mappings',
       hint: "Mapping entre les champs de l'usager dans le profile Agate et les champs de UserInfo du domaine.",
       email: 'Courriel',
@@ -195,6 +196,7 @@ export default {
       firstname_hint: "Champ de UserInfo duquel sera extrait le prénom de l'usager.",
       lastname: 'Nom de famille',
       lastname_hint: "Champ de UserInfo duquel sera extrait le nom de famille de l'usager.",
+      provider_key: 'Provider key',
       username: "Nom d'usager",
       username_hint: 'Champ de UserInfo duquel sera extrait le nom d\'usager de l\'usager. Si non trouvé, les champs suivants évalués dans l\'ordre: "preferred_username", "username", "email", "name" et "sub".',
     },
