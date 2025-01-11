@@ -47,4 +47,4 @@ login:
   otpTimeout: 600
 
 csrf:
-  allowed-agents: curl,python
+  allowed-agents: curl,python,java
