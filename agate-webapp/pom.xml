@@ -199,7 +199,6 @@
                     <include>admin-lte/plugins/toastr/**</include>
                     <include>axios/dist/**</include>
                     <include>jquery.redirect/**</include>
-                    <include>js-cookie/**</include>
                   </includes>
                 </resource>
               </resources>

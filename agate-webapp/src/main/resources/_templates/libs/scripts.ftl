@@ -6,8 +6,6 @@
 <script src="${adminLTEPath}/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE App -->
 <script src="${adminLTEPath}/dist/js/adminlte.min.js"></script>
-<!-- Moment -->
-<script src="${adminLTEPath}/plugins/moment/moment-with-locales.min.js"></script>
 <!-- DataTables -->
 <script src="${adminLTEPath}/plugins/datatables/jquery.dataTables.js"></script>
 <script src="${adminLTEPath}/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
@@ -18,7 +16,6 @@
 
 <!-- Agate Utils and dependencies -->
 <script src="${assetsPath}/libs/node_modules/jquery.redirect/jquery.redirect.js"></script>
-<script src="${assetsPath}/libs/node_modules/js-cookie/src/js.cookie.js"></script>
 <script src="${assetsPath}/js/agate.js"></script>
 
 <!-- Global js variables -->
