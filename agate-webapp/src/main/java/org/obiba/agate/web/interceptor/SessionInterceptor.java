@@ -9,7 +9,7 @@ import org.obiba.agate.domain.User;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.RealmConfigService;
 import org.obiba.agate.service.UserService;
-import org.obiba.agate.web.controller.domain.UserProfile;
+import org.obiba.agate.domain.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -19,8 +19,6 @@ import org.springframework.web.servlet.ModelAndView;
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import java.util.stream.Collectors;
 
 @Component
 public class SessionInterceptor implements HandlerInterceptor {

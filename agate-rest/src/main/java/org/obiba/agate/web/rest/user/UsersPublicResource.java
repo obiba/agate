@@ -19,13 +19,12 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.bson.types.ObjectId;
-import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.joda.time.DateTime;
 import org.obiba.agate.domain.*;
 import org.obiba.agate.security.AgateUserRealm;
 import org.obiba.agate.security.Roles;
 import org.obiba.agate.service.*;
+import org.obiba.agate.validator.EmailValidator;
 import org.obiba.agate.web.rest.config.JerseyConfiguration;
 import org.obiba.agate.web.rest.security.InvalidApplicationKeyException;
 import org.obiba.shiro.authc.HttpAuthorizationToken;
@@ -185,7 +184,7 @@ public class UsersPublicResource {
     if (email == null || Strings.isNullOrEmpty(email.trim())) throw new BadRequestException("Email cannot be empty");
     email = email.trim();
 
-    if (!new EmailValidator().isValid(email, null)) throw new BadRequestException("Not a valid email address");
+    if (!EmailValidator.isValid(email)) throw new BadRequestException("Not a valid email address");
 
     if (!config.getJoinWhitelist().isEmpty()) {
       if (config.getJoinWhitelist().stream().noneMatch(email::endsWith)) {

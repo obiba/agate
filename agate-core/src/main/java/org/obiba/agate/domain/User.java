@@ -14,7 +14,6 @@ import com.google.common.base.CaseFormat;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import org.hibernate.validator.constraints.Email;
 import org.joda.time.DateTime;
 import org.obiba.agate.security.Roles;
 import org.obiba.mongodb.domain.AbstractAuditableDocument;
@@ -41,7 +40,6 @@ public class User extends AbstractAuditableDocument {
 
   private String lastName;
 
-  @Email
   @Indexed(unique = true)
   private String email;
 
