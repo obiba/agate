@@ -29,7 +29,6 @@ import jakarta.ws.rs.core.UriBuilder;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import org.apache.shiro.authz.annotation.RequiresRoles;
-import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.domain.UserStatus;

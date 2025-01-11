@@ -14,7 +14,6 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import org.hibernate.validator.constraints.NotBlank;
 import org.obiba.mongodb.domain.AbstractAuditableDocument;
 import org.obiba.runtime.Version;
 import org.springframework.data.annotation.Transient;
@@ -28,8 +27,6 @@ import java.util.stream.Collectors;
 @Document
 public class Configuration extends AbstractAuditableDocument {
 
-  private static final long serialVersionUID = -9020464712632680519L;
-
   public static final String DEFAULT_NAME = "Agate";
 
   public static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
@@ -40,7 +37,6 @@ public class Configuration extends AbstractAuditableDocument {
 
   public static final int DEFAULT_INACTIVE_TIMEOUT = 365 * 24; // 1 year (in hours)
 
-  @NotBlank
   private String name = DEFAULT_NAME;
 
   private String domain;

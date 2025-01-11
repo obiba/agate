@@ -38,6 +38,7 @@
   import org.obiba.agate.repository.UserCredentialsRepository;
   import org.obiba.agate.repository.UserRepository;
   import org.obiba.agate.service.support.MessageResolverMethod;
+  import org.obiba.agate.validator.NameValidator;
   import org.slf4j.Logger;
   import org.slf4j.LoggerFactory;
   import org.springframework.beans.BeanUtils;
@@ -77,6 +78,7 @@
             + "(?=.*[A-Z])"      // a upper case alphabet must occur at least once
             + "(?=.*[@#$%^&+=!])" // a special character that must occur at least once
             + "(?=\\S+$).{" + PWD_MINIMUM_LENGTH + "," + PWD_MAXIMUM_LENGTH + "}$");
+
 
     @Value("${login.otpTimeout:300}")
     private int otpTimeout;
@@ -266,6 +268,10 @@
     }
 
     public User createUser(@Nonnull User user, @Nullable String password) {
+      checkName(user.getName());
+      checkName(user.getFirstName());
+      checkName(user.getLastName());
+
       if (Strings.isNullOrEmpty(password)) {
         if (user.getRealm() == null) user.setRealm(AgateRealm.AGATE_USER_REALM.getName());
         else {
@@ -455,7 +461,7 @@
       String organization = configurationService.getConfiguration().getName();
 
       Map<String, Object> context = Maps.newHashMap();
-      context.put("user", user);
+      context.put("user", new UserProfile(user));
 
       administrators.forEach(u -> sendEmail(u, "[" + organization + "] " + env.getProperty("registration.pendingForReviewSubject"),
           "pendingForReviewEmail", context));
@@ -479,7 +485,7 @@
       Locale locale = LocaleUtils.toLocale(user.getPreferredLanguage());
       Map<String, Object> ctx = context == null ? Maps.newHashMap() : Maps.newHashMap(context);
       if (!ctx.containsKey("user"))
-        ctx.put("user", user);
+        ctx.put("user", new UserProfile(user));
       ctx.put("organization", configurationService.getConfiguration().getName());
       // get user's realm and find if there is a specific agate base url for this realm
       Optional<RealmConfig> realmConfig = getRealmConfigs(user).stream().findFirst();
@@ -709,6 +715,12 @@
 
     private List<RealmConfig> getRealmConfigs(User user) {
       return realmConfigRepository.findAll().stream().filter(realmConfig -> user.getRealm().equals(realmConfig.getName())).collect(Collectors.toList());
+    }
+
+    private void checkName(String name) {
+      if (!NameValidator.isValid(name)) {
+        throw new BadRequestException("Name contains invalid characters");
+      }
     }
 
   }

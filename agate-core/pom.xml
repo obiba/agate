@@ -160,6 +160,10 @@
     </dependency>
 
     <dependency>
+      <groupId>org.owasp.esapi</groupId>
+      <artifactId>esapi</artifactId>
+    </dependency>
+    <dependency>
       <groupId>dev.samstevens.totp</groupId>
       <artifactId>totp</artifactId>
     </dependency>

@@ -1,6 +1,5 @@
-package org.obiba.agate.web.controller.domain;
+package org.obiba.agate.domain;
 
-import org.obiba.agate.domain.User;
 import org.owasp.esapi.ESAPI;
 
 import java.util.Map;
@@ -51,7 +50,7 @@ public class UserProfile {
   }
 
   public String getPreferredLanguage() {
-    return user.getPreferredLanguage();
+    return ESAPI.encoder().encodeForHTML(user.getPreferredLanguage());
   }
 
   public boolean getOtpEnabled() {
