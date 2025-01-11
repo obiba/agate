@@ -45,3 +45,6 @@ login:
   trialTime: 300
   banTime: 300
   otpTimeout: 600
+
+csrf:
+  allowed-agents: curl,python,java
