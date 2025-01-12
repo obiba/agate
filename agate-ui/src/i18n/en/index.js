@@ -234,6 +234,22 @@ export default {
       APP: 'Mobile app',
       ANY: 'Email or mobile app',
     },
+    attributes: {
+      title: 'User Attributes',
+      hint: 'Attributes extend user description fields as wel as join requests. Localize each attribute by creating a key for each locale prefixed by <code>user-info.</code> in the {url} section.',
+      values_hint: 'Comma separated values',
+      add: 'Add Attribute',
+      update: 'Update Attribute',
+      remove: 'Remove Attribute',
+      remove_confirm: 'Please confirm the removal of the attribute: {name}',
+      name_exists: 'Attribute name already exists',
+      types: {
+        STRING: 'String',
+        NUMBER: 'Number',
+        BOOLEAN: 'Boolean',
+        INTEGER: 'Integer',
+      }
+    }
   },
   ticket: {
     events: 'Events',
@@ -283,8 +299,11 @@ export default {
   source_code: 'Source Code',
   status: 'Status',
   tickets: 'Tickets',
+  translations: 'Translations',
   type: 'Type',
   username: 'Username',
   users_caption: 'Manage users, assign role and groups to grant applications access',
   users: 'Users',
+  value: 'Value',
+  values: 'Values',
 };
