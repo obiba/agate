@@ -96,6 +96,16 @@ export default {
       PENDING: 'User is pending approval.',
     },
     update_password: 'Update password',
+    attributes: {
+      title: 'User Attributes',
+      add: 'Add User Attribute',
+      update: 'Update User Attribute',
+      updated: 'User attribute updated successfully',
+      update_failed: 'Failed to update user attribute',
+      remove: 'Remove User Attribute',
+      remove_confirm: 'Please confirm the removal of the user attribute: {name}',
+      name_exists: 'User attribute name already exists',
+    }
   },
   realm: {
     activate: 'Activate',
@@ -240,6 +250,8 @@ export default {
       values_hint: 'Comma separated values',
       add: 'Add Attribute',
       update: 'Update Attribute',
+      updated: 'Attribute updated successfully',
+      update_failed: 'Failed to update attribute',
       remove: 'Remove Attribute',
       remove_confirm: 'Please confirm the removal of the attribute: {name}',
       name_exists: 'Attribute name already exists',
