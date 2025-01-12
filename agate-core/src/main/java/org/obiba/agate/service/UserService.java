@@ -38,6 +38,7 @@
   import org.obiba.agate.repository.UserCredentialsRepository;
   import org.obiba.agate.repository.UserRepository;
   import org.obiba.agate.service.support.MessageResolverMethod;
+  import org.obiba.agate.validator.EmailValidator;
   import org.obiba.agate.validator.NameValidator;
   import org.slf4j.Logger;
   import org.slf4j.LoggerFactory;
@@ -268,7 +269,7 @@
     }
 
     public User createUser(@Nonnull User user, @Nullable String password) {
-      checkName(user.getName());
+      checkNameOrEmail(user.getName());
       checkName(user.getFirstName());
       checkName(user.getLastName());
 
@@ -723,4 +724,9 @@
       }
     }
 
+    private void checkNameOrEmail(String name) {
+      if (!NameValidator.isValid(name) && !EmailValidator.isValid(name)) {
+        throw new BadRequestException("Name contains invalid characters");
+      }
+    }
   }
