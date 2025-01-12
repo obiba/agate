@@ -10,7 +10,7 @@
       <div class="text-h6 q-mb-md">{{ t('properties') }}</div>
       <system-properties />
       <div class="row q-mt-md">
-        <div class="col-12 col-sm-6">
+        <div class="col-md-6 col-sm-12">
           <div class="text-h6">
             {{ t('system.attributes.title') }}
           </div>

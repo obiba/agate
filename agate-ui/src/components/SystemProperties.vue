@@ -2,7 +2,7 @@
   <div>
     <q-btn @click="onEdit" label="Edit" icon="edit" size="sm" color="primary" class="q-mb-md" />
     <div class="row q-col-gutter-md">
-      <div class="col">
+      <div class="col-md-6 col-sm-12">
         <q-list separator class="fields-list">
           <q-item v-ripple>
             <q-item-section>
@@ -69,7 +69,7 @@
           </q-item>
         </q-list>
       </div>
-      <div class="col">
+      <div class="col-md-6 col-sm-12">
         <q-list separator class="fields-list">
           <q-item>
             <q-item-section>
