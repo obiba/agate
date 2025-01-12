@@ -234,6 +234,22 @@ export default {
       APP: 'Application mobile',
       ANY: 'Courriel ou application mobile',
     },
+    attributes: {
+      title: 'Attributs Utilisateur',
+      hint: 'Les attributs étendent les champs de description de l\'utilisateur ainsi que les demandes d\'adhésion. Localisez chaque attribut en créant une clé pour chaque langue, préfixée par <code>user-info.</code> dans la section {url}.',
+      values_hint: 'Valeurs séparées par des virgules',
+      add: 'Ajouter un Attribut',
+      update: 'Mettre à Jour l\'Attribut',
+      remove: 'Supprimer l\'Attribut',
+      remove_confirm: 'Veuillez confirmer la suppression de l\'attribut : {name}',
+      name_exists: 'Le nom de l\'attribut existe déjà',
+      types: {
+        STRING: 'Chaîne',
+        NUMBER: 'Nombre',
+        BOOLEAN: 'Booléen',
+        INTEGER: 'Entier',
+      }
+    },
   },
   ticket: {
     events: 'Événements',
@@ -283,8 +299,11 @@ export default {
   source_code: 'Code source',
   status: 'Statut',
   tickets: 'Tickets',
+  translations: 'Traductions',
   type: 'Type',
   username: "Nom d'usager",
   users_caption: 'Gérer les utilisateurs, les rôles et les accès aux applications',
   users: 'Utilisateurs',
+  value: 'Valeur',
+  values: 'Valeurs',
 };

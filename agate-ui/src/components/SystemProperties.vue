@@ -134,17 +134,11 @@
 
 <script setup lang="ts">
 import SystemPropertiesDialog from 'src/components/SystemPropertiesDialog.vue';
-
 const systemStore = useSystemStore();
 const { t } = useI18n();
 
 const showDialog = ref(false);
-
 const config = computed(() => systemStore.configuration);
-
-onMounted(() => {
-  systemStore.init();
-});
 
 const onEdit = () => {
   showDialog.value = true;
