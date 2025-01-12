@@ -57,7 +57,7 @@ export default {
     otp_disable_error: 'Failed to disable 2FA',
     otp_disabled: '2FA disabled',
     password_copied: 'Password copied',
-    password_hint: 'Password must contain at least one digit, one upper case alphabet, one lower case alphabet, one special character (which includes @#$%^&+=!) and no white spaces.',
+    password_hint: "{'Password must contain at least one digit, one upper case alphabet, one lower case alphabet, one special character (which includes @#$%^&+=!) and no white spaces.'}",
     password_min_length: 'Password must be at least {min} characters',
     password_required: 'Password is required',
     password: 'Password',

@@ -57,7 +57,7 @@ export default {
     otp_disable_error: 'Échec de la désactivation du 2FA',
     otp_disabled: '2FA désactivé',
     password_copied: 'Mot de passe copié',
-    password_hint: 'Le mot de passe doit contenir au moins un chiffre, une lettre majuscule, une lettre minuscule, un caractère spécial (qui inclut @#$%^&+=!) et aucun espace blanc.',
+    password_hint: "{'Le mot de passe doit contenir au moins un chiffre, une lettre majuscule, une lettre minuscule, un caractère spécial (qui inclut @#$%^&+=!) et aucun espace blanc.'}",
     password_min_length: 'Le mot de passe doit comporter au moins {min} caractères',
     password_required: 'Le mot de passe est requis',
     password: 'Mot de passe',
