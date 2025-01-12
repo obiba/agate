@@ -9,7 +9,17 @@
     <q-page class="q-pa-md">
       <div class="text-h6 q-mb-md">{{ t('properties') }}</div>
       <system-properties />
-      <system-user-attributes class="q-mt-md"/>
+      <div class="row q-mt-md">
+        <div class="col-12 col-sm-6">
+          <div class="text-h6">
+            {{ t('system.attributes.title') }}
+          </div>
+          <div class="text-help">
+            {{ t('system.attributes.hint') }}
+          </div>
+          <system-user-attributes />
+        </div>
+      </div>
     </q-page>
   </div>
 </template>
@@ -18,12 +28,10 @@
 import SystemProperties from 'src/components/SystemProperties.vue';
 import SystemUserAttributes from 'src/components/SystemUserAttributes.vue';
 
-
 const systemStore = useSystemStore();
 const { t } = useI18n();
 
 onMounted(() => {
   systemStore.init();
 });
-
 </script>

@@ -1,16 +1,5 @@
 <template>
   <div>
-    <div class="text-h6 q-mb-md">
-      {{ t('system.attributes.title') }}
-    </div>
-
-    <html-anchor-hint
-      class="text-help"
-      trKey="system.attributes.hint"
-      :text="t('translations').toLocaleLowerCase()"
-      url="/admin/translations"
-    />
-
     <q-table
       :rows="attributes"
       flat
@@ -59,13 +48,13 @@
             </div>
           </q-td>
           <q-td key="type" :props="props">
-            <span>{{ props.row.type }}</span>
+            <span>{{ t(`system.attributes.types.${props.row.type}`) }}</span>
           </q-td>
           <q-td key="description" :props="props">
             <span>{{ props.row.description }}</span>
           </q-td>
           <q-td key="values" :props="props" @mouseover="onOverRow(props.row)" @mouseleave="onLeaveRow(props.row)">
-            <q-chip class="q-ml-none" v-for="(value, index) in props.row.values" :key="index">
+            <q-chip size="sm" class="q-ml-none" v-for="(value, index) in props.row.values" :key="index">
               {{ value }}
             </q-chip>
           </q-td>
@@ -92,16 +81,9 @@
   </div>
 </template>
 
-<script lang="ts">
-export default defineComponent({
-  name: 'SystemUserAttributes',
-});
-</script>
-
 <script setup lang="ts">
 import type { AttributeConfigurationDto } from 'src/models/Agate';
 import { DefaultAlignment } from 'src/components/models';
-import HtmlAnchorHint from 'src/components/HtmlAnchorHint.vue';
 import ConfirmDialog from 'src/components/ConfirmDialog.vue';
 import SystemUserAttributesDialog from 'src/components/SystemUserAttributesDialog.vue';
 

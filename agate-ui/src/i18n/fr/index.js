@@ -236,19 +236,19 @@ export default {
     },
     attributes: {
       title: 'Attributs Utilisateur',
-      hint: 'Les attributs étendent les champs de description de l\'utilisateur ainsi que les demandes d\'adhésion. Localisez chaque attribut en créant une clé pour chaque langue, préfixée par <code>user-info.</code> dans la section {url}.',
+      hint: 'Les attributs utilisateur sont des champs personnalisés qui peuvent être utilisés pour stocker des informations supplémentaires sur les utilisateurs.',
       values_hint: 'Valeurs séparées par des virgules',
       add: 'Ajouter un Attribut',
-      update: 'Mettre à Jour l\'Attribut',
-      remove: 'Supprimer l\'Attribut',
-      remove_confirm: 'Veuillez confirmer la suppression de l\'attribut : {name}',
-      name_exists: 'Le nom de l\'attribut existe déjà',
+      update: "Mettre à Jour l'Attribut",
+      remove: "Supprimer l'Attribut",
+      remove_confirm: "Veuillez confirmer la suppression de l'attribut : {name}",
+      name_exists: "Le nom de l'attribut existe déjà",
       types: {
-        STRING: 'Chaîne',
+        STRING: 'Chaîne de caractères',
         NUMBER: 'Nombre',
         BOOLEAN: 'Booléen',
         INTEGER: 'Entier',
-      }
+      },
     },
   },
   ticket: {

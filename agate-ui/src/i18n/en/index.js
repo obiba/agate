@@ -236,7 +236,7 @@ export default {
     },
     attributes: {
       title: 'User Attributes',
-      hint: 'Attributes extend user description fields as wel as join requests. Localize each attribute by creating a key for each locale prefixed by <code>user-info.</code> in the {url} section.',
+      hint: 'Extend user profile with custom attributes.',
       values_hint: 'Comma separated values',
       add: 'Add Attribute',
       update: 'Update Attribute',
@@ -248,8 +248,8 @@ export default {
         NUMBER: 'Number',
         BOOLEAN: 'Boolean',
         INTEGER: 'Integer',
-      }
-    }
+      },
+    },
   },
   ticket: {
     events: 'Events',

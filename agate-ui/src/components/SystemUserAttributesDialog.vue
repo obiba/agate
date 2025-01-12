@@ -24,6 +24,7 @@
             :label="t('description')"
             class="q-mb-md"
             dense
+            autogrow
             type="textarea"
             lazy-rules
           />
@@ -43,15 +44,10 @@
             :label="t('values')"
             :hint="t('system.attributes.values_hint')"
             class="q-mb-md"
-            :disable="newAttribue.type !== 'STRING'"
+            v-show="newAttribue.type === 'STRING'"
           >
           </q-input>
-          <q-checkbox
-            v-model="newAttribue.required"
-            :label="t('required')"
-            class="q-mb-md"
-            dense
-          />
+          <q-checkbox v-model="newAttribue.required" :label="t('required')" class="q-mb-md" dense />
         </q-form>
       </q-card-section>
 
@@ -59,17 +55,11 @@
 
       <q-card-actions align="right" class="bg-grey-3">
         <q-btn flat :label="t('cancel')" color="secondary" @click="onCancel" v-close-popup />
-        <q-btn flat :label="t('save')"  color="primary" @click="onSave" />
+        <q-btn flat :label="t('save')" color="primary" @click="onSave" />
       </q-card-actions>
     </q-card>
   </q-dialog>
 </template>
-
-<script lang="ts">
-export default defineComponent({
-  name: 'SystemUserAttributesDialog',
-});
-</script>
 
 <script setup lang="ts">
 import type { AttributeConfigurationDto } from 'src/models/Agate';
@@ -102,7 +92,7 @@ const values = computed({
   set: (value) => {
     newAttribue.value.values = value.split(/\s*,\s*/);
   },
-})
+});
 const editMode = computed(() => !!props.attribute && !!props.attribute.name);
 const typeOptions = computed(() =>
   ['STRING', 'NUMBER', 'BOOLEAN', 'INTEGER'].map((value) => ({ label: t(`system.attributes.types.${value}`), value })),

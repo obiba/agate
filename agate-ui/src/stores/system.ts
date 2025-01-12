@@ -40,7 +40,7 @@ export const useSystemStore = defineStore('system', () => {
 
   async function updateAttribute(attribute: AttributeConfigurationDto) {
     if (attribute) {
-      const index = userAttributes.value.findIndex(attr => attr.name === attribute.name);
+      const index = userAttributes.value.findIndex((attr) => attr.name === attribute.name);
       if (index !== -1) {
         userAttributes.value[index] = attribute;
         return save({ ...configuration.value });
