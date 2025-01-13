@@ -39,6 +39,30 @@
                 @click="onShowDelete(props.row)"
               />
               <q-btn
+                v-if="props.row.status === 'PENDING'"
+                rounded
+                dense
+                flat
+                size="sm"
+                color="secondary"
+                :title="t('user.approve')"
+                :icon="toolsVisible[props.row.name] ? 'done' : 'none'"
+                class="q-ml-xs"
+                @click="onApprove(props.row)"
+              />
+              <q-btn
+                v-if="props.row.status === 'PENDING'"
+                rounded
+                dense
+                flat
+                size="sm"
+                color="secondary"
+                :title="t('user.reject')"
+                :icon="toolsVisible[props.row.name] ? 'dangerous' : 'none'"
+                class="q-ml-xs"
+                @click="onShowReject(props.row)"
+              />
+              <q-btn
                 v-if="props.row.realm === 'agate-user-realm'"
                 rounded
                 dense
@@ -63,30 +87,6 @@
                   </q-list>
                 </q-menu>
               </q-btn>
-              <q-btn
-                v-if="props.row.status === 'PENDING'"
-                rounded
-                dense
-                flat
-                size="sm"
-                color="secondary"
-                :title="t('user.approve')"
-                :icon="toolsVisible[props.row.name] ? 'done' : 'none'"
-                class="q-ml-xs"
-                @click="onApprove(props.row)"
-              />
-              <q-btn
-                v-if="props.row.status === 'PENDING'"
-                rounded
-                dense
-                flat
-                size="sm"
-                color="secondary"
-                :title="t('user.reject')"
-                :icon="toolsVisible[props.row.name] ? 'dangerous' : 'none'"
-                class="q-ml-xs"
-                @click="onShowReject(props.row)"
-              />
             </div>
           </q-td>
           <q-td key="fullName" :props="props"> {{ props.row.firstName }} {{ props.row.lastName }} </q-td>
