@@ -74,12 +74,6 @@
   </div>
 </template>
 
-<script lang="ts">
-export default defineComponent({
-  name: 'UserAttributesList',
-});
-</script>
-
 <script setup lang="ts">
 import type { AttributeDto } from 'src/models/Agate';
 import { DefaultAlignment } from 'src/components/models';

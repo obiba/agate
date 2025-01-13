@@ -40,12 +40,6 @@
   </q-dialog>
 </template>
 
-<script lang="ts">
-export default defineComponent({
-  name: 'UserAttributeDialog',
-});
-</script>
-
 <script setup lang="ts">
 import type { AttributeDto } from 'src/models/Agate';
 
