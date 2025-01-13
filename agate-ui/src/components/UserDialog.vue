@@ -167,7 +167,10 @@
             </div>
           </div>
         </q-form>
+
+        <user-attributes-list class="q-mt-lg" v-model="selected!.attributes" />
       </q-card-section>
+
 
       <q-separator />
 
@@ -180,9 +183,10 @@
 </template>
 
 <script setup lang="ts">
+import { copyToClipboard } from 'quasar';
 import type { UserDto } from 'src/models/Agate';
 import { notifyError, notifyInfo, notifySuccess } from 'src/utils/notify';
-import { copyToClipboard } from 'quasar';
+import UserAttributesList from 'src/components/attributes/UserAttributesList.vue';
 
 const { t } = useI18n();
 const userStore = useUserStore();

@@ -1,12 +1,15 @@
 <template>
   <div>
+    <span class="text-h6">
+      {{ t('user.attributes.title') }}
+    </span>
     <q-table
-      :rows="attributes"
+      :rows="filteredAttributes"
       flat
       row-key="name"
       :columns="columns"
       :pagination="initialPagination"
-      :hide-pagination="attributes.length <= initialPagination.rowsPerPage"
+      :hide-pagination="filteredAttributes.length <= initialPagination.rowsPerPage"
     >
       <template v-slot:top-left>
         <q-btn size="sm" icon="add" color="primary" :label="t('add')" @click="onAdd" />
@@ -47,19 +50,8 @@
               />
             </div>
           </q-td>
-          <q-td key="type" :props="props">
-            <span>{{ t(`system.attributes.types.${props.row.type}`) }}</span>
-          </q-td>
-          <q-td key="description" :props="props">
-            <span>{{ props.row.description }}</span>
-          </q-td>
-          <q-td key="values" :props="props" @mouseover="onOverRow(props.row)" @mouseleave="onLeaveRow(props.row)">
-            <q-chip size="sm" class="q-ml-none" v-for="(value, index) in props.row.values" :key="index">
-              {{ value }}
-            </q-chip>
-          </q-td>
-          <q-td key="required" :props="props">
-            <q-icon :name="props.row.required ? 'check_box' : 'check_box_outline_blank'" size="sm" dense />
+          <q-td key="value" :props="props">
+            <span>{{ props.row.value }}</span>
           </q-td>
         </q-tr>
       </template>
@@ -67,13 +59,14 @@
 
     <confirm-dialog
       v-model="showDelete"
-      :title="t('system.attributes.remove')"
-      :text="t('system.attributes.remove_confirm', { name: selected?.name })"
+      :title="t('user.attributes.remove')"
+      :text="t('user.attributes.remove_confirm', { name: selected?.name })"
       @confirm="onDelete"
     />
 
-    <system-user-attributes-dialog
+    <user-attribute-dialog
       v-model="showEdit"
+      :attributes="userAttributes"
       :attribute="selected"
       @saved="onSavedAttribute"
       @cancel="onCancel"
@@ -82,27 +75,40 @@
 </template>
 
 <script setup lang="ts">
-import type { AttributeConfigurationDto } from 'src/models/Agate';
+import type { AttributeDto } from 'src/models/Agate';
 import { DefaultAlignment } from 'src/components/models';
 import ConfirmDialog from 'src/components/ConfirmDialog.vue';
-import SystemUserAttributesDialog from 'src/components/SystemUserAttributesDialog.vue';
+import UserAttributeDialog from 'src/components/attributes/UserAttributeDialog.vue';
 
-const systemStore = useSystemStore();
+interface Props {
+  modelValue: AttributeDto[] | undefined;
+}
+
+const props = defineProps<Props>();
+const emit = defineEmits(['update:modelValue']);
 const { t } = useI18n();
 
-// const showDialog = ref(false);
+const userAttributes = computed({
+  get: () => props.modelValue ?? ([] as AttributeDto[]),
+  set: (value: AttributeDto[]) => {
+    emit('update:modelValue', value);
+  },
+});
+
 const toolsVisible = ref<{ [key: string]: boolean }>({});
 const initialPagination = ref({
   descending: false,
   page: 1,
-  rowsPerPage: 20,
+  rowsPerPage: 5,
 });
-const attributes = computed(
+
+const filteredAttributes = computed(
   () =>
-    systemStore.userAttributes?.filter((attr) =>
+    userAttributes.value.filter((attr) =>
       filter.value ? attr.name.toLowerCase().includes(filter.value.toLowerCase()) : true,
     ) || [],
 );
+
 const filter = ref('');
 const selected = ref();
 const showEdit = ref(false);
@@ -110,23 +116,14 @@ const showDelete = ref(false);
 
 const columns = computed(() => [
   { name: 'name', label: t('name'), field: 'name', align: DefaultAlignment },
-  { name: 'type', label: t('type'), field: 'type', align: DefaultAlignment },
-  { name: 'description', label: t('description'), field: 'description', align: DefaultAlignment },
-  {
-    name: 'values',
-    label: t('values'),
-    field: 'values',
-    format: (val: string) => (val || '').split(/\s*,\s*/),
-    align: DefaultAlignment,
-  },
-  { name: 'required', label: t('required'), field: 'required', align: DefaultAlignment },
+  { name: 'value', label: t('value'), field: 'value', align: DefaultAlignment },
 ]);
 
-function onOverRow(row: AttributeConfigurationDto) {
+function onOverRow(row: AttributeDto) {
   toolsVisible.value[row.name] = true;
 }
 
-function onLeaveRow(row: AttributeConfigurationDto) {
+function onLeaveRow(row: AttributeDto) {
   toolsVisible.value[row.name] = false;
 }
 
@@ -135,19 +132,23 @@ function onAdd() {
   showEdit.value = true;
 }
 
-function onShowEdit(row: AttributeConfigurationDto) {
+function onShowEdit(row: AttributeDto) {
   selected.value = row;
   showEdit.value = true;
 }
 
-function onShowDelete(row: AttributeConfigurationDto) {
+function onShowDelete(row: AttributeDto) {
   selected.value = row;
   showDelete.value = true;
 }
 
 function onDelete() {
   if (selected.value) {
-    systemStore.removeAttribute(selected.value);
+    const index = userAttributes.value.indexOf(selected.value);
+    if (index !== -1) {
+      userAttributes.value.splice(index, 1);
+      emit('update:modelValue', userAttributes.value)
+    }
   }
 }
 
@@ -155,9 +156,18 @@ function onCancel() {
   showEdit.value = false;
 }
 
-function onSavedAttribute() {
+function onSavedAttribute(newAttribute: AttributeDto) {
+  if (newAttribute) {
+    const index = userAttributes.value.findIndex((attr) => attr.name === newAttribute.name);
+    if (index !== -1) {
+      userAttributes.value[index] = newAttribute;
+    } else {
+      userAttributes.value.push(newAttribute);
+    }
+    emit('update:modelValue', userAttributes.value);
+  }
+
   selected.value = undefined;
   showEdit.value = false;
-  systemStore.init();
 }
 </script>

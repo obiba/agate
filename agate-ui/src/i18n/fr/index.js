@@ -96,6 +96,16 @@ export default {
       PENDING: "Usager en attente d'approbation.",
     },
     update_password: 'Mettre à jour le mot de passe',
+    attributes: {
+      title: 'Attributs utilisateur',
+      add: 'Ajouter un attribut d\'utilisateur',
+      update: "Mettre à Jour l'attribut d'utilisateur",
+      updated: 'Attribut utilisateur mis à jour avec succès',
+      update_failed: 'Échec de la mise à jour de l\'attribut utilisateur',
+      remove: "Supprimer l'attribut utilisateur",
+      remove_confirm: "Veuillez confirmer la suppression de l'attribut utilisateur : {name}",
+      name_exists: 'Le nom de l\'attribut utilisateur existe déjà',
+    }
   },
   realm: {
     activate: 'Activer',
@@ -240,6 +250,8 @@ export default {
       values_hint: 'Valeurs séparées par des virgules',
       add: 'Ajouter un Attribut',
       update: "Mettre à Jour l'Attribut",
+      updated: 'Attribut mis à jour',
+      update_failed: 'Échec de la mise à jour de l\'attribut',
       remove: "Supprimer l'Attribut",
       remove_confirm: "Veuillez confirmer la suppression de l'attribut : {name}",
       name_exists: "Le nom de l'attribut existe déjà",
