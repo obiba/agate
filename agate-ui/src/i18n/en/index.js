@@ -98,6 +98,7 @@ export default {
     update_password: 'Update password',
     attributes: {
       title: 'User Attributes',
+      hint: 'Additional user information.',
       add: 'Add User Attribute',
       update: 'Update User Attribute',
       updated: 'User attribute updated successfully',
