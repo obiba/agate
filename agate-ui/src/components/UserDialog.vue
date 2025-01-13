@@ -171,7 +171,6 @@
         <user-attributes-list class="q-mt-lg" v-model="selected!.attributes" />
       </q-card-section>
 
-
       <q-separator />
 
       <q-card-actions align="right" class="bg-grey-3">

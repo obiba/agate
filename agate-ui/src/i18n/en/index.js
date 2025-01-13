@@ -106,7 +106,7 @@ export default {
       remove: 'Remove User Attribute',
       remove_confirm: 'Please confirm the removal of the user attribute: {name}',
       name_exists: 'User attribute name already exists',
-    }
+    },
   },
   realm: {
     activate: 'Activate',
