@@ -186,7 +186,7 @@
 import { copyToClipboard } from 'quasar';
 import type { UserDto } from 'src/models/Agate';
 import { notifyError, notifyInfo, notifySuccess } from 'src/utils/notify';
-import UserAttributesList from 'src/components/attributes/UserAttributesList.vue';
+import UserAttributesList from 'src/components/UserAttributesList.vue';
 
 const { t } = useI18n();
 const userStore = useUserStore();
