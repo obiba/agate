@@ -55,11 +55,24 @@ const { t } = useI18n();
 const attributes = ref<AttributeDto[]>(props.modelValue ? [...props.modelValue] : []);
 
 function onDelete(index: number) {
-    attributes.value.splice(index, 1);
-    emit('update:modelValue', attributes.value.filter((attr) => attr.name && attr.value));
+  attributes.value.splice(index, 1);
+  emit('update:modelValue', getAttributes());
 }
 
 function onUpdate() {
-  emit('update:modelValue', attributes.value.filter((attr) => attr.name && attr.value));
+  emit('update:modelValue', getAttributes());
+}
+
+function getAttributes() {
+  const seen = new Set();
+  return attributes.value
+    .filter((attr) => attr.name && attr.value)
+    .filter((attr) => {
+      if (seen.has(attr.name)) {
+        return false; // Skip duplicates
+      }
+      seen.add(attr.name);
+      return true; // Include unique
+    });
 }
 </script>
