@@ -166,9 +166,11 @@
               />
             </div>
           </div>
+          <schema-form v-if="!!sfModel && !!sfSchema" class="q-pt-md" ref="sfForm" v-model="sfModel" :schema="sfSchema" />
         </q-form>
 
-        <user-attributes-list class="q-mt-lg" v-model="selected!.attributes" />
+        <user-attributes-list ref="sfForm" class="q-mt-lg" v-model="selected!.attributes" />
+
       </q-card-section>
 
       <q-separator />
@@ -186,6 +188,8 @@ import { copyToClipboard } from 'quasar';
 import type { UserDto } from 'src/models/Agate';
 import { notifyError, notifyInfo, notifySuccess } from 'src/utils/notify';
 import UserAttributesList from 'src/components/UserAttributesList.vue';
+import { attributesToSchema } from 'src/utils/attributes';
+import SchemaForm from 'src/components/SchemaForm.vue';
 
 const { t } = useI18n();
 const userStore = useUserStore();
@@ -201,6 +205,10 @@ interface DialogProps {
 
 const props = defineProps<DialogProps>();
 const emit = defineEmits(['update:modelValue', 'saved', 'cancel']);
+
+const sfForm = ref();
+const sfModel = ref();
+const sfSchema = ref();
 
 const showDialog = ref(props.modelValue);
 const selected = ref<UserDto>(
@@ -247,6 +255,7 @@ onMounted(() => {
   groupStore.init();
   applicationStore.init();
   realmStore.init();
+  systemStore.init();
   systemStore.initPub();
 });
 
@@ -265,6 +274,9 @@ watch(
     editMode.value = props.user !== undefined;
     password.value = '';
     passwordVisible.value = false;
+
+    sfModel.value = selected.value.attributes;
+    sfSchema.value = attributesToSchema(systemStore.userAttributes, '', '');
   },
 );
 
