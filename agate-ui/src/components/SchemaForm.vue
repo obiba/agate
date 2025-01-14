@@ -14,7 +14,7 @@
         </div>
       </form>
     </div>
-    <span v-if="!isFormValid" class="text-negative text-caption">{{ t('validation.missing_required_fields') }}</span>
+    <span v-if="!isFormValid" class="text-negative text-caption">{{ t('missing_required_fields') }}</span>
   </div>
 </template>
 

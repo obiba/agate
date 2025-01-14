@@ -17,7 +17,7 @@
     <div v-else-if="isString()">
       <q-select
         v-if="field.enum"
-        v-model="data"
+        v-model="dataString"
         :label="field.title"
         :hint="field.description"
         dense

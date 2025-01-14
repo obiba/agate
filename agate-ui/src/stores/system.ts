@@ -20,7 +20,7 @@ export const useSystemStore = defineStore('system', () => {
     return api.get('/config').then((response) => {
       if (response.status === 200) {
         configuration.value = response.data;
-        userAttributes.value = configuration.value.userAttributes;
+        userAttributes.value = configuration.value.userAttributes || [];
       }
       return response;
     });

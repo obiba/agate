@@ -292,6 +292,7 @@ export default {
   groups: 'Groupes',
   help: 'Aide',
   inherited_from: 'Hérité de: {parent}',
+  missing_required_fields: 'Champs obligatoires manquants',
   more_actions: "Plus d'actions",
   my_profile: 'Mon profil',
   name_hint: 'Le nom doit être unique',

@@ -166,11 +166,10 @@
               />
             </div>
           </div>
-          <schema-form v-if="!!sfModel && !!sfSchema" class="q-pt-md" ref="sfForm" v-model="sfModel" :schema="sfSchema" />
+          <!-- <schema-form class="q-pt-md" ref="sfForm" v-model="sfModel" :schema="  hema" /> -->
         </q-form>
 
-        <user-attributes-list ref="sfForm" class="q-mt-lg" v-model="selected!.attributes" />
-
+        <user-attributes-list class="q-mt-lg" v-model="selected!.attributes" />
       </q-card-section>
 
       <q-separator />
@@ -188,8 +187,8 @@ import { copyToClipboard } from 'quasar';
 import type { UserDto } from 'src/models/Agate';
 import { notifyError, notifyInfo, notifySuccess } from 'src/utils/notify';
 import UserAttributesList from 'src/components/UserAttributesList.vue';
-import { attributesToSchema } from 'src/utils/attributes';
-import SchemaForm from 'src/components/SchemaForm.vue';
+// import { attributesToSchema } from 'src/utils/attributes';
+// import SchemaForm from 'src/components/SchemaForm.vue';
 
 const { t } = useI18n();
 const userStore = useUserStore();
@@ -206,9 +205,8 @@ interface DialogProps {
 const props = defineProps<DialogProps>();
 const emit = defineEmits(['update:modelValue', 'saved', 'cancel']);
 
-const sfForm = ref();
-const sfModel = ref();
-const sfSchema = ref();
+// const sfForm = ref();
+// const sfSchema = ref();
 
 const showDialog = ref(props.modelValue);
 const selected = ref<UserDto>(
@@ -223,6 +221,17 @@ const selected = ref<UserDto>(
 const editMode = ref(false);
 const password = ref('');
 const passwordVisible = ref(false);
+
+// const sfModel = computed({
+//   get: () =>
+//     (selected.value.attributes || [])
+//       .filter((attr) => systemStore.userAttributes.find((ua) => ua.name === attr.name))
+//       .map((attr) => ({ [attr.name]: attr.value }))
+//       .reduce((a, b) => ({ ...a, ...b }), {}),
+//   set: (val) => {
+//     selected.value.attributes = Object.entries(val).map(([name, value]) => ({ name, value }));
+//   },
+// });
 
 const roleOptions = computed(() =>
   ['agate-user', 'agate-administrator'].map((role) => ({ label: t(`user.role.${role}`), value: role })),
@@ -248,7 +257,8 @@ const isValid = computed(
     selected.value.name.trim().length >= 3 &&
     selected.value.email &&
     validateEmailFormat(selected.value.email) &&
-    (!showPassword.value || (password.value && password.value.trim().length >= 8)),
+    (!showPassword.value || (password.value && password.value.trim().length >= 8)) /*&&
+    sfForm.value?.validate()*/,
 );
 
 onMounted(() => {
@@ -275,8 +285,7 @@ watch(
     password.value = '';
     passwordVisible.value = false;
 
-    sfModel.value = selected.value.attributes;
-    sfSchema.value = attributesToSchema(systemStore.userAttributes, '', '');
+    // sfSchema.value = attributesToSchema(systemStore.userAttributes, '', '');
   },
 );
 
