@@ -17,7 +17,7 @@
     <div v-else-if="isString()">
       <q-select
         v-if="field.enum"
-        v-model="data"
+        v-model="dataString"
         :label="field.title"
         :hint="field.description"
         dense
@@ -44,6 +44,19 @@
     <div v-else-if="isNumber()">
       <q-input
         v-model.number="dataNumber"
+        :label="field.title"
+        :hint="field.description"
+        type="number"
+        dense
+        :disable="disable"
+        class="q-mb-md"
+        :debounce="500"
+        @update:model-value="onUpdate"
+      />
+    </div>
+    <div v-else-if="isInteger()">
+      <q-input
+        v-model.number="dataInteger"
         :label="field.title"
         :hint="field.description"
         type="number"
@@ -132,6 +145,7 @@ const data = ref(props.modelValue);
 
 const dataString = ref('');
 const dataNumber = ref<number>();
+const dataInteger = ref<number>();
 const dataBoolean = ref<boolean>();
 const dataArray = ref<Array<FormObject>>([]);
 
@@ -147,6 +161,8 @@ function init() {
     dataString.value = data.value as string;
   } else if (isNumber()) {
     dataNumber.value = data.value as number;
+  } else if (isInteger()) {
+    dataInteger.value = data.value as number;
   } else if (isBoolean()) {
     dataBoolean.value = data.value as boolean;
   }
@@ -165,6 +181,10 @@ function isArray() {
 }
 
 function isNumber() {
+  return props.field.type === 'number';
+}
+
+function isInteger() {
   return props.field.type === 'integer';
 }
 
@@ -179,6 +199,13 @@ function onUpdate() {
     data.value = dataString.value;
   } else if (isNumber()) {
     data.value = dataNumber.value;
+  } else if (isInteger()) {
+    if (dataInteger.value) {
+      // Remove decimal part
+      data.value = dataInteger.value = Math.floor(dataInteger.value);
+    } else {
+      data.value = undefined;
+    }
   } else if (isBoolean()) {
     data.value = dataBoolean.value;
   }

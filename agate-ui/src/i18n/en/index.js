@@ -97,7 +97,7 @@ export default {
     },
     update_password: 'Update password',
     attributes: {
-      title: 'User Attributes',
+      title: 'Specific User Attributes',
       hint: 'Additional user information.',
       add: 'Add User Attribute',
       update: 'Update User Attribute',
@@ -246,7 +246,7 @@ export default {
       ANY: 'Email or mobile app',
     },
     attributes: {
-      title: 'User Attributes',
+      title: 'Custom User Attributes',
       hint: 'Extend user profile with custom attributes.',
       values_hint: 'Comma separated values',
       add: 'Add Attribute',
@@ -292,6 +292,7 @@ export default {
   groups: 'Groups',
   help: 'Help',
   inherited_from: 'Inherited from: {parent}',
+  missing_required_fields: 'Missing required fields',
   more_actions: 'More actions',
   my_profile: 'My Profile',
   name_hint: 'Name must be unique',

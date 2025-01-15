@@ -70,7 +70,7 @@ const systemStore = useSystemStore();
 
 interface DialogProps {
   modelValue: boolean;
-  attribute: AttributeConfigurationDto | null;
+  attribute?: AttributeConfigurationDto;
 }
 
 const props = defineProps<DialogProps>();
