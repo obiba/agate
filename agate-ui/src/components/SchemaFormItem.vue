@@ -164,7 +164,7 @@ function init() {
   } else if (isInteger()) {
     dataInteger.value = data.value as number;
   } else if (isBoolean()) {
-    dataBoolean.value = data.value as boolean;
+    dataBoolean.value = data.value === true || data.value === 'true';
   }
 }
 
