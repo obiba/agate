@@ -166,10 +166,14 @@
               />
             </div>
           </div>
-          <!-- <schema-form class="q-pt-md" ref="sfForm" v-model="sfModel" :schema="  hema" /> -->
         </q-form>
 
-        <user-attributes-list class="q-mt-lg" v-model="selected!.attributes" />
+        <div class="text-bold q-mt-lg">
+          {{ t('system.attributes.title') }}
+          <schema-form ref="sfForm" v-model="sfModel" :schema="sfSchema" />
+        </div>
+
+        <user-attributes-list class="q-mt-lg" v-model="selectedAttributes" />
       </q-card-section>
 
       <q-separator />
@@ -184,11 +188,16 @@
 
 <script setup lang="ts">
 import { copyToClipboard } from 'quasar';
-import type { UserDto } from 'src/models/Agate';
+import type { AttributeDto, UserDto } from 'src/models/Agate';
 import { notifyError, notifyInfo, notifySuccess } from 'src/utils/notify';
 import UserAttributesList from 'src/components/UserAttributesList.vue';
-// import { attributesToSchema } from 'src/utils/attributes';
-// import SchemaForm from 'src/components/SchemaForm.vue';
+import { attributesToSchema, splitAttributes } from 'src/utils/attributes';
+import SchemaForm from 'src/components/SchemaForm.vue';
+
+interface DialogProps {
+  modelValue: boolean;
+  user: UserDto | undefined;
+}
 
 const { t } = useI18n();
 const userStore = useUserStore();
@@ -196,18 +205,11 @@ const groupStore = useGroupStore();
 const applicationStore = useApplicationStore();
 const realmStore = useRealmStore();
 const systemStore = useSystemStore();
-
-interface DialogProps {
-  modelValue: boolean;
-  user: UserDto | undefined;
-}
-
 const props = defineProps<DialogProps>();
 const emit = defineEmits(['update:modelValue', 'saved', 'cancel']);
-
-// const sfForm = ref();
-// const sfSchema = ref();
-
+const sfForm = ref();
+const sfSchema = ref();
+const sfModel = ref();
 const showDialog = ref(props.modelValue);
 const selected = ref<UserDto>(
   props.user ??
@@ -221,17 +223,7 @@ const selected = ref<UserDto>(
 const editMode = ref(false);
 const password = ref('');
 const passwordVisible = ref(false);
-
-// const sfModel = computed({
-//   get: () =>
-//     (selected.value.attributes || [])
-//       .filter((attr) => systemStore.userAttributes.find((ua) => ua.name === attr.name))
-//       .map((attr) => ({ [attr.name]: attr.value }))
-//       .reduce((a, b) => ({ ...a, ...b }), {}),
-//   set: (val) => {
-//     selected.value.attributes = Object.entries(val).map(([name, value]) => ({ name, value }));
-//   },
-// });
+const selectedAttributes = ref([] as AttributeDto[]);
 
 const roleOptions = computed(() =>
   ['agate-user', 'agate-administrator'].map((role) => ({ label: t(`user.role.${role}`), value: role })),
@@ -257,8 +249,8 @@ const isValid = computed(
     selected.value.name.trim().length >= 3 &&
     selected.value.email &&
     validateEmailFormat(selected.value.email) &&
-    (!showPassword.value || (password.value && password.value.trim().length >= 8)) /*&&
-    sfForm.value?.validate()*/,
+    (!showPassword.value || (password.value && password.value.trim().length >= 8)) &&
+    sfForm.value?.validate(),
 );
 
 onMounted(() => {
@@ -285,7 +277,12 @@ watch(
     password.value = '';
     passwordVisible.value = false;
 
-    // sfSchema.value = attributesToSchema(systemStore.userAttributes, '', '');
+    if (value) {
+      sfSchema.value = attributesToSchema(systemStore.userAttributes, '', '');
+      const { custom, specific } = splitAttributes(selected.value.attributes || [], systemStore.userAttributes || []);
+      sfModel.value = custom.map((attr) => ({ [attr.name]: attr.value })).reduce((a, b) => ({ ...a, ...b }), {});
+      selectedAttributes.value = specific;
+    }
   },
 );
 
@@ -298,14 +295,19 @@ function onCancel() {
 }
 
 function onSave() {
+  selected.value.attributes = [
+    ...Object.entries(sfModel.value).map(([name, value]) => ({ name, value: value as string })),
+    ...selectedAttributes.value,
+  ];
+
   userStore
     .save(selected.value, password.value)
     .then(() => {
-      notifySuccess(t('user.saved'));
+      notifySuccess('user.saved');
       emit('saved');
     })
     .catch(() => {
-      notifyError(t('user.save_failed'));
+      notifyError('user.save_failed');
     })
     .finally(() => {
       emit('update:modelValue', false);

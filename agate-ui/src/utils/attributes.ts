@@ -1,4 +1,4 @@
-import type { AttributeConfigurationDto } from 'src/models/Agate';
+import type { AttributeConfigurationDto, AttributeDto } from 'src/models/Agate';
 import type { SchemaFormField, SchemaFormObject } from 'src/components/models';
 
 export function attributesToSchema(attributes: AttributeConfigurationDto[], title: string, description: string) {
@@ -21,7 +21,7 @@ export function attributesToSchema(attributes: AttributeConfigurationDto[], titl
     } as SchemaFormField;
 
     switch (attribute.type.toLowerCase()) {
-      // case 'number': // Not supported yet TODO
+      case 'number':
       case 'integer':
       case 'boolean':
       case 'string':
@@ -38,4 +38,24 @@ export function attributesToSchema(attributes: AttributeConfigurationDto[], titl
   });
 
   return schema;
+}
+
+export function splitAttributes(attributes: AttributeDto[], systemAttributes: AttributeConfigurationDto[]) {
+  const systemAttributesMap = new Map<string, AttributeConfigurationDto>();
+  systemAttributes.forEach((attribute: AttributeConfigurationDto) => {
+    systemAttributesMap.set(attribute.name, attribute);
+  });
+
+  const custom = [] as AttributeDto[];
+  const specific = [] as AttributeDto[];
+
+  (attributes || []).forEach((attribute: AttributeDto) => {
+    if (systemAttributesMap.has(attribute.name)) {
+      custom.push(attribute);
+    } else {
+      specific.push(attribute);
+    }
+  });
+
+  return { custom, specific };
 }

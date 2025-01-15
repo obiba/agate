@@ -97,7 +97,7 @@ export default {
     },
     update_password: 'Mettre à jour le mot de passe',
     attributes: {
-      title: 'Attributs utilisateur',
+      title: 'Attributs utilisateur spécifiques',
       hint: "Informations additionnelles sur l'usager.",
       add: "Ajouter un attribut d'utilisateur",
       update: "Mettre à Jour l'attribut d'utilisateur",
@@ -246,7 +246,7 @@ export default {
       ANY: 'Courriel ou application mobile',
     },
     attributes: {
-      title: 'Attributs Utilisateur',
+      title: 'Attributs utilisateur personnalisés',
       hint: 'Les attributs utilisateur sont des champs personnalisés qui peuvent être utilisés pour stocker des informations supplémentaires sur les utilisateurs.',
       values_hint: 'Valeurs séparées par des virgules',
       add: 'Ajouter un Attribut',

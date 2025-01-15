@@ -122,7 +122,7 @@
               <q-item-label caption>{{ t('system.otp_strategy_hint') }}</q-item-label>
             </q-item-section>
             <q-item-section avatar>
-              {{ t(`system.otp_strategies.${config.enforced2FAStrategy}`) }}
+              {{ config.enforced2FAStrategy ? t(`system.otp_strategies.${config.enforced2FAStrategy}`) : '' }}
             </q-item-section>
           </q-item>
         </q-list>
