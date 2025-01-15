@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="schema" :class="{ 'o-border-negative rounded-borders': !isFormValid }">
+    <div v-if="schema">
       <form autocomplete="off">
         <div v-if="schema.title" class="text-help">{{ schema.title }}</div>
         <div v-if="schema.description" class="text-hint q-mb-sm">{{ schema.description }}</div>
@@ -14,7 +14,7 @@
         </div>
       </form>
     </div>
-    <span v-if="!isFormValid" class="text-negative text-caption">{{ t('missing_required_fields') }}</span>
+    <div v-if="!isFormValid" class="text-negative text-caption q-mb-sm">{{ t('missing_required_fields') }}</div>
   </div>
 </template>
 
@@ -75,12 +75,3 @@ defineExpose({
   validate,
 });
 </script>
-
-<style lang="scss" scoped>
-.o-border-negative {
-  color: $negative !important;
-  outline: 1px solid $negative !important;
-  min-height: 90%;
-  padding: 0.3rem !important;
-}
-</style>

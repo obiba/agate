@@ -27,6 +27,7 @@ export function attributesToSchema(attributes: AttributeConfigurationDto[], titl
       case 'string':
         if (type === 'string' && attribute.values) {
           field.enum = attribute.values.map((value: string) => ({ key: value, title: value }));
+          field.default = attribute.values[0] || '';
         }
 
         schema.items.push(field);

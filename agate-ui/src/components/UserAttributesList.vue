@@ -1,11 +1,5 @@
 <template>
   <div>
-    <div class="text-bold">
-      {{ t('user.attributes.title') }}
-    </div>
-    <div class="text-hint q-mb-sm">
-      {{ t('user.attributes.hint') }}
-    </div>
     <q-list>
       <q-item v-for="(entry, idx) in attributes" :key="idx" class="q-pa-none">
         <q-item-section>

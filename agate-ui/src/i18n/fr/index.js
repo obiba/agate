@@ -97,7 +97,7 @@ export default {
     },
     update_password: 'Mettre à jour le mot de passe',
     attributes: {
-      title: 'Attributs utilisateur spécifiques',
+      title: 'Attributs utilisateur',
       hint: "Informations additionnelles sur l'usager.",
       add: "Ajouter un attribut d'utilisateur",
       update: "Mettre à Jour l'attribut d'utilisateur",

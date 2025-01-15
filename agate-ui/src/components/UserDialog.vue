@@ -169,11 +169,13 @@
         </q-form>
 
         <div class="text-bold q-mt-lg">
-          {{ t('system.attributes.title') }}
-          <schema-form ref="sfForm" v-model="sfModel" :schema="sfSchema" />
+          {{ t('user.attributes.title') }}
         </div>
-
-        <user-attributes-list class="q-mt-lg" v-model="selectedAttributes" />
+        <div class="text-hint q-mb-sm">
+          {{ t('user.attributes.hint') }}
+        </div>
+        <schema-form ref="sfForm" v-model="sfModel" :schema="sfSchema" />
+        <user-attributes-list v-model="selectedAttributes" />
       </q-card-section>
 
       <q-separator />
