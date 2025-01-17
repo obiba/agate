@@ -12,10 +12,10 @@
       <div class="row q-mt-md">
         <div class="col-md-6 col-sm-12">
           <div class="text-h6">
-            {{ t('system.translations') }}
+            {{ t('system.translations.title') }}
           </div>
           <div class="text-help">
-            {{ t('system.translations_hint') }}
+            {{ t('system.translations.hint') }}
           </div>
           <system-custom-translations />
         </div>

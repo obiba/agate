@@ -40,10 +40,6 @@ export default {
     save_failed: "Échec de l'enregistrement du groupe",
     saved: 'Groupe enregistré',
   },
-  'user-info': {
-    'toto': 'FR Toto',
-    'toto-desc': 'FR Toto Description',
-  },
   user: {
     add: 'Ajouter un usager',
     applications_hint: 'Les usagers peuvent être directement accordés un accès aux applications.',
@@ -244,8 +240,15 @@ export default {
     signup_whitelist: "Liste blanche d'inscription",
     sso_domain_hint: 'Domaine de connexion unique.',
     sso_domain: 'Domaine SSO',
-    translations: 'Traductions personnalisés',
-    translations_hint: 'Remplacer les traductions par défaut ou en ajouter de nouvelles',
+    translations: {
+      title: 'Traductions personnalisés',
+      hint: 'Remplacer les traductions par défaut ou en ajouter de nouvelles',
+      name_exists: "La clé de traduction existe déjà",
+      add: 'Ajouter une traduction',
+      add_hint: 'Ajouter la traduction en \'{language}\' - autres langues modifiables dans Paramètres',
+      remove_confirm: 'Veuillez confirmer la suppression de la traduction | Veuillez confirmer la suppression des {count} traductions',
+      apply_changes: 'Cliquez sur Appliquer à jour pour sauvegarder',
+    },
     otp_strategies: {
       NONE: 'Aucun',
       APP: 'Application mobile',
@@ -253,7 +256,7 @@ export default {
     },
     attributes: {
       title: 'Attributs utilisateur personnalisés',
-      hint: 'Les attributs utilisateur sont des champs personnalisés qui peuvent être utilisés pour stocker des informations supplémentaires sur les utilisateurs.',
+      hint: 'Ajoutez des attributs personnalisés au profil utilisateur et localisez-les avec des clés préfixées par \'user-info.\' dans les traductions personnalisées (par ex. : \'user-info.institut\').',
       values_hint: 'Valeurs séparées par des virgules',
       add: 'Ajouter un Attribut',
       update: "Mettre à Jour l'Attribut",
@@ -281,8 +284,10 @@ export default {
   administration: 'Administration',
   applications_caption: "Gérer les applications, les identifications et les fournisseurs d'identité",
   applications: 'Applications',
+  apply: 'Appliquer',
   cancel: 'Annuler',
   content_management: 'Gestion de contenu',
+  confirm: 'Confirmer',
   delete: 'Supprimer',
   description: 'Description',
   docs: 'Docs',

@@ -1,7 +1,14 @@
 <template>
   <div>
     <div class="q-px-md">
-      <q-tabs v-model="tab" dense class="text-grey" active-color="primary" indicator-color="primary" align="justify">
+      <q-tabs
+        v-model="selectedLanguage"
+        dense
+        class="text-grey"
+        active-color="primary"
+        indicator-color="primary"
+        align="justify"
+      >
         <q-tab v-for="language in languages" :key="language" :name="language" :label="language" />
       </q-tabs>
 
@@ -9,7 +16,6 @@
     </div>
 
     <div class="q-px-md">
-      <pre>{{ selectedTranslations.length }}</pre>
       <q-table
         :rows="translations"
         flat
@@ -22,7 +28,7 @@
       >
         <template v-slot:top-left>
           <div class="q-gutter-md">
-            <q-btn size="sm" icon="check" color="primary" :label="t('save')" @click="onUpdate" />
+            <q-btn size="sm" icon="add" color="primary" :label="t('add')" @click="onAdd" />
             <q-btn
               size="sm"
               icon="delete"
@@ -47,17 +53,31 @@
         </template>
         <template v-slot:body-cell-value="props">
           <q-td :props="props">
-            <q-input type=text v-model="props.row.value" dense clearable  @clear="onClearValue(props.row)"/>
+            <q-input type="text" v-model="props.row.value" dense @update:model-value="onValueChanged(props.row)" />
           </q-td>
         </template>
       </q-table>
+      <div v-if="dirty" class="box-warning q-mt-md row items-center justify-center">
+        <div class="col">{{ t('system.translations.apply_changes') }}</div>
+        <div class="col-auto">
+          <q-btn size="sm" icon="check" color="secondary" :label="t('apply')" :disable="!dirty" @click="onApply" />
+        </div>
+      </div>
     </div>
 
     <confirm-dialog
       v-model="showDelete"
       :title="t('user.remove')"
-      :text="t('system.translations.remove', { count: selectedTranslations.length })"
+      :text="t('system.translations.remove_confirm', { count: selectedTranslations.length })"
       @confirm="doDelete"
+    />
+
+    <system-custom-translations-dialog
+      v-model="showAdd"
+      :translation-keys="translationKeys"
+      :language="languages[0] || systemStore.defaultLanguage"
+      @added="onAdded"
+      @cancel="showAdd = false"
     />
   </div>
 </template>
@@ -66,6 +86,8 @@
 import type { AttributeDto } from 'src/models/Agate';
 import { DefaultAlignment } from 'src/components/models';
 import { translationAsMap, mapAsTranslation } from 'src/utils/translations';
+import ConfirmDialog from 'src/components/ConfirmDialog.vue';
+import SystemCustomTranslationsDialog from 'src/components/SystemCustomTranslationsDialog.vue';
 
 const systemStore = useSystemStore();
 const { t } = useI18n();
@@ -73,32 +95,63 @@ const { t } = useI18n();
 const initialPagination = ref({
   descending: false,
   page: 1,
-  rowsPerPage: 20,
+  rowsPerPage: 10,
 });
 
 const filter = ref('');
+const dirty = ref(false);
+const showAdd = ref(false);
 const showDelete = ref(false);
-const tab = ref('en');
 const allTranslations = ref<Record<string, AttributeDto[]>>({});
+const selectedLanguage = ref();
 const translations = computed(
   () =>
-    allTranslations.value[tab.value]?.filter((app) =>
+    allTranslations.value[selectedLanguage.value]?.filter((app) =>
       filter.value ? app.name.toLowerCase().includes(filter.value.toLowerCase()) : true,
     ) || [],
 );
+const translationKeys = computed(() => (allTranslations.value[systemStore.defaultLanguage] || []).map((x) => x.name));
 const selectedTranslations = ref<AttributeDto[]>([]);
-const languages = computed(() => systemStore.configuration.languages);
+const languages = computed<string[]>(() => systemStore.configuration.languages || []);
 const columns = computed(() => [
   { name: 'name', label: t('name'), field: 'name', align: DefaultAlignment },
   { name: 'value', label: t('value'), field: 'value', align: DefaultAlignment },
 ]);
 
-function onClearValue(row: AttributeDto) {
-  row.value = row.name;
+function onValueChanged(row: AttributeDto) {
+  dirty.value = true;
+  if (!row.value || row.value.length === 0) {
+    row.value = row.name;
+  }
 }
 
-function onUpdate() {
-  systemStore.updateTranslation(mapAsTranslation(allTranslations.value));
+function onAdd() {
+  showAdd.value = true;
+}
+
+function onAdded(newTranslation: AttributeDto) {
+  selectedTranslations.value.splice(0);
+  dirty.value = true;
+  showAdd.value = false;
+
+  languages.value.forEach((lang) => {
+    if (!allTranslations.value[lang]) {
+      allTranslations.value[lang] = [];
+    }
+
+    allTranslations.value[lang].push({
+      name: newTranslation.name,
+      value: newTranslation.value || newTranslation.name,
+    });
+  });
+}
+
+function onApply() {
+  dirty.value = false;
+  selectedTranslations.value.splice(0);
+  systemStore.updateTranslation(mapAsTranslation(allTranslations.value)).then(() => {
+    systemStore.init();
+  });
 }
 
 function onDelete() {
@@ -106,13 +159,24 @@ function onDelete() {
 }
 
 function doDelete() {
+  dirty.value = true;
+  selectedTranslations.value.forEach((translation) => {
+    languages.value.forEach((lang) => {
+      if (allTranslations.value[lang]) {
+        allTranslations.value[lang] = allTranslations.value[lang].filter((x) => x.name !== translation.name);
+      }
+    });
+  });
 
+  selectedTranslations.value.splice(0);
+  showDelete.value = false;
 }
 
 watch(
   () => systemStore.configuration.translations,
   (newValue) => {
     if (newValue) {
+      selectedLanguage.value = systemStore.defaultLanguage;
       allTranslations.value = translationAsMap(newValue);
     }
   },

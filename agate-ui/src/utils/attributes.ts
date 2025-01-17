@@ -1,5 +1,7 @@
 import type { AttributeConfigurationDto, AttributeDto } from 'src/models/Agate';
 import type { SchemaFormField, SchemaFormObject } from 'src/components/models';
+import { t } from 'src/boot/i18n';
+
 
 export function attributesToSchema(attributes: AttributeConfigurationDto[], title: string, description: string) {
   const schema = {
@@ -11,13 +13,14 @@ export function attributesToSchema(attributes: AttributeConfigurationDto[], titl
     required: [],
   } as SchemaFormObject;
 
+
   (attributes || []).forEach((attribute: AttributeConfigurationDto) => {
     const type = attribute.type.toLowerCase();
     const field = {
       key: attribute.name,
       type: type,
-      title: attribute.name,
-      description: attribute.description,
+      title: t(`user-info.${attribute.name}`) || attribute.name,
+      description: t(`user-info.${attribute.description || ''}`) || attribute.description,
     } as SchemaFormField;
 
     switch (attribute.type.toLowerCase()) {

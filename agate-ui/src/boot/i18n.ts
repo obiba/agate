@@ -2,6 +2,8 @@ import { boot } from 'quasar/wrappers';
 import { createI18n } from 'vue-i18n';
 import messages from 'src/i18n';
 import { Quasar, Cookies } from 'quasar';
+import { translationAsMap } from 'src/utils/translations';
+import type { AttributeDto } from 'src/models/Agate';
 
 export type MessageLanguages = keyof typeof messages;
 // Type-define 'en-US' as the master schema for the resource
@@ -40,6 +42,28 @@ function getCurrentLocale(): string {
   return detectedLocale || locales[0] || 'en';
 }
 
+function mergeWithCustomMessages() {
+  const serverTranslations = translationAsMap(systemStore.configuration.translations || []);
+
+  Object.keys(serverTranslations).forEach((lang) => {
+    const existingMessages = i18n.global.getLocaleMessage(lang) || {};
+    const newMessages = (serverTranslations[lang] || ([] as AttributeDto[])).reduce(
+      (acc, tr) => {
+        if (tr.name && tr.value) {
+          acc[tr.name] = tr.value;
+        }
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
+
+    i18n.global.setLocaleMessage(lang, {
+      ...existingMessages,
+      ...newMessages,
+    });
+  });
+}
+
 const i18n = createI18n<{ message: MessageSchema }, MessageLanguages>({
   locale: getCurrentLocale(),
   fallbackLocale: locales[0] || 'en',
@@ -52,6 +76,17 @@ export default boot(({ app }) => {
   // Set i18n instance on app
   app.use(i18n);
 });
+
+const systemStore = useSystemStore();
+
+watch(
+  () => systemStore.configuration.translations,
+  (newValue) => {
+    if (newValue) {
+      mergeWithCustomMessages();
+    }
+  },
+);
 
 const t = i18n.global.t;
 

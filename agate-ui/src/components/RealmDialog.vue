@@ -21,7 +21,7 @@
               (val) => (val?.trim().length ?? 0) >= 3 || t('name_min_length', { min: 3 }),
             ]"
             class="q-mb-md"
-          />  
+          />
           <localized-input
             v-model="selected.title"
             :label="t('realm.title')"

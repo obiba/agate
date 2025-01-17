@@ -4,6 +4,17 @@
   <@spring.messageText code code/>
 </#macro>
 
+<#function messageWithFallback prefix attributeName>
+  <#assign fullKey = prefix + attributeName>
+  <#assign message1><@message fullKey /></#assign>
+  <#assign message2><@message attributeName /></#assign>
+  <#if message1?has_content>
+    <#return message1>
+  <#else>
+    <#return message2>
+  </#if>
+</#function>
+
 <!-- Context path setting -->
 <#assign contextPath = "${config.contextPath}"/>
 

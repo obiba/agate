@@ -7,6 +7,7 @@ export const useSystemStore = defineStore('system', () => {
   const configuration = ref<ConfigurationDto>({} as ConfigurationDto);
   const userAttributes = ref<AttributeConfigurationDto[]>([]);
   const translations = ref<LocalizedStringDto[]>([]);
+  const defaultLanguage = computed(() => (configuration.value.languages || [])[0] || 'en');
 
   async function initPub() {
     return api.get('/config/_public').then((response) => {
@@ -30,7 +31,7 @@ export const useSystemStore = defineStore('system', () => {
 
   async function addAttribute(attribute: AttributeConfigurationDto) {
     if (attribute) {
-      if (!userAttributes.value) {
+      if (!configuration.value.userAttributes) {
         configuration.value.userAttributes = [];
         userAttributes.value = configuration.value.userAttributes;
       }
@@ -79,6 +80,7 @@ export const useSystemStore = defineStore('system', () => {
     userAttributes,
     translations,
     configurationPublic,
+    defaultLanguage,
     init,
     initPub,
     addAttribute,
