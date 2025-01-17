@@ -40,6 +40,10 @@ export default {
     save_failed: "Échec de l'enregistrement du groupe",
     saved: 'Groupe enregistré',
   },
+  'user-info': {
+    'toto': 'FR Toto',
+    'toto-desc': 'FR Toto Description',
+  },
   user: {
     add: 'Ajouter un usager',
     applications_hint: 'Les usagers peuvent être directement accordés un accès aux applications.',
@@ -240,6 +244,8 @@ export default {
     signup_whitelist: "Liste blanche d'inscription",
     sso_domain_hint: 'Domaine de connexion unique.',
     sso_domain: 'Domaine SSO',
+    translations: 'Traductions personnalisés',
+    translations_hint: 'Remplacer les traductions par défaut ou en ajouter de nouvelles',
     otp_strategies: {
       NONE: 'Aucun',
       APP: 'Application mobile',
@@ -315,6 +321,7 @@ export default {
   tickets: 'Tickets',
   translations: 'Traductions',
   type: 'Type',
+  update: 'Mettre à jour',
   username: "Nom d'usager",
   users_caption: 'Gérer les utilisateurs, les rôles et les accès aux applications',
   users: 'Utilisateurs',

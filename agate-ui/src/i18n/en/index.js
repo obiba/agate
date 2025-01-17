@@ -240,6 +240,8 @@ export default {
     signup_whitelist: 'Signup whitelist',
     sso_domain_hint: 'Single sign-on domain.',
     sso_domain: 'SSO Domain',
+    translations: "Custom Translations",
+    translations_hint: 'Override the default translations or add new ones.',
     otp_strategies: {
       NONE: 'None',
       APP: 'Mobile app',
@@ -315,6 +317,7 @@ export default {
   tickets: 'Tickets',
   translations: 'Translations',
   type: 'Type',
+  update: 'Update',
   username: 'Username',
   users_caption: 'Manage users, assign role and groups to grant applications access',
   users: 'Users',
