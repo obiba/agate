@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="q-px-md">
+    <div class="q-mr-md">
       <q-tabs
         v-model="selectedLanguage"
         dense
@@ -15,7 +15,7 @@
       <q-separator />
     </div>
 
-    <div class="q-px-md">
+    <div class="q-mr-md">
       <q-table
         :rows="translations"
         flat
@@ -58,9 +58,9 @@
         </template>
       </q-table>
       <div v-if="dirty" class="box-warning q-mt-md row items-center justify-center">
-        <div class="col">{{ t('system.translations.apply_changes') }}</div>
+        <div class="col">{{ t('system.translations.save_changes') }}</div>
         <div class="col-auto">
-          <q-btn size="sm" icon="check" color="secondary" :label="t('apply')" :disable="!dirty" @click="onApply" />
+          <q-btn size="sm" icon="check" color="secondary" :label="t('save')" :disable="!dirty" @click="onApply" />
         </div>
       </div>
     </div>
@@ -175,8 +175,9 @@ function doDelete() {
 watch(
   () => systemStore.configuration.translations,
   (newValue) => {
+    selectedLanguage.value = systemStore.defaultLanguage;
+
     if (newValue) {
-      selectedLanguage.value = systemStore.defaultLanguage;
       allTranslations.value = translationAsMap(newValue);
     }
   },

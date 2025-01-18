@@ -31,6 +31,7 @@ import org.apache.shiro.util.ByteSource;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.obiba.agate.config.MetricsConfiguration;
 import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.LocalizedString;
@@ -54,12 +55,17 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+
 import jakarta.inject.Inject;
+
 import java.io.File;
 import java.io.IOException;
 import java.security.Key;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import static com.jayway.jsonpath.Configuration.defaultConfiguration;
 
@@ -90,12 +96,12 @@ public class ConfigurationService {
 
   @Inject
   public ConfigurationService(
-      AgateConfigRepository agateConfigRepository,
-      RealmConfigService realmConfigService,
-      EventBus eventBus,
-      Environment env,
-      ApplicationContext applicationContext,
-      ObjectMapper objectMapper) {
+    AgateConfigRepository agateConfigRepository,
+    RealmConfigService realmConfigService,
+    EventBus eventBus,
+    Environment env,
+    ApplicationContext applicationContext,
+    ObjectMapper objectMapper) {
     this.agateConfigRepository = agateConfigRepository;
     this.realmConfigService = realmConfigService;
     this.eventBus = eventBus;
@@ -150,8 +156,8 @@ public class ConfigurationService {
   public void save(@Valid Configuration configuration) {
     Configuration savedConfiguration = getOrCreateConfiguration();
     BeanUtils
-        .copyProperties(configuration, savedConfiguration, "id", "version", "createdBy", "createdDate", "lastModifiedBy",
-            "lastModifiedDate", "secretKey", "agateVersion");
+      .copyProperties(configuration, savedConfiguration, "id", "version", "createdBy", "createdDate", "lastModifiedBy",
+        "lastModifiedDate", "secretKey", "agateVersion");
     if (configuration.getAgateVersion() != null) savedConfiguration.setAgateVersion(configuration.getAgateVersion());
     agateConfigRepository.save(savedConfiguration);
     cachedConfiguration = null;
@@ -223,14 +229,14 @@ public class ConfigurationService {
   public JSONObject getJoinConfiguration(String locale, String application, boolean forEditing) throws JSONException, IOException {
     Configuration config = getConfiguration();
     List<RealmConfig> realms = Strings.isNullOrEmpty(application)
-        ? realmConfigService.findAllRealmsForSignup()
-        : realmConfigService.findAllRealmsForSignupAndApplication(application);
+      ? realmConfigService.findAllRealmsForSignup()
+      : realmConfigService.findAllRealmsForSignupAndApplication(application);
 
     JSONObject form = UserFormBuilder.newBuilder(config, locale, applicationContext.getResource("classpath:join/formDefinition.json"))
-        .realms(realms)
-        .attributes(config.getUserAttributes())
-        .addUsername(forEditing || config.isJoinWithUsername())
-        .build();
+      .realms(realms)
+      .attributes(config.getUserAttributes())
+      .addUsername(forEditing || config.isJoinWithUsername())
+      .build();
 
     return new TranslationUtils().translate(form, getTranslator(locale));
   }
@@ -247,9 +253,9 @@ public class ConfigurationService {
     List<RealmConfig> realms = realmConfigService.findAllRealmsForSignup();
 
     JSONObject form = UserFormBuilder.newBuilder(config, locale, applicationContext.getResource("classpath:join/formDefinition.json"))
-        .realms(realms)
-        .attributes(config.getUserAttributes())
-        .build();
+      .realms(realms)
+      .attributes(config.getUserAttributes())
+      .build();
 
     return new TranslationUtils().translate(form, getTranslator(locale));
   }
@@ -260,32 +266,32 @@ public class ConfigurationService {
     JSONObject form = new JSONObject();
 
     form.put(
-        "form",
-        translationUtils.translate(RealmConfigFormBuilder.newBuilder(forEditing).build(), translator).toString()
+      "form",
+      translationUtils.translate(RealmConfigFormBuilder.newBuilder(forEditing).build(), translator).toString()
     );
     form.put(
-        "userInfoMapping",
-        translationUtils.translate(RealmUserInfoFormBuilder.newBuilder(extractUserInfoFieldsToMap(forEditing)).build(), translator).toString()
+      "userInfoMapping",
+      translationUtils.translate(RealmUserInfoFormBuilder.newBuilder(extractUserInfoFieldsToMap(forEditing)).build(), translator).toString()
     );
     form.put(
-        "userInfoMappingDefaults",
-        UserInfoFieldsMappingDefaultsFactory.create()
+      "userInfoMappingDefaults",
+      UserInfoFieldsMappingDefaultsFactory.create()
     );
     form.put(
-        AgateRealm.AGATE_LDAP_REALM.getName(),
-        translationUtils.translate(LdapRealmConfigFormBuilder.newBuilder().build(), translator).toString()
+      AgateRealm.AGATE_LDAP_REALM.getName(),
+      translationUtils.translate(LdapRealmConfigFormBuilder.newBuilder().build(), translator).toString()
     );
     form.put(
-        AgateRealm.AGATE_JDBC_REALM.getName(),
-        translationUtils.translate(JdbcRealmConfigFormBuilder.newBuilder().build().toString(), translator)
+      AgateRealm.AGATE_JDBC_REALM.getName(),
+      translationUtils.translate(JdbcRealmConfigFormBuilder.newBuilder().build().toString(), translator)
     );
     form.put(
-        AgateRealm.AGATE_AD_REALM.getName(),
-        translationUtils.translate(ActiveDirectoryRealmConfigFormBuilder.newBuilder().build().toString(), translator)
+      AgateRealm.AGATE_AD_REALM.getName(),
+      translationUtils.translate(ActiveDirectoryRealmConfigFormBuilder.newBuilder().build().toString(), translator)
     );
     form.put(
-        AgateRealm.AGATE_OIDC_REALM.getName(),
-        translationUtils.translate(OidcRealmConfigFormBuilder.newBuilder().build().toString(), translator)
+      AgateRealm.AGATE_OIDC_REALM.getName(),
+      translationUtils.translate(OidcRealmConfigFormBuilder.newBuilder().build().toString(), translator)
     );
 
     return form;
@@ -421,6 +427,46 @@ public class ConfigurationService {
   }
 
   /**
+   * Update translations based on additions and removals of locales.
+   *
+   * @param savedConfig
+   * @param updatedConfig
+   */
+  private void updateTranslations(Configuration savedConfig, Configuration updatedConfig) {
+    LocalizedString translations = updatedConfig.getTranslations();
+    if (translations == null) return;
+
+    HashSet<Locale> saved = new HashSet<>(savedConfig.getLocales());
+    HashSet<Locale> updated = new HashSet<>(updatedConfig.getLocales());
+
+    Set<Locale> addedLocales = new HashSet<>(updated);
+    addedLocales.removeAll(saved);
+    Set<Locale> removedLocales = new HashSet<>(saved);
+    removedLocales.removeAll(updated);
+    Set<Locale> commonLocales = new HashSet<>(saved);
+    commonLocales.retainAll(updated);
+
+    if (!removedLocales.isEmpty()) {
+      updatedConfig.getTranslations().keySet().removeIf(locale -> removedLocales.contains(Locale.forLanguageTag(locale)));
+    }
+
+    if (!addedLocales.isEmpty()) {
+      Locale defaultLocale = commonLocales.stream()
+        .filter(locale -> locale.getLanguage().equalsIgnoreCase("en"))
+        .findFirst()
+        .orElse(commonLocales.isEmpty() ? null : commonLocales.iterator().next());
+
+      for (Locale locale : addedLocales) {
+        if (defaultLocale != null) {
+          translations.put(locale.toLanguageTag(), updatedConfig.getTranslations().get(defaultLocale.toLanguageTag()));
+        } else {
+          translations.put(locale.toLanguageTag(), "{}");
+        }
+      }
+    }
+  }
+
+  /**
    * Apply settings that are modified only internally.
    *
    * @param updatedConfig
@@ -431,6 +477,7 @@ public class ConfigurationService {
     updatedConfig.setSecretOtp(savedConfig.getSecretOtp());
     updatedConfig.setGroupsSeeded(savedConfig.isGroupsSeeded());
     updatedConfig.setApplicationsSeeded(savedConfig.isApplicationsSeeded());
+    updateTranslations(savedConfig, updatedConfig);
     return updatedConfig;
   }
 }

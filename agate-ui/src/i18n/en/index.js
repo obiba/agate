@@ -247,7 +247,7 @@ export default {
       add: 'Add Translation',
       add_hint: 'Add \'{language}\' translation - other languages can be edited in Settings.',
       remove_confirm: 'Please confirm the removal of the translation | Please confirm the removal of the {count} translations',
-      apply_changes: 'Click Apply to save changes',
+      save_changes: 'Save changes to avoid losing your updates',
     },
     otp_strategies: {
       NONE: 'None',

@@ -28,7 +28,7 @@
 
       <q-card-actions align="right" class="bg-grey-3">
         <q-btn flat :label="t('cancel')" color="secondary" @click="onCancel" v-close-popup />
-        <q-btn flat :label="t('save')" color="primary" @click="onSave" />
+        <q-btn flat :label="t('add')" color="primary" @click="onSave" />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -88,7 +88,7 @@ async function onSave() {
     if (!newAttribue.value.value) {
       newAttribue.value.value = newAttribue.value.name;
     }
-    
+
     emit('added', newAttribue.value);
     emit('update:modelValue', false);
   }

@@ -247,7 +247,7 @@ export default {
       add: 'Ajouter une traduction',
       add_hint: 'Ajouter la traduction en \'{language}\' - autres langues modifiables dans Paramètres',
       remove_confirm: 'Veuillez confirmer la suppression de la traduction | Veuillez confirmer la suppression des {count} traductions',
-      apply_changes: 'Cliquez sur Appliquer à jour pour sauvegarder',
+      save_changes: 'Sauvegarder les modifications pour éviter de perdre vos ajouts',
     },
     otp_strategies: {
       NONE: 'Aucun',

@@ -63,7 +63,12 @@ export const useSystemStore = defineStore('system', () => {
 
   async function updateTranslation(newTranslations: LocalizedStringDto[]) {
     if (newTranslations && newTranslations.length) {
-      configuration.value.translations.splice(0, newTranslations.length, ...newTranslations);
+      if (!configuration.value.translations) {
+        configuration.value.translations = [];
+        translations.value = configuration.value.translations;
+      }
+
+      translations.value.splice(0, newTranslations.length, ...newTranslations);
       return save({ ...configuration.value });
     }
   }

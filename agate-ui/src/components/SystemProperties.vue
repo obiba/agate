@@ -128,7 +128,7 @@
         </q-list>
       </div>
     </div>
-    <system-properties-dialog v-model="showDialog" />
+    <system-properties-dialog v-model="showDialog" @saved="onSaved"/>
   </div>
 </template>
 
@@ -142,5 +142,10 @@ const config = computed(() => systemStore.configuration);
 
 const onEdit = () => {
   showDialog.value = true;
+};
+
+const onSaved = () => {
+  showDialog.value = false;
+  systemStore.init();
 };
 </script>
