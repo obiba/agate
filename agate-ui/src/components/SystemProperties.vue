@@ -128,7 +128,7 @@
         </q-list>
       </div>
     </div>
-    <system-properties-dialog v-model="showDialog" @saved="onSaved"/>
+    <system-properties-dialog v-model="showDialog" @saved="onSaved" />
   </div>
 </template>
 

@@ -1,4 +1,4 @@
-import type { AttributeDto, LocalizedStringDto } from "src/models/Agate";
+import type { AttributeDto, LocalizedStringDto } from 'src/models/Agate';
 
 function flattenJSON(obj: Record<string, unknown>, prefix: string = ''): AttributeDto[] {
   return Object.entries(obj).reduce((acc: AttributeDto[], [key, value]) => {

@@ -2,7 +2,6 @@ import type { AttributeConfigurationDto, AttributeDto } from 'src/models/Agate';
 import type { SchemaFormField, SchemaFormObject } from 'src/components/models';
 import { t } from 'src/boot/i18n';
 
-
 export function attributesToSchema(attributes: AttributeConfigurationDto[], title: string, description: string) {
   const schema = {
     $schema: 'http://json-schema.org/schema#',
@@ -12,7 +11,6 @@ export function attributesToSchema(attributes: AttributeConfigurationDto[], titl
     items: [] as SchemaFormField[],
     required: [],
   } as SchemaFormObject;
-
 
   (attributes || []).forEach((attribute: AttributeConfigurationDto) => {
     const type = attribute.type.toLowerCase();

@@ -38,7 +38,6 @@
 <script setup lang="ts">
 import type { AttributeDto } from 'src/models/Agate';
 
-
 interface Props {
   modelValue: AttributeDto[] | undefined;
 }
@@ -60,14 +59,14 @@ function onUpdate() {
 }
 
 function getAttributes() {
-  const seen = new Set(systemStore.userAttributes.map(config => config.name));
+  const seen = new Set(systemStore.userAttributes.map((config) => config.name));
   return attributes.value
     .filter((attr) => attr.name && attr.value)
     .filter((attr) => {
       if (seen.has(attr.name)) {
         return false; // Skip duplicates
       }
-      seen.add(attr.name);  
+      seen.add(attr.name);
       return true; // Include unique
     });
 }

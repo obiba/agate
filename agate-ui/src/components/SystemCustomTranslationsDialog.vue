@@ -20,20 +20,11 @@
             :rules="[validateRequired, validateUnique]"
           >
           </q-input>
-
+          <div class="text-help">{{ t('translations') }}</div>
           <template v-for="language in languages" :key="language">
-            <q-input
-              v-model="newValues[language]"
-              dense
-              type="text"
-              :label="t('value')"
-              class="q-mb-md"
-              lazy-rules
-            >
+            <q-input v-model="newValues[language]" dense type="text" class="q-mb-md" lazy-rules>
               <template v-slot:prepend>
-                <q-chip color="default">
-                  {{ language }}
-                </q-chip>
+                <q-chip :label="language.toUpperCase()" size="sm" />
               </template>
             </q-input>
           </template>
@@ -51,7 +42,6 @@
 </template>
 
 <script setup lang="ts">
-
 interface DialogProps {
   modelValue: boolean;
   translationKeys: string[];
@@ -105,10 +95,9 @@ async function onSave() {
   if (valid) {
     Object.keys(newValues.value).forEach((key) => {
       if (!newValues.value[key]) {
-        newValues.value [key] = newName.value;
+        newValues.value[key] = newName.value;
       }
     });
-
 
     emit('added', newName.value, newValues.value);
     emit('update:modelValue', false);

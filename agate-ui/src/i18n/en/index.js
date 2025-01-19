@@ -241,10 +241,10 @@ export default {
     sso_domain_hint: 'Single sign-on domain.',
     sso_domain: 'SSO Domain',
     translations: {
-      title: "Custom Translations",
+      title: 'Custom Translations',
       hint: 'Override the default translations or add new ones.',
       name_exists: 'Translation key already exists',
-      name_hint: 'Use \'.\' for grouping (e.g., \'address.street\', \'address.city\')',
+      name_hint: "Use '.' for grouping (e.g., 'address.street', 'address.city')",
       add: 'Add Translation',
       remove_confirm: 'Please confirm the removal of the translation | Please confirm the removal of the {count} translations',
     },
@@ -255,7 +255,7 @@ export default {
     },
     attributes: {
       title: 'Custom User Attributes',
-      hint: 'Add custom attributes to the user profile and localize them with \'user-info.\'-prefixed keys in Custom Translations (e.g., \'user-info.institution\').',
+      hint: "Add custom attributes to the user profile and localize them with 'user-info.'-prefixed keys in Custom Translations (e.g., 'user-info.institution').",
       values_hint: 'Comma separated values',
       add: 'Add Attribute',
       update: 'Update Attribute',

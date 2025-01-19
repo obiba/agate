@@ -1,28 +1,12 @@
 <template>
   <div>
     <div class="q-mr-md">
-      <q-tabs
-        v-model="selectedLanguage"
-        dense
-        class="text-grey"
-        active-color="primary"
-        indicator-color="primary"
-        align="justify"
-      >
-        <q-tab v-for="language in languages" :key="language" :name="language" :label="language" />
-      </q-tabs>
-
-      <q-separator />
-    </div>
-
-    <div class="q-mr-md">
       <q-table
-        :rows="translations"
+        :rows="rows"
         flat
         row-key="name"
         :columns="columns"
         :pagination="initialPagination"
-        :hide-pagination="translations.length <= initialPagination.rowsPerPage"
         selection="multiple"
         v-model:selected="selectedTranslations"
       >
@@ -51,9 +35,21 @@
             <span>{{ props.value }}</span>
           </q-td>
         </template>
-        <template v-slot:body-cell-value="props">
+        <template v-slot:body-cell-attributes="props">
           <q-td :props="props">
-            <q-input type="text" debounce="300" v-model="props.row.value" dense @update:model-value="onValueChanged(props.row)" />
+            <div v-for="lang in languages" :key="lang">
+              <q-input
+                type="text"
+                debounce="500"
+                v-model="props.row.attributes[lang].value"
+                dense
+                @update:model-value="onValueChanged(props.row.attributes[lang])"
+              >
+                <template v-slot:prepend>
+                  <q-chip :label="lang.toUpperCase()" size="sm" />
+                </template>
+              </q-input>
+            </div>
           </q-td>
         </template>
       </q-table>
@@ -86,6 +82,11 @@ import SystemCustomTranslationsDialog from 'src/components/SystemCustomTranslati
 const systemStore = useSystemStore();
 const { t } = useI18n();
 
+interface TranslationRow {
+  name: string;
+  attributes: Record<string, AttributeDto>;
+}
+
 const initialPagination = ref({
   descending: false,
   page: 1,
@@ -97,21 +98,20 @@ const dirty = ref(false);
 const showAdd = ref(false);
 const showDelete = ref(false);
 const allTranslations = ref<Record<string, AttributeDto[]>>({});
-const selectedLanguage = ref();
-const translations = computed(
-  () =>
-    allTranslations.value[selectedLanguage.value]?.filter((app) =>
-      filter.value ? app.name.toLowerCase().includes(filter.value.toLowerCase()) : true,
-    ) || [],
-);
+const translations = ref<TranslationRow[]>([]);
 const translationKeys = computed(() => (allTranslations.value[systemStore.defaultLanguage] || []).map((x) => x.name));
 const selectedTranslations = ref<AttributeDto[]>([]);
 const languages = computed<string[]>(() => systemStore.configuration.languages || []);
 const columns = computed(() => [
   { name: 'name', label: t('name'), field: 'name', align: DefaultAlignment },
-  { name: 'value', label: t('value'), field: 'value', align: DefaultAlignment },
+  { name: 'attributes', label: t('translations'), field: 'attributes', align: DefaultAlignment },
 ]);
-
+const rows = computed(
+  () =>
+    translations.value.filter((row) =>
+      filter.value ? row.name.toLowerCase().includes(filter.value.toLowerCase()) : true,
+    ) || [],
+);
 
 function save() {
   dirty.value = false;
@@ -172,10 +172,33 @@ function doDelete() {
 watch(
   () => systemStore.configuration.translations,
   (newValue) => {
-    selectedLanguage.value = systemStore.defaultLanguage;
-
     if (newValue) {
       allTranslations.value = translationAsMap(newValue);
+      // get the list of attribute names
+      const names = new Set();
+      Object.keys(allTranslations.value).forEach((lang) => {
+        allTranslations.value[lang]?.forEach((attr) => {
+          names.add(attr.name);
+        });
+      });
+      // for each name, map the translations to the attribute for each language
+      translations.value = [];
+      names.forEach((name) => {
+        const row = { name, attributes: {} } as TranslationRow;
+        languages.value.forEach((lang) => {
+          if (allTranslations.value[lang]) {
+            const attr = allTranslations.value[lang].find((x) => x.name === name);
+            if (attr) {
+              row.attributes[lang] = attr;
+            } else {
+              row.attributes[lang] = { name, value: name } as AttributeDto;
+            }
+          } else {
+            row.attributes[lang] = { name, value: name } as AttributeDto;
+          }
+        });
+        translations.value.push(row);
+      });
     }
   },
   { immediate: true },

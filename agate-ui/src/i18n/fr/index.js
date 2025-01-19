@@ -243,8 +243,8 @@ export default {
     translations: {
       title: 'Traductions personnalisés',
       hint: 'Remplacer les traductions par défaut ou en ajouter de nouvelles',
-      name_exists: "La clé de traduction existe déjà",
-      name_hint: 'Utiliser \'.\' pour le regroupement (ex. : \'adresse.rue\', \'adresse.ville\')',
+      name_exists: 'La clé de traduction existe déjà',
+      name_hint: "Utiliser '.' pour le regroupement (ex. : 'adresse.rue', 'adresse.ville')",
       add: 'Ajouter une traduction',
       remove_confirm: 'Veuillez confirmer la suppression de la traduction | Veuillez confirmer la suppression des {count} traductions',
     },
@@ -255,7 +255,7 @@ export default {
     },
     attributes: {
       title: 'Attributs utilisateur personnalisés',
-      hint: 'Ajoutez des attributs personnalisés au profil utilisateur et localisez-les avec des clés préfixées par \'user-info.\' dans les traductions personnalisées (par ex. : \'user-info.institut\').',
+      hint: "Ajoutez des attributs personnalisés au profil utilisateur et localisez-les avec des clés préfixées par 'user-info.' dans les traductions personnalisées (par ex. : 'user-info.institut').",
       values_hint: 'Valeurs séparées par des virgules',
       add: 'Ajouter un Attribut',
       update: "Mettre à Jour l'Attribut",
