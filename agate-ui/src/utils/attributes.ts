@@ -17,8 +17,8 @@ export function attributesToSchema(attributes: AttributeConfigurationDto[], titl
     const field = {
       key: attribute.name,
       type: type,
-      title: t(`user-info.${attribute.name}`) || attribute.name,
-      description: t(`user-info.${attribute.description || ''}`) || attribute.description,
+      title: t(attribute.name) || attribute.name,
+      description: attribute.description ? t(attribute.description) || attribute.description : undefined,
     } as SchemaFormField;
 
     switch (attribute.type.toLowerCase()) {
