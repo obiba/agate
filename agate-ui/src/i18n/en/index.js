@@ -98,8 +98,6 @@ export default {
       PENDING: 'User is pending approval.',
     },
     update_password: 'Update password',
-    password_updated: 'Password updated',
-    password_update_failed: 'Failed to update password',
     attributes: {
       title: 'User Attributes',
       hint: 'Additional user information.',
@@ -246,8 +244,6 @@ export default {
     signup_whitelist: 'Signup whitelist',
     sso_domain_hint: 'Single sign-on domain.',
     sso_domain: 'SSO Domain',
-    updated: 'Settings updated',
-    update_failed: 'Failed to update settings',
     translations: {
       title: 'Custom Translations',
       hint: 'Override the default translations or add new ones.',
