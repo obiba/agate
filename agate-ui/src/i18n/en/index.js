@@ -247,7 +247,6 @@ export default {
       name_hint: 'Use \'.\' for grouping (e.g., \'address.street\', \'address.city\')',
       add: 'Add Translation',
       remove_confirm: 'Please confirm the removal of the translation | Please confirm the removal of the {count} translations',
-      save_changes: 'Save changes to avoid losing your updates',
     },
     otp_strategies: {
       NONE: 'None',

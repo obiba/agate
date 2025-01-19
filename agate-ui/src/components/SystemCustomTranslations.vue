@@ -53,16 +53,10 @@
         </template>
         <template v-slot:body-cell-value="props">
           <q-td :props="props">
-            <q-input type="text" v-model="props.row.value" dense @update:model-value="onValueChanged(props.row)" />
+            <q-input type="text" debounce="300" v-model="props.row.value" dense @update:model-value="onValueChanged(props.row)" />
           </q-td>
         </template>
       </q-table>
-      <div v-if="dirty" class="box-warning q-mt-md row items-center justify-center ripple-effect">
-        <div class="col text-bold">{{ t('system.translations.save_changes') }}</div>
-        <div class="col-auto">
-          <q-btn size="sm" icon="check" color="secondary" :label="t('save')" :disable="!dirty" @click="onApply" />
-        </div>
-      </div>
     </div>
 
     <confirm-dialog
@@ -118,11 +112,21 @@ const columns = computed(() => [
   { name: 'value', label: t('value'), field: 'value', align: DefaultAlignment },
 ]);
 
+
+function save() {
+  dirty.value = false;
+  selectedTranslations.value.splice(0);
+  systemStore.updateTranslation(mapAsTranslation(allTranslations.value)).then(() => {
+    systemStore.init();
+  });
+}
+
 function onValueChanged(row: AttributeDto) {
-  dirty.value = true;
   if (!row.value || row.value.length === 0) {
     row.value = row.name;
   }
+
+  save();
 }
 
 function onAdd() {
@@ -131,7 +135,6 @@ function onAdd() {
 
 function onAdded(newName: string, newValues: Record<string, string>) {
   selectedTranslations.value.splice(0);
-  dirty.value = true;
   showAdd.value = false;
 
   languages.value.forEach((lang) => {
@@ -144,14 +147,8 @@ function onAdded(newName: string, newValues: Record<string, string>) {
       value: newValues[lang] || newName,
     });
   });
-}
 
-function onApply() {
-  dirty.value = false;
-  selectedTranslations.value.splice(0);
-  systemStore.updateTranslation(mapAsTranslation(allTranslations.value)).then(() => {
-    systemStore.init();
-  });
+  save();
 }
 
 function onDelete() {
@@ -159,7 +156,6 @@ function onDelete() {
 }
 
 function doDelete() {
-  dirty.value = true;
   selectedTranslations.value.forEach((translation) => {
     languages.value.forEach((lang) => {
       if (allTranslations.value[lang]) {
@@ -170,6 +166,7 @@ function doDelete() {
 
   selectedTranslations.value.splice(0);
   showDelete.value = false;
+  save();
 }
 
 watch(
@@ -184,16 +181,3 @@ watch(
   { immediate: true },
 );
 </script>
-
-<style lang="scss" scoped>
-@keyframes ripple {
-  0% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.6); }
-  70% { box-shadow: 0 0 0 10px rgba(255, 193, 7, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); }
-}
-
-.ripple-effect {
-  animation: ripple 1s ease-out infinite;
-}
-
-</style>
