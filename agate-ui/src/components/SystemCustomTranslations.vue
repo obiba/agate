@@ -57,8 +57,8 @@
           </q-td>
         </template>
       </q-table>
-      <div v-if="dirty" class="box-warning q-mt-md row items-center justify-center">
-        <div class="col">{{ t('system.translations.save_changes') }}</div>
+      <div v-if="dirty" class="box-warning q-mt-md row items-center justify-center ripple-effect">
+        <div class="col text-bold">{{ t('system.translations.save_changes') }}</div>
         <div class="col-auto">
           <q-btn size="sm" icon="check" color="secondary" :label="t('save')" :disable="!dirty" @click="onApply" />
         </div>
@@ -75,7 +75,7 @@
     <system-custom-translations-dialog
       v-model="showAdd"
       :translation-keys="translationKeys"
-      :language="languages[0] || systemStore.defaultLanguage"
+      :languages="languages"
       @added="onAdded"
       @cancel="showAdd = false"
     />
@@ -129,7 +129,7 @@ function onAdd() {
   showAdd.value = true;
 }
 
-function onAdded(newTranslation: AttributeDto) {
+function onAdded(newName: string, newValues: Record<string, string>) {
   selectedTranslations.value.splice(0);
   dirty.value = true;
   showAdd.value = false;
@@ -140,8 +140,8 @@ function onAdded(newTranslation: AttributeDto) {
     }
 
     allTranslations.value[lang].push({
-      name: newTranslation.name,
-      value: newTranslation.value || newTranslation.name,
+      name: newName,
+      value: newValues[lang] || newName,
     });
   });
 }
@@ -184,3 +184,16 @@ watch(
   { immediate: true },
 );
 </script>
+
+<style lang="scss" scoped>
+@keyframes ripple {
+  0% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.6); }
+  70% { box-shadow: 0 0 0 10px rgba(255, 193, 7, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); }
+}
+
+.ripple-effect {
+  animation: ripple 1s ease-out infinite;
+}
+
+</style>

@@ -8,19 +8,35 @@
       <q-separator />
 
       <q-card-section>
-        <div class="text-help q-mb-md">{{ t('system.translations.add_hint', {language: language.toUpperCase()}) }}</div>
         <q-form ref="formRef">
           <q-input
-            v-model="newAttribue.name"
+            v-model="newName"
             dense
             type="text"
             :label="t('name') + ' *'"
+            :hint="t('system.translations.name_hint')"
             class="q-mb-md"
             lazy-rules
             :rules="[validateRequired, validateUnique]"
           >
           </q-input>
-          <q-input v-model="newAttribue.value" :label="t('value')" class="q-mb-md" dense type="text" lazy-rules />
+
+          <template v-for="language in languages" :key="language">
+            <q-input
+              v-model="newValues[language]"
+              dense
+              type="text"
+              :label="t('value')"
+              class="q-mb-md"
+              lazy-rules
+            >
+              <template v-slot:prepend>
+                <q-chip color="default">
+                  {{ language }}
+                </q-chip>
+              </template>
+            </q-input>
+          </template>
         </q-form>
       </q-card-section>
 
@@ -35,21 +51,20 @@
 </template>
 
 <script setup lang="ts">
-import type { AttributeDto } from 'src/models/Agate';
-
-const { t } = useI18n();
 
 interface DialogProps {
   modelValue: boolean;
   translationKeys: string[];
-  language: string;
+  languages: string[];
 }
 
+const { t } = useI18n();
 const props = defineProps<DialogProps>();
 const emit = defineEmits(['update:modelValue', 'added', 'cancel']);
 const formRef = ref();
 const showDialog = ref(props.modelValue);
-const newAttribue = ref<AttributeDto>({} as AttributeDto);
+const newName = ref('');
+const newValues = ref<{ [key: string]: string }>({});
 
 function validateRequired(value: string) {
   return !!value || t('name_required');
@@ -67,7 +82,10 @@ watch(
   () => props.modelValue,
   (value) => {
     if (value) {
-      newAttribue.value = {} as AttributeDto;
+      newName.value = '';
+      props.languages.forEach((language: string) => {
+        newValues.value[language] = '';
+      });
     }
 
     showDialog.value = value;
@@ -85,11 +103,14 @@ function onCancel() {
 async function onSave() {
   const valid = await formRef.value.validate();
   if (valid) {
-    if (!newAttribue.value.value) {
-      newAttribue.value.value = newAttribue.value.name;
-    }
+    Object.keys(newValues.value).forEach((key) => {
+      if (!newValues.value[key]) {
+        newValues.value [key] = newName.value;
+      }
+    });
 
-    emit('added', newAttribue.value);
+
+    emit('added', newName.value, newValues.value);
     emit('update:modelValue', false);
   }
 }
