@@ -210,11 +210,11 @@ function onSave() {
   systemStore
     .save(configuration.value)
     .then(() => {
-      notifySuccess(t('user.password_updated'));
+      notifySuccess(t('system.properties_updated'));
       emit('saved');
     })
     .catch(() => {
-      notifyError(t('user.password_update_failed'));
+      notifyError(t('system.properties_update_failed'));
     })
     .finally(() => {
       emit('update:modelValue', false);
