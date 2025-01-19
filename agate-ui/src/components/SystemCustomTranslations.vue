@@ -78,6 +78,7 @@ import { DefaultAlignment } from 'src/components/models';
 import { translationAsMap, mapAsTranslation } from 'src/utils/translations';
 import ConfirmDialog from 'src/components/ConfirmDialog.vue';
 import SystemCustomTranslationsDialog from 'src/components/SystemCustomTranslationsDialog.vue';
+import { notifyError, notifySuccess } from 'src/utils/notify';
 
 const systemStore = useSystemStore();
 const { t } = useI18n();
@@ -118,6 +119,9 @@ function save() {
   selectedTranslations.value.splice(0);
   systemStore.updateTranslation(mapAsTranslation(allTranslations.value)).then(() => {
     systemStore.init();
+    notifySuccess(t('system.translations.updated'));
+  }).catch(() => {
+    notifyError(t('system.translations.update_failed'));
   });
 }
 

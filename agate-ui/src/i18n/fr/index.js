@@ -98,6 +98,8 @@ export default {
       PENDING: "Usager en attente d'approbation.",
     },
     update_password: 'Mettre à jour le mot de passe',
+    password_updated: 'Mot de passe mis à jour',
+    password_update_failed: "Échec de la mise à jour du mot de passe",
     attributes: {
       title: 'Attributs utilisateur',
       hint: "Informations additionnelles sur l'usager.",
@@ -244,6 +246,8 @@ export default {
     signup_whitelist: "Liste blanche d'inscription",
     sso_domain_hint: 'Domaine de connexion unique.',
     sso_domain: 'Domaine SSO',
+    updated: 'Paramètres mis à jour',
+    update_failed: 'Échec de la mise à jour des paramètres',
     translations: {
       title: 'Traductions personnalisés',
       hint: 'Remplacer les traductions par défaut ou en ajouter de nouvelles',
@@ -251,6 +255,8 @@ export default {
       name_hint: "Utiliser '.' pour le regroupement (ex. : 'adresse.rue', 'adresse.ville')",
       add: 'Ajouter une traduction',
       remove_confirm: 'Veuillez confirmer la suppression de la traduction | Veuillez confirmer la suppression des {count} traductions',
+      updated: 'Traductions mises à jour',
+      update_failed: 'Échec de la mise à jour des traductions',
     },
     otp_strategies: {
       NONE: 'Aucun',
