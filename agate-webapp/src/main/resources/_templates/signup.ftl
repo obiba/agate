@@ -99,7 +99,7 @@
                 </#list>
               </select>
             <#else>
-              <input name="${attribute.name}" type="${attribute.inputType}" class="form-control" placeholder="<@message attribute.name/>">
+              <input name="${attribute.name}" type="${attribute.inputType}" class="form-control" placeholder="${messageWithFallback('user-info.', attribute.name)}">
             </#if>
           </div>
         </#list>

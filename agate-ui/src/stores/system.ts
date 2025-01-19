@@ -1,11 +1,18 @@
 import { defineStore } from 'pinia';
 import { api } from 'src/boot/api';
-import type { PublicConfigurationDto, ConfigurationDto, AttributeConfigurationDto } from 'src/models/Agate';
+import type {
+  PublicConfigurationDto,
+  ConfigurationDto,
+  AttributeConfigurationDto,
+  LocalizedStringDto,
+} from 'src/models/Agate';
 
 export const useSystemStore = defineStore('system', () => {
   const configurationPublic = ref<PublicConfigurationDto>({} as PublicConfigurationDto);
   const configuration = ref<ConfigurationDto>({} as ConfigurationDto);
   const userAttributes = ref<AttributeConfigurationDto[]>([]);
+  const translations = ref<LocalizedStringDto[]>([]);
+  const defaultLanguage = computed(() => (configuration.value.languages || [])[0] || 'en');
 
   async function initPub() {
     return api.get('/config/_public').then((response) => {
@@ -21,6 +28,7 @@ export const useSystemStore = defineStore('system', () => {
       if (response.status === 200) {
         configuration.value = response.data;
         userAttributes.value = configuration.value.userAttributes || [];
+        translations.value = configuration.value.translations;
       }
       return response;
     });
@@ -28,7 +36,7 @@ export const useSystemStore = defineStore('system', () => {
 
   async function addAttribute(attribute: AttributeConfigurationDto) {
     if (attribute) {
-      if (!userAttributes.value) {
+      if (!configuration.value.userAttributes) {
         configuration.value.userAttributes = [];
         userAttributes.value = configuration.value.userAttributes;
       }
@@ -58,6 +66,18 @@ export const useSystemStore = defineStore('system', () => {
     }
   }
 
+  async function updateTranslation(newTranslations: LocalizedStringDto[]) {
+    if (newTranslations && newTranslations.length) {
+      if (!configuration.value.translations) {
+        configuration.value.translations = [];
+        translations.value = configuration.value.translations;
+      }
+
+      translations.value.splice(0, newTranslations.length, ...newTranslations);
+      return save({ ...configuration.value });
+    }
+  }
+
   async function save(config: ConfigurationDto) {
     return api.put('/config', config).then((response) => {
       configuration.value = { ...config };
@@ -68,12 +88,15 @@ export const useSystemStore = defineStore('system', () => {
   return {
     configuration,
     userAttributes,
+    translations,
     configurationPublic,
+    defaultLanguage,
     init,
     initPub,
     addAttribute,
     updateAttribute,
     removeAttribute,
+    updateTranslation,
     save,
   };
 });
