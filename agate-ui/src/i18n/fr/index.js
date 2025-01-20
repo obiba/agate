@@ -251,6 +251,8 @@ export default {
       name_hint: "Utiliser '.' pour le regroupement (ex. : 'adresse.rue', 'adresse.ville')",
       add: 'Ajouter une traduction',
       remove_confirm: 'Veuillez confirmer la suppression de la traduction | Veuillez confirmer la suppression des {count} traductions',
+      updated: 'Traductions mises à jour',
+      update_failed: 'Échec de la mise à jour des traductions',
     },
     otp_strategies: {
       NONE: 'Aucun',
