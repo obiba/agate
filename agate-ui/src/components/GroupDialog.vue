@@ -68,7 +68,7 @@ const selected = ref<GroupDto>(props.group ?? ({} as GroupDto));
 const editMode = ref(false);
 
 const applicationOptions = computed(
-  () => applicationStore.applications?.map((app) => ({ label: app.name, value: app.id })) ?? [],
+  () => (applicationStore.applications?.map((app) => ({ label: app.name, value: app.id })) ?? []).sort((a, b) => a.label.localeCompare(b.label)),
 );
 const isValid = computed(() => selected.value.name && selected.value.name.trim().length >= 3);
 
