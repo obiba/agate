@@ -3,6 +3,7 @@
     <q-table :rows="users" flat row-key="name" :columns="columns" :pagination="initialPagination">
       <template v-slot:top-left>
         <q-btn size="sm" icon="add" color="primary" :label="t('add')" @click="onAdd" />
+        <q-btn class="q-ml-sm" color="secondary" icon="file_download" size="sm" @click="onDownload" />
       </template>
       <template v-slot:top-right>
         <q-input v-model="filter" debounce="300" :placeholder="t('search')" dense clearable class="q-mr-md">
@@ -193,8 +194,8 @@ const selected = ref();
 
 const users = computed(
   () =>
-    userStore.users?.filter((usr) => {
-      const str = `${usr.name} ${usr.firstName || ''} ${usr.lastName || ''} ${usr.email}`;
+    userStore.users?.filter((user) => {
+      const str: string = `${user.name || ''} ${user.firstName || ''} ${user.lastName || ''} ${user.email || ''} || ${user.status || ''} || ${user.role || ''} || ${(user.groups || []).join(' ')} || ${(user.applications || []).join(' ')}`;
       return filter.value ? str.toLowerCase().includes(filter.value.toLowerCase()) : true;
     }) || [],
 );
@@ -264,6 +265,10 @@ function onDelete() {
 function onAdd() {
   selected.value = undefined;
   showEdit.value = true;
+}
+
+function onDownload() {
+  userStore.download();
 }
 
 function onSaved() {

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { api } from 'src/boot/api';
+import { api, baseUrl } from 'src/boot/api';
 import type { UserDto } from 'src/models/Agate';
 
 export const useUserStore = defineStore('user', () => {
@@ -47,6 +47,10 @@ export const useUserStore = defineStore('user', () => {
     return user.id ? api.put(`/user/${user.id}`, user) : api.post('/users', { password, user });
   }
 
+  function download() {
+    window.open(`${baseUrl}/users/_csv`, '_self');
+  }
+
   function generatePassword(length: number = 12): string {
     if (length < 8) {
       throw new Error('Password length should be at least 8 characters for strength.');
@@ -90,5 +94,6 @@ export const useUserStore = defineStore('user', () => {
     generatePassword,
     updatePassword,
     disableOTP,
+    download,
   };
 });
