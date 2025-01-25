@@ -99,12 +99,10 @@ function onSave() {
     .then(() => {
       notifySuccess(t('group.saved'));
       emit('saved');
-    })
-    .catch(() => {
-      notifyError(t('group.save_failed'));
-    })
-    .finally(() => {
       emit('update:modelValue', false);
+    })
+    .catch((err) => {
+      notifyError(err);
     });
 }
 </script>

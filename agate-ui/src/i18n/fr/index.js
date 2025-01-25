@@ -285,6 +285,30 @@ export default {
     remove: 'Supprimer le ticket',
     remove_confirm: 'Veuillez confirmer la suppression du ticket: {id} de {username}',
   },
+  server: {
+    error: {
+      404: 'Le serveur a rejeté votre demande. Assurez-vous d\'être connecté et réessayez.',
+      403: 'Le serveur a rejeté votre requête, assurez vous que vous ête connecté et réessayez.',
+      password: {
+        'too-short': 'Le mot de passe est plus court que le {0} caractères requis',
+        'too-long': 'Le mot de passe est plus long que {0} caractères',
+        'not-changed': 'Le nouveau mot de passe est le même que le mot de passe actuel',
+        'too-weak': 'Le mot de passe doit contenir au moins un chiffre, une lettre minuscule, une lettre majuscule, un caractère spécial (tel que @#$%^&+=!) et aucun espace'
+      },
+      'email-already-assigned': 'Le courriel \'{0}\' est déjà assigné à un autre utilisateur.',
+      'duplicate-key': 'L\'ID de l\'item est en duplicata.',
+      'bad-request': 'Requête de serveur incorrecte, veuillez contacter votre administrateur Agate.',
+      realm: {
+        'not-orphan': 'Impossible de supprimer un domaine ayant des utilisateurs.'
+      },
+      group: {
+        'not-orphan': 'Impossible de supprimer un groupe ayant des utilisateurs.'
+      },
+      application: {
+        'not-orphan': 'Impossible de supprimer une application ayant des utilisateurs ou des groupes.'
+      }
+    }
+  },
   add: 'ajouter',
   administration: 'Administration',
   applications_caption: "Gérer les applications, les identifications et les fournisseurs d'identité",

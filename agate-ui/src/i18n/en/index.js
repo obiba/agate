@@ -285,6 +285,30 @@ export default {
     remove: 'Remove ticket',
     remove_confirm: 'Please confirm ticket removal: {id} of {username}',
   },
+  server: {
+    error: {
+      404: 'Server rejected your request, please make sure you are logged in and try again.',
+      403: 'Server rejected your request, please make sure you are logged in and try again.',
+      password: {
+        'too-short': 'Password is shorter than the required {0} characters',
+        'too-long': 'Password is longer than {0} characters',
+        'not-changed': 'New password is identical to the current password',
+        'too-weak': 'Password must contain at least one digit, one upper case alphabet, one lower case alphabet, one special character (which includes @#$%^&+=!) and no white space'
+      },
+      'email-already-assigned': 'Email \'{0}\' is already assigned to another user.',
+      'duplicate-key': 'Duplicate item ID.',
+      'bad-request': 'Bad server request, please contact your Agate administrator.',
+      realm: {
+        'not-orphan': 'Cannot delete a realm having associated users.'
+      },
+      group: {
+        'not-orphan': 'Cannot delete a group having associated users.'
+      },
+      application: {
+        'not-orphan': 'Cannot delete an application having associated users or groups.'
+      }
+    }
+  },
   add: 'Add',
   administration: 'Administration',
   applications_caption: 'Manage applications, identifications and identity providers',

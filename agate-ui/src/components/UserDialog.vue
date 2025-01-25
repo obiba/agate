@@ -307,12 +307,10 @@ function onSave() {
     .then(() => {
       notifySuccess('user.saved');
       emit('saved');
-    })
-    .catch(() => {
-      notifyError('user.save_failed');
-    })
-    .finally(() => {
       emit('update:modelValue', false);
+    })
+    .catch((err) => {
+      notifyError(err);
     });
 }
 

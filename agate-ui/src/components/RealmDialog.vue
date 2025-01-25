@@ -196,12 +196,10 @@ function onSave() {
     .then(() => {
       notifySuccess(t('realm.saved'));
       emit('saved');
-    })
-    .catch(() => {
-      notifyError(t('realm.save_failed'));
-    })
-    .finally(() => {
       emit('update:modelValue', false);
+    })
+    .catch((err) => {
+      notifyError(err);
     });
 }
 </script>

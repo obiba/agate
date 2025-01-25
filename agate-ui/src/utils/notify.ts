@@ -30,8 +30,13 @@ export function notifyError(error: any) {
   } else {
     console.error(error);
     message = error.message;
-    if (error.response?.data && error.response.data?.status) {
-      message = t(`error.${error.response?.data.status}`, error.response?.data.arguments);
+    if (error.response?.data && error.response.data?.code) {
+      message = t(`error.${error.response?.data.code}`);
+      if (error.response.data.messageTemplate) {
+        message = t(error.response.data.messageTemplate, error.response.data.arguments);
+      }
+      if (error.response.data.message)
+        message = error.response.data.message;
     }
   }
   Notify.create({
