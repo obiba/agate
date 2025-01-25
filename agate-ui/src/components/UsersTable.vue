@@ -199,15 +199,15 @@ const users = computed(
     }) || [],
 );
 const columns = computed(() => [
-  { name: 'name', label: t('name'), field: 'name', align: DefaultAlignment },
-  { name: 'fullName', label: t('fullName'), field: 'fullName', align: DefaultAlignment },
-  { name: 'email', label: t('email'), field: 'email', align: DefaultAlignment },
-  { name: 'status', label: t('status'), field: 'status', align: DefaultAlignment },
-  { name: 'role', label: t('role'), field: 'role', align: DefaultAlignment },
+  { name: 'name', label: t('name'), field: 'name', align: DefaultAlignment, sortable: true },
+  { name: 'fullName', label: t('fullName'), field: 'fullName', align: DefaultAlignment, sortable: true },
+  { name: 'email', label: t('email'), field: 'email', align: DefaultAlignment, sortable: true },
+  { name: 'status', label: t('status'), field: 'status', align: DefaultAlignment, sortable: true },
+  { name: 'role', label: t('role'), field: 'role', align: DefaultAlignment, sortable: true },
   { name: 'otpEnabled', label: t('otpEnabled'), field: 'otpEnabled', align: DefaultAlignment },
-  { name: 'realm', label: t('realm.realm'), field: 'realm', align: DefaultAlignment },
-  { name: 'groups', label: t('groups'), field: 'groups', align: DefaultAlignment },
-  { name: 'applications', label: t('applications'), field: 'applications', align: DefaultAlignment },
+  { name: 'realm', label: t('realm.realm'), field: 'realm', align: DefaultAlignment, sortable: true },
+  { name: 'groups', label: t('groups'), field: 'groups', align: DefaultAlignment, sortable: true },
+  { name: 'applications', label: t('applications'), field: 'applications', align: DefaultAlignment, sortable: false },
 ]);
 
 onMounted(() => {

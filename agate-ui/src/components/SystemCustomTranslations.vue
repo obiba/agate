@@ -104,7 +104,7 @@ const translationKeys = computed(() => (allTranslations.value[systemStore.defaul
 const selectedTranslations = ref<AttributeDto[]>([]);
 const languages = computed<string[]>(() => systemStore.configuration.languages || []);
 const columns = computed(() => [
-  { name: 'name', label: t('name'), field: 'name', align: DefaultAlignment },
+  { name: 'name', label: t('name'), field: 'name', align: DefaultAlignment, sortable: true },
   { name: 'attributes', label: t('translations'), field: 'attributes', align: DefaultAlignment },
 ]);
 const rows = computed(

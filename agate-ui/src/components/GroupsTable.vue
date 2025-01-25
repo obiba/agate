@@ -89,9 +89,9 @@ const groups = computed(
     ) || [],
 );
 const columns = computed(() => [
-  { name: 'name', label: t('name'), field: 'name', align: DefaultAlignment },
-  { name: 'description', label: t('description'), field: 'description', align: DefaultAlignment },
-  { name: 'applications', label: t('applications'), field: 'applications', align: DefaultAlignment },
+  { name: 'name', label: t('name'), field: 'name', align: DefaultAlignment, sortable: true },
+  { name: 'description', label: t('description'), field: 'description', align: DefaultAlignment, sortable: true },
+  { name: 'applications', label: t('applications'), field: 'applications', align: DefaultAlignment, sortable: true },
 ]);
 
 onMounted(() => {

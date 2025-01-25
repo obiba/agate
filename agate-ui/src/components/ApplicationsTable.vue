@@ -96,11 +96,11 @@ const applications = computed(
     ) || [],
 );
 const columns = computed(() => [
-  { name: 'id', label: 'ID', field: 'id', align: DefaultAlignment },
-  { name: 'name', label: t('name'), field: 'name', align: DefaultAlignment },
-  { name: 'description', label: t('description'), field: 'description', align: DefaultAlignment },
-  { name: 'scopes', label: t('application.scopes'), field: 'scopes', align: DefaultAlignment },
-  { name: 'realmGroups', label: t('application.realms_groups'), field: 'realmGroups', align: DefaultAlignment },
+  { name: 'id', label: 'ID', field: 'id', align: DefaultAlignment, sortable: true },
+  { name: 'name', label: t('name'), field: 'name', align: DefaultAlignment, sortable: true },
+  { name: 'description', label: t('description'), field: 'description', align: DefaultAlignment, sortable: true },
+  { name: 'scopes', label: t('application.scopes'), field: 'scopes', align: DefaultAlignment, sortable: true },
+  { name: 'realmGroups', label: t('application.realms_groups'), field: 'realmGroups', align: DefaultAlignment, sortable: true },
 ]);
 
 onMounted(() => {

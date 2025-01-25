@@ -109,9 +109,9 @@ const showEdit = ref(false);
 const showDelete = ref(false);
 
 const columns = computed(() => [
-  { name: 'name', label: t('name'), field: 'name', align: DefaultAlignment },
-  { name: 'type', label: t('type'), field: 'type', align: DefaultAlignment },
-  { name: 'description', label: t('description'), field: 'description', align: DefaultAlignment },
+  { name: 'name', label: t('name'), field: 'name', align: DefaultAlignment, sortable: true },
+  { name: 'type', label: t('type'), field: 'type', align: DefaultAlignment, sortable: true },
+  { name: 'description', label: t('description'), field: 'description', align: DefaultAlignment, sortable: true },
   {
     name: 'values',
     label: t('values'),
@@ -119,7 +119,7 @@ const columns = computed(() => [
     format: (val: string) => (val || '').split(/\s*,\s*/),
     align: DefaultAlignment,
   },
-  { name: 'required', label: t('required'), field: 'required', align: DefaultAlignment },
+  { name: 'required', label: t('required'), field: 'required', align: DefaultAlignment, sortable: true },
 ]);
 
 function onOverRow(row: AttributeConfigurationDto) {

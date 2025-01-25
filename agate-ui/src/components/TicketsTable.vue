@@ -80,11 +80,11 @@ const tickets = computed<TicketDto[]>(
     ) || [],
 );
 const columns = computed(() => [
-  { name: 'id', label: 'ID', field: 'id', align: DefaultAlignment },
-  { name: 'username', label: t('username'), field: 'username', align: DefaultAlignment },
-  { name: 'expires', label: t('ticket.expires'), field: 'expires', align: DefaultAlignment },
-  { name: 'login_app', label: t('ticket.login_app'), field: 'events', align: DefaultAlignment },
-  { name: 'events', label: t('ticket.events'), field: 'events', align: DefaultAlignment },
+  { name: 'id', label: 'ID', field: 'id', align: DefaultAlignment, sortable: true },
+  { name: 'username', label: t('username'), field: 'username', align: DefaultAlignment, sortable: true },
+  { name: 'expires', label: t('ticket.expires'), field: 'expires', align: DefaultAlignment, sortable: true },
+  { name: 'login_app', label: t('ticket.login_app'), field: 'events', align: DefaultAlignment, sortable: true },
+  { name: 'events', label: t('ticket.events'), field: 'events', align: DefaultAlignment, sortable: false },
 ]);
 
 onMounted(() => {

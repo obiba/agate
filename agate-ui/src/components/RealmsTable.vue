@@ -114,10 +114,10 @@ const realms = computed(
     ) || [],
 );
 const columns = computed(() => [
-  { name: 'name', label: t('name'), field: 'name', align: DefaultAlignment },
-  { name: 'status', label: t('status'), field: 'status', align: DefaultAlignment },
-  { name: 'type', label: t('type'), field: 'type', align: DefaultAlignment },
-  { name: 'userCount', label: t('realm.user_count'), field: 'userCount', align: DefaultAlignment },
+  { name: 'name', label: t('name'), field: 'name', align: DefaultAlignment, sortable: true },
+  { name: 'status', label: t('status'), field: 'status', align: DefaultAlignment, sortable: true },
+  { name: 'type', label: t('type'), field: 'type', align: DefaultAlignment, sortable: true },
+  { name: 'userCount', label: t('realm.user_count'), field: 'userCount', align: DefaultAlignment, sortable: true },
 ]);
 
 onMounted(() => {
