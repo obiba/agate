@@ -3,7 +3,7 @@
     <q-table :rows="users" flat row-key="name" :columns="columns" :pagination="initialPagination">
       <template v-slot:top-left>
         <q-btn size="sm" icon="add" color="primary" :label="t('add')" @click="onAdd" />
-        <q-btn class="q-ml-sm" color="secondary" icon="file_download" size="sm" @click="onDownload" />
+        <q-btn class="q-ml-sm" color="secondary" icon="file_download" size="sm" :disable="users.length < 1" @click="onDownload" />
       </template>
       <template v-slot:top-right>
         <q-input v-model="filter" debounce="300" :placeholder="t('search')" dense clearable class="q-mr-md">
@@ -166,6 +166,7 @@
 </template>
 
 <script setup lang="ts">
+import { type QTableColumn, exportFile } from 'quasar';
 import type { UserDto } from 'src/models/Agate';
 import UserDialog from 'src/components/UserDialog.vue';
 import UpdatePasswordDialog from 'src/components/UpdatePasswordDialog.vue';
@@ -199,7 +200,7 @@ const users = computed(
       return filter.value ? str.toLowerCase().includes(filter.value.toLowerCase()) : true;
     }) || [],
 );
-const columns = computed(() => [
+const columns = computed<QTableColumn[]>(() => [
   { name: 'name', label: t('name'), field: 'name', align: DefaultAlignment, sortable: true },
   { name: 'fullName', label: t('fullName'), field: 'fullName', align: DefaultAlignment, sortable: true },
   { name: 'email', label: t('email'), field: 'email', align: DefaultAlignment, sortable: true },
@@ -267,8 +268,36 @@ function onAdd() {
   showEdit.value = true;
 }
 
+function formatColumnValue(fieldName: string, row: UserDto): string {
+  const value = row[fieldName as keyof UserDto] || '';
+  const applications = (row.applications || []).concat((row.groupApplications || []).map((app) => app.application));
+
+  switch (fieldName) {
+    case 'fullName':
+      return `"${row.firstName || ''} ${row.lastName || ''}"`.trim();
+    case 'groups':
+      return Array.isArray(value) ? `"${value.join(', ')}"` : `"${value}"`;
+      case 'applications':
+        return `"${applications.map((app) => applicationStore.getApplicationName(app)).join(', ')}"`;
+    case 'otpEnabled':
+      return value ? t('enabled') : t('disabled');
+    case 'status':
+      return t(`user.status.${value}`);
+    default:
+      return typeof value === 'string' ? `"${value}"` : String(value);
+  }
+}
 function onDownload() {
-  userStore.download();
+  const content = [columns.value.map((col) => col.label)]
+    .concat(users.value.map((row) => columns.value.map((col) => formatColumnValue(col.field as string, row))))
+    .map((row) => row.join(','))
+    .join('\n');
+
+  const status = exportFile('table-export.csv', content, 'text/csv');
+
+  if (status !== true) {
+    notifyError(t('export_error'));
+  }
 }
 
 function onSaved() {
