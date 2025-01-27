@@ -1,5 +1,11 @@
 package org.obiba.agate.service;
 
+import jakarta.inject.Inject;
+import org.joda.time.DateTime;
+import org.obiba.agate.domain.Configuration;
+import org.obiba.agate.domain.User;
+import org.springframework.stereotype.Service;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -9,13 +15,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import jakarta.inject.Inject;
-
-import org.joda.time.DateTime;
-import org.obiba.agate.domain.Configuration;
-import org.obiba.agate.domain.User;
-import org.springframework.stereotype.Service;
 
 @Service
 public class UserCsvService {
@@ -54,11 +53,11 @@ public class UserCsvService {
     }};
 
     return Stream.concat(
-      initList.stream(),
-      users.stream()
-      .map(user -> this.extractFieldsFromUser(user, header))
-      .map(this::convertToLine))
-    .collect(Collectors.toList());
+        initList.stream(),
+        users.stream()
+          .map(user -> this.extractFieldsFromUser(user, header))
+          .map(this::convertToLine))
+      .collect(Collectors.toList());
   }
 
   private List<String> getHeaderFromConfiguration() {
@@ -69,15 +68,18 @@ public class UserCsvService {
       add("firstName");
       add("lastName");
       add("email");
-      add("preferredLanguage");
       add("status");
+      add("2FA");
+      add("groups");
+      add("applications");
+      add("preferredLanguage");
       add("lastLogin");
     }};
 
     return Stream.concat(
-      headerNameList.stream(),
-      configuration.getUserAttributes().stream().map(attr -> "attribute." + attr.getName()))
-    .collect(Collectors.toList());
+        headerNameList.stream(),
+        configuration.getUserAttributes().stream().map(attr -> "attribute." + attr.getName()))
+      .collect(Collectors.toList());
   }
 
   private List<String> extractFieldsFromUser(User user, List<String> headerFromConfiguration) {
@@ -86,19 +88,22 @@ public class UserCsvService {
       add(user.getFirstName());
       add(user.getLastName());
       add(user.getEmail());
-      add(user.getPreferredLanguage());
       add(user.getStatus().toString().toUpperCase());
+      add(Boolean.toString(user.hasOtp()));
+      add(user.getGroups().stream().sorted().collect(Collectors.joining(" | ")));
+      add(user.getApplications().stream().sorted().collect(Collectors.joining(" | ")));
+      add(user.getPreferredLanguage());
       add(Optional.ofNullable(user.getLastLogin()).map(DateTime::toString).orElse(""));
     }};
 
     return Stream.concat(
-      data.stream(),
-      headerFromConfiguration.stream()
-        .filter(header -> header.startsWith("attribute."))
-        .map(header -> header.replace("attribute.", ""))
-        .map(header -> user.getAttributes().getOrDefault(header, ""))
-        .map(this::escapeSpecialCharacters))
-    .collect(Collectors.toList());
+        data.stream(),
+        headerFromConfiguration.stream()
+          .filter(header -> header.startsWith("attribute."))
+          .map(header -> header.replace("attribute.", ""))
+          .map(header -> user.getAttributes().getOrDefault(header, ""))
+          .map(this::escapeSpecialCharacters))
+      .collect(Collectors.toList());
   }
 
   private String escapeSpecialCharacters(String data) {
