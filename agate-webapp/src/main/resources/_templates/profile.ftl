@@ -117,6 +117,10 @@
                       <small><@message "password-no-match"/></small>
                     </div>
 
+                    <div id="alertPasswordNotModified" class="alert alert-danger d-none">
+                      <small><@message "password-not-modified"/></small>
+                    </div>
+
                     <div id="alertFailure" class="alert alert-danger d-none">
                       <small><@message "update-password-failed"/></small>
                     </div>
@@ -126,6 +130,14 @@
                     </div>
 
                     <form id="password-form" method="post">
+                      <div class="input-group mb-3">
+                        <input name="password0" type="password" class="form-control" placeholder="<@message "current-password"/>">
+                        <div class="input-group-append">
+                          <div class="input-group-text">
+                            <span class="fas fa-lock"></span>
+                          </div>
+                        </div>
+                      </div>
                       <div class="input-group mb-3">
                         <input name="password" type="password" class="form-control" placeholder="<@message "new-password"/>">
                         <div class="input-group-append">

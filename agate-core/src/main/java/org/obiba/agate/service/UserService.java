@@ -24,6 +24,7 @@
   import org.apache.shiro.SecurityUtils;
   import org.apache.shiro.authc.AuthenticationInfo;
   import org.apache.shiro.authc.UsernamePasswordToken;
+  import org.apache.shiro.authz.UnauthenticatedException;
   import org.apache.shiro.crypto.hash.Sha512Hash;
   import org.apache.shiro.mgt.SessionsSecurityManager;
   import org.apache.shiro.realm.Realm;
@@ -266,6 +267,17 @@
       }
 
       save(userCredentials);
+    }
+
+    public void updateUserPassword(@Nonnull User user, @Nonnull String password0, @Nonnull String password) {
+      if (user == null) throw new BadRequestException("Invalid User");
+      UserCredentials userCredentials = findUserCredentials(user.getName());
+      if (userCredentials == null) throw new BadRequestException("Invalid User");
+      String hashedPassword0 = hashPassword(password0);
+      if (!userCredentials.getPassword().equals(hashedPassword0)) {
+        throw new CurrentPasswordInvalidException();
+      }
+      updateUserPassword(user, password);
     }
 
     public User createUser(@Nonnull User user, @Nullable String password) {
@@ -625,6 +637,9 @@
      * @throws org.obiba.agate.service.NoSuchUserException
      */
     public User getCurrentUser() {
+      if (SecurityUtils.getSubject().getPrincipal() == null) {
+        throw new UnauthenticatedException();
+      }
       String username = SecurityUtils.getSubject().getPrincipal().toString();
       User currentUser = findUser(username);
       if (currentUser == null) throw NoSuchUserException.withName(username);
