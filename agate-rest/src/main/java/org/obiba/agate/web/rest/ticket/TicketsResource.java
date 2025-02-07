@@ -124,8 +124,13 @@ public class TicketsResource extends ApplicationAwareResource {
       String token = tokenUtils.makeAccessToken(ticket);
       Configuration configuration = getConfiguration();
       int timeout = rememberMe ? configuration.getLongTimeout() : configuration.getShortTimeout();
-      NewCookie cookie = new NewCookie(TICKET_COOKIE_NAME, token, "/", configuration.getDomain(), null,
-          timeout * 3600, true, true);
+      NewCookie cookie = new NewCookie.Builder(TICKET_COOKIE_NAME)
+          .value(token)
+          .path("/")
+          .domain(configuration.getDomain())
+          .maxAge(timeout * 3600)
+          .secure(true)
+          .httpOnly(true).build();
 
       user = userService.getUser(user.getId()); // refresh after login
       user.setLastLogin(DateTime.now());

@@ -73,7 +73,14 @@ public class SessionsResource {
 
       User user = userService.findUser(username);
       if (user != null && !Strings.isNullOrEmpty(user.getPreferredLanguage())) {
-        builder.cookie(new NewCookie("NG_TRANSLATE_LANG_KEY", user.getPreferredLanguage(), configurationService.getContextPath() + "/", null, DEFAULT_VERSION, null, DEFAULT_MAX_AGE, null, false, false));
+        builder.cookie(new NewCookie.Builder("NG_TRANSLATE_LANG_KEY")
+                .value(user.getPreferredLanguage())
+                .path(configurationService.getContextPath() + "/")
+                .version(DEFAULT_VERSION)
+                .maxAge(DEFAULT_MAX_AGE)
+                .secure(false)
+                .httpOnly(false)
+                .build());
       }
 
       return builder.build();

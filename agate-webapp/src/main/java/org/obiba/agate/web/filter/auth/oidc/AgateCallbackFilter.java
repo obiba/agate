@@ -11,6 +11,7 @@ package org.obiba.agate.web.filter.auth.oidc;
 
 import com.google.common.base.Strings;
 import com.google.common.eventbus.Subscribe;
+import jakarta.ws.rs.ext.RuntimeDelegate;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
@@ -41,6 +42,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.NewCookie;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -80,16 +82,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
 
   private String publicUrl;
 
-  public AgateCallbackFilter(
-      OIDCConfigurationProvider oidcConfigurationProvider,
-      OidcAuthConfigurationProvider oidcAuthConfigurationProvider,
-      OIDCSessionManager oidcSessionManager,
-      AuthenticationExecutor authenticationExecutor,
-      ConfigurationService configurationService,
-      ApplicationService applicationService,
-      RealmConfigService realmConfigService, UserService userService,
-      TicketService ticketService,
-      TokenUtils tokenUtils) {
+  public AgateCallbackFilter(OIDCConfigurationProvider oidcConfigurationProvider, OidcAuthConfigurationProvider oidcAuthConfigurationProvider, OIDCSessionManager oidcSessionManager, AuthenticationExecutor authenticationExecutor, ConfigurationService configurationService, ApplicationService applicationService, RealmConfigService realmConfigService, UserService userService, TicketService ticketService, TokenUtils tokenUtils) {
     this.oidcConfigurationProvider = oidcConfigurationProvider;
     this.oidcAuthConfigurationProvider = oidcAuthConfigurationProvider;
     this.oidcSessionManager = oidcSessionManager;
@@ -144,6 +137,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
       // ignore
     }
   }
+
   @Override
   protected void onRedirect(OIDCSession session, J2EContext context, String provider) throws IOException {
     if (session == null) return;
@@ -226,8 +220,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
    * @param errorUrl
    * @see AgateSignInFilter to see how the redirect URI is added to the initial OIDC authentication request.
    */
-  private void signInWithTicket(OIDCCredentials credentials, HttpServletResponse response, String provider, Application application, String errorUrl, String signInErrorUrl)
-      throws IOException {
+  private void signInWithTicket(OIDCCredentials credentials, HttpServletResponse response, String provider, Application application, String errorUrl, String signInErrorUrl) throws IOException {
     RealmConfig realmConfig = realmConfigService.findConfig(provider);
     OIDCAuthenticationToken oidcAuthenticationToken = new OIDCAuthenticationToken(credentials);
     User user = userService.findUser(credentials.getUsername(getUsernameClaim(realmConfig)));
@@ -250,9 +243,15 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
           // get domain from realm config
           String domain = realmConfig.hasDomain() ? realmConfig.getDomain() : configuration.getDomain();
 
-          response.addHeader(HttpHeaders.SET_COOKIE,
-              new NewCookie(TicketsResource.TICKET_COOKIE_NAME, token, "/", domain,
-                  "Obiba session deleted", timeout, true, true).toString());
+          response.addHeader(HttpHeaders.SET_COOKIE, toCookieString(new NewCookie.Builder(TicketsResource.TICKET_COOKIE_NAME)
+              .value(token)
+              .path("/")
+              .domain(domain)
+              .comment("Obiba session deleted")
+              .maxAge(timeout)
+              .secure(true)
+              .httpOnly(true)
+              .build()));
           log.debug("Successfully authenticated subject {}", SecurityUtils.getSubject().getPrincipal());
         }
       }
@@ -276,11 +275,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
         if (principal instanceof Map) {
           Set<String> groups = user.getGroups();
           int count = groups.size();
-          new DefaultOIDCGroupsExtractor().extractGroups(oidcConfig, (Map<String, Object>) principal)
-              .stream()
-              .map(String::trim)
-              .filter(g -> !g.isEmpty())
-              .forEach(groups::add);
+          new DefaultOIDCGroupsExtractor().extractGroups(oidcConfig, (Map<String, Object>) principal).stream().map(String::trim).filter(g -> !g.isEmpty()).forEach(groups::add);
           if (count < groups.size()) {
             user.setGroups(groups);
             userService.save(user);
@@ -297,8 +292,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
    * @param response
    * @param provider
    */
-  private void signIn(OIDCCredentials credentials, HttpServletResponse response, String provider, String errorUrl, String signInErrorUrl)
-      throws IOException {
+  private void signIn(OIDCCredentials credentials, HttpServletResponse response, String provider, String errorUrl, String signInErrorUrl) throws IOException {
     RealmConfig config = realmConfigService.findConfig(provider);
     OIDCAuthenticationToken oidcAuthenticationToken = new OIDCAuthenticationToken(credentials);
     User user = userService.findUser(credentials.getUsername(getUsernameClaim(config)));
@@ -314,8 +308,14 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
 
           updateUserGroups(user, subject);
 
-          response.addHeader(HttpHeaders.SET_COOKIE,
-              new NewCookie("agatesid", subjectSession.getId().toString(), configurationService.getContextPath() + "/", null, null, timeout, true, true).toString());
+          response.addHeader(HttpHeaders.SET_COOKIE, toCookieString(
+              new NewCookie.Builder("agatesid")
+                  .value(subjectSession.getId().toString())
+                  .path(configurationService.getContextPath() + "/")
+                  .maxAge(timeout)
+                  .secure(true)
+                  .httpOnly(true)
+                  .build()));
           log.debug("Successfully authenticated subject {}", SecurityUtils.getSubject().getPrincipal());
         }
       }
@@ -374,17 +374,15 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
       // if (Strings.isNullOrEmpty(domain)) domain = configuration.getDomain();
 
       Configuration configuration = configurationService.getConfiguration();
-      response.addHeader(HttpHeaders.SET_COOKIE,
-          new NewCookie(
-              "u_auth",
-              URLUtils.encode(userMappedInfo.toString()).replaceAll("\\+", "%20"),
-              "/",
-              configuration.getDomain(),
-              null,
-              600,
-              true,
-              true
-          ).toString());
+      response.addHeader(HttpHeaders.SET_COOKIE, toCookieString(
+          new NewCookie.Builder("u_auth")
+              .value(URLUtils.encode(userMappedInfo.toString()).replaceAll("\\+", "%20"))
+              .path("/")
+              .domain(configuration.getDomain())
+              .maxAge(600)
+              .secure(true)
+              .httpOnly(true)
+              .build()));
     } else {
       sendRedirectOrSendError(errorUrl, "Realm '" + provider + "' not set up for sign up.", response);
     }
@@ -415,10 +413,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
   private Optional<Application> findApplication(String redirect) {
     String redirectUri = extractRedirectUri(redirect);
     if (!Strings.isNullOrEmpty(redirectUri)) {
-      return applicationService.findAll()
-          .stream()
-          .filter(application -> application.hasRedirectURI() && matchRedirectUrl(application.getRedirectURIs(), redirectUri))
-          .findFirst();
+      return applicationService.findAll().stream().filter(application -> application.hasRedirectURI() && matchRedirectUrl(application.getRedirectURIs(), redirectUri)).findFirst();
     }
     return Optional.empty();
   }
@@ -428,21 +423,14 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
   }
 
   private boolean matchRedirectUrl(String source, String target) {
-    String patternString =
-        source
-            .replaceAll("\\.", "\\\\.")
-            .replaceAll("[\\/\\*]*$", ".*")
-            .replaceAll("/", "\\\\/");
+    String patternString = source.replaceAll("\\.", "\\\\.").replaceAll("[\\/\\*]*$", ".*").replaceAll("/", "\\\\/");
 
     Pattern compile = Pattern.compile(patternString);
     return compile.matcher(target).matches();
   }
 
   private String retrieveRequestParameter(String key, Map<String, String[]> requestParameters) {
-    return Optional.ofNullable(requestParameters.get(key))
-        .filter(p -> p != null && p.length > 0)
-        .map(p -> p[0])
-        .orElse("");
+    return Optional.ofNullable(requestParameters.get(key)).filter(p -> p != null && p.length > 0).map(p -> p[0]).orElse("");
   }
 
   private String retrieveRedirectUrl(Map<String, String[]> requestParameters) {
@@ -496,6 +484,10 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     }
 
     return url;
+  }
+
+  private String toCookieString(NewCookie cookie) {
+    return RuntimeDelegate.getInstance().createHeaderDelegate(NewCookie.class).toString(cookie);
   }
 
 }

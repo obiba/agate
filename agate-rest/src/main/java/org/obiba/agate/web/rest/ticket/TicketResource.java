@@ -210,8 +210,13 @@ public class TicketResource extends ApplicationAwareResource {
 
     Configuration configuration = getConfiguration();
     return Response.noContent().header(HttpHeaders.SET_COOKIE,
-      new NewCookie(TicketsResource.TICKET_COOKIE_NAME, null, "/", configuration.getDomain(),
-        "Obiba session deleted", 0, true, true)).build();
+      new NewCookie.Builder(TicketsResource.TICKET_COOKIE_NAME)
+          .path("/")
+          .domain(configuration.getDomain())
+          .comment("Obiba session deleted")
+          .maxAge(0)
+          .secure(true)
+          .httpOnly(true)).build();
   }
 
   //
@@ -222,8 +227,13 @@ public class TicketResource extends ApplicationAwareResource {
     String token = tokenUtils.makeAccessToken(ticket);
     Configuration configuration = getConfiguration();
     int timeout = ticket.isRemembered() ? configuration.getLongTimeout() : configuration.getShortTimeout();
-    return new NewCookie(TicketsResource.TICKET_COOKIE_NAME, token, "/", configuration.getDomain(), null,
-      timeout * 3600, true, true);
+    return new NewCookie.Builder(TicketsResource.TICKET_COOKIE_NAME)
+        .value(token)
+        .path("/")
+        .domain(configuration.getDomain())
+        .maxAge(timeout * 3600)
+        .secure(true)
+        .httpOnly(true).build();
   }
 
 }
