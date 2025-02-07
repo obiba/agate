@@ -267,15 +267,27 @@ var agatejs = (function() {
 
       var formData = form.serializeArray();
 
+      // current password
       if (formData[0].value.trim() === '') {
         onFailure('PasswordMissing');
         return;
       }
-      if (formData[0].value.length < 8) {
+      // new password
+      if (formData[1].value.trim() === '') {
+        onFailure('PasswordMissing');
+        return;
+      }
+      // compare current and new password
+      if (formData[0].value === formData[1].value) {
+        onFailure('PasswordNotModified');
+        return;
+      }
+      if (formData[1].value.length < 8) {
         onFailure('PasswordTooShort');
         return;
       }
-      if (formData[0].value !== formData[1].value) {
+      // compare repeated new password
+      if (formData[1].value !== formData[2].value) {
         onFailure('PasswordNoMatch');
         return;
       }

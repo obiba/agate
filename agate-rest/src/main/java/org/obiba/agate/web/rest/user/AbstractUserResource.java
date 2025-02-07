@@ -50,8 +50,9 @@ public abstract class AbstractUserResource {
 
   @PUT
   @Path("/password")
-  public Response updatePassword(@FormParam("password") String password) {
-    userService.updateUserPassword(getUser(), password);
+  public Response updatePassword(@FormParam("password0") String password0, @FormParam("password") String password) {
+    // provide current user password and new password
+    userService.updateUserPassword(getUser(), password0, password);
 
     return Response.noContent().build();
   }

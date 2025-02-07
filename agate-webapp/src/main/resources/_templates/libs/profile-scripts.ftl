@@ -10,6 +10,7 @@
   ];
 
   const errorMessages = {
+      'server.error.password.current-invalid': "<@message "server.error.password.current-invalid"/>",
       'server.error.password.not-changed': "<@message "server.error.password.not-changed"/>",
       'server.error.password.too-weak': "<@message "server.error.password.too-weak"/>"
   };
