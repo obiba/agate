@@ -50,6 +50,7 @@ public class OidcRealmConfig extends OIDCConfiguration {
     jsonObject.put(SCOPE_FIELD, getScope());
     jsonObject.put(USE_NONCE_FIELD, isUseNonce());
     jsonObject.put(CONNECT_TIMEOUT_FIELD, getConnectTimeout());
+    jsonObject.put(READ_TIMEOUT_FIELD, getReadTimeout());
 
     if (getCustomParams().containsKey(PROVIDER_URL_FIELD)) {
       jsonObject.put(PROVIDER_URL_FIELD, getCustomParams().get(PROVIDER_URL_FIELD));
