@@ -15,7 +15,7 @@ export const useTicketStore = defineStore('ticket', () => {
   }
 
   async function remove(ticket: TicketDto) {
-    return api.delete(`/tickets/${ticket.id}`);
+    return api.delete(`/ticket/${ticket.id}`);
   }
 
   return {
