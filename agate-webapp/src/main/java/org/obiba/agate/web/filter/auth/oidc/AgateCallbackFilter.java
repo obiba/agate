@@ -490,4 +490,9 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     return RuntimeDelegate.getInstance().createHeaderDelegate(NewCookie.class).toString(cookie);
   }
 
+  protected J2EContext makeJ2EContext(HttpServletRequest request, HttpServletResponse response) {
+    String sid = request.getRequestedSessionId();
+    log.debug("callback filter requested session id: {}", sid);
+    return super.makeJ2EContext(request, response);
+  }
 }
