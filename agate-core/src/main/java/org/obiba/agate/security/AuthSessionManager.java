@@ -21,19 +21,19 @@ public class AuthSessionManager extends DefaultOIDCSessionManager {
   private final Logger log = LoggerFactory.getLogger(AuthSessionManager.class);
   @Override
   public void saveSession(OIDCSession session) {
-    log.debug("Saving session {}", session.getId());
+    log.debug("Saving session {}", session.getStateValue());
     super.saveSession(session);
   }
 
   @Override
-  public boolean hasSession(String client) {
-    log.debug("Checking if session {} exists", client);
-    return super.hasSession(client);
+  public boolean hasSession(String state) {
+    log.debug("Checking if session {} exists", state);
+    return super.hasSession(state);
   }
 
   @Override
-  public OIDCSession getSession(String client) {
-    log.debug("Getting session {}", client);
-    return super.getSession(client);
+  public OIDCSession getSession(String state) {
+    log.debug("Getting session {}", state);
+    return super.getSession(state);
   }
 }

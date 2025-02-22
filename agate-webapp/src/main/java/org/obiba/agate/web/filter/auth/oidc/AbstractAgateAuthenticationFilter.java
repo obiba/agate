@@ -106,14 +106,14 @@ public abstract class AbstractAgateAuthenticationFilter extends OIDCLoginFilter 
   }
 
   @Override
-  protected String makeCallbackURL(String provider) {
+  protected String makeCallbackURL(String provider, String callbackURL) {
     RealmConfig realmConfig = realmConfigService.findConfig(provider);
     // get agate's callback url from this realm config, if defined
     if (realmConfig.hasPublicUrl()) {
-      String callbackURL = realmConfig.getPublicUrl() + "/auth/callback/";
-      return makeCallbackURL(provider, callbackURL);
+      String cbURL = realmConfig.getPublicUrl() + "/auth/callback/";
+      return super.makeCallbackURL(provider, cbURL);
     }
     // otherwise fallback to agate's public url
-    return super.makeCallbackURL(provider);
+    return super.makeCallbackURL(provider, callbackURL);
   }
 }

@@ -141,6 +141,8 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
   @Override
   protected void onRedirect(OIDCSession session, J2EContext context, String provider) throws IOException {
     if (session == null) return;
+    if (context.getResponse().isCommitted()) return;
+
     Map<String, String[]> requestParameters = session.getRequestParameters();
     String action = retrieveRequestParameter(FilterParameter.ACTION.value(), requestParameters);
 
