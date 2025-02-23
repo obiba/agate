@@ -144,21 +144,21 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     if (context.getResponse().isCommitted()) return;
 
     Map<String, String[]> requestParameters = session.getRequestParameters();
-    log.debug("onRedirect: Request parameters: {}", requestParameters);
     String action = retrieveRequestParameter(FilterParameter.ACTION.value(), requestParameters);
-    log.debug("onRedirect: Action: {}", action);
     String redirect = retrieveRequestParameter(FilterParameter.REDIRECT.value(), requestParameters);
-    log.debug("onRedirect: Redirect URL: {}", redirect);
+    log.debug("onRedirect: Action: {}", action);
+    log.debug("onRedirect: Redirect URL (params): {}", redirect);
 
     if (Strings.isNullOrEmpty(redirect)) {
       if (FilterAction.SIGNIN.equals(FilterAction.valueOf(action))) {
-        context.getResponse().sendRedirect(retrieveRedirectUrl(requestParameters));
+        redirect = retrieveRedirectUrl(requestParameters);
       } else {
-        context.getResponse().sendRedirect(retrieveSignupRedirectUrl(requestParameters));
+        redirect = retrieveSignupRedirectUrl(requestParameters);
       }
-    } else {
-      context.getResponse().sendRedirect(redirect);
     }
+    log.debug("onRedirect: Redirect URL (location): {}", redirect);
+    context.getResponse().addHeader(HttpHeaders.LOCATION, redirect);
+    context.getResponse().sendRedirect(redirect);
   }
 
   /**
