@@ -144,9 +144,11 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     if (context.getResponse().isCommitted()) return;
 
     Map<String, String[]> requestParameters = session.getRequestParameters();
+    log.debug("onRedirect: Request parameters: {}", requestParameters);
     String action = retrieveRequestParameter(FilterParameter.ACTION.value(), requestParameters);
-
+    log.debug("onRedirect: Action: {}", action);
     String redirect = retrieveRequestParameter(FilterParameter.REDIRECT.value(), requestParameters);
+    log.debug("onRedirect: Redirect URL: {}", redirect);
 
     if (Strings.isNullOrEmpty(redirect)) {
       if (FilterAction.SIGNIN.equals(FilterAction.valueOf(action))) {
@@ -260,7 +262,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     } else {
       log.info("Agate Authentication failure for '{}', user does not exist in Agate", credentials.getUsername(getUsernameClaim(realmConfig)));
       try {
-        setUserAuthCookieForSignUp(credentials, oidcAuthenticationToken, response, provider, errorUrl);
+        setUserAuthCookieForSignUp(credentials, response, provider, errorUrl);
       } catch (JSONException e) {
         // ignore
       }
@@ -324,7 +326,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     } else {
       log.info("Agate Authentication failure for '{}', user does not exist in Agate", credentials.getUsername(getUsernameClaim(config)));
       try {
-        setUserAuthCookieForSignUp(credentials, oidcAuthenticationToken, response, provider, errorUrl);
+        setUserAuthCookieForSignUp(credentials, response, provider, errorUrl);
       } catch (JSONException e) {
         // ignore
       }
@@ -339,14 +341,14 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     User user = userService.findUser(credentials.getUsername(getUsernameClaim(config)));
 
     if (user == null) {
-      setUserAuthCookieForSignUp(credentials, oidcAuthenticationToken, response, provider, errorUrl);
+      setUserAuthCookieForSignUp(credentials, response, provider, errorUrl);
     } else {
       log.info("SignUp failure for '{}' with provider '{}', user already exists in Agate", credentials.getUsername(getUsernameClaim(config)), provider);
       sendRedirectOrSendError(errorUrl, "Can't sign up with these credentials.", response);
     }
   }
 
-  private void setUserAuthCookieForSignUp(OIDCCredentials credentials, OIDCAuthenticationToken oidcAuthenticationToken, HttpServletResponse response, String provider, String errorUrl) throws IOException, JSONException {
+  private void setUserAuthCookieForSignUp(OIDCCredentials credentials, HttpServletResponse response, String provider, String errorUrl) throws IOException, JSONException {
     RealmConfig realmConfig = realmConfigService.findConfig(provider);
 
     if (realmConfig != null && realmConfig.isForSignup()) {
@@ -371,16 +373,15 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
 
       log.debug("User info mapped: {}", userMappedInfo);
 
-      // TODO get domain from realm config
-      // String domain = realmConfig.getDomain();
-      // if (Strings.isNullOrEmpty(domain)) domain = configuration.getDomain();
 
       Configuration configuration = configurationService.getConfiguration();
+      // get domain from realm config
+      String domain = realmConfig.hasDomain() ? realmConfig.getDomain() : configuration.getDomain();
       response.addHeader(HttpHeaders.SET_COOKIE, toCookieString(
           new NewCookie.Builder("u_auth")
               .value(URLUtils.encode(userMappedInfo.toString()).replaceAll("\\+", "%20"))
               .path("/")
-              .domain(configuration.getDomain())
+              .domain(domain)
               .maxAge(600)
               .secure(true)
               .httpOnly(true)
