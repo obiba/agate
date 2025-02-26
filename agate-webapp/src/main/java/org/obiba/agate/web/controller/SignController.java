@@ -132,6 +132,7 @@ public class SignController {
       uAuthObj = new JSONObject();
     }
 
+    log.debug("Signup with username {}", uAuth);
     if (uAuthObj.has("username")) {
       mv.getModel().put("uAuth", uAuthObj);
       mv.getModel().put("authConfig", new AuthConfiguration(configurationService.getConfiguration(), clientConfiguration));
