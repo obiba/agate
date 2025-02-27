@@ -19,11 +19,16 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 
 public abstract class AbstractAgateAuthenticationFilter extends OIDCLoginFilter {
+
+  private static final Logger log = LoggerFactory.getLogger(AbstractAgateAuthenticationFilter.class);
 
   private final RealmConfigService realmConfigService;
 
@@ -77,6 +82,12 @@ public abstract class AbstractAgateAuthenticationFilter extends OIDCLoginFilter 
     }
   }
 
+  protected J2EContext makeJ2EContext(HttpServletRequest request, HttpServletResponse response) {
+    String sid = request.getRequestedSessionId();
+    log.debug("login filter requested session id: {}", sid);
+    return super.makeJ2EContext(request, response);
+  }
+
   /**
    * Creates an OIDC session and adds the <code>action</code> request parameter to be used later by the callback filter.
    *
@@ -95,14 +106,14 @@ public abstract class AbstractAgateAuthenticationFilter extends OIDCLoginFilter 
   }
 
   @Override
-  protected String makeCallbackURL(String provider) {
+  protected String makeCallbackURL(String provider, String callbackURL) {
     RealmConfig realmConfig = realmConfigService.findConfig(provider);
     // get agate's callback url from this realm config, if defined
     if (realmConfig.hasPublicUrl()) {
-      String callbackURL = realmConfig.getPublicUrl() + "/auth/callback/";
-      return makeCallbackURL(provider, callbackURL);
+      String cbURL = realmConfig.getPublicUrl() + "/auth/callback/";
+      return super.makeCallbackURL(provider, cbURL);
     }
     // otherwise fallback to agate's public url
-    return super.makeCallbackURL(provider);
+    return super.makeCallbackURL(provider, callbackURL);
   }
 }

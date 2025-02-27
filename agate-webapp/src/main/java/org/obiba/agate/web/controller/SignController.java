@@ -119,11 +119,12 @@ public class SignController {
   }
 
   @GetMapping("/signup-with")
-  public ModelAndView signupWith(@CookieValue(value = "u_auth", required = false, defaultValue = "{}") String uAuth) {
+  public ModelAndView signupWith(@CookieValue(value = "u_auth", required = false, defaultValue = "{}") String uAuth, @RequestParam(value = "redirect", required = false) String redirect) {
     if (!configurationService.getConfiguration().isJoinPageEnabled())
       return new ModelAndView("redirect:" + configurationService.getContextPath() + "/");
 
     ModelAndView mv = new ModelAndView("signup-with");
+    mv.getModel().put("authConfig", new AuthConfiguration(configurationService.getConfiguration(), clientConfiguration));
     JSONObject uAuthObj;
     try {
       String fixedUAuth = uAuth.replaceAll("\\\\", "");
@@ -132,12 +133,12 @@ public class SignController {
       uAuthObj = new JSONObject();
     }
 
-    if (uAuthObj.has("username")) {
-      mv.getModel().put("uAuth", uAuthObj);
-      mv.getModel().put("authConfig", new AuthConfiguration(configurationService.getConfiguration(), clientConfiguration));
+    log.debug("Signup with username {}", uAuth);
+    mv.getModel().put("uAuth", uAuthObj.toMap());
+    if (uAuthObj.has("username") || Strings.isNullOrEmpty(redirect)) {
       return mv;
     }
-    return new ModelAndView("redirect:/signup");
+    return check(redirect);
   }
 
   @GetMapping("/signout")
@@ -223,6 +224,10 @@ public class SignController {
     mv.getModel().put("key", key);
     return mv;
   }
+
+  //
+  // Private methods
+  //
 
   private String getLang(String language, String locale) {
     return language == null ? locale : language;
