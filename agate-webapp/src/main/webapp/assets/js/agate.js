@@ -421,12 +421,17 @@ var agatejs = (function() {
     window.location.search = kvp.join('&');
   };
 
+  const agateRefreshSignupWith = function() {
+    window.location.assign(normalizeUrl('/signup-with?redirect=/signup'));
+  }
+
   return {
     'normalizeUrl': normalizeUrl,
     'signin': agateSignin,
     'signout': agateSignout,
     'redirect': agateRedirect,
     'signup': agateSignup,
+    'refreshSignupWith': agateRefreshSignupWith,
     'forgotPassword': agateForgotPassword,
     'resetPassword': agateResetPassword,
     'updatePassword': agateUpdatePassword,
