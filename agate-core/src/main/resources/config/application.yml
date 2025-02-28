@@ -7,6 +7,9 @@ spring:
       request-context-attribute: rc
       settings:
         template_exception_handler: rethrow
+      charset: UTF-8
+      suffix: .ftl
+      content-type: text/html;charset=UTF-8
     task:
       scheduling:
         pool:
