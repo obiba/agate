@@ -5,7 +5,7 @@
   "description": "Agate web UI",
   "dependencies": {
     "admin-lte": "^3.2.0",
-    "axios": "^1.7.9",
+    "axios": "^1.8.2",
     "jquery.redirect": "^1.2.0"
   },
   "devDependencies": {
