@@ -47,6 +47,10 @@ export const useUserStore = defineStore('user', () => {
     return user.id ? api.put(`/user/${user.id}`, user) : api.post('/users', { password, user });
   }
 
+  function getUser(id: string | undefined) {
+    return users.value?.find((u) => u.id === id);
+  }
+
   function download() {
     window.open(`${baseUrl}/users/_csv`, '_self');
   }
@@ -95,5 +99,6 @@ export const useUserStore = defineStore('user', () => {
     updatePassword,
     disableOTP,
     download,
+    getUser,
   };
 });
