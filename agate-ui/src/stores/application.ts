@@ -25,6 +25,10 @@ export const useApplicationStore = defineStore('application', () => {
     return api.delete(`/application/${application.id}`);
   }
 
+  function getApplication(id: string | undefined) {
+    return applications.value?.find((app) => app.id === id);
+  }
+
   function generateKey(length: number = 30): string {
     if (length < 24) {
       throw new Error('Key length should be at least 24 characters for strength.');
@@ -63,5 +67,6 @@ export const useApplicationStore = defineStore('application', () => {
     remove,
     generateKey,
     getApplicationName,
+    getApplication,
   };
 });
