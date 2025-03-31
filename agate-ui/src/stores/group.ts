@@ -21,10 +21,15 @@ export const useGroupStore = defineStore('group', () => {
     return api.delete(`/group/${group.id}`);
   }
 
+  function getGroupName(id: string | undefined) {
+    return groups.value?.find((g) => g.id === id)?.name || id || '';
+  }
+
   return {
     groups,
     init,
     remove,
     save,
+    getGroupName,
   };
 });

@@ -53,7 +53,7 @@ export const useApplicationStore = defineStore('application', () => {
   }
 
   function getApplicationName(id: string | undefined) {
-    return applications.value?.find((app) => app.id === id)?.name;
+    return applications.value?.find((app) => app.id === id)?.name || id || '';
   }
 
   return {

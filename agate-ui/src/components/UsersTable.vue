@@ -123,7 +123,7 @@
           </q-td>
           <q-td key="groups" :props="props">
             <template v-for="grp in props.row.groups" :key="grp">
-              <q-badge :label="grp" class="on-left" />
+              <q-badge :label="groupStore.getGroupName(grp)" class="on-left" />
             </template>
           </q-td>
           <q-td key="applications" :props="props">
@@ -299,7 +299,7 @@ function mergeGroupApplications(user: UserDto): GroupApplicationDto[] {
     // look for the application in the list
     const idx = groupApplications.findIndex((grpApp) => grpApp.application === app.application);
     if (idx === -1) {
-      groupApplications.push({...app});
+      groupApplications.push({...app, group: groupStore.getGroupName(app.group)});
     } else if (groupApplications[idx]) {
       // merge the group
       groupApplications[idx] = { ...app, group: `${groupApplications[idx].group}, ${app.group}`};
