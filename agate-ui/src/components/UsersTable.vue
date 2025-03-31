@@ -130,7 +130,7 @@
             <template v-for="app in props.row.applications" :key="app">
               <q-badge :label="applicationStore.getApplicationName(app)" class="on-left" />
             </template>
-            <template v-for="(grpApp, idx) in props.row.groupApplications" :key="idx">
+            <template v-for="(grpApp, idx) in mergeGroupApplications(props.row)" :key="idx">
               <q-badge
                 color="secondary"
                 :label="applicationStore.getApplicationName(grpApp.application)"
@@ -167,7 +167,7 @@
 
 <script setup lang="ts">
 import { type QTableColumn, exportFile } from 'quasar';
-import type { UserDto } from 'src/models/Agate';
+import type { GroupApplicationDto, UserDto } from 'src/models/Agate';
 import UserDialog from 'src/components/UserDialog.vue';
 import UpdatePasswordDialog from 'src/components/UpdatePasswordDialog.vue';
 import ConfirmDialog from 'src/components/ConfirmDialog.vue';
@@ -270,15 +270,19 @@ function onAdd() {
 
 function formatColumnValue(fieldName: string, row: UserDto): string {
   const value = row[fieldName as keyof UserDto] || '';
-  const applications = (row.applications || []).concat((row.groupApplications || []).map((app) => app.application));
-
+  
   switch (fieldName) {
     case 'fullName':
       return `"${row.firstName || ''} ${row.lastName || ''}"`.trim();
     case 'groups':
       return Array.isArray(value) ? `"${value.join(', ')}"` : `"${value}"`;
-      case 'applications':
+      case 'applications': {
+        const applications = (row.applications || []).concat((row.groupApplications || [])
+          .map((app) => app.application))
+          // unique applications
+          .filter((value, index, self) => self.indexOf(value) === index);
         return `"${applications.map((app) => applicationStore.getApplicationName(app)).join(', ')}"`;
+      }
     case 'otpEnabled':
       return value ? t('enabled') : t('disabled');
     case 'status':
@@ -287,6 +291,23 @@ function formatColumnValue(fieldName: string, row: UserDto): string {
       return typeof value === 'string' ? `"${value}"` : String(value);
   }
 }
+
+// obiba/agate#603
+function mergeGroupApplications(user: UserDto): GroupApplicationDto[] {
+  const groupApplications: GroupApplicationDto[] = [];
+  (user.groupApplications || []).forEach((app) => {
+    // look for the application in the list
+    const idx = groupApplications.findIndex((grpApp) => grpApp.application === app.application);
+    if (idx === -1) {
+      groupApplications.push({...app});
+    } else if (groupApplications[idx]) {
+      // merge the group
+      groupApplications[idx] = { ...app, group: `${groupApplications[idx].group}, ${app.group}`};
+    }
+  });
+  return groupApplications;
+}
+
 function onDownload() {
   const content = [columns.value.map((col) => col.label)]
     .concat(users.value.map((row) => columns.value.map((col) => formatColumnValue(col.field as string, row))))
