@@ -161,7 +161,9 @@ public class RealmConfigService {
 
   public RealmConfig findConfig(@Nonnull String name) {
     Assert.notNull(name, "Realm config name cannot be null.");
-    return realmConfigRepository.findOneByName(name);
+    RealmConfig config = realmConfigRepository.findById(RealmConfig.idFromName(name)).orElse(null);
+    if (config == null) config = realmConfigRepository.findOneByName(name);
+    return config;
   }
 
   public RealmConfig getConfig(@Nonnull String name) {

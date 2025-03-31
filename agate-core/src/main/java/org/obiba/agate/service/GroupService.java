@@ -39,15 +39,17 @@ public class GroupService {
   }
 
   /**
-   * Find a {@link org.obiba.agate.domain.Group} by its name.
+   * Find a {@link org.obiba.agate.domain.Group} by its name or id.
    *
-   * @param name
+   * @param idOrName
    * @return null if not found
    */
   @Nullable
-  public Group findGroup(@Nonnull String name) {
-    Assert.notNull(name, "Group name cannot be null.");
-    return groupRepository.findOneByName(name);
+  public Group findGroup(@Nonnull String idOrName) {
+    Assert.notNull(idOrName, "Group name cannot be null.");
+    Group group = groupRepository.findById(Group.idFromName(idOrName)).orElse(null);
+    if(group == null) group = groupRepository.findOneByName(idOrName);
+    return group;
   }
 
   public List<Group> findByApplication(@Nonnull String application) {

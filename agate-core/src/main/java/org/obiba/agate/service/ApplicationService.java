@@ -71,7 +71,7 @@ public class ApplicationService {
   }
 
   public Application findByIdOrName(@Nonnull String idOrName) {
-    Application application = find(idOrName);
+    Application application = find(Application.idFromName(idOrName));
     if (application == null) {
       List<Application> applications = applicationRepository.findByName(idOrName);
       return applications == null || applications.isEmpty() ? null : applications.get(0);

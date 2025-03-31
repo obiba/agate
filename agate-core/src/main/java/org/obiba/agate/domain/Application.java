@@ -55,8 +55,12 @@ public class Application extends AbstractAuditableDocument {
     this.key = key;
   }
 
+  public static String idFromName(String name) {
+    return name.replaceAll("\\s+", "-").replaceAll(":", "-").replaceAll("-+", "-").toLowerCase();
+  }
+
   public void setNameAsId() {
-    setId(getName().replaceAll("\\s+", "-").replaceAll(":", "-").replaceAll("-+", "-").toLowerCase());
+    setId(idFromName(name));
   }
 
   public String getName() {

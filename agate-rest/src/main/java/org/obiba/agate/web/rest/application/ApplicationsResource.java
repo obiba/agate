@@ -51,7 +51,7 @@ public class ApplicationsResource {
 
   @POST
   public Response create(Agate.ApplicationDto dto) {
-    if (applicationService.findByName(dto.getName()) != null) {
+    if (applicationService.findByIdOrName(dto.getName()) != null) {
       throw new BadRequestException("Application already exists.");
     }
 
