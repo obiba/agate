@@ -10,7 +10,7 @@ export const useRealmStore = defineStore('realm', () => {
   async function init() {
     return api.get('/config/realms/summaries').then((response) => {
       if (response.status === 200) {
-        realms.value = response.data;
+        realms.value = response.data.sort((a: RealmConfigSummaryDto, b: RealmConfigSummaryDto) => a.name.localeCompare(b.name));
       }
       return response;
     });

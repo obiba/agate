@@ -8,7 +8,7 @@ export const useUserStore = defineStore('user', () => {
   async function init() {
     return api.get('/users').then((response) => {
       if (response.status === 200) {
-        users.value = response.data;
+        users.value = response.data.sort((a: UserDto, b: UserDto) => a.name.localeCompare(b.name));
       }
       return response;
     });

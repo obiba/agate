@@ -8,7 +8,7 @@ export const useApplicationStore = defineStore('application', () => {
   async function init() {
     return api.get('/applications').then((response) => {
       if (response.status === 200) {
-        applications.value = response.data;
+        applications.value = response.data.sort((a: ApplicationDto, b: ApplicationDto) => a.name.localeCompare(b.name));
       }
       return response;
     });

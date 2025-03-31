@@ -7,7 +7,7 @@ export const useGroupStore = defineStore('group', () => {
 
   async function init() {
     return api.get('/groups').then((response) => {
-      groups.value = response.data;
+      groups.value = response.data.sort((a: GroupDto, b: GroupDto) => a.name.localeCompare(b.name));
       return response.data;
     });
   }
