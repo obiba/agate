@@ -142,6 +142,7 @@
               color="primary"
               size="sm"
               :label="t('application.add_realm_groups')"
+              :disable="!realmOptions.length"
               @click="onAddRealmGroups"
               class="q-mt-md"
             />
