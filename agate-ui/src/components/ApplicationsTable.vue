@@ -17,7 +17,7 @@
             <code>{{ props.row.id }}</code>
           </q-td>
           <q-td key="name" :props="props">
-            <span class="text-primary">{{ props.row.name }}</span>
+            <router-link :to="`/application/${props.row.id}`">{{ props.row.name }}</router-link>
             <div class="float-right">
               <q-btn
                 rounded

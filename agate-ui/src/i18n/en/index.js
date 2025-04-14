@@ -335,6 +335,7 @@ export default {
   groups: 'Groups',
   help: 'Help',
   inherited_from: 'Inherited from: {parent}',
+  last_modified: 'Last modified',
   missing_required_fields: 'Missing required fields',
   more_actions: 'More actions',
   my_profile: 'My Profile',

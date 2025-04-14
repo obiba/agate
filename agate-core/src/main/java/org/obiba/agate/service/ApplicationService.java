@@ -12,6 +12,7 @@ package org.obiba.agate.service;
 
 import jakarta.annotation.Nonnull;
 import org.apache.shiro.crypto.hash.Sha512Hash;
+import org.joda.time.DateTime;
 import org.obiba.agate.domain.Application;
 import org.obiba.agate.domain.Group;
 import org.obiba.agate.domain.User;
@@ -91,8 +92,10 @@ public class ApplicationService {
     if(application.isNew()) {
       generateId(application);
       applicationRepository.insert(application);
-    } else
+    } else {
+      application.setLastModifiedDate(new DateTime());
       applicationRepository.save(application);
+    }
   }
 
   public void delete(@Nonnull String id) {

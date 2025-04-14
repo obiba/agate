@@ -334,6 +334,7 @@ export default {
   groups_caption: 'Gérer les groupes et leurs membres, les accès aux applications',
   groups: 'Groupes',
   help: 'Aide',
+  last_modified: 'Dernière modification',
   inherited_from: 'Hérité de: {parent}',
   missing_required_fields: 'Champs obligatoires manquants',
   more_actions: "Plus d'actions",
