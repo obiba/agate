@@ -15,7 +15,7 @@
       </div>
       <div style="padding: 30px;">
         <p style="margin: 0 0 30px;">
-          ${msg("email.pendingForReview.body", user.firstName!"", user.lastName!"")}
+          ${msg("email.pendingForReview.body", user.firstName!"", user.lastName!"", organization)}
         </p>
         <p style="margin: 0 0 30px;">
         </p>
