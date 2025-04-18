@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { api, baseUrl } from 'src/boot/api';
-import type { UserDto } from 'src/models/Agate';
+import type { AuthorizationDto, UserDto } from 'src/models/Agate';
 
 export const useUserStore = defineStore('user', () => {
   const users = ref<UserDto[]>([]);
@@ -40,6 +40,16 @@ export const useUserStore = defineStore('user', () => {
       { status: 'approved' },
       { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } },
     );
+  }
+
+  async function getAuthorizations(id: string): Promise<AuthorizationDto[]> {
+    return api.get(`/user/${id}/authorizations`).then((response) => {
+      return response.data;
+    });
+  }
+
+  async function removeAuthorization(id: string, authorization: AuthorizationDto) {
+    return api.delete(`/user/${id}/authorization/${authorization.id}`);
   }
 
   async function save(user: UserDto, password: string | undefined = undefined) {
@@ -100,5 +110,7 @@ export const useUserStore = defineStore('user', () => {
     disableOTP,
     download,
     getUser,
+    getAuthorizations,
+    removeAuthorization,
   };
 });

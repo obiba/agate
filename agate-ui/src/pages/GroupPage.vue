@@ -71,7 +71,7 @@ const showRemoveUser = ref(false);
 const selectedUser = ref<UserSummaryDto>();
 const selected = ref<GroupDto>();
 
-const items: FieldItem[] = [
+const items = computed<FieldItem[]>(() => [
   {
     field: 'id',
     label: 'ID',
@@ -98,7 +98,7 @@ const items: FieldItem[] = [
     label: t('last_modified'),
     format: (val: GroupDto) => (val ? getDateLabel(val.timestamps?.lastUpdate ? val.timestamps?.lastUpdate : val.timestamps?.created) : ''),
   },
-];
+]);
 
 onMounted(() => {
   groupStore.init();

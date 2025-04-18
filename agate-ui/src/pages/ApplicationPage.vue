@@ -12,32 +12,16 @@
         <div class="col-12 col-md-6">
           <div class="text-h6 q-mb-sm">{{ t('properties') }}</div>
           <div class="q-mb-md">
-            <q-btn
-              icon="edit"
-              color="primary"
-              size="sm"
-              @click="onShowEdit"
-            />
-            <q-btn
-              outline
-              icon="delete"
-              color="negative"
-              size="sm"
-              class="on-right"
-              @click="onShowDelete"
-            />
+            <q-btn icon="edit" color="primary" size="sm" @click="onShowEdit" />
+            <q-btn outline icon="delete" color="negative" size="sm" class="on-right" @click="onShowDelete" />
           </div>
           <fields-list :dbobject="application" :items="items" />
         </div>
         <div class="col-12 col-md-6">
         </div>
       </div>
-      <confirm-dialog
-        v-model="showDelete"
-        :title="t('application.remove')"
-        :text="t('application.remove_confirm', { name: selected?.name })"
-        @confirm="onDelete"
-      />
+      <confirm-dialog v-model="showDelete" :title="t('application.remove')"
+        :text="t('application.remove_confirm', { name: selected?.name })" @confirm="onDelete" />
       <application-dialog v-model="showEdit" :application="selected" @saved="onSaved" />
     </q-page>
   </div>
@@ -63,7 +47,7 @@ const showEdit = ref(false);
 const showDelete = ref(false);
 const selected = ref<ApplicationDto>();
 
-const items: FieldItem[] = [
+const items = computed<FieldItem[]>(() => [
   {
     field: 'id',
     label: 'ID',
@@ -79,12 +63,13 @@ const items: FieldItem[] = [
     field: 'redirectURI',
     label: t('application.redirect_uris'),
     links: (val: ApplicationDto) =>
-    val.redirectURI?.split(',').map((uri) => {
-      return {
-        label: uri,
-        to: uri,
-        iconRight: 'open_in_new',
-      }}) || [],
+      val.redirectURI?.split(',').map((uri) => {
+        return {
+          label: uri,
+          to: uri,
+          iconRight: 'open_in_new',
+        }
+      }) || [],
   },
   {
     field: 'autoApproval',
@@ -116,7 +101,7 @@ const items: FieldItem[] = [
     label: t('last_modified'),
     format: (val: ApplicationDto) => (val ? getDateLabel(val.timestamps?.lastUpdate ? val.timestamps?.lastUpdate : val.timestamps?.created) : ''),
   },
-];
+]);
 
 onMounted(() => {
   applicationStore.init();
