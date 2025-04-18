@@ -12,53 +12,35 @@
         <div class="col-12 col-md-6">
           <div class="text-h6 q-mb-sm">{{ t('properties') }}</div>
           <div class="q-mb-md">
-            <q-btn
-              icon="edit"
-              color="primary"
-              size="sm"
-              @click="onShowEdit"
-            />
-            <q-btn
-              outline
-              icon="delete"
-              color="negative"
-              size="sm"
-              class="on-right"
-              @click="onShowDelete"
-            />
+            <q-btn icon="edit" color="primary" size="sm" @click="onShowEdit" />
+            <q-btn outline icon="delete" color="negative" size="sm" class="on-right" @click="onShowDelete" />
           </div>
           <fields-list :dbobject="group" :items="items" />
         </div>
         <div class="col-12 col-md-6">
           <div class="text-h6 q-mb-sm">{{ t('users') }}</div>
-          <q-list bordered separator>
-            <q-item v-for="user in users" :key="user.name" clickable>
+
+          <q-list v-if="users?.length" bordered separator>
+            <q-item v-for="user in users" :key="user.name">
               <q-item-section>
                 <q-item-label>
-                  <div class="text-bold">{{ user.name }}</div>
+                  <div><router-link :to="`/user/${user.name}`">{{ user.name }}</router-link></div>
                   <div class="text-caption">{{ user.firstName }} {{ user.lastName }}</div>
                   <div class="text-hint">{{ user.email }}</div>
                 </q-item-label>
               </q-item-section>
               <q-item-section side>
-                <q-btn
-                  flat
-                  icon="delete"
-                  color="negative"
-                  size="sm"
-                  @click="onShowRemoveUser(user)"
-                />
+                <q-btn flat icon="delete" color="negative" size="sm" @click="onShowRemoveUser(user)" />
               </q-item-section>
             </q-item>
           </q-list>
+          <div v-else class="text-hint">{{ t('no_members') }}</div>
         </div>
       </div>
-      <confirm-dialog
-        v-model="showDelete"
-        :title="t('group.remove')"
-        :text="t('group.remove_confirm', { name: selected?.name })"
-        @confirm="onDelete"
-      />
+      <confirm-dialog v-model="showDelete" :title="t('group.remove')"
+        :text="t('group.remove_confirm', { name: selected?.name })" @confirm="onDelete" />
+      <confirm-dialog v-model="showRemoveUser" :title="t('group.user_remove')"
+        :text="t('group.user_remove_confirm', { name: selectedUser?.name })" @confirm="onRemoveUser" />
       <group-dialog v-model="showEdit" :group="selected" @saved="onSaved" />
     </q-page>
   </div>
@@ -85,6 +67,8 @@ const users = ref<UserSummaryDto[]>([]);
 
 const showEdit = ref(false);
 const showDelete = ref(false);
+const showRemoveUser = ref(false);
+const selectedUser = ref<UserSummaryDto>();
 const selected = ref<GroupDto>();
 
 const items: FieldItem[] = [
@@ -148,7 +132,18 @@ function onDelete() {
 }
 
 function onShowRemoveUser(user: UserSummaryDto) {
-  // TODO
-  console.log('Remove user', user);
+  selectedUser.value = user;
+  showRemoveUser.value = true;
+}
+
+function onRemoveUser() {
+  if (!selectedUser.value) {
+    return;
+  }
+  groupStore.removeUsers(id.value, [selectedUser.value.name]).then(() => {
+    groupStore.getUsers(id.value).then((data) => {
+      users.value = data;
+    });
+  });
 }
 </script>

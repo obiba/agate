@@ -25,6 +25,15 @@ export const useGroupStore = defineStore('group', () => {
     return api.get(`/group/${groupId}/users`).then((response) => response.data);
   }
 
+  async function removeUsers(groupId: string, names: string[]): Promise<void> {
+    return api.delete(`/group/${groupId}/users`, {
+      params: { names },
+      paramsSerializer: {
+        indexes: null, // no brackets at all
+      }
+    });
+  }
+
   function getGroupName(id: string | undefined) {
     return groups.value?.find((g) => g.id === id)?.name || id || '';
   }
@@ -41,5 +50,6 @@ export const useGroupStore = defineStore('group', () => {
     getGroupName,
     getGroup,
     getUsers,
+    removeUsers,
   };
 });

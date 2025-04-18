@@ -39,6 +39,8 @@ export default {
     remove: 'Remove group',
     save_failed: 'Failed to save group',
     saved: 'Group saved',
+    user_remove: 'Remove user from group',
+    user_remove_confirm: 'Please confirm user removal from this group: {name}',
   },
   user: {
     add: 'Add user',
@@ -343,6 +345,7 @@ export default {
   name_min_length: 'Name must be at least {min} characters',
   name_required: 'Name is required',
   name: 'Name',
+  no_members: 'No members',
   number_invalid: 'Invalid number',
   other_links: 'Other links',
   otpEnabled: '2FA',

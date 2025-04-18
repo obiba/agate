@@ -39,6 +39,8 @@ export default {
     remove: 'Suppression du groupe',
     save_failed: "Échec de l'enregistrement du groupe",
     saved: 'Groupe enregistré',
+    user_remove: 'Retirer un usager',
+    user_remove_confirm: 'Veuillez confirmer le retrait de l\'usager: {name} de ce groupe.',
   },
   user: {
     add: 'Ajouter un usager',
@@ -343,6 +345,7 @@ export default {
   name_min_length: 'Le nom doit comporter au moins {min} caractères',
   name_required: 'Le nom est requis',
   name: 'Nom',
+  no_members: 'Aucun membre',
   number_invalid: 'Nombre invalide',
   other_links: 'Autres liens',
   otpEnabled: '2FA',
