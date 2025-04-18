@@ -57,6 +57,7 @@ export default {
     groups_hint: 'Les usagers peuvent être membres de groupes pour accéder aux applications associées à ces groupes.',
     language: 'Langue',
     lastName: 'Nom de famille',
+    last_login: 'Dernière connexion',
     otp_disable_error: 'Échec de la désactivation du 2FA',
     otp_disabled: '2FA désactivé',
     password_copied: 'Mot de passe copié',

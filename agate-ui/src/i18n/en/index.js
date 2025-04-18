@@ -57,6 +57,7 @@ export default {
     groups_hint: 'Users can be members of groups to access applications associated to these groups.',
     language: 'Language',
     lastName: 'Last Name',
+    last_login: 'Last login',
     otp_disable_error: 'Failed to disable 2FA',
     otp_disabled: '2FA disabled',
     password_copied: 'Password copied',

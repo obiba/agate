@@ -133,6 +133,11 @@ const items = computed<FieldItem[]>(() => [
     label: t('last_modified'),
     format: (val: UserDto) => (val ? getDateLabel(val.timestamps?.lastUpdate ? val.timestamps?.lastUpdate : val.timestamps?.created) : ''),
   },
+  {
+    field: 'lastLogin',
+    label: t('user.last_login'),
+    format: (val: UserDto) => (val ? getDateLabel(val.lastLogin) : ''),
+  },
 ]);
 
 onMounted(() => {
