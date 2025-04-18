@@ -317,6 +317,7 @@ export default {
   applications_caption: "Gérer les applications, les identifications et les fournisseurs d'identité",
   applications: 'Applications',
   apply: 'Appliquer',
+  attributes: 'Attributs',
   cancel: 'Annuler',
   content_management: 'Gestion de contenu',
   confirm: 'Confirmer',
