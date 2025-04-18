@@ -16,7 +16,7 @@
       <template v-slot:body="props">
         <q-tr :props="props" @mouseover="onOverRow(props.row)" @mouseleave="onLeaveRow(props.row)">
           <q-td key="name" :props="props">
-            <router-link :to="`/user/${props.row.name}`">{{ props.row.name }}</router-link>
+            <router-link :to="`/user/${props.row.id}`">{{ props.row.name }}</router-link>
             <div class="float-right">
               <q-btn rounded dense flat size="sm" color="secondary"
                 :icon="toolsVisible[props.row.name] ? 'edit' : 'none'" :title="t('edit')" class="q-ml-xs"
