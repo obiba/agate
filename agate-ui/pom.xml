@@ -15,7 +15,7 @@
   <parent>
     <artifactId>agate</artifactId>
     <groupId>org.obiba.agate</groupId>
-    <version>3.4-SNAPSHOT</version>
+    <version>3.5-SNAPSHOT</version>
   </parent>
   <artifactId>agate-ui</artifactId>
   <name>agate-ui</name>
