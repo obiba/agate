@@ -1,6 +1,7 @@
 package org.obiba.agate.service;
 
 import jakarta.annotation.Nonnull;
+import org.joda.time.DateTime;
 import org.obiba.agate.domain.Group;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.repository.GroupRepository;
@@ -88,8 +89,10 @@ public class GroupService {
     if(group.isNew()) {
       group.setNameAsId();
       groupRepository.insert(group);
-    } else
+    } else {
+      group.setLastModifiedDate(new DateTime());
       groupRepository.save(group);
+    }
     return group;
   }
 

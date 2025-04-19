@@ -13,8 +13,11 @@
       </template>
       <template v-slot:body="props">
         <q-tr :props="props" @mouseover="onOverRow(props.row)" @mouseleave="onLeaveRow(props.row)">
+          <q-td key="id" :props="props">
+            <code>{{ props.row.id }}</code>
+          </q-td>
           <q-td key="name" :props="props">
-            <span class="text-primary">{{ props.row.name }}</span>
+            <router-link :to="`/group/${props.row.id}`">{{ props.row.name }}</router-link>
             <div class="float-right">
               <q-btn
                 rounded
@@ -89,6 +92,7 @@ const groups = computed(
     ) || [],
 );
 const columns = computed(() => [
+  { name: 'id', label: 'ID', field: 'id', align: DefaultAlignment, sortable: true },
   { name: 'name', label: t('name'), field: 'name', align: DefaultAlignment, sortable: true },
   { name: 'description', label: t('description'), field: 'description', align: DefaultAlignment, sortable: true },
   { name: 'applications', label: t('applications'), field: 'applications', align: DefaultAlignment, sortable: true },

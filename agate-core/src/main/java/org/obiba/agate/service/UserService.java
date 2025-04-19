@@ -241,6 +241,7 @@
       currentUser.setFirstName(firstName);
       currentUser.setLastName(lastName);
       currentUser.setEmail(email);
+      currentUser.setLastModifiedDate(new DateTime());
       userRepository.save(currentUser);
       log.debug("Changed information for User: {}", currentUser);
     }
@@ -346,9 +347,10 @@
 
       if (uNew)
         userRepository.insert(user);
-      else
+      else {
+        saved.setLastModifiedDate(new DateTime());
         userRepository.save(saved);
-
+      }
       if (saved.getGroups() != null) {
         for (String groupName : saved.getGroups()) {
           Group group = groupService.findGroup(groupName);
@@ -403,6 +405,7 @@
     }
 
     public UserCredentials save(@Nonnull UserCredentials userCredentials) {
+      userCredentials.setLastModifiedDate(new DateTime());
       userCredentialsRepository.save(userCredentials);
       return userCredentials;
     }
@@ -422,7 +425,7 @@
       if (!PWD_PATTERN.matcher(password).matches()) throw new PasswordTooWeakException();
 
       userCredentials.setPassword(hashPassword(password));
-
+      userCredentials.setLastModifiedDate(new DateTime());
       userCredentialsRepository.save(userCredentials);
 
       user.setStatus(UserStatus.ACTIVE);
