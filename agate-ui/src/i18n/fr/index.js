@@ -41,6 +41,8 @@ export default {
     saved: 'Groupe enregistré',
     user_remove: 'Retirer un usager',
     user_remove_confirm: 'Veuillez confirmer le retrait de l\'usager: {name} de ce groupe.',
+    members: 'Members',
+    members_hint: "Les usagers membres du groupe peuvent accéder aux applications associées.",
   },
   user: {
     add: 'Ajouter un usager',

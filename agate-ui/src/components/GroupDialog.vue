@@ -72,10 +72,6 @@ const applicationOptions = computed(
 );
 const isValid = computed(() => selected.value.name && selected.value.name.trim().length >= 3);
 
-onMounted(() => {
-  applicationStore.init();
-});
-
 watch(
   () => props.modelValue,
   (value) => {

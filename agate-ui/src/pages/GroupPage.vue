@@ -18,8 +18,9 @@
           <fields-list :dbobject="group" :items="items" />
         </div>
         <div class="col-12 col-md-6">
-          <div class="text-h6 q-mb-sm">{{ t('users') }}</div>
-
+          <div class="text-h6 q-mb-sm">{{ t('group.members') }}</div>
+          <div class="text-hint q-mb-sm">{{ t('group.members_hint') }}</div>
+          <q-btn v-show="false" size="sm" icon="add" color="primary" :label="t('add')" @click="onShowAddUser" class="q-mb-sm"/>
           <q-list v-if="users?.length" bordered separator>
             <q-item v-for="user in users" :key="user.name">
               <q-item-section>
@@ -67,6 +68,7 @@ const users = ref<UserSummaryDto[]>([]);
 
 const showEdit = ref(false);
 const showDelete = ref(false);
+const showAddUser = ref(false);
 const showRemoveUser = ref(false);
 const selectedUser = ref<UserSummaryDto>();
 const selected = ref<GroupDto>();
@@ -145,5 +147,9 @@ function onRemoveUser() {
       users.value = data;
     });
   });
+}
+
+function onShowAddUser() {
+  showAddUser.value = true;
 }
 </script>

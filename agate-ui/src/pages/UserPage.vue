@@ -13,9 +13,20 @@
           <div class="text-h6 q-mb-sm">{{ t('properties') }}</div>
           <div class="q-mb-md">
             <q-btn icon="edit" color="primary" size="sm" @click="onShowEdit" />
+            <q-btn-dropdown v-if="user?.realm === 'agate-user-realm'" outline icon="key" size="sm" class="on-right">
+              <q-list style="min-width: 100px">
+                <q-item clickable v-close-popup @click="onShowResetPassword">
+                  <q-item-section>{{ t('user.reset_password') }}</q-item-section>
+                </q-item>
+                <q-item clickable v-close-popup @click="onShowUpdatePassword">
+                  <q-item-section>{{ t('user.update_password') }}</q-item-section>
+                </q-item>
+                <q-item clickable :disable="!user?.otpEnabled" v-close-popup @click="onDisableOTP">
+                  <q-item-section>{{ t('user.disable_2fa') }}</q-item-section>
+                </q-item>
+              </q-list>
+            </q-btn-dropdown>
             <q-btn outline icon="delete" color="negative" size="sm" class="on-right" @click="onShowDelete" />
-            <q-btn :disable="!user?.otpEnabled" outline icon="key" size="sm" :label="t('user.disable_2fa')"
-              class="on-right" @click="onDisableOTP" />
           </div>
           <fields-list :dbobject="user" :items="items" />
         </div>
@@ -39,7 +50,10 @@
       </div>
       <confirm-dialog v-model="showDelete" :title="t('user.remove')"
         :text="t('user.remove_confirm', { name: selected?.name })" @confirm="onDelete" />
+      <confirm-dialog v-model="showResetPassword" :title="t('user.reset_password')"
+        :text="t('user.reset_password_confirm', { name: selected?.name })" @confirm="onResetPassword" />
       <user-dialog v-model="showEdit" :user="selected" @saved="onSaved" />
+      <update-password-dialog v-model="showUpdatePassword" :user="user" />
     </q-page>
   </div>
 </template>
@@ -50,6 +64,7 @@ import type { FieldItem } from 'src/components/FieldsList.vue';
 import FieldsList from 'src/components/FieldsList.vue';
 import UserDialog from 'src/components/UserDialog.vue';
 import ConfirmDialog from 'src/components/ConfirmDialog.vue';
+import UpdatePasswordDialog from 'src/components/UpdatePasswordDialog.vue';
 import { getDateLabel } from 'src/utils/dates';
 import { notifyError, notifySuccess } from 'src/utils/notify';
 
@@ -66,6 +81,8 @@ const name = computed(() => user.value?.name || id.value);
 const authorizations = ref<AuthorizationDto[]>([]);
 const showEdit = ref(false);
 const showDelete = ref(false);
+const showResetPassword = ref(false);
+const showUpdatePassword = ref(false);
 const selected = ref<UserDto>();
 
 const items = computed<FieldItem[]>(() => [
@@ -188,4 +205,23 @@ function onDisableOTP() {
     .catch(() => notifyError(t('user.otp_disable_error')))
     .finally(userStore.init);
 }
+
+function onShowResetPassword() {
+  showResetPassword.value = true;
+}
+
+function onResetPassword() {
+  if (!user.value) {
+    return;
+  }
+  userStore
+    .resetPassword(user.value)
+    .then(() => notifySuccess(t('user.reset_password_success')))
+    .catch(() => notifyError(t('user.reset_password_error')));
+}
+
+function onShowUpdatePassword() {
+  showUpdatePassword.value = true;
+}
+
 </script>

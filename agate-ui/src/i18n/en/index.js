@@ -41,6 +41,8 @@ export default {
     saved: 'Group saved',
     user_remove: 'Remove user from group',
     user_remove_confirm: 'Please confirm user removal from this group: {name}',
+    members: 'Members',
+    members_hint: 'Users that are members of this group can access the associated applications.',
   },
   user: {
     add: 'Add user',

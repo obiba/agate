@@ -256,8 +256,6 @@ const isValid = computed(
 );
 
 onMounted(() => {
-  groupStore.init();
-  applicationStore.init();
   realmStore.init();
   systemStore.init();
   systemStore.initPub();
