@@ -33,16 +33,19 @@ export default {
   },
   group: {
     add: 'Ajouter un groupe',
+    add_members: 'Ajouter des membres',
+    add_members_hint: 'Rechercher un usager à ajouter au groupe, par nom ou courriel.',
     applications_hint: "Les membres d'un groupe ont accès aux applications associées à ce groupe.",
     edit: 'Modifier le groupe',
+    members: 'Members',
+    members_added: 'Membres ajoutés au groupe.',
+    members_hint: 'Les usagers membres du groupe peuvent accéder aux applications associées.',
     remove_confirm: 'Veuillez confirmer la suppression du groupe: {name}. Les usagers membres de ce groupe ne seront pas affectés.',
     remove: 'Suppression du groupe',
     save_failed: "Échec de l'enregistrement du groupe",
     saved: 'Groupe enregistré',
     user_remove: 'Retirer un usager',
-    user_remove_confirm: 'Veuillez confirmer le retrait de l\'usager: {name} de ce groupe.',
-    members: 'Members',
-    members_hint: "Les usagers membres du groupe peuvent accéder aux applications associées.",
+    user_remove_confirm: "Veuillez confirmer le retrait de l'usager: {name} de ce groupe.",
   },
   user: {
     add: 'Ajouter un usager',
@@ -53,7 +56,7 @@ export default {
     copy_password: 'Copier le mot de passe',
     disable_2fa: 'Désactiver le 2FA',
     edit: "Modifier l'usager",
-    export_error: 'Échec de l\'exportation des usagers',
+    export_error: "Échec de l'exportation des usagers",
     firstName: 'Prénom',
     generate_password: 'Générer un mot de passe',
     groups_hint: 'Les usagers peuvent être membres de groupes pour accéder aux applications associées à ces groupes.',
@@ -293,27 +296,27 @@ export default {
   },
   server: {
     error: {
-      404: 'Le serveur a rejeté votre demande. Assurez-vous d\'être connecté et réessayez.',
+      404: "Le serveur a rejeté votre demande. Assurez-vous d'être connecté et réessayez.",
       403: 'Le serveur a rejeté votre requête, assurez vous que vous ête connecté et réessayez.',
       password: {
         'too-short': 'Le mot de passe est plus court que le {0} caractères requis',
         'too-long': 'Le mot de passe est plus long que {0} caractères',
         'not-changed': 'Le nouveau mot de passe est le même que le mot de passe actuel',
-        'too-weak': 'Le mot de passe doit contenir au moins un chiffre, une lettre minuscule, une lettre majuscule, un caractère spécial (tel que @#$%^&+=!) et aucun espace'
+        'too-weak': 'Le mot de passe doit contenir au moins un chiffre, une lettre minuscule, une lettre majuscule, un caractère spécial (tel que @#$%^&+=!) et aucun espace',
       },
-      'email-already-assigned': 'Le courriel \'{0}\' est déjà assigné à un autre utilisateur.',
-      'duplicate-key': 'L\'ID de l\'item est en duplicata.',
+      'email-already-assigned': "Le courriel '{0}' est déjà assigné à un autre utilisateur.",
+      'duplicate-key': "L'ID de l'item est en duplicata.",
       'bad-request': 'Requête de serveur incorrecte, veuillez contacter votre administrateur Agate.',
       realm: {
-        'not-orphan': 'Impossible de supprimer un domaine ayant des utilisateurs.'
+        'not-orphan': 'Impossible de supprimer un domaine ayant des utilisateurs.',
       },
       group: {
-        'not-orphan': 'Impossible de supprimer un groupe ayant des utilisateurs.'
+        'not-orphan': 'Impossible de supprimer un groupe ayant des utilisateurs.',
       },
       application: {
-        'not-orphan': 'Impossible de supprimer une application ayant des utilisateurs ou des groupes.'
-      }
-    }
+        'not-orphan': 'Impossible de supprimer une application ayant des utilisateurs ou des groupes.',
+      },
+    },
   },
   add: 'ajouter',
   administration: 'Administration',

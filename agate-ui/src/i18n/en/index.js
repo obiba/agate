@@ -33,16 +33,19 @@ export default {
   },
   group: {
     add: 'Add group',
+    add_members: 'Add members',
+    add_members_hint: 'Search for users to add to this group. You can search by username or email.',
     applications_hint: 'Members of a group get access to the applications associated to this group.',
     edit: 'Edit group',
+    members: 'Members',
+    members_added: 'Member(s) added to the group.',
+    members_hint: 'Users that are members of this group can access the associated applications.',
     remove_confirm: 'Please confirm group removal: {name}. User members of this group will not be removed.',
     remove: 'Remove group',
     save_failed: 'Failed to save group',
     saved: 'Group saved',
     user_remove: 'Remove user from group',
     user_remove_confirm: 'Please confirm user removal from this group: {name}',
-    members: 'Members',
-    members_hint: 'Users that are members of this group can access the associated applications.',
   },
   user: {
     add: 'Add user',
@@ -299,21 +302,21 @@ export default {
         'too-short': 'Password is shorter than the required {0} characters',
         'too-long': 'Password is longer than {0} characters',
         'not-changed': 'New password is identical to the current password',
-        'too-weak': 'Password must contain at least one digit, one upper case alphabet, one lower case alphabet, one special character (which includes @#$%^&+=!) and no white space'
+        'too-weak': 'Password must contain at least one digit, one upper case alphabet, one lower case alphabet, one special character (which includes @#$%^&+=!) and no white space',
       },
-      'email-already-assigned': 'Email \'{0}\' is already assigned to another user.',
+      'email-already-assigned': "Email '{0}' is already assigned to another user.",
       'duplicate-key': 'Duplicate item ID.',
       'bad-request': 'Bad server request, please contact your Agate administrator.',
       realm: {
-        'not-orphan': 'Cannot delete a realm having associated users.'
+        'not-orphan': 'Cannot delete a realm having associated users.',
       },
       group: {
-        'not-orphan': 'Cannot delete a group having associated users.'
+        'not-orphan': 'Cannot delete a group having associated users.',
       },
       application: {
-        'not-orphan': 'Cannot delete an application having associated users or groups.'
-      }
-    }
+        'not-orphan': 'Cannot delete an application having associated users or groups.',
+      },
+    },
   },
   add: 'Add',
   administration: 'Administration',

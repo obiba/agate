@@ -232,6 +232,10 @@
       return users == null || users.isEmpty() ? null : users.get(0);
     }
 
+    public List<User> searchUsers(@Nonnull String prefix) {
+      return userRepository.findByNameOrEmailContainingIgnoreCase(prefix, prefix);
+    }
+
     //
     // User methods
     //

@@ -30,7 +30,7 @@ export const useGroupStore = defineStore('group', () => {
       params: { names },
       paramsSerializer: {
         indexes: null, // no brackets at all
-      }
+      },
     });
   }
 

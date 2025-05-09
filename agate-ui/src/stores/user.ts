@@ -61,6 +61,18 @@ export const useUserStore = defineStore('user', () => {
     return users.value?.find((u) => u.id === id);
   }
 
+  async function findUser(nameOfEmail: string): Promise<UserDto | undefined> {
+    return api.get('/users/find', { params: { q: nameOfEmail } }).then((response) => {
+      return response.data;
+    });
+  }
+
+  async function searchUsers(nameOfEmail: string): Promise<UserDto[] | undefined> {
+    return api.get('/users/search', { params: { q: nameOfEmail } }).then((response) => {
+      return response.data;
+    });
+  }
+
   function download() {
     window.open(`${baseUrl}/users/_csv`, '_self');
   }
@@ -110,6 +122,8 @@ export const useUserStore = defineStore('user', () => {
     disableOTP,
     download,
     getUser,
+    findUser,
+    searchUsers,
     getAuthorizations,
     removeAuthorization,
   };

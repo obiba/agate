@@ -20,12 +20,14 @@
         <div class="col-12 col-md-6">
           <div class="text-h6 q-mb-sm">{{ t('group.members') }}</div>
           <div class="text-hint q-mb-sm">{{ t('group.members_hint') }}</div>
-          <q-btn v-show="false" size="sm" icon="add" color="primary" :label="t('add')" @click="onShowAddUser" class="q-mb-sm"/>
+          <q-btn size="sm" icon="add" color="primary" :label="t('add')" @click="onShowAddUser" class="q-mb-sm" />
           <q-list v-if="users?.length" bordered separator>
             <q-item v-for="user in users" :key="user.name">
               <q-item-section>
                 <q-item-label>
-                  <div><router-link :to="`/user/${user.name}`">{{ user.name }}</router-link></div>
+                  <div>
+                    <router-link :to="`/user/${user.name}`">{{ user.name }}</router-link>
+                  </div>
                   <div class="text-caption">{{ user.firstName }} {{ user.lastName }}</div>
                   <div class="text-hint">{{ user.email }}</div>
                 </q-item-label>
@@ -38,11 +40,20 @@
           <div v-else class="text-hint">{{ t('no_members') }}</div>
         </div>
       </div>
-      <confirm-dialog v-model="showDelete" :title="t('group.remove')"
-        :text="t('group.remove_confirm', { name: selected?.name })" @confirm="onDelete" />
-      <confirm-dialog v-model="showRemoveUser" :title="t('group.user_remove')"
-        :text="t('group.user_remove_confirm', { name: selectedUser?.name })" @confirm="onRemoveUser" />
+      <confirm-dialog
+        v-model="showDelete"
+        :title="t('group.remove')"
+        :text="t('group.remove_confirm', { name: selected?.name })"
+        @confirm="onDelete"
+      />
+      <confirm-dialog
+        v-model="showRemoveUser"
+        :title="t('group.user_remove')"
+        :text="t('group.user_remove_confirm', { name: selectedUser?.name })"
+        @confirm="onRemoveUser"
+      />
       <group-dialog v-model="showEdit" :group="selected" @saved="onSaved" />
+      <add-group-members-dialog v-if="group" v-model="showAddUser" :group="group" @saved="onRefreshMembers" />
     </q-page>
   </div>
 </template>
@@ -52,9 +63,9 @@ import type { GroupDto, UserSummaryDto } from 'src/models/Agate';
 import type { FieldItem } from 'src/components/FieldsList.vue';
 import GroupDialog from 'src/components/GroupDialog.vue';
 import ConfirmDialog from 'src/components/ConfirmDialog.vue';
+import AddGroupMembersDialog from 'src/components/AddGroupMembersDialog.vue';
 import FieldsList from 'src/components/FieldsList.vue';
 import { getDateLabel } from 'src/utils/dates';
-
 
 const { t } = useI18n();
 const router = useRouter();
@@ -98,17 +109,22 @@ const items = computed<FieldItem[]>(() => [
   {
     field: 'lastModified',
     label: t('last_modified'),
-    format: (val: GroupDto) => (val ? getDateLabel(val.timestamps?.lastUpdate ? val.timestamps?.lastUpdate : val.timestamps?.created) : ''),
+    format: (val: GroupDto) =>
+      val ? getDateLabel(val.timestamps?.lastUpdate ? val.timestamps?.lastUpdate : val.timestamps?.created) : '',
   },
 ]);
 
 onMounted(() => {
   groupStore.init();
   applicationStore.init();
+  onRefreshMembers();
+});
+
+function onRefreshMembers() {
   groupStore.getUsers(id.value).then((data) => {
     users.value = data;
   });
-});
+}
 
 function onShowEdit() {
   selected.value = JSON.parse(JSON.stringify(group.value));

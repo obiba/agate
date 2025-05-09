@@ -17,11 +17,14 @@
           </div>
           <fields-list :dbobject="application" :items="items" />
         </div>
-        <div class="col-12 col-md-6">
-        </div>
+        <div class="col-12 col-md-6"></div>
       </div>
-      <confirm-dialog v-model="showDelete" :title="t('application.remove')"
-        :text="t('application.remove_confirm', { name: selected?.name })" @confirm="onDelete" />
+      <confirm-dialog
+        v-model="showDelete"
+        :title="t('application.remove')"
+        :text="t('application.remove_confirm', { name: selected?.name })"
+        @confirm="onDelete"
+      />
       <application-dialog v-model="showEdit" :application="selected" @saved="onSaved" />
     </q-page>
   </div>
@@ -68,7 +71,7 @@ const items = computed<FieldItem[]>(() => [
           label: uri,
           to: uri,
           iconRight: 'open_in_new',
-        }
+        };
       }) || [],
   },
   {
@@ -83,7 +86,9 @@ const items = computed<FieldItem[]>(() => [
       if (!val.scopes) {
         return '-';
       }
-      return val.scopes.map((scope) => `<span class="text-caption" title="${scope.description}">${scope.name}</span>`).join(' | ');
+      return val.scopes
+        .map((scope) => `<span class="text-caption" title="${scope.description}">${scope.name}</span>`)
+        .join(' | ');
     },
   },
   {
@@ -93,13 +98,16 @@ const items = computed<FieldItem[]>(() => [
       if (!val.realmGroups) {
         return '-';
       }
-      return val.realmGroups.map((rg) => `<span class="text-caption" title="${rg.groups.join(', ')}">${rg.realm}</span>`).join(' | ');
+      return val.realmGroups
+        .map((rg) => `<span class="text-caption" title="${rg.groups.join(', ')}">${rg.realm}</span>`)
+        .join(' | ');
     },
   },
   {
     field: 'lastModified',
     label: t('last_modified'),
-    format: (val: ApplicationDto) => (val ? getDateLabel(val.timestamps?.lastUpdate ? val.timestamps?.lastUpdate : val.timestamps?.created) : ''),
+    format: (val: ApplicationDto) =>
+      val ? getDateLabel(val.timestamps?.lastUpdate ? val.timestamps?.lastUpdate : val.timestamps?.created) : '',
   },
 ]);
 
@@ -129,5 +137,4 @@ function onDelete() {
     router.push('/applications');
   });
 }
-
 </script>

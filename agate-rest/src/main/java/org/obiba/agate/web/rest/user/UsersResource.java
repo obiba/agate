@@ -82,6 +82,13 @@ public class UsersResource {
     return dtos.asDto(user);
   }
 
+  @GET
+  @Path("/search")
+  @RequiresRoles("agate-administrator")
+  public List<Agate.UserDto> searchUsers(@QueryParam("q") String searchTerm) {
+    return userService.searchUsers(searchTerm).stream().map((u) -> dtos.asDto(u)).toList();
+  }
+
   @POST
   public Response create(Agate.UserCreateFormDto userCreateFormDto) {
     Agate.UserDto userDto = userCreateFormDto.getUser();

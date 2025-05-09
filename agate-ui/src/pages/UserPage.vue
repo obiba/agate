@@ -48,10 +48,18 @@
           <div v-else class="text-hint">{{ t('no_authorizations') }}</div>
         </div>
       </div>
-      <confirm-dialog v-model="showDelete" :title="t('user.remove')"
-        :text="t('user.remove_confirm', { name: selected?.name })" @confirm="onDelete" />
-      <confirm-dialog v-model="showResetPassword" :title="t('user.reset_password')"
-        :text="t('user.reset_password_confirm', { name: selected?.name })" @confirm="onResetPassword" />
+      <confirm-dialog
+        v-model="showDelete"
+        :title="t('user.remove')"
+        :text="t('user.remove_confirm', { name: selected?.name })"
+        @confirm="onDelete"
+      />
+      <confirm-dialog
+        v-model="showResetPassword"
+        :title="t('user.reset_password')"
+        :text="t('user.reset_password_confirm', { name: selected?.name })"
+        @confirm="onResetPassword"
+      />
       <user-dialog v-model="showEdit" :user="selected" @saved="onSaved" />
       <update-password-dialog v-model="showUpdatePassword" :user="user" />
     </q-page>
@@ -137,8 +145,7 @@ const items = computed<FieldItem[]>(() => [
   },
   {
     field: 'attributes',
-    html: (val: UserDto) =>
-      val.attributes?.map((attr) => `<code>${attr.name}: ${attr.value}</code>`).join(' '),
+    html: (val: UserDto) => val.attributes?.map((attr) => `<code>${attr.name}: ${attr.value}</code>`).join(' '),
   },
   {
     field: 'created',
@@ -148,7 +155,8 @@ const items = computed<FieldItem[]>(() => [
   {
     field: 'lastModified',
     label: t('last_modified'),
-    format: (val: UserDto) => (val ? getDateLabel(val.timestamps?.lastUpdate ? val.timestamps?.lastUpdate : val.timestamps?.created) : ''),
+    format: (val: UserDto) =>
+      val ? getDateLabel(val.timestamps?.lastUpdate ? val.timestamps?.lastUpdate : val.timestamps?.created) : '',
   },
   {
     field: 'lastLogin',
@@ -223,5 +231,4 @@ function onResetPassword() {
 function onShowUpdatePassword() {
   showUpdatePassword.value = true;
 }
-
 </script>

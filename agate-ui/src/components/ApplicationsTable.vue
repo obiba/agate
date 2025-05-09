@@ -100,7 +100,13 @@ const columns = computed(() => [
   { name: 'name', label: t('name'), field: 'name', align: DefaultAlignment, sortable: true },
   { name: 'description', label: t('description'), field: 'description', align: DefaultAlignment, sortable: true },
   { name: 'scopes', label: t('application.scopes'), field: 'scopes', align: DefaultAlignment, sortable: true },
-  { name: 'realmGroups', label: t('application.realms_groups'), field: 'realmGroups', align: DefaultAlignment, sortable: true },
+  {
+    name: 'realmGroups',
+    label: t('application.realms_groups'),
+    field: 'realmGroups',
+    align: DefaultAlignment,
+    sortable: true,
+  },
 ]);
 
 onMounted(() => {

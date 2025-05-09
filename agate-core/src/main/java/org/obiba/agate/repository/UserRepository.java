@@ -45,5 +45,7 @@ public interface UserRepository extends MongoRepository<User, String> {
 
   List<User> findByNameAndStatusAndGroups(String username, UserStatus status, String group);
 
+  List<User> findByNameOrEmailContainingIgnoreCase(String namePart, String emailPart);
+
   long countByRealm(String realm);
 }
