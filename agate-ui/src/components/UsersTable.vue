@@ -3,8 +3,14 @@
     <q-table :rows="users" flat row-key="name" :columns="columns" :pagination="initialPagination">
       <template v-slot:top-left>
         <q-btn size="sm" icon="add" color="primary" :label="t('add')" @click="onAdd" />
-        <q-btn class="q-ml-sm" color="secondary" icon="file_download" size="sm" :disable="users.length < 1"
-          @click="onDownload" />
+        <q-btn
+          class="q-ml-sm"
+          color="secondary"
+          icon="file_download"
+          size="sm"
+          :disable="users.length < 1"
+          @click="onDownload"
+        />
       </template>
       <template v-slot:top-right>
         <q-input v-model="filter" debounce="300" :placeholder="t('search')" dense clearable class="q-mr-md">
@@ -18,20 +24,63 @@
           <q-td key="name" :props="props">
             <router-link :to="`/user/${props.row.id}`">{{ props.row.name }}</router-link>
             <div class="float-right">
-              <q-btn rounded dense flat size="sm" color="secondary"
-                :icon="toolsVisible[props.row.name] ? 'edit' : 'none'" :title="t('edit')" class="q-ml-xs"
-                @click="onShowEdit(props.row)" />
-              <q-btn rounded dense flat size="sm" color="secondary" :title="t('delete')"
-                :icon="toolsVisible[props.row.name] ? 'delete' : 'none'" class="q-ml-xs"
-                @click="onShowDelete(props.row)" />
-              <q-btn v-if="props.row.status === 'PENDING'" rounded dense flat size="sm" color="secondary"
-                :title="t('user.approve')" :icon="toolsVisible[props.row.name] ? 'done' : 'none'" class="q-ml-xs"
-                @click="onApprove(props.row)" />
-              <q-btn v-if="props.row.status === 'PENDING'" rounded dense flat size="sm" color="secondary"
-                :title="t('user.reject')" :icon="toolsVisible[props.row.name] ? 'dangerous' : 'none'" class="q-ml-xs"
-                @click="onShowReject(props.row)" />
-              <q-btn v-if="props.row.realm === 'agate-user-realm'" rounded dense flat size="sm" color="secondary"
-                :title="t('more_actions')" :icon="toolsVisible[props.row.name] ? 'more_vert' : 'none'" class="q-ml-xs">
+              <q-btn
+                rounded
+                dense
+                flat
+                size="sm"
+                color="secondary"
+                :icon="toolsVisible[props.row.name] ? 'edit' : 'none'"
+                :title="t('edit')"
+                class="q-ml-xs"
+                @click="onShowEdit(props.row)"
+              />
+              <q-btn
+                rounded
+                dense
+                flat
+                size="sm"
+                color="secondary"
+                :title="t('delete')"
+                :icon="toolsVisible[props.row.name] ? 'delete' : 'none'"
+                class="q-ml-xs"
+                @click="onShowDelete(props.row)"
+              />
+              <q-btn
+                v-if="props.row.status === 'PENDING'"
+                rounded
+                dense
+                flat
+                size="sm"
+                color="secondary"
+                :title="t('user.approve')"
+                :icon="toolsVisible[props.row.name] ? 'done' : 'none'"
+                class="q-ml-xs"
+                @click="onApprove(props.row)"
+              />
+              <q-btn
+                v-if="props.row.status === 'PENDING'"
+                rounded
+                dense
+                flat
+                size="sm"
+                color="secondary"
+                :title="t('user.reject')"
+                :icon="toolsVisible[props.row.name] ? 'dangerous' : 'none'"
+                class="q-ml-xs"
+                @click="onShowReject(props.row)"
+              />
+              <q-btn
+                v-if="props.row.realm === 'agate-user-realm'"
+                rounded
+                dense
+                flat
+                size="sm"
+                color="secondary"
+                :title="t('more_actions')"
+                :icon="toolsVisible[props.row.name] ? 'more_vert' : 'none'"
+                class="q-ml-xs"
+              >
                 <q-menu>
                   <q-list style="min-width: 100px">
                     <q-item clickable v-close-popup @click="onShowResetPassword(props.row)">
@@ -55,7 +104,7 @@
           <q-td key="status" :props="props">
             <span class="text-caption" :title="t(`user.status_hint.${props.row.status}`)">{{
               t(`user.status.${props.row.status}`)
-              }}</span>
+            }}</span>
           </q-td>
           <q-td key="role" :props="props">
             <span class="text-caption">{{ t(`user.role.${props.row.role}`) }}</span>
@@ -68,8 +117,16 @@
           </q-td>
           <q-td key="realm" :props="props">
             <q-chip size="sm">{{ props.row.realm }}</q-chip>
-            <q-btn v-if="props.row.accountUrl" :title="props.row.accountUrl" dense flat icon="account_circle"
-              color="secondary" size="sm" @click="onAccount(props.row)" />
+            <q-btn
+              v-if="props.row.accountUrl"
+              :title="props.row.accountUrl"
+              dense
+              flat
+              icon="account_circle"
+              color="secondary"
+              size="sm"
+              @click="onAccount(props.row)"
+            />
           </q-td>
           <q-td key="groups" :props="props">
             <template v-for="grp in props.row.groups" :key="grp">
@@ -81,19 +138,35 @@
               <q-badge :label="applicationStore.getApplicationName(app)" class="on-left" />
             </template>
             <template v-for="(grpApp, idx) in mergeGroupApplications(props.row)" :key="idx">
-              <q-badge color="secondary" :label="applicationStore.getApplicationName(grpApp.application)"
-                :title="t('inherited_from', { parent: grpApp.group })" class="on-left" />
+              <q-badge
+                color="secondary"
+                :label="applicationStore.getApplicationName(grpApp.application)"
+                :title="t('inherited_from', { parent: grpApp.group })"
+                class="on-left"
+              />
             </template>
           </q-td>
         </q-tr>
       </template>
     </q-table>
-    <confirm-dialog v-model="showDelete" :title="t('user.remove')"
-      :text="t('user.remove_confirm', { name: selected?.name })" @confirm="onDelete" />
-    <confirm-dialog v-model="showResetPassword" :title="t('user.reset_password')"
-      :text="t('user.reset_password_confirm', { name: selected?.name })" @confirm="onResetPassword" />
-    <confirm-dialog v-model="showReject" :title="t('user.reject')"
-      :text="t('user.reject_confirm', { name: selected?.name })" @confirm="onDelete" />
+    <confirm-dialog
+      v-model="showDelete"
+      :title="t('user.remove')"
+      :text="t('user.remove_confirm', { name: selected?.name })"
+      @confirm="onDelete"
+    />
+    <confirm-dialog
+      v-model="showResetPassword"
+      :title="t('user.reset_password')"
+      :text="t('user.reset_password_confirm', { name: selected?.name })"
+      @confirm="onResetPassword"
+    />
+    <confirm-dialog
+      v-model="showReject"
+      :title="t('user.reject')"
+      :text="t('user.reject_confirm', { name: selected?.name })"
+      @confirm="onDelete"
+    />
     <user-dialog v-model="showEdit" :user="selected" @saved="onSaved" />
     <update-password-dialog v-model="showUpdatePassword" :user="selected" />
   </div>
@@ -211,8 +284,8 @@ function formatColumnValue(fieldName: string, row: UserDto): string {
     case 'groups':
       return Array.isArray(value) ? `"${value.join(', ')}"` : `"${value}"`;
     case 'applications': {
-      const applications = (row.applications || []).concat((row.groupApplications || [])
-        .map((app) => app.application))
+      const applications = (row.applications || [])
+        .concat((row.groupApplications || []).map((app) => app.application))
         // unique applications
         .filter((value, index, self) => self.indexOf(value) === index);
       return `"${applications.map((app) => applicationStore.getApplicationName(app)).join(', ')}"`;

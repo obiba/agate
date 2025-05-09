@@ -233,16 +233,26 @@ const roleOptions = computed(() =>
 const statusOptions = computed(() =>
   ['ACTIVE', 'APPROVED', 'INACTIVE', 'PENDING'].map((status) => ({ label: t(`user.status.${status}`), value: status })),
 );
-const groupOptions = computed(() => (groupStore.groups?.map((group) => ({ label: group.name, value: group.id })) ?? []).sort((a, b) => a.label.localeCompare(b.label)));
-const applicationOptions = computed(
-  () => (applicationStore.applications?.map((app) => ({ label: app.name, value: app.id })) ?? []).sort((a, b) => a.label.localeCompare(b.label)),
+const groupOptions = computed(() =>
+  (groupStore.groups?.map((group) => ({ label: group.name, value: group.id })) ?? []).sort((a, b) =>
+    a.label.localeCompare(b.label),
+  ),
 );
-const realmOptions = computed(() => [
-  { label: 'agate-user-realm', value: 'agate-user-realm' },
-  ...(realmStore.realms?.map((realm) => ({ label: realm.name, value: realm.id })) ?? []),
-].sort((a, b) => a.label.localeCompare(b.label)));
-const languageOptions = computed(
-  () => (systemStore.configurationPublic.languages?.map((lang) => ({ label: lang, value: lang })) ?? []).sort((a, b) => a.label.localeCompare(b.label)),
+const applicationOptions = computed(() =>
+  (applicationStore.applications?.map((app) => ({ label: app.name, value: app.id })) ?? []).sort((a, b) =>
+    a.label.localeCompare(b.label),
+  ),
+);
+const realmOptions = computed(() =>
+  [
+    { label: 'agate-user-realm', value: 'agate-user-realm' },
+    ...(realmStore.realms?.map((realm) => ({ label: realm.name, value: realm.id })) ?? []),
+  ].sort((a, b) => a.label.localeCompare(b.label)),
+);
+const languageOptions = computed(() =>
+  (systemStore.configurationPublic.languages?.map((lang) => ({ label: lang, value: lang })) ?? []).sort((a, b) =>
+    a.label.localeCompare(b.label),
+  ),
 );
 const showPassword = computed(() => !editMode.value && selected.value.realm === 'agate-user-realm');
 const isValid = computed(

@@ -35,8 +35,7 @@ export function notifyError(error: any) {
       if (error.response.data.messageTemplate) {
         message = t(error.response.data.messageTemplate, error.response.data.arguments);
       }
-      if (error.response.data.message)
-        message = error.response.data.message;
+      if (error.response.data.message) message = error.response.data.message;
     }
   }
   Notify.create({

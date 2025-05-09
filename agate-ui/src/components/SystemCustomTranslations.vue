@@ -117,12 +117,15 @@ const rows = computed(
 function save() {
   dirty.value = false;
   selectedTranslations.value.splice(0);
-  systemStore.updateTranslation(mapAsTranslation(allTranslations.value)).then(() => {
-    systemStore.init();
-    notifySuccess(t('system.translations.updated'));
-  }).catch(() => {
-    notifyError(t('system.translations.update_failed'));
-  });
+  systemStore
+    .updateTranslation(mapAsTranslation(allTranslations.value))
+    .then(() => {
+      systemStore.init();
+      notifySuccess(t('system.translations.updated'));
+    })
+    .catch(() => {
+      notifyError(t('system.translations.update_failed'));
+    });
 }
 
 function onValueChanged(row: AttributeDto) {

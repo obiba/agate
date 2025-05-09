@@ -144,12 +144,18 @@ const selected = ref<RealmConfigDto>({} as RealmConfigDto);
 const editMode = ref(false);
 
 const typeOptions = computed(() =>
-  ['agate-oidc-realm', 'agate-ad-realm', 'agate-ldap-realm', 'agate-jdbc-realm'].map((type) => ({
-    label: t(`realm.type.${type}`),
-    value: type,
-  })).sort((a, b) => a.label.localeCompare(b.label)),
+  ['agate-oidc-realm', 'agate-ad-realm', 'agate-ldap-realm', 'agate-jdbc-realm']
+    .map((type) => ({
+      label: t(`realm.type.${type}`),
+      value: type,
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label)),
 );
-const groupOptions = computed(() => (groupStore.groups?.map((group) => ({ label: group.name, value: group.id })) ?? []).sort((a, b) => a.label.localeCompare(b.label)));
+const groupOptions = computed(() =>
+  (groupStore.groups?.map((group) => ({ label: group.name, value: group.id })) ?? []).sort((a, b) =>
+    a.label.localeCompare(b.label),
+  ),
+);
 const isValid = computed(() => selected.value.name && selected.value.name.trim().length >= 3);
 
 onMounted(() => {
@@ -169,7 +175,11 @@ watch(
         }
       });
     } else {
-      selected.value = { type: typeOptions.value.find((rlm) => rlm.value === 'agate-oidc-realm')?.value, status: 'INACTIVE', forSignup: false } as RealmConfigDto;
+      selected.value = {
+        type: typeOptions.value.find((rlm) => rlm.value === 'agate-oidc-realm')?.value,
+        status: 'INACTIVE',
+        forSignup: false,
+      } as RealmConfigDto;
     }
     editMode.value = props.realmSummary !== undefined && !props.duplicate;
   },
