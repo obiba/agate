@@ -7,13 +7,15 @@
   <title>${config.name?default("")} | <@message "sign-up"/></title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script type="text/javascript">
-    var onloadCallback = function() {
-      grecaptcha.render('html_element', {
-        'sitekey' : '${authConfig.reCaptchaKey}'
-      });
-    };
-  </script>
+  <#if authConfig.reCaptchaEnabled>
+    <script type="text/javascript">
+      var onloadCallback = function() {
+        grecaptcha.render('html_element', {
+          'sitekey' : '${authConfig.reCaptchaKey}'
+        });
+      };
+    </script>
+  </#if>
 </head>
 <body id="signup-with-page" class="hold-transition login-page">
 <div class="login-box">
@@ -115,9 +117,11 @@
         </div>
       </form>
 
-      <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"
-              async defer>
-      </script>
+      <#if authConfig.reCaptchaEnabled>
+        <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"
+                async defer>
+        </script>
+      </#if>
 
       <p class="mb-1">
         <a href="signin" class="text-center"><@message "already-have-a-membership"/></a>
@@ -145,7 +149,9 @@
         { name: '${attribute.name}', title: "<@message attribute.name/>" },
       </#if>
     </#list>
-    { name: 'g-recaptcha-response', title: "<@message "captcha"/>" }
+    <#if authConfig.reCaptchaEnabled>
+      { name: 'g-recaptcha-response', title: "<@message "captcha"/>" }
+    </#if>
   ];
 </script>
 <#include "libs/signup-scripts.ftl">

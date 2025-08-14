@@ -12,6 +12,7 @@ package org.obiba.agate.service;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.impl.DefaultRedirectStrategy;
@@ -37,9 +38,15 @@ public class ReCaptchaService {
   private Environment env;
 
   public boolean verify(String reCaptchaResponse) {
+    // No verification if no recaptcha config
+    String verifyUrl = env.getProperty("recaptcha.verifyUrl");
+    if (Strings.isNullOrEmpty(verifyUrl)) return true;
+    String secret = env.getProperty("recaptcha.secret");
+    if (Strings.isNullOrEmpty(secret)) return true;
+    if (Strings.isNullOrEmpty(env.getProperty("client.reCaptchaKey"))) return true;
 
     MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-    map.add("secret", env.getProperty("recaptcha.secret"));
+    map.add("secret", secret);
     map.add("response", reCaptchaResponse);
 
     // #495 http client that supports redirect on POST
@@ -53,11 +60,11 @@ public class ReCaptchaService {
     restTemplate.setRequestFactory(factory);
 
     ReCaptchaVerifyResponse recaptchaVerifyResponse = restTemplate
-        .postForObject(env.getProperty("recaptcha.verifyUrl"), map, ReCaptchaVerifyResponse.class);
+        .postForObject(verifyUrl, map, ReCaptchaVerifyResponse.class);
 
     if (recaptchaVerifyResponse == null || !recaptchaVerifyResponse.isSuccess() && (recaptchaVerifyResponse.getErrorCodes().contains("invalid-input-secret") ||
         recaptchaVerifyResponse.getErrorCodes().contains("missing-input-secret"))) {
-      log.error("Error verifying recaptcha: " + reCaptchaResponse);
+      log.error("Error verifying recaptcha: {}", reCaptchaResponse);
       throw new RuntimeException("Error verifying recaptcha.");
     }
 

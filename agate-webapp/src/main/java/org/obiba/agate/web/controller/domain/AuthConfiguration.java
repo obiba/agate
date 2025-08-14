@@ -10,6 +10,7 @@
 
 package org.obiba.agate.web.controller.domain;
 
+import com.google.common.base.Strings;
 import org.obiba.agate.config.ClientConfiguration;
 import org.obiba.agate.domain.AttributeConfiguration;
 import org.obiba.agate.domain.Configuration;
@@ -29,6 +30,10 @@ public class AuthConfiguration {
 
   public String getReCaptchaKey() {
     return clientConfiguration.getReCaptchaKey();
+  }
+
+  public boolean isReCaptchaEnabled() {
+    return !Strings.isNullOrEmpty(clientConfiguration.getReCaptchaKey());
   }
 
   public boolean getJoinWithUsername() {
