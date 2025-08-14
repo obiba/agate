@@ -47,12 +47,12 @@
             <span>{{ props.row.description }}</span>
           </q-td>
           <q-td key="scopes" :props="props">
-            <template v-for="scope in props.row.scopes" :key="scope.name">
+            <template v-for="scope in props.row.scopes?.sort()" :key="scope.name">
               <q-badge :label="scope.name" :title="scope.description" class="on-left" />
             </template>
           </q-td>
           <q-td key="realmGroups" :props="props">
-            <template v-for="realmGroups in props.row.realmGroups" :key="realmGroups.realm">
+            <template v-for="realmGroups in props.row.realmGroups?.sort()" :key="realmGroups.realm">
               <q-badge :label="realmGroups.realm" :title="realmGroups.groups.join(', ')" class="on-left" />
             </template>
           </q-td>

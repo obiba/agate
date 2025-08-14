@@ -129,12 +129,12 @@
             />
           </q-td>
           <q-td key="groups" :props="props">
-            <template v-for="grp in props.row.groups" :key="grp">
+            <template v-for="grp in props.row.groups?.sort()" :key="grp">
               <q-badge :label="groupStore.getGroupName(grp)" class="on-left" />
             </template>
           </q-td>
           <q-td key="applications" :props="props">
-            <template v-for="app in props.row.applications" :key="app">
+            <template v-for="app in props.row.applications?.sort()" :key="app">
               <q-badge :label="applicationStore.getApplicationName(app)" class="on-left" />
             </template>
             <template v-for="(grpApp, idx) in mergeGroupApplications(props.row)" :key="idx">

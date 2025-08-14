@@ -47,7 +47,7 @@
             <span>{{ props.row.description }}</span>
           </q-td>
           <q-td key="applications" :props="props">
-            <template v-for="app in props.row.applications" :key="app">
+            <template v-for="app in props.row.applications?.sort()" :key="app">
               <q-badge :label="applicationStore.getApplicationName(app)" class="on-left" />
             </template>
           </q-td>
