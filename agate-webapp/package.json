@@ -4,7 +4,7 @@
   "private": true,
   "description": "Agate web UI",
   "dependencies": {
-    "admin-lte": "^3.2.0",
+    "admin-lte": "^4.0.0-rc3",
     "axios": "^1.12.0",
     "jquery.redirect": "^1.2.0"
   },
