@@ -193,12 +193,14 @@
                     <include>admin-lte/plugins/chart.js/**</include>
                     <include>admin-lte/plugins/datatables/**</include>
                     <include>admin-lte/plugins/datatables-bs4/**</include>
-                    <include>admin-lte/plugins/fontawesome-free/**</include>
                     <include>admin-lte/plugins/jquery/**</include>
                     <include>admin-lte/plugins/moment/**</include>
-                    <include>admin-lte/plugins/toastr/**</include>
+                    <include>toastr/build/**</include>
+                    <include>@fortawesome/fontawesome-free/**</include>
                     <include>axios/dist/**</include>
+                    <include>jquery/dist/**</include>
                     <include>jquery.redirect/**</include>
+                    <include>bootstrap/dist/**</include>
                   </includes>
                 </resource>
               </resources>
