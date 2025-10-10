@@ -5,8 +5,14 @@
   "description": "Agate web UI",
   "dependencies": {
     "admin-lte": "^4.0.0-rc3",
+    "toastr": "^2.1.4",
     "axios": "^1.12.0",
-    "jquery.redirect": "^1.2.0"
+    "jquery": "^3.7.1",
+    "jquery.redirect": "^1.2.0",
+
+    "bootstrap": "^5.3.3",
+    "@popperjs/core": "^2.11.8",
+    "@fortawesome/fontawesome-free": "^6.5.2"
   },
   "devDependencies": {
     "husky": "^9.1.7"
