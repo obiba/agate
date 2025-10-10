@@ -87,13 +87,13 @@
                 </div>
               <#else>
                 <div class="alert alert-danger">
-                  <h5><i class="icon fas fa-ban"></i> <@message "alert"/></h5>
+                  <h5><i class="icon fa-solid fa-ban"></i> <@message "alert"/></h5>
                   <@message "oauth.application-access-denied"/>
                 </div>
               </#if>
             <#else>
               <div class="alert alert-danger">
-                <h5><i class="icon fas fa-ban"></i> <@message "alert"/></h5>
+                <h5><i class="icon fa-solid fa-ban"></i> <@message "alert"/></h5>
                 <@message "oauth.unknown-client-application"/>
               </div>
             </#if>

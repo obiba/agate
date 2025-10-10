@@ -40,7 +40,7 @@
             <input name="password" type="password" class="form-control" placeholder="<@message "new-password"/>">
             <div class="input-group-append">
               <div class="input-group-text">
-                <span class="fas fa-lock"></span>
+                <span class="fa-solid fa-lock"></span>
               </div>
             </div>
           </div>
@@ -48,7 +48,7 @@
             <input name="password2" type="password" class="form-control" placeholder="<@message "repeat-new-password"/>">
             <div class="input-group-append">
               <div class="input-group-text">
-                <span class="fas fa-lock"></span>
+                <span class="fa-solid fa-lock"></span>
               </div>
             </div>
           </div>

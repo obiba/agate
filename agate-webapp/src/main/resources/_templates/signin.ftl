@@ -29,44 +29,29 @@
       <form id="form" method="post">
         <div class="input-group mb-3">
           <input name="username" type="text" class="form-control" placeholder="<@message "sign-in-username"/>">
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-envelope"></span>
-            </div>
-          </div>
+          <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
         </div>
         <div class="input-group mb-3">
           <input name="password" type="password" autocomplete="off" class="form-control" placeholder="<@message "password"/>">
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-lock"></span>
-            </div>
-          </div>
+          <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
         </div>
-        <div class="row">
-          <div class="col-6">
-
-          </div>
-          <!-- /.col -->
-          <div class="col-6">
-            <button type="submit" class="btn btn-primary btn-block">
-              <i class="spinner-border spinner-border-sm" style="display: none;"></i> <@message "sign-in-submit"/>
-            </button>
-          </div>
-          <!-- /.col -->
+        <div class="d-flex justify-content-end">
+          <button type="submit" class="btn btn-primary">
+            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+            <@message "sign-in-submit"/>
+          </button>
         </div>
       </form>
 
       <#if oidcProviders?? && oidcProviders?size != 0>
-        <div class="social-auth-links text-center mb-3">
-          <p>- <@message "sign-in-or"/> -</p>
+        <div class="social-auth-links text-end mb-3">
+          <p class="text-center">- <@message "sign-up-or"/> -</p>
           <#list oidcProviders as oidc>
-            <a href="${oidc.url}" class="btn btn-block btn-primary">
-              <@message "sign-in-with"/> ${oidc.title}
+            <a href="${oidc.url}" class="btn btn-primary mb-2">
+              <@message "sign-up-with"/> ${oidc.title}
             </a>
           </#list>
         </div>
-        <!-- /.social-auth-links -->
       </#if>
 
       <p class="mb-1">
@@ -94,7 +79,7 @@
           <input id="otp" name="otp" type="number" class="form-control"/>
           <div class="input-group-append">
             <div class="input-group-text">
-              <span class="fas fa-mobile"></span>
+              <span class="fa-solid fa-mobile"></span>
             </div>
           </div>
         </div>

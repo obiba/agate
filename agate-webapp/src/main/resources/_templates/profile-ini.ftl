@@ -43,8 +43,8 @@
                   <@message "2fa-instructions"/>
                 </div>
                 <div>
-                  <button id="disable-otp" type="button" class="btn btn-primary" onclick="disableOtp();" <#if !otpEnabled>style="display: none;"</#if>><i class="fas fa-unlock"></i> <@message "2fa-disable"/></button>
-                  <button id="enable-otp" type="button" class="btn btn-primary" onclick="enableOtp();" <#if otpEnabled>style="display: none;"</#if>><i class="fas fa-lock"></i> <@message "2fa-enable"/></button>
+                  <button id="disable-otp" type="button" class="btn btn-primary" onclick="disableOtp();" <#if !otpEnabled>style="display: none;"</#if>><i class="fa-solid fa-unlock"></i> <@message "2fa-disable"/></button>
+                  <button id="enable-otp" type="button" class="btn btn-primary" onclick="enableOtp();" <#if otpEnabled>style="display: none;"</#if>><i class="fa-solid fa-lock"></i> <@message "2fa-enable"/></button>
                 </div>
               </div>
               <div id="qr-panel" class="card-footer" style="display:none;">
