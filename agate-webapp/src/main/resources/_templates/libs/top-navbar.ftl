@@ -1,10 +1,10 @@
 <#include "navbar-menus.ftl">
-<nav class="main-header navbar navbar-expand-md navbar-light navbar-white">
+<nav class="app-header navbar navbar-expand-md bg-body py-0">
   <div class="container">
     <#if config??>
     <a href="${portalLink}" class="navbar-brand">
       <img src="${brandImageSrc}" alt="Logo" class="brand-image ${brandImageClass}"
-           style="opacity: .8">
+           style="opacity: .8; max-height: 3rem;">
       <span class="brand-text ${brandTextClass}">
         <#if brandTextEnabled>
           ${config.name!""}
@@ -13,7 +13,7 @@
     </a>
     <#else>
       <img src="${brandImageSrc}" alt="Logo" class="brand-image ${brandImageClass}"
-           style="opacity: .8">
+           style="opacity: .8; max-height: 3rem;">
       <span class="brand-text ${brandTextClass}"></span>
     </#if>
 
@@ -28,7 +28,7 @@
       </ul>
 
       <!-- Right navbar links -->
-      <ul class="order-1 order-md-3 navbar-nav navbar-no-expand ml-auto">
+      <ul class="order-1 order-md-3 navbar-nav navbar-no-expand ms-auto">
         <@rightmenus></@rightmenus>
       </ul>
     </div>

@@ -78,12 +78,12 @@
                       <dd class="col-sm-8">
                         <#if user.attributes?? && user.attributes[attribute.name]??>
                           <#if user.attributes[attribute.name] == "true">
-                            <i class="fas fa-check"></i>
+                            <i class="fa-solid fa-check"></i>
                           <#else>
                             ${user.attributes[attribute.name]}
                           </#if>
                         <#elseif attribute.inputType == "checkbox">
-                          <i class="fas fa-times"></i>
+                          <i class="fa-solid fa-times"></i>
                         </#if>
                       </dd>
                     </#list>
@@ -93,7 +93,7 @@
               <div class="card-footer">
                 <div class="float-right">
                   <button type="button" class="btn btn-primary" data-toggle="modal"
-                          data-target="#modal-profile"><i class="fas fa-pen"></i> <@message "personal-information"/></button>
+                          data-target="#modal-profile"><i class="fa-solid fa-pen"></i> <@message "personal-information"/></button>
                 </div>
               </div>
             </div>
@@ -134,7 +134,7 @@
                         <input name="password0" type="password" class="form-control" placeholder="<@message "current-password"/>">
                         <div class="input-group-append">
                           <div class="input-group-text">
-                            <span class="fas fa-lock"></span>
+                            <span class="fa-solid fa-lock"></span>
                           </div>
                         </div>
                       </div>
@@ -142,7 +142,7 @@
                         <input name="password" type="password" class="form-control" placeholder="<@message "new-password"/>">
                         <div class="input-group-append">
                           <div class="input-group-text">
-                            <span class="fas fa-lock"></span>
+                            <span class="fa-solid fa-lock"></span>
                           </div>
                         </div>
                       </div>
@@ -150,7 +150,7 @@
                         <input name="password2" type="password" class="form-control" placeholder="<@message "repeat-new-password"/>">
                         <div class="input-group-append">
                           <div class="input-group-text">
-                            <span class="fas fa-lock"></span>
+                            <span class="fa-solid fa-lock"></span>
                           </div>
                         </div>
                       </div>
@@ -159,7 +159,7 @@
                   <#elseif realmConfig??>
                     <#if providerUrl??>
                       <@message "user-account-at"/>
-                      <a href="${providerUrl}" class="btn btn-primary ml-2" target="_blank"><i class="fas fa-user"></i> ${realmConfig.title[.lang]}</a>
+                      <a href="${providerUrl}" class="btn btn-primary ml-2" target="_blank"><i class="fa-solid fa-user"></i> ${realmConfig.title[.lang]}</a>
                     <#else>
                       <@message "contact-system-administrator-to-change-password"/>
                     </#if>
@@ -186,8 +186,8 @@
                     <@message "2fa-instructions"/>
                   </div>
                   <div>
-                    <button id="disable-otp" type="button" class="btn btn-primary" onclick="disableOtp();" <#if !otpEnabled>style="display: none;"</#if>><i class="fas fa-unlock"></i> <@message "2fa-disable"/></button>
-                    <button id="enable-otp" type="button" class="btn btn-primary" onclick="enableOtp();" <#if otpEnabled>style="display: none;"</#if>><i class="fas fa-lock"></i> <@message "2fa-enable"/></button>
+                    <button id="disable-otp" type="button" class="btn btn-primary" onclick="disableOtp();" <#if !otpEnabled>style="display: none;"</#if>><i class="fa-solid fa-unlock"></i> <@message "2fa-disable"/></button>
+                    <button id="enable-otp" type="button" class="btn btn-primary" onclick="enableOtp();" <#if otpEnabled>style="display: none;"</#if>><i class="fa-solid fa-lock"></i> <@message "2fa-enable"/></button>
                   </div>
                 </div>
                 <div id="qr-panel" class="card-footer" style="display:none;">

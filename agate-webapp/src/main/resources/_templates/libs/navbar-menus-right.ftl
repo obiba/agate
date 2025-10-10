@@ -14,11 +14,11 @@
     <li class="nav-item">
       <#if user??>
         <a href="${contextPath}/profile" class="nav-link">
-          <i class="fas fa-user"></i> ${user.displayName}
+          <i class="fa-solid fa-user"></i> ${user.displayName}
         </a>
       <#else>
         <a href="${contextPath}/profile" class="nav-link">
-          <i class="fas fa-user"></i> ${username}
+          <i class="fa-solid fa-user"></i> ${username}
         </a>
       </#if>
     </li>
