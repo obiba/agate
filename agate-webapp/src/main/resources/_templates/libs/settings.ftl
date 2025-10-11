@@ -16,6 +16,9 @@
 
 <!-- Theme -->
 <#assign adminLTEPath = "${assetsPath}/libs/node_modules/admin-lte"/>
+<#assign bootstrapPath = "${assetsPath}/libs/node_modules/bootstrap/dist"/>
+<#assign jqueryPath = "${assetsPath}/libs/node_modules/jquery/dist"/>
+<#assign toastrPath = "${assetsPath}/libs/node_modules/toastr/build"/>
 
 <!-- Home page settings -->
 <#assign portalLink = "${config.portalUrl!contextPath}" + "/"/>

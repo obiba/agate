@@ -8,37 +8,42 @@
   <title>${config.name!"Agate"}</title>
 </head>
 <body id="index-page" class="hold-transition layout-top-nav layout-navbar-fixed">
-<div class="wrapper">
+
+<div class="app-wrapper"><!-- was .wrapper -->
 
   <!-- Navbar -->
+  <#-- IMPORTANT: update libs/top-navbar.ftl to use <nav class="app-header navbar ..."> and BS5 data-bs-* attrs -->
   <#include "libs/top-navbar.ftl">
   <!-- /.navbar -->
 
-  <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
+  <!-- Main -->
+  <main class="app-main"><!-- was .content-wrapper -->
 
-    <div class="jumbotron jumbotron-fluid">
+    <!-- Hero (BS5 replacement for jumbotron) -->
+    <section class="py-5 mb-4 bg-body-tertiary border-bottom">
       <div class="container">
-        <h1 class="display-4"><@message "auth-portal-title"/></h1>
-        <p class="lead"><@message "auth-portal-text"/></p>
+        <h1 class="display-5 fw-semibold"><@message "auth-portal-title"/></h1>
+        <p class="lead mb-0"><@message "auth-portal-text"/></p>
       </div>
-    </div>
+    </section>
 
-    <!-- Main content -->
-    <div class="content">
+    <!-- Content -->
+    <section class="app-content"><!-- was .content -->
       <div class="container">
 
         <@homeModel/>
 
-      </div><!-- /.container-fluid -->
-    </div>
-    <!-- /.content -->
-  </div>
-  <!-- /.content-wrapper -->
+      </div><!-- /.container -->
+    </section>
+    <!-- /.app-content -->
+
+  </main>
+  <!-- /.app-main -->
 
   <#include "libs/footer.ftl">
+
 </div>
-<!-- ./wrapper -->
+<!-- /.app-wrapper -->
 
 <#include "libs/scripts.ftl">
 

@@ -30,7 +30,9 @@
 <link rel="shortcut icon" href="${faviconPath}" />
 
 <!-- Font Awesome Icons -->
-<link rel="stylesheet" href="${adminLTEPath}/plugins/fontawesome-free/css/all.min.css">
+<link rel="stylesheet" href="${bootstrapPath}/css/bootstrap.min.css">
+
+<link rel="stylesheet" href="${assetsPath}/libs/node_modules/@fortawesome/fontawesome-free/css/all.min.css">
 <!-- Theme style -->
 <link rel="stylesheet" href="${adminLTEPath}/dist/css/adminlte.min.css">
 <!-- Font: Source Sans Pro -->
@@ -69,9 +71,9 @@
   }
 </style>
 <!-- DataTables -->
-<link rel="stylesheet" href="${adminLTEPath}/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
+<#--<link rel="stylesheet" href="${adminLTEPath}/plugins/datatables-bs4/css/dataTables.bootstrap4.css">-->
 <!-- Toastr -->
-<link rel="stylesheet" href="${adminLTEPath}/plugins/toastr/toastr.min.css">
+<link rel="stylesheet" href="${toastrPath}/toastr.min.css">
 
 <!-- Custom head -->
 <#include "../models/head.ftl"/>

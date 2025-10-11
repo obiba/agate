@@ -35,19 +35,11 @@
 
         <div class="input-group mb-3">
           <input name="username" type="text" class="form-control" placeholder="<@message "username"/>" value="${uAuth.username?default("")}" readonly>
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-user"></span>
-            </div>
-          </div>
+          <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
         </div>
         <div class="input-group mb-3">
           <input name="email" type="email" class="form-control" placeholder="<@message "email"/>" value="${uAuth.email?default("")}" readonly>
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-envelope"></span>
-            </div>
-          </div>
+          <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
         </div>
         <input type="hidden" name="realm" value="${uAuth.realm?default("")}"/>
 
@@ -57,19 +49,11 @@
 
         <div class="input-group mb-3">
           <input name="firstname" type="text" class="form-control" placeholder="<@message "firstname"/>" value="${uAuth.firstname?default("")}">
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-user"></span>
-            </div>
-          </div>
+          <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
         </div>
         <div class="input-group mb-3">
           <input name="lastname" type="text" class="form-control" placeholder="<@message "lastname"/>"  value="${uAuth.lastname?default("")}">
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-user"></span>
-            </div>
-          </div>
+          <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
         </div>
 
         <#if authConfig.languages?size gt 1>
@@ -106,14 +90,8 @@
         </#list>
 
         <div id="html_element" class="mb-3"></div>
-        <div class="row">
-          <div class="col-6">
-          </div>
-          <!-- /.col -->
-          <div class="col-6">
-            <button type="submit" class="btn btn-primary btn-block"><@message "sign-up-submit"/></button>
-          </div>
-          <!-- /.col -->
+        <div class="d-flex justify-content-end">
+          <button type="submit" class="btn btn-primary w-100"><@message "sign-up-submit"/></button>
         </div>
       </form>
 
