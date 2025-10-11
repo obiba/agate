@@ -36,7 +36,7 @@
           <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
         </div>
         <div class="d-flex justify-content-end">
-          <button type="submit" class="btn btn-primary">
+          <button type="submit" class="btn btn-primary w-50">
             <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
             <@message "sign-in-submit"/>
           </button>
@@ -47,7 +47,7 @@
         <div class="social-auth-links text-end mb-3">
           <p class="text-center">- <@message "sign-up-or"/> -</p>
           <#list oidcProviders as oidc>
-            <a href="${oidc.url}" class="btn btn-primary mb-2">
+            <a href="${oidc.url}" class="btn btn-primary mb-2 w-100">
               <@message "sign-up-with"/> ${oidc.title}
             </a>
           </#list>
@@ -81,13 +81,13 @@
         </div>
         <div class="row">
           <div class="col-6">
-            <button class="btn btn-primary btn-block" onclick="validateOtp()">
+            <button class="btn btn-primary w-100" onclick="validateOtp()">
               <i class="spinner-border spinner-border-sm" style="display: none;"></i> <@message "validate"/>
             </button>
           </div>
           <!-- /.col -->
           <div class="col-6">
-            <button class="btn btn-secondary btn-block" onclick="cancelOtp()">
+            <button class="btn btn-secondary w-100" onclick="cancelOtp()">
               <@message "cancel"/>
             </button>
           </div>

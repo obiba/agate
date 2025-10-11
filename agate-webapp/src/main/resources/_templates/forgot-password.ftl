@@ -28,7 +28,7 @@
         </div>
 
         <div class="d-flex justify-content-end">
-          <button type="submit" class="btn btn-primary"><@message "reset"/></button>
+          <button type="submit" class="btn btn-primary w-50"><@message "reset"/></button>
         </div>
       </form>
 
