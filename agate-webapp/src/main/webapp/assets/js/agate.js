@@ -8,16 +8,16 @@ var agatejs = (function() {
   };
 
   const agateSignin = function(formId, otpId, onFailure) {
-    const toggleSubmitButton = function(enable)  {
-      const submitSelect = '#' + formId + ' button[type="submit"]';
-      if (enable) {
-        $(submitSelect).prop("disabled",false);
-        $( submitSelect + ' i').hide();
-      } else {
-        $(submitSelect).prop("disabled",true);
-        $( submitSelect + ' i').show();
-      }
+    const toggleSubmitButton = (enable) => {
+      const btn = document.querySelector(`#${formId} button[type="submit"]`);
+      if (!btn) return;
+      const spinner = btn.querySelector('.spinner-border');
+
+      btn.disabled = !enable;
+      btn.setAttribute('aria-busy', String(!enable));
+      if (spinner) spinner.classList.toggle('d-none', enable);
     };
+
     $('#' + formId).submit(function(e) {
       e.preventDefault(); // avoid to execute the actual submit of the form.
       const form = $(this);

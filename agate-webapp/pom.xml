@@ -190,11 +190,6 @@
                   <includes>
                     <include>admin-lte/dist/**</include>
                     <include>admin-lte/plugins/bootstrap/**</include>
-                    <include>admin-lte/plugins/chart.js/**</include>
-                    <include>admin-lte/plugins/datatables/**</include>
-                    <include>admin-lte/plugins/datatables-bs4/**</include>
-                    <include>admin-lte/plugins/jquery/**</include>
-                    <include>admin-lte/plugins/moment/**</include>
                     <include>toastr/build/**</include>
                     <include>@fortawesome/fontawesome-free/**</include>
                     <include>axios/dist/**</include>
