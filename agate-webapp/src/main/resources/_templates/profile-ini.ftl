@@ -5,14 +5,14 @@
   <title>${config.name!"Agate"} | <@message "profile"/></title>
 </head>
 <body id="profile-page" class="hold-transition layout-top-nav layout-navbar-fixed">
-<div class="wrapper">
+<div class="app-wrapper d-flex flex-column min-vh-100">
 
   <!-- Navbar -->
   <#include "libs/top-navbar.ftl">
   <!-- /.navbar -->
 
   <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
+  <div class="app-main flex-fill">
 
     <!-- Content Header (Page header) -->
     <div class="content-header bg-info mb-4">
@@ -30,7 +30,7 @@
     <!-- /.content-header -->
 
     <!-- Main content -->
-    <div class="content">
+    <div class="app-content">
       <div class="container">
         <div class="row">
           <div class="col-sm-12 col-lg-6">
