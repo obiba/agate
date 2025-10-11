@@ -5,14 +5,14 @@
   <title>${config.name!"Agate"} | <@message "profile"/></title>
 </head>
 <body id="profile-page" class="hold-transition layout-top-nav layout-navbar-fixed">
-<div class="wrapper">
+<div class="app-wrapper d-flex flex-column min-vh-100">
 
   <!-- Navbar -->
   <#include "libs/top-navbar.ftl">
   <!-- /.navbar -->
 
   <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
+  <div class="app-main flex-fill">
 
     <!-- Content Header (Page header) -->
     <div class="content-header bg-info mb-4">
@@ -30,7 +30,7 @@
     <!-- /.content-header -->
 
     <!-- Main content -->
-    <div class="content">
+    <div class="app-content">
       <div class="container">
         <div class="row">
           <div class="col-sm-12 col-lg-6">
@@ -201,10 +201,8 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h4 class="modal-title"><@message "personal-information"/></h4>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+          <h5 class="modal-title"><@message "personal-information"/></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <div id="alertProfileFailure" class="alert alert-danger d-none">
@@ -212,19 +210,19 @@
           </div>
 
           <form id="profile-form" method="post">
-            <div class="form-group mb-3">
+            <div class="mb-3">
               <label><@message "firstname"/></label>
               <input name="firstname" type="text" class="form-control" value="${user.firstName!""}">
             </div>
-            <div class="form-group mb-3">
+            <div class="mb-3">
               <label><@message "lastname"/></label>
               <input name="lastname" type="text" class="form-control" value="${user.lastName!""}">
             </div>
 
             <#if authConfig.languages?size gt 1>
-              <div class="form-group mb-3">
-                <label><@message "preferred-language"/></label>
-                <select class="form-control" name="locale">
+              <div class="mb-3">
+                <label class="form-label"><@message "preferred-language"/></label>
+                <select class="form-select" name="locale">
                   <#list authConfig.languages as language>
                     <option value="${language}" <#if user.preferredLanguage == language>selected</#if>><@message "language." + language/></option>
                   </#list>
@@ -235,7 +233,7 @@
             </#if>
 
             <#list authConfig.userAttributes as attribute>
-              <div class="form-group mb-3">
+              <div class="mb-3">
                 <#if attribute.inputType == "checkbox">
                   <div class="form-check">
                     <input name="${attribute.name}" type="checkbox" value="true" class="form-check-input"
@@ -261,7 +259,7 @@
           </form>
         </div>
         <div class="modal-footer justify-content-between">
-          <button type="button" class="btn btn-default" data-dismiss="modal"><@message "cancel"/></button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><@message "cancel"/></button>
           <label for="submit-profile" class="btn btn-primary mb-0" style="cursor: pointer; font-weight: normal;"><@message "update"/></label>
         </div>
       </div>

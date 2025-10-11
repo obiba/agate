@@ -75,7 +75,7 @@
                       <input type="hidden" name="response_type" value="${responseType}">
                       <input type="hidden" name="state" value="${state}">
                       <input type="hidden" name="scope" value="${scope}">
-                      <button type="submit" name="grant" class="btn btn-default" value="false">
+                      <button type="submit" name="grant" class="btn btn-secondary" value="false">
                         <span><@message "oauth.decline"/></span>
                       </button>
                       <button type="submit" name="grant" class="btn btn-primary" value="true">

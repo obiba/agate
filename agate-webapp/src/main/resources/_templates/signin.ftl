@@ -87,7 +87,7 @@
           </div>
           <!-- /.col -->
           <div class="col-6">
-            <button class="btn btn-default btn-block" onclick="cancelOtp()">
+            <button class="btn btn-secondary btn-block" onclick="cancelOtp()">
               <@message "cancel"/>
             </button>
           </div>
