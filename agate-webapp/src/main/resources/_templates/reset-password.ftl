@@ -51,7 +51,7 @@
             </div>
             <!-- /.col -->
             <div class="col-4">
-              <button type="submit" class="btn btn-primary btn-block"><@message "update"/></button>
+              <button type="submit" class="btn btn-primary w-100"><@message "update"/></button>
             </div>
             <!-- /.col -->
           </div>

@@ -90,14 +90,8 @@
         </#list>
 
         <div id="html_element" class="mb-3"></div>
-        <div class="row">
-          <div class="col-6">
-          </div>
-          <!-- /.col -->
-          <div class="col-6">
-            <button type="submit" class="btn btn-primary btn-block"><@message "sign-up-submit"/></button>
-          </div>
-          <!-- /.col -->
+        <div class="d-flex justify-content-end">
+          <button type="submit" class="btn btn-primary w-100"><@message "sign-up-submit"/></button>
         </div>
       </form>
 
