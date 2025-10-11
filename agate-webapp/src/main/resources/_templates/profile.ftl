@@ -92,8 +92,8 @@
               </div>
               <div class="card-footer">
                 <div class="float-right">
-                  <button type="button" class="btn btn-primary" data-toggle="modal"
-                          data-target="#modal-profile"><i class="fa-solid fa-pen"></i> <@message "personal-information"/></button>
+                  <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                          data-bs-target="#modal-profile"><i class="fa-solid fa-pen"></i> <@message "personal-information"/></button>
                 </div>
               </div>
             </div>
@@ -132,27 +132,15 @@
                     <form id="password-form" method="post">
                       <div class="input-group mb-3">
                         <input name="password0" type="password" class="form-control" placeholder="<@message "current-password"/>">
-                        <div class="input-group-append">
-                          <div class="input-group-text">
-                            <span class="fa-solid fa-lock"></span>
-                          </div>
-                        </div>
+                        <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
                       </div>
                       <div class="input-group mb-3">
                         <input name="password" type="password" class="form-control" placeholder="<@message "new-password"/>">
-                        <div class="input-group-append">
-                          <div class="input-group-text">
-                            <span class="fa-solid fa-lock"></span>
-                          </div>
-                        </div>
+                        <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
                       </div>
                       <div class="input-group mb-3">
                         <input name="password2" type="password" class="form-control" placeholder="<@message "repeat-new-password"/>">
-                        <div class="input-group-append">
-                          <div class="input-group-text">
-                            <span class="fa-solid fa-lock"></span>
-                          </div>
-                        </div>
+                        <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
                       </div>
                       <button type="submit" id="submit-password" class="d-none"></button>
                     </form>

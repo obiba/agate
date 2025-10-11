@@ -77,11 +77,7 @@
       <div>
         <div class="input-group mb-3">
           <input id="otp" name="otp" type="number" class="form-control"/>
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fa-solid fa-mobile"></span>
-            </div>
-          </div>
+          <span class="input-group-text"><i class="fa-solid fa-mobile"></i></span>
         </div>
         <div class="row">
           <div class="col-6">
