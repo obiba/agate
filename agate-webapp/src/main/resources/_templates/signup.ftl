@@ -51,11 +51,11 @@
 
         <div class="input-group mb-3">
           <input name="firstname" type="text" class="form-control" placeholder="<@message "firstname"/>">
-          <span class="input-group-text"><i class="fa-solid fa-solid fa-user"></i></span>
+          <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
         </div>
         <div class="input-group mb-3">
           <input name="lastname" type="text" class="form-control" placeholder="<@message "lastname"/>">
-          <span class="input-group-text"><i class="fa-solid fa-solid fa-user"></i></span>
+          <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
         </div>
 
         <#if authConfig.languages?size gt 1>
