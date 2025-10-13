@@ -45,10 +45,10 @@
 
       <#if oidcProviders?? && oidcProviders?size != 0>
         <div class="social-auth-links text-end mb-3">
-          <p class="text-center">- <@message "sign-up-or"/> -</p>
+          <p class="text-center">- <@message "sign-in-or"/> -</p>
           <#list oidcProviders as oidc>
             <a href="${oidc.url}" class="btn btn-primary mb-2 w-100">
-              <@message "sign-up-with"/> ${oidc.title}
+              <@message "sign-in-with"/> ${oidc.title}
             </a>
           </#list>
         </div>
