@@ -41,6 +41,7 @@
     font-family: 'Source Sans Pro';
     font-style: normal;
     font-weight: 300;
+    font-display: swap;
     src: url("${assetsPath}/fonts/Source_Sans_Pro/SourceSansPro-Light.ttf") format("truetype"),
     url("${assetsPath}/fonts/Source_Sans_Pro/sourcesanspro-light-webfont.woff2") format("woff2"),
     url("${assetsPath}/fonts/Source_Sans_Pro/sourcesanspro-light-webfont.woff") format("woff");
@@ -49,6 +50,7 @@
     font-family: 'Source Sans Pro';
     font-style: normal;
     font-weight: 400;
+    font-display: swap;
     src: url("${assetsPath}/fonts/Source_Sans_Pro/SourceSansPro-Regular.ttf") format("truetype"),
     url("${assetsPath}/fonts/Source_Sans_Pro/sourcesanspro-regular-webfont.woff2") format("woff2"),
     url("${assetsPath}/fonts/Source_Sans_Pro/sourcesanspro-regular-webfont.woff") format("woff");
@@ -57,6 +59,7 @@
     font-family: 'Source Sans Pro';
     font-style: normal;
     font-weight: 700;
+    font-display: swap;
     src: url("${assetsPath}/fonts/Source_Sans_Pro/SourceSansPro-Bold.ttf") format("truetype"),
     url("${assetsPath}/fonts/Source_Sans_Pro/sourcesanspro-bold-webfont.woff2") format("woff2"),
     url("${assetsPath}/fonts/Source_Sans_Pro/sourcesanspro-bold-webfont.woff") format("woff");
@@ -65,10 +68,20 @@
     font-family: 'Source Sans Pro';
     font-style: italic;
     font-weight: 400;
+    font-display: swap;
     src: url("${assetsPath}/fonts/Source_Sans_Pro/SourceSansPro-Italic.ttf") format("truetype"),
     url("${assetsPath}/fonts/Source_Sans_Pro/sourcesanspro-italic-webfont.woff2") format("woff2"),
     url("${assetsPath}/fonts/Source_Sans_Pro/sourcesanspro-italic-webfont.woff") format("woff");
   }
+
+  /* Use the AdminLTE 3 default font */
+  :root{
+    --bs-font-sans-serif: "Source Sans Pro", system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans",
+    "Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+  }
+
+  body{ font-family: var(--bs-font-sans-serif) !important; }
 </style>
 <!-- DataTables -->
 <#--<link rel="stylesheet" href="${adminLTEPath}/plugins/datatables-bs4/css/dataTables.bootstrap4.css">-->
