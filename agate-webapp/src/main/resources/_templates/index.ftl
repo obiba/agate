@@ -12,17 +12,15 @@
 <div class="app-wrapper"><!-- was .wrapper -->
 
   <!-- Navbar -->
-  <#-- IMPORTANT: update libs/top-navbar.ftl to use <nav class="app-header navbar ..."> and BS5 data-bs-* attrs -->
   <#include "libs/top-navbar.ftl">
   <!-- /.navbar -->
 
   <!-- Main -->
   <main class="app-main"><!-- was .content-wrapper -->
 
-    <!-- Hero (BS5 replacement for jumbotron) -->
     <section class="py-5 mb-4 bg-body-tertiary">
-      <div class="container">
-        <h1 class="display-5"><@message "auth-portal-title"/></h1>
+      <div class="container py-4">
+        <h1 class="display-4"><@message "auth-portal-title"/></h1>
         <p class="lead mb-0"><@message "auth-portal-text"/></p>
       </div>
     </section>
