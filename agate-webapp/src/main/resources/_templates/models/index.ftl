@@ -24,7 +24,7 @@
 
     <#if !user?? || user.role == "agate-administrator">
       <div class="col-sm-12 col-lg-6">
-        <div class="small-box bg-info position-relative">
+        <div class="small-box bg-info text-white position-relative">
           <div class="inner z-1">
             <h3><@message "administration"/></h3>
             <p><@message "admin-users-apps"/></p>
