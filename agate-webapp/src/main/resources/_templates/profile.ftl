@@ -165,7 +165,7 @@
               </div>
 
             <#if otpSupport>
-              <div class="card card-primary card-outline">
+              <div class="card card-primary card-outline mt-3">
                 <div class="card-header">
                   <h3 class="card-title"><@message "two-factor-authentication"/></h3>
                 </div>

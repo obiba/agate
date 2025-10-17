@@ -150,9 +150,17 @@
             <fileset>
               <directory>src/main/webapp/assets/libs/node_modules</directory>
             </fileset>
+            <fileset>
+              <directory>src/main/webapp/assets/css</directory>
+              <includes>
+                <include>*.css</include>
+                <include>*.map</include>
+              </includes>
+            </fileset>
           </filesets>
         </configuration>
       </plugin>
+
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
@@ -162,8 +170,10 @@
             <phase>generate-sources</phase>
             <configuration>
               <executable>npm</executable>
+              <workingDirectory>${project.basedir}</workingDirectory>
               <arguments>
                 <argument>install</argument>
+                <argument>--include=dev</argument>
               </arguments>
             </configuration>
             <goals>
@@ -285,6 +295,30 @@
               </arguments>
             </configuration>
           </plugin>
+
+          <!-- Dev: build readable CSS -->
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>exec-npm-build-css-dev</id>
+                <phase>generate-resources</phase>
+                <configuration>
+                  <executable>npm</executable>
+                  <workingDirectory>${project.basedir}</workingDirectory>
+                  <arguments>
+                    <argument>run</argument>
+                    <argument>build:css</argument>
+                  </arguments>
+                </configuration>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
         </plugins>
       </build>
     </profile>
@@ -318,6 +352,46 @@
               </arguments>
             </configuration>
           </plugin>
+
+          <!-- Prod: ensure devDeps present, then build minified CSS -->
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>exec-npm-install-prod</id>
+                <phase>generate-sources</phase>
+                <configuration>
+                  <executable>npm</executable>
+                  <workingDirectory>${project.basedir}</workingDirectory>
+                  <arguments>
+                    <argument>install</argument>
+                    <argument>--include=dev</argument>
+                  </arguments>
+                </configuration>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+              </execution>
+
+              <execution>
+                <id>exec-npm-build-css-prod</id>
+                <phase>generate-resources</phase>
+                <configuration>
+                  <executable>npm</executable>
+                  <workingDirectory>${project.basedir}</workingDirectory>
+                  <arguments>
+                    <argument>run</argument>
+                    <argument>build:css:prod</argument>
+                  </arguments>
+                </configuration>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
         </plugins>
       </build>
     </profile>
@@ -338,6 +412,13 @@
                 </fileset>
                 <fileset>
                   <directory>src/main/webapp/assets/libs/node_modules</directory>
+                </fileset>
+                <fileset>
+                  <directory>src/main/webapp/assets/css</directory>
+                  <includes>
+                    <include>*.css</include>
+                    <include>*.map</include>
+                  </includes>
                 </fileset>
               </filesets>
             </configuration>
