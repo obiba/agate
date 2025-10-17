@@ -35,6 +35,7 @@
 <link rel="stylesheet" href="${assetsPath}/libs/node_modules/@fortawesome/fontawesome-free/css/all.min.css">
 <!-- Theme style -->
 <link rel="stylesheet" href="${adminLTEPath}/dist/css/adminlte.min.css">
+<link rel="stylesheet" href="${assetsPath}/css/agate.min.css">
 <!-- Font: Source Sans Pro -->
 <style type="text/css">
   @font-face {
