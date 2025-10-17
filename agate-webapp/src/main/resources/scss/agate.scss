@@ -1,6 +1,13 @@
 @import "bootstrap/scss/bootstrap";
 @import "admin-lte/src/scss/adminlte";
 
+:root {
+  --bs-info: #17a2b8;
+  --bs-info-rgb: 23, 162, 184;      /* needed so .bg-info updates */
+  --bs-info-bg-subtle: #d1ecf1;      /* alerts, badges subtle */
+  --bs-info-border-subtle: #bee5eb;
+  --bs-info-text-emphasis: #0c5460;
+}
 
 .error-page {
   margin: 20px auto 0;
