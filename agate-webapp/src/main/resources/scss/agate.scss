@@ -7,6 +7,23 @@
   --bs-info-bg-subtle: #d1ecf1;      /* alerts, badges subtle */
   --bs-info-border-subtle: #bee5eb;
   --bs-info-text-emphasis: #0c5460;
+  --bs-tertiary-bg-rgb: 233, 236, 239;
+}
+
+h1 {
+  font-size: 1.8rem;
+}
+
+a {
+  text-decoration: none;
+}
+
+.bg-info {
+  color: #ffffff;
+ }
+
+.content-header {
+  padding: 15px .5rem;
 }
 
 .error-page {
