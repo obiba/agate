@@ -18,7 +18,7 @@
     "sass": "^1.93.2"
   },
   "scripts": {
-    "build:css":      "sass --style=compressed --source-map   --load-path=node_modules src/main/resources/scss/agate.scss src/main/webapp/assets/css/agate.min.css",
-    "build:css:prod": "sass --style=compressed --no-source-map --load-path=node_modules src/main/resources/scss/agate.scss src/main/webapp/assets/css/agate.min.css"
+    "build:css":      "sass --quiet-deps --style=compressed --source-map   --load-path=node_modules src/main/resources/scss/agate.scss src/main/webapp/assets/css/agate.min.css",
+    "build:css:prod": "sass --quiet-deps --style=compressed --no-source-map --load-path=node_modules src/main/resources/scss/agate.scss src/main/webapp/assets/css/agate.min.css"
   }
 }

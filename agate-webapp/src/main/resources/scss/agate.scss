@@ -1,5 +1,5 @@
-@import "bootstrap/scss/bootstrap";
-@import "admin-lte/src/scss/adminlte";
+@use "bootstrap/scss/bootstrap" as *;
+@use "admin-lte/src/scss/adminlte" as lte;
 
 :root {
   --bs-info: #17a2b8;
