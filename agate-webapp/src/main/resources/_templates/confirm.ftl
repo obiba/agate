@@ -42,19 +42,11 @@
         <form id="form" method="post">
           <div class="input-group mb-3">
             <input name="password" type="password" class="form-control" placeholder="<@message "new-password"/>">
-            <div class="input-group-append">
-              <div class="input-group-text">
-                <span class="fas fa-lock"></span>
-              </div>
-            </div>
+            <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
           </div>
           <div class="input-group mb-3">
             <input name="password2" type="password" class="form-control" placeholder="<@message "repeat-new-password"/>">
-            <div class="input-group-append">
-              <div class="input-group-text">
-                <span class="fas fa-lock"></span>
-              </div>
-            </div>
+            <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
           </div>
           <input name="key" type="hidden" value="${key}">
           <div class="row">
@@ -63,7 +55,7 @@
             </div>
             <!-- /.col -->
             <div class="col-6">
-              <button type="submit" class="btn btn-primary btn-block"><@message "submit"/></button>
+              <button type="submit" class="btn btn-primary w-100"><@message "submit"/></button>
             </div>
             <!-- /.col -->
           </div>

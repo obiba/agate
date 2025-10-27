@@ -1,0 +1,67 @@
+@use "bootstrap/scss/bootstrap" as *;
+@use "admin-lte/src/scss/adminlte" as lte;
+
+:root {
+  --bs-info: #17a2b8;
+  --bs-info-rgb: 23, 162, 184;      /* needed so .bg-info updates */
+  --bs-info-bg-subtle: #d1ecf1;      /* alerts, badges subtle */
+  --bs-info-border-subtle: #bee5eb;
+  --bs-info-text-emphasis: #0c5460;
+  --bs-tertiary-bg-rgb: 233, 236, 239;
+}
+
+h1 {
+  font-size: 1.8rem;
+}
+
+a {
+  text-decoration: none;
+}
+
+.bg-info {
+  color: #ffffff;
+ }
+
+.content-header {
+  padding: 15px .5rem;
+}
+
+.error-page {
+  margin: 20px auto 0;
+  width: 600px;
+
+  @include media-breakpoint-down(sm) {
+    width: 100%;
+  }
+
+  //For the error number e.g: 404
+  > .headline {
+    float: left;
+    font-size: 100px;
+    font-weight: 300;
+
+    @include media-breakpoint-down(sm) {
+      float: none;
+      text-align: center;
+    }
+  }
+
+  //For the message
+  > .error-content {
+    display: block;
+    margin-left: 190px;
+
+    @include media-breakpoint-down(sm) {
+      margin-left: 0;
+    }
+
+    > h3 {
+      font-size: 25px;
+      font-weight: 300;
+
+      @include media-breakpoint-down(sm) {
+        text-align: center;
+      }
+    }
+  }
+}

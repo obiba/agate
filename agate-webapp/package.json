@@ -4,14 +4,21 @@
   "private": true,
   "description": "Agate web UI",
   "dependencies": {
-    "admin-lte": "^3.2.0",
+    "admin-lte": "^4.0.0-rc4",
+    "toastr": "^2.1.4",
     "axios": "^1.12.0",
-    "jquery.redirect": "^1.2.0"
+    "jquery": "^3.7.1",
+    "jquery.redirect": "^1.2.0",
+
+    "bootstrap": "^5.3.3",
+    "@popperjs/core": "^2.11.8",
+    "@fortawesome/fontawesome-free": "^6.5.2"
   },
   "devDependencies": {
-    "husky": "^9.1.7"
+    "sass": "^1.93.2"
   },
-  "engines": {
-    "node": ">=0.10.0"
+  "scripts": {
+    "build:css":      "sass --quiet-deps --style=compressed --source-map   --load-path=node_modules src/main/resources/scss/agate.scss src/main/webapp/assets/css/agate.min.css",
+    "build:css:prod": "sass --quiet-deps --style=compressed --no-source-map --load-path=node_modules src/main/resources/scss/agate.scss src/main/webapp/assets/css/agate.min.css"
   }
 }
