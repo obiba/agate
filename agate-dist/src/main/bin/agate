@@ -51,4 +51,4 @@ fi
 JAVA_DEBUG=-agentlib:jdwp=transport=dt_socket,server=y,address=8000,suspend=n
 
 # Add $JAVA_DEBUG to this line to enable remote JVM debugging (for developers)
-java $JAVA_OPTS -cp "$CLASSPATH" -DAGATE_HOME="${AGATE_HOME}" -DAGATE_DIST=${AGATE_DIST} -DAGATE_LOG=${AGATE_LOG} org.obiba.agate.Application $@
+exec java $JAVA_OPTS -cp "$CLASSPATH" -DAGATE_HOME="${AGATE_HOME}" -DAGATE_DIST=${AGATE_DIST} -DAGATE_LOG=${AGATE_LOG} org.obiba.agate.Application $@
