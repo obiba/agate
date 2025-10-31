@@ -16,3 +16,4 @@ spring_loaded
 .work
 .vscode
 agate_home
+agate-webapp/src/main/webapp/assets/css/agate.min.css*
