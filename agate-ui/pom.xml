@@ -36,7 +36,7 @@
               <goal>install-node-and-npm</goal>
             </goals>
             <configuration>
-              <nodeVersion>v20.9.0</nodeVersion>
+              <nodeVersion>v22.20.0</nodeVersion>
             </configuration>
           </execution>
 
@@ -75,6 +75,7 @@
               <target>
                 <delete dir="node_modules" />
                 <delete dir="dist" />
+                <delete dir="node" />
               </target>
             </configuration>
           </execution>
