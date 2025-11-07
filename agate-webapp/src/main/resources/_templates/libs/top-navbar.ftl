@@ -4,7 +4,7 @@
     <#if config??>
     <a href="${portalLink}" class="navbar-brand">
       <img src="${brandImageSrc}" alt="Logo" class="brand-image ${brandImageClass}"
-           style="opacity: .8; max-height: 3rem;">
+           style="opacity: .8; max-height: 2.8rem;">
       <span class="brand-text ${brandTextClass}">
         <#if brandTextEnabled>
           ${config.name!""}
