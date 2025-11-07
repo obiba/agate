@@ -9,17 +9,7 @@ Central authentication server for OBiBa applications.
 
 ## For developers
 
-Install NodeJS, Grunt
-
-```
-sudo add-apt-repository -y ppa:chris-lea/node.js
-sudo apt-get install -y nodejs
-sudo npm install -g grunt-cli
-```
-
-If you run agate for the first time, run `make npm-install`.
-
-Make sure you use **Java 17**:
+Make sure you use **Java 21**:
 
 ```
 sudo update-alternatives --config java
@@ -31,7 +21,6 @@ Or use [SDKMAN!](https://sdkman.io/).
 During development, run in debug mode:
 
 * `make all debug` in one terminal to start a fresh empty agate REST server on [HTTP port 8081](http://localhost:8081) or [HTTPS port 8444](https://localhost:8444)
-* `make grunt` in another terminal to start Grunt server with live reload on port **9000**
 
 See `make help` for other targets.
 

@@ -241,6 +241,7 @@
           <plugin>
             <groupId>com.github.eirslett</groupId>
             <artifactId>frontend-maven-plugin</artifactId>
+            <version>${frontend-maven-plugin.version}</version>
             <executions>
               <execution>
                 <id>exec-npm-install</id>
@@ -299,6 +300,7 @@
           <plugin>
             <groupId>com.github.eirslett</groupId>
             <artifactId>frontend-maven-plugin</artifactId>
+            <version>${frontend-maven-plugin.version}</version>
             <executions>
               <execution>
                 <id>exec-npm-build-css-dev</id>
@@ -351,6 +353,7 @@
           <plugin>
             <groupId>com.github.eirslett</groupId>
             <artifactId>frontend-maven-plugin</artifactId>
+            <version>${frontend-maven-plugin.version}</version>
             <executions>
               <execution>
                 <id>exec-npm-install-prod</id>
