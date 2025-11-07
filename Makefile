@@ -18,8 +18,6 @@ help:
 	@echo
 	@echo "  run         : Run webapp module"
 	@echo "  debug       : Debug webapp module on port 8001"
-	@echo "  grunt       : Start grunt on port 9000"
-	@echo "  npm-install : Download all NodeJS dependencies"
 	@echo
 	@echo "  clear-log   : Delete logs from ${agate_log}"
 	@echo "  drop-mongo  : Drop MongoDB agate database"
@@ -86,14 +84,6 @@ run-python:
 	chmod +x ./scripts/agate && \
 	export PYTHONPATH=${current_dir}/../agate-python-client/target/agate-python/bin && \
 	./scripts/agate ${args}
-
-grunt:
-	cd agate-webapp && \
-	grunt server
-
-npm-install:
-	cd agate-webapp && \
-	npm install
 
 clear-log:
 	rm -rf ${agate_log}

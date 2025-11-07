@@ -129,14 +129,10 @@
       <groupId>net.minidev</groupId>
       <artifactId>json-smart</artifactId>
     </dependency>
-
-
   </dependencies>
 
   <build>
-
     <plugins>
-
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
         <configuration>
@@ -160,25 +156,30 @@
           </filesets>
         </configuration>
       </plugin>
-
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <version>${frontend-maven-plugin.version}</version>
         <executions>
           <execution>
-            <id>exec-npm-install</id>
+            <id>install node and npm</id>
             <phase>generate-sources</phase>
-            <configuration>
-              <executable>npm</executable>
-              <workingDirectory>${project.basedir}</workingDirectory>
-              <arguments>
-                <argument>install</argument>
-                <argument>--include=dev</argument>
-              </arguments>
-            </configuration>
             <goals>
-              <goal>exec</goal>
+              <goal>install-node-and-npm</goal>
             </goals>
+            <configuration>
+              <nodeVersion>v24.11.0</nodeVersion>
+            </configuration>
+          </execution>
+          <execution>
+            <id>npm install</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>install --include=dev</arguments>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -230,31 +231,27 @@
         </executions>
       </plugin>
     </plugins>
-
   </build>
 
   <profiles>
-
     <profile>
       <id>generate-node-modules</id>
       <build>
         <plugins>
           <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
+            <groupId>com.github.eirslett</groupId>
+            <artifactId>frontend-maven-plugin</artifactId>
+            <version>${frontend-maven-plugin.version}</version>
             <executions>
               <execution>
                 <id>exec-npm-install</id>
                 <phase>generate-sources</phase>
-                <configuration>
-                  <executable>npm</executable>
-                  <arguments>
-                    <argument>install</argument>
-                  </arguments>
-                </configuration>
                 <goals>
-                  <goal>exec</goal>
+                  <goal>npm</goal>
                 </goals>
+                <configuration>
+                  <arguments>install</arguments>
+                </configuration>
               </execution>
             </executions>
           </plugin>
@@ -301,23 +298,19 @@
 
           <!-- Dev: build readable CSS -->
           <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
+            <groupId>com.github.eirslett</groupId>
+            <artifactId>frontend-maven-plugin</artifactId>
+            <version>${frontend-maven-plugin.version}</version>
             <executions>
               <execution>
                 <id>exec-npm-build-css-dev</id>
                 <phase>generate-resources</phase>
-                <configuration>
-                  <executable>npm</executable>
-                  <workingDirectory>${project.basedir}</workingDirectory>
-                  <arguments>
-                    <argument>run</argument>
-                    <argument>build:css</argument>
-                  </arguments>
-                </configuration>
                 <goals>
-                  <goal>exec</goal>
+                  <goal>npm</goal>
                 </goals>
+                <configuration>
+                  <arguments>run build:css</arguments>
+                </configuration>
               </execution>
             </executions>
           </plugin>
@@ -358,39 +351,30 @@
 
           <!-- Prod: ensure devDeps present, then build minified CSS -->
           <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
+            <groupId>com.github.eirslett</groupId>
+            <artifactId>frontend-maven-plugin</artifactId>
+            <version>${frontend-maven-plugin.version}</version>
             <executions>
               <execution>
                 <id>exec-npm-install-prod</id>
                 <phase>generate-sources</phase>
-                <configuration>
-                  <executable>npm</executable>
-                  <workingDirectory>${project.basedir}</workingDirectory>
-                  <arguments>
-                    <argument>install</argument>
-                    <argument>--include=dev</argument>
-                  </arguments>
-                </configuration>
                 <goals>
-                  <goal>exec</goal>
+                  <goal>npm</goal>
                 </goals>
+                <configuration>
+                  <arguments>install --include=dev</arguments>
+                </configuration>
               </execution>
 
               <execution>
                 <id>exec-npm-build-css-prod</id>
                 <phase>generate-resources</phase>
-                <configuration>
-                  <executable>npm</executable>
-                  <workingDirectory>${project.basedir}</workingDirectory>
-                  <arguments>
-                    <argument>run</argument>
-                    <argument>build:css:prod</argument>
-                  </arguments>
-                </configuration>
                 <goals>
-                  <goal>exec</goal>
+                  <goal>npm</goal>
                 </goals>
+                <configuration>
+                  <arguments>run build:css:prod</arguments>
+                </configuration>
               </execution>
             </executions>
           </plugin>
