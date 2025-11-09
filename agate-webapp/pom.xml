@@ -320,7 +320,7 @@
     </profile>
 
     <profile>
-      <id>js-compiled</id>
+      <id>release</id>
       <build>
         <resources>
           <resource>
@@ -348,8 +348,6 @@
               </arguments>
             </configuration>
           </plugin>
-
-          <!-- Prod: ensure devDeps present, then build minified CSS -->
           <plugin>
             <groupId>com.github.eirslett</groupId>
             <artifactId>frontend-maven-plugin</artifactId>
@@ -365,7 +363,6 @@
                   <arguments>install --include=dev</arguments>
                 </configuration>
               </execution>
-
               <execution>
                 <id>exec-npm-build-css-prod</id>
                 <phase>generate-resources</phase>
@@ -378,15 +375,6 @@
               </execution>
             </executions>
           </plugin>
-
-        </plugins>
-      </build>
-    </profile>
-
-    <profile>
-      <id>release</id>
-      <build>
-        <plugins>
           <plugin>
             <artifactId>maven-clean-plugin</artifactId>
             <configuration>
