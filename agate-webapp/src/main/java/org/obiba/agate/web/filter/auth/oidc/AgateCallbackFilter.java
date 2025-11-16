@@ -255,6 +255,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
               .maxAge(timeout)
               .secure(true)
               .httpOnly(true)
+              .sameSite(NewCookie.SameSite.LAX)
               .build()));
           log.debug("Successfully authenticated subject {}", SecurityUtils.getSubject().getPrincipal());
         }
