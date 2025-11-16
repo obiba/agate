@@ -18,6 +18,7 @@ import org.obiba.agate.config.Constants;
 import org.obiba.agate.web.rest.security.AuditInterceptor;
 import org.obiba.agate.web.rest.security.AuthenticationInterceptor;
 import org.obiba.agate.web.rest.security.CSRFInterceptor;
+import org.obiba.agate.web.rest.security.CSRFTokenHelper;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.Profiles;
@@ -31,13 +32,17 @@ public class JerseyConfiguration extends ResourceConfig {
   public static final String WS_ROOT = "/ws";
 
   @Inject
-  public JerseyConfiguration(Environment environment) {
+  public JerseyConfiguration(Environment environment, CSRFTokenHelper csrfTokenHelper) {
     register(RequestContextFilter.class);
     packages("org.obiba.agate.web", "org.obiba.jersey", "com.fasterxml.jackson");
     ///register(LoggingFilter.class);
     register(AuthenticationInterceptor.class);
     register(AuditInterceptor.class);
-    register(new CSRFInterceptor(environment.acceptsProfiles(Profiles.of(Constants.SPRING_PROFILE_PRODUCTION)), environment.getProperty("csrf.allowed", ""), environment.getProperty("csrf.allowed-agents", "")));
+    register(new CSRFInterceptor(
+        environment.acceptsProfiles(Profiles.of(Constants.SPRING_PROFILE_PRODUCTION)),
+        environment.getProperty("csrf.allowed", ""),
+        environment.getProperty("csrf.allowed-agents", ""),
+        csrfTokenHelper));
     // validation errors will be sent to the client
     property(ServerProperties.BV_SEND_ERROR_IN_RESPONSE, true);
   }

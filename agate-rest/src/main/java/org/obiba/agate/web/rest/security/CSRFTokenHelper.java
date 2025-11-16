@@ -1,10 +1,12 @@
 package org.obiba.agate.web.rest.security;
 
 import com.google.common.base.Strings;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.core.NewCookie;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
+import org.obiba.agate.service.ConfigurationService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -22,10 +24,11 @@ public class CSRFTokenHelper {
 
   public final String DEFAULT_CSRF_TOKEN;
 
-  @Value("${org.obiba.opal.server.context-path}")
-  private String contextPath;
+  private final ConfigurationService configurationService;
 
-  public CSRFTokenHelper() {
+  @Inject
+  public CSRFTokenHelper(ConfigurationService configurationService) {
+    this.configurationService = configurationService;
     DEFAULT_CSRF_TOKEN = UUID.randomUUID().toString();
   }
 
@@ -101,6 +104,7 @@ public class CSRFTokenHelper {
   }
 
   private String getCookiePath() {
+    String contextPath = configurationService.getContextPath();
     return Strings.isNullOrEmpty(contextPath) ? "/" : contextPath;
   }
 }

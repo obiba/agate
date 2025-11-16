@@ -31,15 +31,22 @@ public class AuthenticationInterceptor implements ContainerResponseFilter {
 
   private static final String AGATE_SESSION_ID_COOKIE_NAME = "agatesid";
 
+  private final ConfigurationService configurationService;
+
+  private final CSRFTokenHelper csrfTokenHelper;
+
   @Inject
-  private ConfigurationService configurationService;
+  public AuthenticationInterceptor(ConfigurationService configurationService, CSRFTokenHelper csrfTokenHelper) {
+    this.configurationService = configurationService;
+    this.csrfTokenHelper = csrfTokenHelper;
+  }
 
   @Override
   public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext)
       throws IOException {
     // Set the cookie if the user is still authenticated
     String path = configurationService.getContextPath() + "/";
-    if(isUserAuthenticated()) {
+    if (isUserAuthenticated()) {
       Session session = SecurityUtils.getSubject().getSession();
       session.touch();
       int timeout = (int) (session.getTimeout() / 1000);
@@ -50,7 +57,9 @@ public class AuthenticationInterceptor implements ContainerResponseFilter {
               .maxAge(timeout)
               .secure(true)
               .httpOnly(true)
+              .sameSite(NewCookie.SameSite.LAX)
               .build());
+      responseContext.getHeaders().add(HttpHeaders.SET_COOKIE, csrfTokenHelper.createCsrfTokenCookie());
     } else {
       if(responseContext.getHeaders().get(HttpHeaders.SET_COOKIE) == null) {
         responseContext.getHeaders().putSingle(HttpHeaders.SET_COOKIE,
@@ -60,7 +69,9 @@ public class AuthenticationInterceptor implements ContainerResponseFilter {
                 .maxAge(0)
                 .secure(true)
                 .httpOnly(true)
+                .sameSite(NewCookie.SameSite.LAX)
                 .build());
+        responseContext.getHeaders().add(HttpHeaders.SET_COOKIE, csrfTokenHelper.deleteCsrfTokenCookie());
       }
     }
   }

@@ -1,6 +1,10 @@
 /* exported agatejs */
 'use strict';
 
+// Axios automatically reads XSRF-TOKEN cookie and sends as X-XSRF-TOKEN header
+axios.defaults.xsrfCookieName = 'XSRF-TOKEN';
+axios.defaults.xsrfHeaderName = 'X-XSRF-TOKEN';
+
 var agatejs = (function() {
 
   const normalizeUrl = function(url) {
@@ -388,13 +392,14 @@ var agatejs = (function() {
   }
 
   const agateSignout = function(redirectUrl) {
-    $.ajax({
-      type: 'DELETE',
-      url: normalizeUrl('/ws/auth/session/_current')
-    })
-        .always(function() {
-          agateRedirect(redirectUrl);
-        });
+      axios.delete(normalizeUrl('/ws/auth/session/_current'))
+        .catch(handle => {
+          console.dir(handle);
+        })
+        .finally(() => {
+            agateRedirect(redirectUrl);
+        }
+        );
   };
 
   const agateChangeLanguage = function(lang) {

@@ -2,7 +2,7 @@
 server:
     port: 8081
     address: localhost
-    #context-path: /gate
+    #context-path: /agate
 
 https:
     port: 8444
