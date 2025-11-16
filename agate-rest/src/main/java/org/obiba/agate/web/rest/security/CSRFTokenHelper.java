@@ -22,14 +22,11 @@ public class CSRFTokenHelper {
 
   public static final String CSRF_TOKEN_COOKIE_NAME = "XSRF-TOKEN";
 
-  public final String DEFAULT_CSRF_TOKEN;
-
   private final ConfigurationService configurationService;
 
   @Inject
   public CSRFTokenHelper(ConfigurationService configurationService) {
     this.configurationService = configurationService;
-    DEFAULT_CSRF_TOKEN = UUID.randomUUID().toString();
   }
 
   /**
@@ -79,9 +76,12 @@ public class CSRFTokenHelper {
     Session session = subject.getSession(false);
     if(session != null) {
       String sessionToken = (String) session.getAttribute(CSRF_TOKEN_COOKIE_NAME);
-      return (Strings.isNullOrEmpty(headerToken) && Strings.isNullOrEmpty(sessionToken)) || (!Strings.isNullOrEmpty(headerToken) && headerToken.equals(sessionToken));
+      if (Strings.isNullOrEmpty(sessionToken)) {
+        return true; // No token in session yet, skip validation
+      }
+      return !Strings.isNullOrEmpty(headerToken) && headerToken.equals(sessionToken);
     }
-    return DEFAULT_CSRF_TOKEN.equals(headerToken);
+    return true;
   }
 
   //
@@ -92,7 +92,7 @@ public class CSRFTokenHelper {
     Subject subject = ThreadContext.getSubject();
     if (subject == null) {
       // return a default token if no subject is associated with the request
-      return DEFAULT_CSRF_TOKEN;
+      return null;
     }
     Session session = subject.getSession();
     String csrfToken = (String) session.getAttribute(CSRF_TOKEN_COOKIE_NAME);

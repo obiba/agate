@@ -38,6 +38,8 @@ public class CSRFInterceptor implements ContainerRequestFilter {
 
   private static final Pattern loopbackhostPattern = Pattern.compile("^http[s]?://127\\.0\\.0\\.1:");
 
+  private static final List<String> SAFE_METHODS = Lists.newArrayList("GET", "HEAD", "OPTIONS");
+
   private final boolean productionMode;
 
   private final List<String> csrfAllowedHosts;
@@ -58,11 +60,14 @@ public class CSRFInterceptor implements ContainerRequestFilter {
       throws IOException {
     if (!productionMode) return;
 
-    String xsrfCookie = requestContext.getHeaderString(CSRFTokenHelper.CSRF_TOKEN_HEADER);
-    log.debug("{}: {}", CSRFTokenHelper.CSRF_TOKEN_HEADER, xsrfCookie);
-    if (!csrfTokenHelper.validateXsrfToken(xsrfCookie)) {
-      log.warn("XSRF token validation failed. Are you sending the '{}' HTTP header with the XSRF token value?", CSRFTokenHelper.CSRF_TOKEN_HEADER);
-      throw new ForbiddenException("XSRF token validation failed");
+    String method = requestContext.getMethod();
+    if (!SAFE_METHODS.contains(method)) {
+      String xsrfToken = requestContext.getHeaderString(CSRFTokenHelper.CSRF_TOKEN_HEADER);
+      log.debug("{}: {}", CSRFTokenHelper.CSRF_TOKEN_HEADER, xsrfToken);
+      if (!csrfTokenHelper.validateXsrfToken(xsrfToken)) {
+        log.warn("XSRF token validation failed. Are you sending the '{}' HTTP header with the XSRF token value?", CSRFTokenHelper.CSRF_TOKEN_HEADER);
+        throw new ForbiddenException("XSRF token validation failed");
+      }
     }
 
     if (csrfAllowedHosts.contains("*")) return;
