@@ -59,7 +59,9 @@ public class AuthenticationInterceptor implements ContainerResponseFilter {
               .httpOnly(true)
               .sameSite(NewCookie.SameSite.LAX)
               .build());
-      responseContext.getHeaders().add(HttpHeaders.SET_COOKIE, csrfTokenHelper.createCsrfTokenCookie());
+      NewCookie csrfCookie = csrfTokenHelper.createCsrfTokenCookie();
+      if(csrfCookie != null)
+        responseContext.getHeaders().add(HttpHeaders.SET_COOKIE, csrfCookie);
     } else {
       if(responseContext.getHeaders().get(HttpHeaders.SET_COOKIE) == null) {
         responseContext.getHeaders().putSingle(HttpHeaders.SET_COOKIE,

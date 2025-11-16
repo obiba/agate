@@ -38,7 +38,7 @@ public class CSRFInterceptor implements ContainerRequestFilter {
 
   private static final Pattern loopbackhostPattern = Pattern.compile("^http[s]?://127\\.0\\.0\\.1:");
 
-  private static final List<String> SAFE_METHODS = Lists.newArrayList("GET", "HEAD", "OPTIONS");
+  private static final List<String> SAFE_METHODS = Lists.newArrayList("GET", "HEAD", "OPTIONS", "TRACE");
 
   private final boolean productionMode;
 

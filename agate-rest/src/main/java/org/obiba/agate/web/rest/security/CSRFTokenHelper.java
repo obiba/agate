@@ -31,10 +31,13 @@ public class CSRFTokenHelper {
 
   /**
    * Create a new CSRF token cookie. If a token is already associated with the current user's session, it is reused.
-   * @return
+   * @return a NewCookie containing the CSRF token, or null if no subject is authenticated
    */
   public NewCookie createCsrfTokenCookie() {
     String csrfToken = getOrGenerateCsrfToken();
+    if (csrfToken == null) {
+      return null;
+    }
     return new NewCookie.Builder(CSRF_TOKEN_COOKIE_NAME)
         .value(csrfToken)
         .path(getCookiePath())
@@ -47,12 +50,12 @@ public class CSRFTokenHelper {
 
   /**
    * Create a CSRF token cookie that will delete the cookie from the client.
-   * @return
+   * @return a NewCookie that will delete the CSRF token cookie from the client
    */
   public NewCookie deleteCsrfTokenCookie() {
     return new NewCookie.Builder(CSRF_TOKEN_COOKIE_NAME)
         .value(null)
-        .comment("Opal session deleted")
+        .comment("Agate session deleted")
         .path(getCookiePath())
         .maxAge(0)
         .httpOnly(false)
@@ -74,7 +77,7 @@ public class CSRFTokenHelper {
       return true;
     }
     Session session = subject.getSession(false);
-    if(session != null) {
+    if (session != null) {
       String sessionToken = (String) session.getAttribute(CSRF_TOKEN_COOKIE_NAME);
       if (Strings.isNullOrEmpty(sessionToken)) {
         return true; // No token in session yet, skip validation
@@ -91,12 +94,12 @@ public class CSRFTokenHelper {
   private String getOrGenerateCsrfToken() {
     Subject subject = ThreadContext.getSubject();
     if (subject == null) {
-      // return a default token if no subject is associated with the request
+      // return null if no subject is associated with the request
       return null;
     }
     Session session = subject.getSession();
     String csrfToken = (String) session.getAttribute(CSRF_TOKEN_COOKIE_NAME);
-    if(csrfToken == null) {
+    if (csrfToken == null) {
       csrfToken = UUID.randomUUID().toString();
       session.setAttribute(CSRF_TOKEN_COOKIE_NAME, csrfToken);
     }
