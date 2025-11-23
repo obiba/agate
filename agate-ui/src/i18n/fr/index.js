@@ -1,9 +1,19 @@
 export default {
-  auth: {
-    signout: 'Déconnexion',
-  },
   main: {
     powered_by: 'Propulsé par',
+  },
+  auth: {
+    title: 'Identifiez-vous pour commencer une session',
+    confirm_title: 'Veuillez vous ré-authentifier pour continuer',
+    password: 'Mot de passe',
+    signin: 'Se connecter',
+    signout: 'Se déconnecter',
+    username: "Nom d'utilisateur",
+    totp_help: "Ouvrir l'application mobile d'authentification et scanner ce code QR pour initialiser votre générateur de code NIP.",
+    code: 'Code',
+    code_hint: 'Entrer le code à 6 chiffres.',
+    validate: 'Valider',
+    signin_with: "S'identifier avec {provider}",
   },
   application: {
     add_realm_groups: 'Ajouter un domaine',
@@ -164,6 +174,10 @@ export default {
       groups_claim_hint: "Champ de UserInfo duquel seront extraits les noms des groupes. Ignoré si 'Groupes par JS' est défini.",
       groups_js: 'Groupes par JS',
       groups_js_hint: 'Code javascript pour extraire les noms des groupes de UserInfo.',
+      prompt: 'Prompt',
+      prompt_hint: 'Liste facultative de valeurs de prompt séparées par des espaces à envoyer au point de terminaison d\'autorisation: none, login, consent, select_account.',
+      max_age: 'Âge maximal',
+      max_age_hint: "Âge maximal facultatif (en secondes) du jeton d'authentification de l'utilisateur. Si l'âge du jeton dépasse cette valeur, l'utilisateur devra se ré-authentifier.",
       nonce: 'Utiliser un nonce',
       connect_timeout: 'Délai de connexion',
       connect_timeout_hint: 'Délai maximum en millisecondes pour établir une connexion. Zero implique pas de délai.',
@@ -296,8 +310,13 @@ export default {
   },
   server: {
     error: {
-      404: "Le serveur a rejeté votre demande. Assurez-vous d'être connecté et réessayez.",
-      403: 'Le serveur a rejeté votre requête, assurez vous que vous ête connecté et réessayez.',
+      401: "Opération non autorisée",
+      403: "Opération interdite",
+      404: "Non trouvé",
+      reauthentication_required: "Une ré-authentification est requise pour effectuer cette opération.",
+      user_already_exists: "Un utilisateur avec le même nom d'utilisateur ou courriel existe déjà.",
+      reserved_username: "Le nom d'utilisateur est réservé et ne peut pas être utilisé.",
+      password_required: 'Le mot de passe est requis.',
       password: {
         'too-short': 'Le mot de passe est plus court que le {0} caractères requis',
         'too-long': 'Le mot de passe est plus long que {0} caractères',

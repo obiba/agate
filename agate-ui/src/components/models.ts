@@ -73,6 +73,8 @@ export interface OIDCRealmConfig {
   providerUrl?: string;
   groupsClaim?: string;
   groupsJS?: string;
+  prompt?: string | undefined;
+  maxAge?: number | undefined;
 }
 
 export interface LDAPRealmConfig {

@@ -34,12 +34,23 @@ export function notifyError(error: any) {
       message = t(`error.${error.response?.data.code}`);
       if (error.response.data.messageTemplate) {
         message = t(error.response.data.messageTemplate, error.response.data.arguments);
+      } else if (error.response.data.message) {
+        message = error.response.data.message;
       }
-      if (error.response.data.message) message = error.response.data.message;
     }
   }
   Notify.create({
-    type: 'negative',
+    type: isReAuthError(error) ? 'warning' : 'negative',
     message,
   });
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function isReAuthError(error: any): boolean {
+  if (error.response?.status === 401) {
+    if (error.response.data.messageTemplate === 'server.error.reauthentication_required') {
+      return true;
+    }
+  }
+  return false;
 }

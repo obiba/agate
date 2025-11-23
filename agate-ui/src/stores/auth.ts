@@ -1,12 +1,13 @@
+import type { AxiosResponse } from 'axios';
 import { defineStore } from 'pinia';
 import { api } from 'src/boot/api';
-import type { SessionDto } from 'src/models/Agate';
+import type { SessionDto, OIDCAuthProviderSummaryDto } from 'src/models/Agate';
 
 export const useAuthStore = defineStore('auth', () => {
   const sid = ref('');
   const version = ref('');
   const session = ref<SessionDto | null>(null);
-
+  
   const isAdministrator = computed(() => session.value?.role === 'agate-administrator');
 
   const isAuthenticated = computed(() => {
@@ -29,7 +30,7 @@ export const useAuthStore = defineStore('auth', () => {
     if (authMethod && token) {
       //headers[authMethod] = token;
     }
-    return api.post('/auth/sessions', params, { headers }).then((response) => {
+    return api.post('/auth/sessions', params, { headers }).then((response: AxiosResponse) => {
       if (response.status === 201) {
         const sessionUrl = response.headers['location'];
         sid.value = sessionUrl.split('/').pop();
@@ -56,11 +57,11 @@ export const useAuthStore = defineStore('auth', () => {
     });
   }
 
-  // async function getProviders(): Promise<AuthProviderDto[]> {
-  //   return api.get('/auth/providers').then((response) => {
-  //     return response.data;
-  //   });
-  // }
+  async function getProviders(): Promise<OIDCAuthProviderSummaryDto[]> {
+    return api.get('/auth/providers').then((response) => {
+      return response.data;
+    });
+  }
 
   return {
     sid,
@@ -72,5 +73,6 @@ export const useAuthStore = defineStore('auth', () => {
     signout,
     userProfile,
     reset,
+    getProviders,
   };
 });

@@ -61,12 +61,14 @@
         <q-btn flat :label="t('save')" :disable="!isValid" color="primary" @click="onSave" />
       </q-card-actions>
     </q-card>
+    <re-signin-dialog v-model="showReSigninDialog" />
   </q-dialog>
 </template>
 
 <script setup lang="ts">
 import type { UserDto } from 'src/models/Agate';
-import { notifyError, notifyInfo, notifySuccess } from 'src/utils/notify';
+import ReSigninDialog from 'src/components/ReSigninDialog.vue';
+import { notifyError, notifyInfo, notifySuccess, isReAuthError } from 'src/utils/notify';
 import { copyToClipboard } from 'quasar';
 
 const { t } = useI18n();
@@ -83,6 +85,8 @@ const emit = defineEmits(['update:modelValue', 'saved', 'cancel']);
 const showDialog = ref(props.modelValue);
 const password = ref('');
 const passwordVisible = ref(false);
+const showReSigninDialog = ref(false);
+
 const isValid = computed(() => password.value && password.value.trim().length >= 8);
 
 watch(
@@ -91,6 +95,7 @@ watch(
     showDialog.value = value;
     password.value = '';
     passwordVisible.value = false;
+    showReSigninDialog.value = false;
   },
 );
 
@@ -111,12 +116,14 @@ function onSave() {
     .then(() => {
       notifySuccess(t('user.password_updated'));
       emit('saved');
+      onHide();
     })
-    .catch(() => {
-      notifyError(t('user.password_update_failed'));
-    })
-    .finally(() => {
-      emit('update:modelValue', false);
+    .catch((error) => {
+      if (isReAuthError(error)) {
+        showReSigninDialog.value = true;
+      } else {
+        notifyError(error);
+      }
     });
 }
 

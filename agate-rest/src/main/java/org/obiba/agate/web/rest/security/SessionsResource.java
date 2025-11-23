@@ -21,6 +21,10 @@ import jakarta.ws.rs.core.UriBuilder;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.session.InvalidSessionException;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.ThreadContext;
 import org.json.JSONObject;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.service.ConfigurationService;
@@ -62,6 +66,9 @@ public class SessionsResource {
   @Path("/sessions")
   public Response createSession(@SuppressWarnings("TypeMayBeWeakened") @Context HttpServletRequest servletRequest,
       @FormParam("username") String username, @FormParam("password") String password) {
+    if (isUserAuthenticated()) {
+      invalidateSession();
+    }
     try {
       authenticationExecutor.login(makeUsernamePasswordToken(username, password, servletRequest));
       String sessionId = SecurityUtils.getSubject().getSession().getId().toString();
@@ -121,6 +128,26 @@ public class SessionsResource {
     if (!Strings.isNullOrEmpty(otp))
       return new UsernamePasswordOtpToken(username, password, otp);
     return new UsernamePasswordToken(username, password);
+  }
+
+  private boolean isUserAuthenticated() {
+    Subject subject = ThreadContext.getSubject();
+    return subject != null && subject.isAuthenticated();
+  }
+
+  private void invalidateSession() {
+    Subject subject = SecurityUtils.getSubject();
+    if(subject != null) {
+      try {
+        Session session = subject.getSession(false);
+        if(session != null) {
+          session.stop();
+        }
+        subject.logout();
+      } catch(InvalidSessionException e) {
+        // Session is already stopped/invalidated.
+      }
+    }
   }
 }
 

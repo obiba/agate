@@ -58,7 +58,7 @@ public class CSRFInterceptor implements ContainerRequestFilter {
   @Override
   public void filter(ContainerRequestContext requestContext)
       throws IOException {
-    if (!productionMode) return;
+    if (!productionMode || csrfAllowedHosts.contains("*")) return;
 
     String method = requestContext.getMethod();
     if (!SAFE_METHODS.contains(method)) {
@@ -69,8 +69,6 @@ public class CSRFInterceptor implements ContainerRequestFilter {
         throw new ForbiddenException("XSRF token validation failed");
       }
     }
-
-    if (csrfAllowedHosts.contains("*")) return;
 
     String host = requestContext.getHeaderString(HOST_HEADER);
     if (matchesLocalhost(host)) return;
