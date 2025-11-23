@@ -13,12 +13,13 @@ package org.obiba.agate.web.rest.security;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
+import org.obiba.shiro.realm.ObibaRealm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
@@ -60,14 +61,18 @@ public class CSRFInterceptor implements ContainerRequestFilter {
       throws IOException {
     if (!productionMode || csrfAllowedHosts.contains("*")) return;
 
-    String method = requestContext.getMethod();
-    if (!SAFE_METHODS.contains(method)) {
-      String xsrfToken = requestContext.getHeaderString(CSRFTokenHelper.CSRF_TOKEN_HEADER);
-      log.debug("{}: {}", CSRFTokenHelper.CSRF_TOKEN_HEADER, xsrfToken);
-      if (!csrfTokenHelper.validateXsrfToken(xsrfToken)) {
-        log.warn("XSRF token validation failed. Are you sending the '{}' HTTP header with the XSRF token value?", CSRFTokenHelper.CSRF_TOKEN_HEADER);
-        throw new ForbiddenException("XSRF token validation failed");
+    if (isAuthenticatedByCookie(requestContext) && !isAppAuthentication(requestContext)) {
+      String method = requestContext.getMethod();
+      if (!SAFE_METHODS.contains(method)) {
+        String xsrfToken = requestContext.getHeaderString(CSRFTokenHelper.CSRF_TOKEN_HEADER);
+        log.debug("{}: {}", CSRFTokenHelper.CSRF_TOKEN_HEADER, xsrfToken);
+        if (!csrfTokenHelper.validateXsrfToken(xsrfToken)) {
+          log.warn("XSRF token validation failed. Are you sending the '{}' HTTP header with the XSRF token value?", CSRFTokenHelper.CSRF_TOKEN_HEADER);
+          throw new ForbiddenException("XSRF token validation failed");
+        }
       }
+    } else {
+      log.debug("Not authenticated by cookie, skipping CSRF token check");
     }
 
     String host = requestContext.getHeaderString(HOST_HEADER);
@@ -112,4 +117,11 @@ public class CSRFInterceptor implements ContainerRequestFilter {
     return csrfAllowedAgents.stream().anyMatch(ua -> userAgent.toLowerCase().contains(ua.toLowerCase()));
   }
 
+  private boolean isAuthenticatedByCookie(ContainerRequestContext requestContext) {
+    return requestContext.getCookies().containsKey(AuthenticationInterceptor.AGATE_SESSION_ID_COOKIE_NAME);
+  }
+
+  private boolean isAppAuthentication(ContainerRequestContext requestContext) {
+    return requestContext.getHeaders().containsKey(ObibaRealm.APPLICATION_AUTH_HEADER);
+  }
 }

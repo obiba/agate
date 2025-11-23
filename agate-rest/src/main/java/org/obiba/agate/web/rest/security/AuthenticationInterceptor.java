@@ -32,7 +32,7 @@ import java.util.Date;
 @Priority(Integer.MIN_VALUE)
 public class AuthenticationInterceptor implements ContainerResponseFilter {
 
-  private static final String AGATE_SESSION_ID_COOKIE_NAME = "agatesid";
+  public static final String AGATE_SESSION_ID_COOKIE_NAME = "agatesid";
 
   private final ConfigurationService configurationService;
 
