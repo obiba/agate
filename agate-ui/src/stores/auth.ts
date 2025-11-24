@@ -7,7 +7,8 @@ export const useAuthStore = defineStore('auth', () => {
   const sid = ref('');
   const version = ref('');
   const session = ref<SessionDto | null>(null);
-  
+  const reAuthRequired = ref(false);
+
   const isAdministrator = computed(() => session.value?.role === 'agate-administrator');
 
   const isAuthenticated = computed(() => {
@@ -69,6 +70,7 @@ export const useAuthStore = defineStore('auth', () => {
     session,
     isAuthenticated,
     isAdministrator,
+    reAuthRequired,
     signin,
     signout,
     userProfile,

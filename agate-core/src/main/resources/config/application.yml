@@ -51,7 +51,7 @@ login:
   banTime: 300
   otpTimeout: 600
   re-auth:
-    time: 300
+    timeout: 300
     endpoints:
       - POST:/users
       - PUT:/user/**

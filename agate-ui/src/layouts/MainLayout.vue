@@ -50,6 +50,7 @@
 
     <q-page-container>
       <router-view />
+      <re-signin-dialog v-model="authStore.reAuthRequired" />
     </q-page-container>
   </q-layout>
 </template>
@@ -58,6 +59,7 @@
 import { Cookies } from 'quasar';
 import { locales } from 'boot/i18n';
 import { contextPath } from 'src/boot/api';
+import ReSigninDialog from 'src/components/ReSigninDialog.vue';
 import MainDrawer from 'src/components/MainDrawer.vue';
 
 const { t } = useI18n();

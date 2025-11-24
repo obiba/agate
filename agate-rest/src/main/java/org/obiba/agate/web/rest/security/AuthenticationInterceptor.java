@@ -108,7 +108,7 @@ public class AuthenticationInterceptor implements ContainerResponseFilter {
     Date startDate = session.getStartTimestamp();
     long now = System.currentTimeMillis();
     long elapsed = now - startDate.getTime();
-    long timeoutMillis = reAuthConfiguration.getTime() * 1000L;
+    long timeoutMillis = reAuthConfiguration.getTimeout() * 1000L;
     return elapsed >= timeoutMillis;
   }
 

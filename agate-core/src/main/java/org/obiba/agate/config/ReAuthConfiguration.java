@@ -14,17 +14,17 @@ public class ReAuthConfiguration {
 
   private static final Logger log = LoggerFactory.getLogger(ReAuthConfiguration.class);
 
-  private int time;
+  private int timeout;
 
   private List<String> endpoints;
 
   // Getters and setters
-  public int getTime() {
-    return time;
+  public int getTimeout() {
+    return timeout;
   }
 
-  public void setTime(int time) {
-    this.time = time;
+  public void setTimeout(int timeout) {
+    this.timeout = timeout;
   }
 
   public List<String> getEndpoints() {

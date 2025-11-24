@@ -185,16 +185,14 @@
         <q-btn flat :label="t('save')" :disable="!isValid" color="primary" @click="onSave" />
       </q-card-actions>
     </q-card>
-    <re-signin-dialog v-model="showReSigninDialog" />
   </q-dialog>
 </template>
 
 <script setup lang="ts">
 import { copyToClipboard } from 'quasar';
 import type { AttributeDto, UserDto } from 'src/models/Agate';
-import { notifyError, notifyInfo, notifySuccess, isReAuthError } from 'src/utils/notify';
+import { notifyError, notifyInfo, notifySuccess } from 'src/utils/notify';
 import UserAttributesList from 'src/components/UserAttributesList.vue';
-import ReSigninDialog from 'src/components/ReSigninDialog.vue';
 import { attributesToSchema, splitAttributes } from 'src/utils/attributes';
 import SchemaForm from 'src/components/SchemaForm.vue';
 
@@ -228,7 +226,6 @@ const editMode = ref(false);
 const password = ref('');
 const passwordVisible = ref(false);
 const selectedAttributes = ref([] as AttributeDto[]);
-const showReSigninDialog = ref(false);
 
 const roleOptions = computed(() =>
   ['agate-user', 'agate-administrator'].map((role) => ({ label: t(`user.role.${role}`), value: role })),
@@ -278,7 +275,6 @@ watch(
   () => props.modelValue,
   (value) => {
     showDialog.value = value;
-    showReSigninDialog.value = false;
     selected.value = props.user
       ? { ...props.user }
       : ({
@@ -321,12 +317,7 @@ function onSave() {
       emit('saved');
       emit('update:modelValue', false);
     })
-    .catch((err) => {
-      if (isReAuthError(err)) {
-        showReSigninDialog.value = true;
-      }
-      notifyError(err);
-    });
+    .catch(notifyError);
 }
 
 function validateEmailFormat(val: string): boolean {
