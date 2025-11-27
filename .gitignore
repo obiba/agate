@@ -18,3 +18,5 @@ spring_loaded
 agate_home
 agate-webapp/src/main/webapp/assets/css/agate.min.css*
 .claude
+.serena
+.agent-sandbox

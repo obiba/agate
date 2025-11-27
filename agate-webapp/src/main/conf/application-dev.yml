@@ -12,6 +12,8 @@ spring:
         mongodb:
             uri: mongodb://localhost:27017/agate
     mail:
+        # Authentication type: smtp (default) or oauth2
+        auth-type: smtp
         host: localhost
         port: 25
         user:
@@ -20,6 +22,17 @@ spring:
         tls: false
         auth: false
         from: no-reply@obiba.org
+
+        # OAuth2 configuration (only used when auth-type: oauth2)
+#        oauth2:
+#            enabled: true
+#            user: someuser@test.org
+#            client-id: valid-client-id
+#            client-secret: valid-client-secret
+#            tenant-id: valid-tenant-id
+#            refresh-token: valid-refresh-token
+#            token-uri: url-token
+#            scope: scope
 
 shiro:
     password:
