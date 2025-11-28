@@ -23,6 +23,7 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.obiba.agate.config.ReAuthConfiguration;
 import org.obiba.agate.service.ConfigurationService;
+import org.obiba.web.model.ErrorDtos;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -56,7 +57,12 @@ public class AuthenticationInterceptor implements ContainerResponseFilter {
       if (needsReauthenticateSubject(requestContext)) {
         responseContext.setStatus(401);
         // ClientErrorDto json
-        responseContext.setEntity("{\"code\": 401, \"messageTemplate\": \"server.error.reauthentication_required\", \"message\": \"Re-authentication is required to perform this operation\"}", null, MediaType.APPLICATION_JSON_TYPE);
+        ErrorDtos.ClientErrorDto errorDto = ErrorDtos.ClientErrorDto.newBuilder()
+            .setCode(401)
+            .setMessageTemplate("server.error.reauthentication_required")
+            .setMessage("Re-authentication is required to perform this operation")
+            .build();
+        responseContext.setEntity(errorDto, null, MediaType.APPLICATION_JSON_TYPE);
         return;
       }
       Session session = SecurityUtils.getSubject().getSession();

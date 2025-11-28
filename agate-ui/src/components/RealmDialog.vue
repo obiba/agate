@@ -203,7 +203,7 @@ function onCancel() {
 
 function onTypeChange() {
   selected.value.content = '';
-  if (selected.value.type !== 'agate-oidc-realm') {
+  if (selected.value.type === 'agate-oidc-realm') {
     selected.value.userInfoMappings = OIDCUserInfoDefaultMappings;
   }
 }
