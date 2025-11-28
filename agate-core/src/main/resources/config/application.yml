@@ -54,7 +54,7 @@ login:
     timeout: 300
     endpoints:
       - POST:/users
-      - PUT:/user/**
+      - PUT:/user/*
 
 csrf:
   allowed-agents: curl,python,java,HTTP.jl
