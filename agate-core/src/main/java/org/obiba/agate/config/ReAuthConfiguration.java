@@ -1,5 +1,6 @@
 package org.obiba.agate.config;
 
+import com.beust.jcommander.internal.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -34,10 +35,10 @@ public class ReAuthConfiguration {
 
   public void setEndpoints(List<String> endpoints) {
     this.endpoints = endpoints;
-    this.endpointList = endpoints.stream().map(ep -> {
+    this.endpointList = endpoints == null ? Lists.newArrayList() : endpoints.stream().map(ep -> {
       String[] parts = ep.split(":");
       if (parts.length == 2) {
-        return new Endpoint(parts[0], parts[1]);
+        return new Endpoint(parts[0].toUpperCase(), parts[1]);
       } else {
         throw new IllegalArgumentException("Invalid endpoint format: " + ep);
       }
@@ -48,7 +49,7 @@ public class ReAuthConfiguration {
     log.debug("Re-auth request evaluated: {}:{}", method, path);
     if (endpointList != null) {
       for (Endpoint endpoint : endpointList) {
-        if (endpoint.appliesTo(method, path)) {
+        if (endpoint.appliesTo(method.toUpperCase(), path)) {
           log.debug("Re-auth required for request: {}:{}", method, path);
           return true;
         }
@@ -68,6 +69,9 @@ public class ReAuthConfiguration {
         String[] requestParts = requestPath.split("/");
         if (patternParts.length != requestParts.length) return false;
         for (int i = 0; i < patternParts.length; i++) {
+          if (patternParts[i].equals("*") && requestParts[i].isEmpty()) {
+            return false;
+          }
           if (!patternParts[i].equals("*") && !patternParts[i].equals(requestParts[i])) {
             return false;
           }

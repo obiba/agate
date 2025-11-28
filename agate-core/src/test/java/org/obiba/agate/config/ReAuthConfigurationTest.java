@@ -21,6 +21,8 @@ public class ReAuthConfigurationTest {
     ReAuthConfiguration config = new ReAuthConfiguration();
     config.setEndpoints(Lists.newArrayList("PUT:/user/*/password"));
     assertFalse(config.appliesTo("PUT", "/user/toto"));
+    assertFalse(config.appliesTo("PUT", "/user//password"));
+    assertTrue(config.appliesTo("PUT", "/user/toto/password/"));
     assertTrue(config.appliesTo("PUT", "/user/toto/password"));
   }
 
@@ -40,4 +42,46 @@ public class ReAuthConfigurationTest {
     assertFalse(config.appliesTo("PUT", "/user/toto/attribute"));
     assertTrue(config.appliesTo("PUT", "/user/toto/attribute/value"));
   }
+
+  @Test
+  public void appliesToReturnsFalseForEmptyEndpointList() {
+    ReAuthConfiguration config = new ReAuthConfiguration();
+    config.setEndpoints(Lists.newArrayList());
+    assertFalse(config.appliesTo("GET", "/any/path"));
+  }
+
+  @Test
+  public void appliesToThrowsExceptionForInvalidEndpointFormat() {
+    ReAuthConfiguration config = new ReAuthConfiguration();
+    IllegalArgumentException exception =
+        org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> {
+          config.setEndpoints(Lists.newArrayList("INVALID-ENDPOINT"));
+        });
+    assertTrue(exception.getMessage().contains("Invalid endpoint format"));
+  }
+
+  @Test
+  public void appliesToHandlesNullEndpointsGracefully() {
+    ReAuthConfiguration config = new ReAuthConfiguration();
+    config.setEndpoints(null);
+    assertFalse(config.appliesTo("GET", "/any/path"));
+  }
+
+  @Test
+  public void appliesToHandlesMultipleWildcardsCorrectly() {
+    ReAuthConfiguration config = new ReAuthConfiguration();
+    config.setEndpoints(Lists.newArrayList("GET:/user/*/profile/*"));
+    assertTrue(config.appliesTo("GET", "/user/123/profile/456"));
+    assertFalse(config.appliesTo("GET", "/user/123/profile"));
+    assertFalse(config.appliesTo("POST", "/user/123/profile/456"));
+  }
+
+  @Test
+  public void appliesToHandlesCaseSensitivityInMethod() {
+    ReAuthConfiguration config = new ReAuthConfiguration();
+    config.setEndpoints(Lists.newArrayList("get:/users"));
+    assertTrue(config.appliesTo("GET", "/users"));
+    assertTrue(config.appliesTo("get", "/users"));
+  }
+
 }
