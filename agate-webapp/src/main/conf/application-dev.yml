@@ -1,67 +1,65 @@
 # used for development when application is run with dev profile
 server:
-    port: 8081
-    address: localhost
-    #context-path: /agate
+  port: 8081
+  address: localhost
+  #context-path: /agate
 
 https:
-    port: 8444
+  port: 8444
 
 spring:
-    data:
-        mongodb:
-            uri: mongodb://localhost:27017/agate
-    mail:
-        # Authentication type: smtp (default) or oauth2
-        auth-type: smtp
-        host: localhost
-        port: 25
-        user:
-        password:
-        protocol: smtp
-        tls: false
-        auth: false
-        from: no-reply@obiba.org
-
-        # OAuth2 configuration (only used when auth-type: oauth2)
-#        oauth2:
-#            enabled: true
-#            user: someuser@test.org
-#            client-id: valid-client-id
-#            client-secret: valid-client-secret
-#            tenant-id: valid-tenant-id
-#            refresh-token: valid-refresh-token
-#            token-uri: url-token
-#            scope: scope
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/agate
+  mail:
+    # Authentication type: smtp (default) or oauth2
+    auth-type: smtp
+    host: localhost
+    port: 25
+    user:
+    password:
+    protocol: smtp
+    tls: false
+    auth: false
+    from: no-reply@obiba.org
+    # OAuth2 configuration - only used when auth-type: oauth2
+    oauth2:
+      user:                # Email address that will send emails
+      client-id:           # OAuth2 application client ID
+      client-secret:       # OAuth2 application client secret
+      tenant-id:           # Tenant/directory ID (provider-specific)
+      refresh-token:       # OAuth2 refresh token (obtain via authorization flow)
+      token-uri:           # Token endpoint (e.g., https://login.microsoftonline.com/{tenant-id}/oauth2/v2.0/token)
+      scope:               # Required scope (e.g., https://outlook.office365.com/SMTP.Send)
 
 shiro:
-    password:
-        nbHashIterations: 10000
-        salt: agate
+  password:
+    nbHashIterations: 10000
+    salt: agate
 
 registration:
-    pendingForApprovalSubject: Account Registration
-    pendingForReviewSubject: Registration Pending
-    confirmationSubject: Registration Approved
-    resetPasswordSubject: Password Reset
+  pendingForApprovalSubject: Account Registration
+  pendingForReviewSubject: Registration Pending
+  confirmationSubject: Registration Approved
+  resetPasswordSubject: Password Reset
 
 recaptcha:
-    verifyUrl: https://www.google.com/recaptcha/api/siteverify
-    secret: 6LdANggTAAAAAMds-qrsU6P-STY7GZ3nRgQEuWZE
+  verifyUrl: https://www.google.com/recaptcha/api/siteverify
+  secret: 6LdANggTAAAAAMds-qrsU6P-STY7GZ3nRgQEuWZE
 
 client:
-    reCaptchaKey: 6LdANggTAAAAAEBWCuEL-YkFd3ehtzlg4CzQpn3e
+  reCaptchaKey: 6LdANggTAAAAAEBWCuEL-YkFd3ehtzlg4CzQpn3e
 
 # You can add as many as folders to watch
 # You just need to add a dash + the directory to watch
 hotReload:
-    enabled: true
-    package:
-        project: org.obiba.agate
-        domain: org.obiba.agate.domain
-        restdto: org.obiba.agate.web.rest.dto
-    liquibase:
-        defaultCatalogName:
-        defaultSchema:
-    watchdir:
-        - target/classes
+  enabled: true
+  package:
+    project: org.obiba.agate
+    domain: org.obiba.agate.domain
+    restdto: org.obiba.agate.web.rest.dto
+  liquibase:
+    defaultCatalogName:
+    defaultSchema:
+  watchdir:
+    - target/classes

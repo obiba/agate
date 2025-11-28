@@ -10,6 +10,8 @@ spring:
         mongodb:
             uri: mongodb://localhost:27017/agate
     mail:
+        # Authentication type: smtp (default) or oauth2
+        auth-type: smtp
         host: localhost
         port: 25
         user:
@@ -18,6 +20,15 @@ spring:
         tls: false
         auth: false
         from: agate@example.org
+        # OAuth2 configuration - only used when auth-type: oauth2
+        oauth2:
+            user:                # Email address that will send emails
+            client-id:           # OAuth2 application client ID
+            client-secret:       # OAuth2 application client secret
+            tenant-id:           # Tenant/directory ID (provider-specific)
+            refresh-token:       # OAuth2 refresh token (obtain via authorization flow)
+            token-uri:           # Token endpoint (e.g., https://login.microsoftonline.com/{tenant-id}/oauth2/v2.0/token)
+            scope:               # Required scope (e.g., https://outlook.office365.com/SMTP.Send)
 
 shiro:
     password:

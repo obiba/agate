@@ -99,6 +99,14 @@ public class OAuth2TokenService {
   }
 
   /**
+   * Get the token expiry time (milliseconds since epoch)
+   * This is already adjusted with a 5-minute safety buffer
+   */
+  public long getTokenExpiryTime() {
+    return tokenExpiryTime;
+  }
+
+  /**
    * Clear cached token (for testing/debugging)
    */
   public synchronized void clearToken() {

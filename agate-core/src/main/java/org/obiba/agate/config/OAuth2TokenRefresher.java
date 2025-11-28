@@ -4,19 +4,20 @@ import org.obiba.agate.service.OAuth2TokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
 
 import jakarta.inject.Inject;
+import java.time.Instant;
 
 /**
  * Scheduled task to refresh OAuth2 access tokens before they expire.
- * Runs every 50 minutes (typical token expiry is 60 minutes).
+ * Dynamically schedules refreshes based on the actual token expiry time from the OAuth2 provider.
  */
 @Component
-@ConditionalOnProperty(name = "spring.mail.oauth2.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.mail.auth-type", havingValue = "oauth2")
 public class OAuth2TokenRefresher {
 
   private static final Logger log = LoggerFactory.getLogger(OAuth2TokenRefresher.class);
@@ -25,23 +26,47 @@ public class OAuth2TokenRefresher {
   private OAuth2TokenService oauth2TokenService;
 
   @Inject
-  private Environment env;
+  private TaskScheduler taskScheduler;
 
   /**
-   * Refresh token every 50 minutes (3000000 milliseconds)
-   * Most OAuth2 access tokens expire after 60 minutes, so this provides a 10-minute safety margin
+   * Start the token refresh cycle when application is fully started
    */
-  @Scheduled(fixedRate = 3000000, initialDelay = 60000)
-  public void scheduleTokenRefresh() {
-    String authType = env.getProperty("spring.mail.auth-type", "smtp");
+  @EventListener(ApplicationReadyEvent.class)
+  public void initialize() {
+    // Schedule initial refresh after 1 minute to allow application to fully start
+    long initialDelayMs = 60000;
+    Instant firstRefresh = Instant.now().plusMillis(initialDelayMs);
 
-    if ("oauth2".equals(authType)) {
-      try {
-        log.debug("Starting scheduled OAuth2 token refresh");
-        oauth2TokenService.refreshAccessToken();
-      } catch (Exception e) {
-        log.error("Scheduled token refresh failed", e);
+    log.info("OAuth2 token refresher initialized. First refresh scheduled at {}", firstRefresh);
+    taskScheduler.schedule(this::refreshAndScheduleNext, firstRefresh);
+  }
+
+  /**
+   * Refresh the token and schedule the next refresh based on token expiry
+   */
+  private void refreshAndScheduleNext() {
+    try {
+      log.debug("Starting scheduled OAuth2 token refresh");
+      oauth2TokenService.refreshAccessToken();
+
+      // Get the token expiry time (already includes 5-minute safety buffer)
+      long expiryTime = oauth2TokenService.getTokenExpiryTime();
+
+      if (expiryTime > 0) {
+        Instant nextRefresh = Instant.ofEpochMilli(expiryTime);
+        long delaySeconds = (expiryTime - System.currentTimeMillis()) / 1000;
+
+        log.info("Next OAuth2 token refresh scheduled at {} (in {} seconds)", nextRefresh, delaySeconds);
+        taskScheduler.schedule(this::refreshAndScheduleNext, nextRefresh);
+      } else {
+        log.warn("Token expiry time not available, will retry in 5 minutes");
+        taskScheduler.schedule(this::refreshAndScheduleNext, Instant.now().plusSeconds(300));
       }
+
+    } catch (Exception e) {
+      log.error("Scheduled token refresh failed, will retry in 5 minutes", e);
+      // On error, retry in 5 minutes
+      taskScheduler.schedule(this::refreshAndScheduleNext, Instant.now().plusSeconds(300));
     }
   }
 }
