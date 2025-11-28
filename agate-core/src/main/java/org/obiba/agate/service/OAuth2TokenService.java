@@ -20,8 +20,13 @@ public class OAuth2TokenService {
   @Inject
   private Environment env;
 
-  private String currentAccessToken;
-  private long tokenExpiryTime;
+  private final RestTemplate restTemplate = new RestTemplate();
+
+  private volatile String currentAccessToken;
+  private volatile long tokenExpiryTime;
+
+  // Token refresh safety buffer (5 minutes in seconds)
+  private static final int TOKEN_REFRESH_BUFFER_SECONDS = 300;
 
   /**
    * Get current access token, refreshing if necessary
@@ -50,7 +55,6 @@ public class OAuth2TokenService {
         throw new IllegalStateException("OAuth2 configuration is incomplete");
       }
 
-      RestTemplate restTemplate = new RestTemplate();
       HttpHeaders headers = new HttpHeaders();
       headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
@@ -72,8 +76,8 @@ public class OAuth2TokenService {
         Integer expiresIn = (Integer) responseBody.get("expires_in");
 
         if (currentAccessToken != null && expiresIn != null) {
-          // Set expiry time to 5 minutes before actual expiry for safety margin
-          tokenExpiryTime = System.currentTimeMillis() + ((expiresIn - 300) * 1000L);
+          // Set expiry time with safety buffer before actual expiry
+          tokenExpiryTime = System.currentTimeMillis() + ((expiresIn - TOKEN_REFRESH_BUFFER_SECONDS) * 1000L);
           log.info("OAuth2 access token refreshed successfully. Expires in {} seconds", expiresIn);
         } else {
           throw new IllegalStateException("Invalid token response: missing access_token or expires_in");

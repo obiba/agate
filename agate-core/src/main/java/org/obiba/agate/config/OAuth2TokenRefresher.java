@@ -3,6 +3,7 @@ package org.obiba.agate.config;
 import org.obiba.agate.service.OAuth2TokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -22,10 +23,17 @@ public class OAuth2TokenRefresher {
 
   private static final Logger log = LoggerFactory.getLogger(OAuth2TokenRefresher.class);
 
+  // Initial delay before first token refresh (1 minute in milliseconds)
+  private static final long INITIAL_REFRESH_DELAY_MS = 60000;
+
+  // Retry delay on error (5 minutes in seconds)
+  private static final long ERROR_RETRY_DELAY_SECONDS = 300;
+
   @Inject
   private OAuth2TokenService oauth2TokenService;
 
   @Inject
+  @Qualifier("taskScheduler")
   private TaskScheduler taskScheduler;
 
   /**
@@ -33,9 +41,8 @@ public class OAuth2TokenRefresher {
    */
   @EventListener(ApplicationReadyEvent.class)
   public void initialize() {
-    // Schedule initial refresh after 1 minute to allow application to fully start
-    long initialDelayMs = 60000;
-    Instant firstRefresh = Instant.now().plusMillis(initialDelayMs);
+    // Schedule initial refresh to allow application to fully start
+    Instant firstRefresh = Instant.now().plusMillis(INITIAL_REFRESH_DELAY_MS);
 
     log.info("OAuth2 token refresher initialized. First refresh scheduled at {}", firstRefresh);
     taskScheduler.schedule(this::refreshAndScheduleNext, firstRefresh);
@@ -59,14 +66,14 @@ public class OAuth2TokenRefresher {
         log.info("Next OAuth2 token refresh scheduled at {} (in {} seconds)", nextRefresh, delaySeconds);
         taskScheduler.schedule(this::refreshAndScheduleNext, nextRefresh);
       } else {
-        log.warn("Token expiry time not available, will retry in 5 minutes");
-        taskScheduler.schedule(this::refreshAndScheduleNext, Instant.now().plusSeconds(300));
+        log.warn("Token expiry time not available, will retry in {} seconds", ERROR_RETRY_DELAY_SECONDS);
+        taskScheduler.schedule(this::refreshAndScheduleNext, Instant.now().plusSeconds(ERROR_RETRY_DELAY_SECONDS));
       }
 
     } catch (Exception e) {
-      log.error("Scheduled token refresh failed, will retry in 5 minutes", e);
-      // On error, retry in 5 minutes
-      taskScheduler.schedule(this::refreshAndScheduleNext, Instant.now().plusSeconds(300));
+      log.error("Scheduled token refresh failed, will retry in {} seconds", ERROR_RETRY_DELAY_SECONDS, e);
+      // On error, retry after delay
+      taskScheduler.schedule(this::refreshAndScheduleNext, Instant.now().plusSeconds(ERROR_RETRY_DELAY_SECONDS));
     }
   }
 }
