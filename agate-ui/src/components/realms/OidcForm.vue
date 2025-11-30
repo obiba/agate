@@ -65,6 +65,24 @@
       class="q-mb-md"
       @update:model-value="onUpdate"
     />
+    <q-input
+      v-model="config.prompt"
+      :label="t('realm.oidc.prompt')"
+      :hint="t('realm.oidc.prompt_hint')"
+      dense
+      class="q-mb-md"
+      @update:model-value="onUpdate"
+    />
+    <q-input
+      v-model.number="config.maxAge"
+      :label="t('realm.oidc.max_age')"
+      :hint="t('realm.oidc.max_age_hint')"
+      type="number"
+      :min="0"
+      dense
+      class="q-mb-md"
+      @update:model-value="onUpdate"
+    />
     <q-toggle
       v-model="config.useNonce"
       :label="t('realm.oidc.nonce')"
@@ -121,6 +139,8 @@ const DefaultConfig = {
   useNonce: true,
   connectTimeout: 0,
   readTimeout: 0,
+  prompt: undefined,
+  maxAge: undefined,
 };
 
 const groupsJSPlaceholder = `// input: userInfo
@@ -147,6 +167,9 @@ watch(
 );
 
 function onUpdate() {
+  if (config.value.maxAge && isNaN(config.value.maxAge)) {
+    config.value.maxAge = undefined;
+  }
   emits('update:modelValue', JSON.stringify(config.value));
 }
 </script>

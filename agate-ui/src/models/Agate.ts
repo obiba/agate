@@ -241,3 +241,9 @@ export interface RealmConfigSummaryDto {
   status?: RealmStatus | undefined;
   userCount?: number | undefined;
 }
+
+export interface OIDCAuthProviderSummaryDto {
+  name: string;
+  title?: string | undefined;
+  providerUrl?: string | undefined;
+}

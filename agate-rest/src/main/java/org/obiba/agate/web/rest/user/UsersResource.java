@@ -96,16 +96,16 @@ public class UsersResource {
     
     User user = userService.findUser(username);
 
-    if(user != null) throw new BadRequestException("User already exists: " + username);
+    if(user != null) throw new UserCreationException("User already exists: " + username, "server.error.user_already_exists");
 
     user = userService.findUserByEmail(userDto.getEmail().trim());
 
-    if(user != null) throw new BadRequestException("Email already in use: " + user.getEmail());
+    if(user != null) throw new UserCreationException("User already exists: " + user.getEmail(), "server.error.user_already_exists");
 
-    if(RESERVED_USER_NAMES.contains(username)) throw new BadRequestException("Reserved user name");
+    if(RESERVED_USER_NAMES.contains(username)) throw new UserCreationException("Reserved user name", "server.error.reserved_username");
 
     if (AgateRealm.AGATE_USER_REALM.getName().equals(userDto.getRealm()) && Strings.isNullOrEmpty(userCreateFormDto.getPassword()))
-      throw new BadRequestException("User requires a password");
+      throw new UserCreationException("User requires a password", "server.error.password_required");
 
     user = userService.createUser(dtos.fromDto(userDto), userCreateFormDto.getPassword());
 

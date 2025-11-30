@@ -1,9 +1,19 @@
 export default {
-  auth: {
-    signout: 'Sign Out',
-  },
   main: {
     powered_by: 'Powered by',
+  },
+  auth: {
+    title: 'Sign in to start your session',
+    confirm_title: 'Please re-authenticate to continue',
+    password: 'Password',
+    signin: 'Sign in',
+    signout: 'Sign out',
+    username: 'User name',
+    totp_help: 'Open the authenticator mobile app and scan this QR code to initialise your PIN code generator.',
+    code: 'Code',
+    code_hint: 'Enter the 6-digits PIN code.',
+    validate: 'Validate',
+    signin_with: "Sign in with {provider}",
   },
   application: {
     add_realm_groups: 'Add realm groups',
@@ -164,6 +174,10 @@ export default {
       groups_claim_hint: "Field name to extract group name(s) from UserInfo. Ignored if 'Groups by JS' is defined.",
       groups_js: 'Groups by JS',
       groups_js_hint: 'Javascript code chunk to extract group name(s) from UserInfo.',
+      prompt: 'Prompt',
+      prompt_hint: 'Optional space separated list of prompt values to be sent to the authorization endpoint: none, login, consent, select_account.',
+      max_age: 'Max Age',
+      max_age_hint: 'Optional maximum authentication age in seconds to be sent to the authorization endpoint.',
       nonce: 'Use nonce',
       connect_timeout: 'Connect timeout',
       connect_timeout_hint: 'Maximum time in milliseconds to wait before a connection is established. Zero implies no timeout.',
@@ -296,8 +310,13 @@ export default {
   },
   server: {
     error: {
-      404: 'Server rejected your request, please make sure you are logged in and try again.',
-      403: 'Server rejected your request, please make sure you are logged in and try again.',
+      401: 'Unauthorized operation',
+      403: 'Forbidden operation',
+      404: 'Not found',
+      reauthentication_required: 'Re-authentication is required to perform this operation.',
+      user_already_exists: 'User with the same username or email already exists.',
+      reserved_username: 'The username is reserved and cannot be used.',
+      password_required: 'Password is required.',
       password: {
         'too-short': 'Password is shorter than the required {0} characters',
         'too-long': 'Password is longer than {0} characters',

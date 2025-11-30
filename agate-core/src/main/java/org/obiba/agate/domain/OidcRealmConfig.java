@@ -33,6 +33,9 @@ public class OidcRealmConfig extends OIDCConfiguration {
   private static final String USERNAME_CLAIM = "usernameClaim";
   private static final String GROUPS_CLAIM = "groupsClaim";
   private static final String GROUPS_JS = "groupsJS";
+  private static final String PROMPT_FIELD = "prompt";
+  private static final String MAX_AGE_FIELD = "maxAge";
+
 
   public static OidcRealmConfig.Builder newBuilder(String content) throws JSONException {
     return newBuilder(new JSONObject(content));
@@ -51,6 +54,14 @@ public class OidcRealmConfig extends OIDCConfiguration {
     jsonObject.put(USE_NONCE_FIELD, isUseNonce());
     jsonObject.put(CONNECT_TIMEOUT_FIELD, getConnectTimeout());
     jsonObject.put(READ_TIMEOUT_FIELD, getReadTimeout());
+
+    if (hasPrompt()) {
+      jsonObject.put(PROMPT_FIELD, getPrompt());
+    }
+
+    if (hasMaxAge()) {
+      jsonObject.put(MAX_AGE_FIELD, getMaxAge());
+    }
 
     if (getCustomParams().containsKey(PROVIDER_URL_FIELD)) {
       jsonObject.put(PROVIDER_URL_FIELD, getCustomParams().get(PROVIDER_URL_FIELD));
@@ -85,6 +96,14 @@ public class OidcRealmConfig extends OIDCConfiguration {
       config.setConnectTimeout(content.optInt(CONNECT_TIMEOUT_FIELD, 0));
       config.setReadTimeout(content.optInt(READ_TIMEOUT_FIELD, 0));
       config.setMaxClockSkew(content.optInt(MAX_CLOCK_SKEW_FIELD, 30));
+
+      if (content.has(PROMPT_FIELD)) {
+        config.setPrompt(content.optString(PROMPT_FIELD));
+      }
+
+      if (content.has(MAX_AGE_FIELD)) {
+        config.setMaxAge(content.optInt(MAX_AGE_FIELD));
+      }
 
       if (content.has(PROVIDER_URL_FIELD)) {
         customParameters.put(PROVIDER_URL_FIELD, content.optString(PROVIDER_URL_FIELD));

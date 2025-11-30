@@ -247,8 +247,8 @@ public class SignController {
     if (!Strings.isNullOrEmpty(url)) return url;
 
     url = configurationService.getConfiguration().hasPublicUrl() ? configurationService.getPublicUrl() : "/";
-    String contextPath = configurationService.getContextPath();
-    return contextPath.equals("/") ? url : url + contextPath;
+    // note: must be an absolute URL, including context path
+    return url;
   }
 
   private String normalizeRedirect(String redirect) {

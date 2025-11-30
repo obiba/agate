@@ -50,6 +50,11 @@ login:
   trialTime: 300
   banTime: 300
   otpTimeout: 600
+  re-auth:
+    timeout: 300
+    endpoints:
+      - POST:/users
+      - PUT:/user/*
 
 csrf:
   allowed-agents: curl,python,java,HTTP.jl

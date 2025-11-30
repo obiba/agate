@@ -18,6 +18,7 @@ public class CorsFilter implements ContainerResponseFilter {
 
     // Allow specific headers
     responseContext.getHeaders().add("Access-Control-Allow-Headers", "Authorization, Content-Type");
+    responseContext.getHeaders().add("Access-Control-Expose-Headers", "Location, X-Agate-Version");
 
     // Allow credentials (if needed)
     responseContext.getHeaders().add("Access-Control-Allow-Credentials", "true");

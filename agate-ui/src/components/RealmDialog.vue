@@ -158,6 +158,13 @@ const groupOptions = computed(() =>
 );
 const isValid = computed(() => selected.value.name && selected.value.name.trim().length >= 3);
 
+const OIDCUserInfoDefaultMappings = [
+  { key: 'username', value: 'preferred_username' },
+  { key: 'email', value: 'email' },
+  { key: 'firstname', value: 'given_name' },
+  { key: 'lastname', value: 'family_name' },
+];
+
 onMounted(() => {
   groupStore.init();
 });
@@ -177,6 +184,7 @@ watch(
     } else {
       selected.value = {
         type: typeOptions.value.find((rlm) => rlm.value === 'agate-oidc-realm')?.value,
+        userInfoMappings: OIDCUserInfoDefaultMappings,
         status: 'INACTIVE',
         forSignup: false,
       } as RealmConfigDto;
@@ -195,8 +203,8 @@ function onCancel() {
 
 function onTypeChange() {
   selected.value.content = '';
-  if (selected.value.type !== 'agate-oidc-realm') {
-    selected.value.userInfoMappings = [];
+  if (selected.value.type === 'agate-oidc-realm') {
+    selected.value.userInfoMappings = OIDCUserInfoDefaultMappings;
   }
 }
 

@@ -83,6 +83,7 @@ const emit = defineEmits(['update:modelValue', 'saved', 'cancel']);
 const showDialog = ref(props.modelValue);
 const password = ref('');
 const passwordVisible = ref(false);
+
 const isValid = computed(() => password.value && password.value.trim().length >= 8);
 
 watch(
@@ -111,13 +112,9 @@ function onSave() {
     .then(() => {
       notifySuccess(t('user.password_updated'));
       emit('saved');
+      onHide();
     })
-    .catch(() => {
-      notifyError(t('user.password_update_failed'));
-    })
-    .finally(() => {
-      emit('update:modelValue', false);
-    });
+    .catch(notifyError);
 }
 
 function generatePassword() {

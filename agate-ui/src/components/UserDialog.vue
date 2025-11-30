@@ -317,9 +317,7 @@ function onSave() {
       emit('saved');
       emit('update:modelValue', false);
     })
-    .catch((err) => {
-      notifyError(err);
-    });
+    .catch(notifyError);
 }
 
 function validateEmailFormat(val: string): boolean {
