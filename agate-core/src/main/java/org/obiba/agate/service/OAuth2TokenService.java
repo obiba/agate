@@ -51,8 +51,17 @@ public class OAuth2TokenService {
       String refreshToken = env.getProperty("spring.mail.oauth2.refresh-token");
       String scope = env.getProperty("spring.mail.oauth2.scope");
 
-      if (tokenUri == null || clientId == null || clientSecret == null || refreshToken == null) {
-        throw new IllegalStateException("OAuth2 configuration is incomplete");
+      if (tokenUri == null) {
+        throw new IllegalStateException("OAuth2 configuration is incomplete: missing spring.mail.oauth2.token-uri");
+      }
+      if (clientId == null) {
+        throw new IllegalStateException("OAuth2 configuration is incomplete: missing spring.mail.oauth2.client-id");
+      }
+      if (clientSecret == null) {
+        throw new IllegalStateException("OAuth2 configuration is incomplete: missing spring.mail.oauth2.client-secret");
+      }
+      if (refreshToken == null) {
+        throw new IllegalStateException("OAuth2 configuration is incomplete: missing spring.mail.oauth2.refresh-token");
       }
 
       HttpHeaders headers = new HttpHeaders();
