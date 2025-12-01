@@ -12,6 +12,7 @@ package org.obiba.agate.config;
 
 import java.util.Properties;
 
+import org.obiba.agate.service.OAuth2TokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.EnvironmentAware;
@@ -20,8 +21,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
+import jakarta.inject.Inject;
+
 @Configuration
 public class MailConfiguration implements EnvironmentAware {
+
+  @Inject
+  private OAuth2TokenService oauth2TokenService;
 
   private static final String ENV_SPRING_MAIL = "spring.mail";
 
@@ -79,6 +85,9 @@ public class MailConfiguration implements EnvironmentAware {
     // https://docs.spring.io/spring-boot/docs/2.7.8/reference/html/application-properties.html#application-properties.mail.spring.mail.properties
     String mailProtocols = environment.getProperty(String.format("%s.%s", ENV_SPRING_MAIL + ".properties", PROP_MAIL_PROTOCOLS), DEFAULT_PROP_MAIL_PROTOCOLS);
 
+    // Check authentication type
+    String authType = environment.getProperty(String.format("%s.auth-type", ENV_SPRING_MAIL), "smtp");
+
     JavaMailSenderImpl sender = new JavaMailSenderImpl();
     if(host != null && !host.isEmpty()) {
       sender.setHost(host);
@@ -89,14 +98,41 @@ public class MailConfiguration implements EnvironmentAware {
     }
     sender.setPort(port);
     sender.setUsername(user);
-    sender.setPassword(password);
 
     Properties sendProperties = new Properties();
-    sendProperties.setProperty(PROP_SMTP_AUTH, auth.toString());
     sendProperties.setProperty(PROP_STARTTLS, tls.toString());
     sendProperties.setProperty(PROP_TRANSPORT_PROTO, protocol);
     sendProperties.setProperty(PROP_MAIL_PROTOCOLS, mailProtocols);
+
+    if ("oauth2".equalsIgnoreCase(authType)) {
+      // OAuth2 authentication
+      log.info("Configuring OAuth2 authentication for email");
+      configureOAuth2(sender, sendProperties);
+    } else {
+      // Traditional SMTP authentication (default)
+      log.info("Configuring SMTP authentication for email");
+      sender.setPassword(password);
+      sendProperties.setProperty(PROP_SMTP_AUTH, auth.toString());
+    }
+
     sender.setJavaMailProperties(sendProperties);
     return sender;
+  }
+
+  /**
+   * Configure OAuth2 authentication for JavaMailSender
+   */
+  private void configureOAuth2(JavaMailSenderImpl sender, Properties props) {
+    // Get OAuth2 access token
+    String accessToken = oauth2TokenService.getAccessToken();
+
+    // Set OAuth2 token as password
+    sender.setPassword(accessToken);
+
+    // Configure XOAUTH2 SASL mechanism
+    props.setProperty("mail.smtp.auth", "true");
+    props.setProperty("mail.smtp.auth.mechanisms", "XOAUTH2");
+
+    log.debug("OAuth2 authentication configured with XOAUTH2 SASL mechanism");
   }
 }
