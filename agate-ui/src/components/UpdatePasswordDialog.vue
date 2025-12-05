@@ -10,6 +10,7 @@
       <q-card-section>
         <q-form>
           <q-input
+            autocomplete="new-password"
             v-model="password"
             :label="t('user.password') + ' *'"
             :type="passwordVisible ? 'text' : 'password'"
@@ -27,7 +28,7 @@
                 size="sm"
                 :title="t('user.show_password')"
                 flat
-                icon="visibility"
+                :icon="passwordVisible ? 'visibility_off' : 'visibility'"
                 @click="passwordVisible = !passwordVisible"
               />
               <q-btn
