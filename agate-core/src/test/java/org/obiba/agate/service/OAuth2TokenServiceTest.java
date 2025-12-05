@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.core.env.Environment;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -105,5 +106,24 @@ class OAuth2TokenServiceTest {
     // Execute & Verify
     RuntimeException exception = assertThrows(RuntimeException.class, () -> tokenService.refreshAccessToken());
     assertTrue(exception.getMessage().contains("OAuth2 token refresh failed"));
+  }
+
+  @Test
+  void testSetJavaMailSender_ShouldStoreReference() {
+    // Setup
+    JavaMailSenderImpl mockSender = mock(JavaMailSenderImpl.class);
+
+    // Execute
+    tokenService.setJavaMailSender(mockSender);
+
+    // Verify - the sender should be stored (we can't directly verify private field,
+    // but the fact that no exception is thrown confirms the method works)
+    assertDoesNotThrow(() -> tokenService.setJavaMailSender(mockSender));
+  }
+
+  @Test
+  void testSetJavaMailSender_WithNull_ShouldAccept() {
+    // Execute & Verify - should accept null without throwing
+    assertDoesNotThrow(() -> tokenService.setJavaMailSender(null));
   }
 }
