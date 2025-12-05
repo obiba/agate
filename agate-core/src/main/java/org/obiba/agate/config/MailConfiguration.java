@@ -108,6 +108,9 @@ public class MailConfiguration implements EnvironmentAware {
       // OAuth2 authentication
       log.info("Configuring OAuth2 authentication for email");
       configureOAuth2(sender, sendProperties);
+
+      // Register JavaMailSender with OAuth2TokenService for automatic token updates
+      oauth2TokenService.setJavaMailSender(sender);
     } else {
       // Traditional SMTP authentication (default)
       log.info("Configuring SMTP authentication for email");

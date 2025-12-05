@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
 
@@ -37,9 +36,6 @@ public class OAuth2TokenRefresher {
   @Qualifier("taskScheduler")
   private TaskScheduler taskScheduler;
 
-  @Inject
-  private JavaMailSenderImpl javaMailSender;
-
   /**
    * Start the token refresh cycle when application is fully started
    */
@@ -59,11 +55,6 @@ public class OAuth2TokenRefresher {
     try {
       log.debug("Starting scheduled OAuth2 token refresh");
       oauth2TokenService.refreshAccessToken();
-
-      // Update JavaMailSender with the new access token
-      String newAccessToken = oauth2TokenService.getAccessToken();
-      javaMailSender.setPassword(newAccessToken);
-      log.debug("Updated JavaMailSender with refreshed OAuth2 token");
 
       // Get the token expiry time (already includes 5-minute safety buffer)
       long expiryTime = oauth2TokenService.getTokenExpiryTime();

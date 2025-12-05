@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.http.*;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -25,8 +26,19 @@ public class OAuth2TokenService {
   private volatile String currentAccessToken;
   private volatile long tokenExpiryTime;
 
+  // JavaMailSender to update when token is refreshed (only set when using OAuth2)
+  private JavaMailSenderImpl javaMailSender;
+
   // Token refresh safety buffer (5 minutes in seconds)
   private static final int TOKEN_REFRESH_BUFFER_SECONDS = 300;
+
+  /**
+   * Set the JavaMailSender to update when token is refreshed.
+   * Should be called by MailConfiguration when OAuth2 is enabled.
+   */
+  public void setJavaMailSender(JavaMailSenderImpl javaMailSender) {
+    this.javaMailSender = javaMailSender;
+  }
 
   /**
    * Get current access token, refreshing if necessary
@@ -87,6 +99,13 @@ public class OAuth2TokenService {
         if (currentAccessToken != null && expiresIn != null) {
           // Set expiry time with safety buffer before actual expiry
           tokenExpiryTime = System.currentTimeMillis() + ((expiresIn - TOKEN_REFRESH_BUFFER_SECONDS) * 1000L);
+
+          // Update JavaMailSender with new token (atomically within synchronized block)
+          if (javaMailSender != null) {
+            javaMailSender.setPassword(currentAccessToken);
+            log.debug("Updated JavaMailSender with refreshed OAuth2 token");
+          }
+
           log.info("OAuth2 access token refreshed successfully. Expires in {} seconds", expiresIn);
         } else {
           throw new IllegalStateException("Invalid token response: missing access_token or expires_in");
