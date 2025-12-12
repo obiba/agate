@@ -91,7 +91,7 @@
                 </dl>
               </div>
               <div class="card-footer">
-                <div class="float-right">
+                <div class="float-end">
                   <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                           data-bs-target="#modal-profile"><i class="fa-solid fa-pen"></i> <@message "personal-information"/></button>
                 </div>
@@ -157,7 +157,7 @@
                 </div>
                 <#if user.realm == "agate-user-realm">
                   <div class="card-footer">
-                    <div class="float-right">
+                    <div class="float-end">
                       <label for="submit-password" class="btn btn-primary mb-0" style="cursor: pointer; font-weight: normal;"><@message "update"/></label>
                     </div>
                   </div>
