@@ -41,7 +41,7 @@
           </div>
         </#if>
         <div class="input-group mb-3">
-          <input name="email" type="email" class="form-control" placeholder="<@message "email"/>">
+          <input name="email" type="email" class="form-control" placeholder="<@message "email"/>" autocomplete="email">
           <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
         </div>
 
@@ -59,9 +59,9 @@
         </div>
 
         <#if authConfig.languages?size gt 1>
-          <div class="form-group mb-3">
-            <label><@message "preferred-language"/></label>
-            <select class="form-control" name="locale">
+          <div class="mb-3">
+            <label for="locale"><@message "preferred-language"/></label>
+            <select id="locale" class="form-select" name="locale">
               <#list authConfig.languages as language>
                 <option value="${language}"><@message language/></option>
               </#list>
@@ -72,7 +72,7 @@
         </#if>
 
         <#list authConfig.userAttributes as attribute>
-          <div class="form-group mb-3">
+          <div class="mb-3">
             <#if attribute.inputType == "checkbox">
               <div class="form-check">
                 <input name="${attribute.name}" type="checkbox" value="true" class="form-check-input" id="${attribute.name}">
@@ -80,7 +80,7 @@
               </div>
             <#elseif attribute.values?size != 0>
               <label><@message attribute.name/></label>
-              <select class="form-control" name="${attribute.name}">
+              <select class="form-select" name="${attribute.name}">
                 <#list attribute.values as value>
                   <option value="${value}"><@message value/></option>
                 </#list>
