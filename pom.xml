@@ -36,7 +36,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-    <assertj-core.version>1.7.1</assertj-core.version>
+    <assertj-core.version>3.27.7</assertj-core.version>
     <awaitility.version>4.2.1</awaitility.version>
     <dropwizard-metrics.version>4.2.23</dropwizard-metrics.version>
     <commons-io.version>2.15.1</commons-io.version>
