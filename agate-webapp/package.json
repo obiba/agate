@@ -6,7 +6,7 @@
   "dependencies": {
     "admin-lte": "^4.0.0-rc4",
     "toastr": "^2.1.4",
-    "axios": "^1.12.0",
+    "axios": "^1.13.5",
     "jquery": "^3.7.1",
     "jquery.redirect": "^1.2.0",
     "bootstrap": "^5.3.3",
