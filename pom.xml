@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>4.0.1</version>
+    <version>4.0.2</version>
   </parent>
 
   <modules>
@@ -61,13 +61,13 @@
     <logstash-logback.version>7.4</logstash-logback.version>
     <mariabd.version>3.0.7</mariabd.version>
     <metrics-spring.version>3.0.0</metrics-spring.version>
-     <mongodb-driver.version>5.6.2</mongodb-driver.version>
+    <mongodb-driver.version>5.6.3</mongodb-driver.version>
     <mysql.version>8.4.0</mysql.version>
     <mysql-connector-j.version>8.4.0</mysql-connector-j.version>
     <nimbus-jose-jwt.version>10.0.2</nimbus-jose-jwt.version>
     <nosqlunit.version>0.7.9</nosqlunit.version>
     <oauth-oidc-sdk.version>11.12</oauth-oidc-sdk.version>
-    <obiba-commons.version>4.4.0</obiba-commons.version>
+    <obiba-commons.version>5.0.0</obiba-commons.version>
     <parsson.version>1.1.5</parsson.version>
     <postgres.version>42.7.2</postgres.version>
     <protobuf.version>3.25.5</protobuf.version>
