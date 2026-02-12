@@ -21,7 +21,6 @@ import org.obiba.agate.service.UserService;
 import org.obiba.oidc.shiro.realm.OIDCRealm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Component;
 
@@ -131,8 +130,6 @@ public class AgateRealmFactory {
   }
 
   private DataSource createDataSource(String configName, JdbcRealmConfig content) {
-    DataSourceBuilder builder = DataSourceBuilder.create();
-
     String url = content.getUrl();
     String driverClassName = getValidDriverClassName(configName, url);
 
@@ -144,14 +141,13 @@ public class AgateRealmFactory {
       return null;
     }
 
-    builder
-      .type(DriverManagerDataSource.class)
-      .url(url)
-      .username(content.getUsername())
-      .password(content.getPassword())
-      .driverClassName(driverClassName);
+    DriverManagerDataSource ds = new DriverManagerDataSource();
+    ds.setUrl(url);
+    ds.setUsername(content.getUsername());
+    ds.setPassword(content.getPassword());
+    ds.setDriverClassName(driverClassName);
 
-    return builder.build();
+    return ds;
   }
 
   private String getValidDriverClassName(String configName, String url) {

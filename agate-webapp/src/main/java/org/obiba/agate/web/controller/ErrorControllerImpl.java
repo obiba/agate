@@ -1,7 +1,6 @@
 package org.obiba.agate.web.controller;
 
 import org.owasp.esapi.ESAPI;
-import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-public class ErrorControllerImpl implements ErrorController {
+public class ErrorControllerImpl {
 
   @GetMapping("/error")
   public ModelAndView error(@RequestParam(value = "error", required = false, defaultValue = "404") String status, @RequestParam(defaultValue = "") String message) {

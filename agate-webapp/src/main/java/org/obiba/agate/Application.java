@@ -18,7 +18,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.SimpleCommandLinePropertySource;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -26,7 +25,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import jakarta.inject.Inject;
 import java.util.Arrays;
 
-@SpringBootApplication(exclude = { SecurityAutoConfiguration.class }, scanBasePackages = "org.obiba")
+@SpringBootApplication(scanBasePackages = "org.obiba")
 @EnableScheduling
 public class Application implements InitializingBean {
 

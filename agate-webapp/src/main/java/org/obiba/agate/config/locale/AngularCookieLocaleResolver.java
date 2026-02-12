@@ -48,15 +48,18 @@ public class AngularCookieLocaleResolver extends CookieLocaleResolver {
     this.configurationService = configurationService;
   }
 
-  @Override
   protected Locale determineDefaultLocale(HttpServletRequest request) {
-    Locale defaultLocale = super.determineDefaultLocale(request);
+    Locale defaultLocale = Locale.getDefault();
     // validate default locale, which could come from the Accept-Language header
     List<Locale> configLocales = configurationService.getConfiguration().getLocales();
     List<Locale> languageLocales = configLocales.stream()
         .filter(locale -> locale.getLanguage().equalsIgnoreCase(defaultLocale.getLanguage()))
         .collect(Collectors.toList());
     return languageLocales.isEmpty() ? configLocales.stream().findFirst().orElse(Locale.ENGLISH) : languageLocales.get(0);
+  }
+
+  protected TimeZone determineDefaultTimeZone(HttpServletRequest request) {
+    return TimeZone.getDefault();
   }
 
   @Override
