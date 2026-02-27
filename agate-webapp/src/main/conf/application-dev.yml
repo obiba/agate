@@ -8,9 +8,6 @@ https:
   port: 8444
 
 spring:
-  data:
-    mongodb:
-      uri: mongodb://localhost:27017/agate
   mail:
     # Authentication type: smtp (default) or oauth2
     auth-type: smtp
@@ -31,6 +28,8 @@ spring:
       refresh-token:       # OAuth2 refresh token (obtain via authorization flow)
       token-uri:           # Token endpoint (e.g., https://login.microsoftonline.com/{tenant-id}/oauth2/v2.0/token)
       scope:               # Required scope (e.g., https://outlook.office365.com/SMTP.Send)
+  mongodb:
+    uri: mongodb://localhost:27017/agate
 
 shiro:
   password:
