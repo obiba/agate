@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 
+import org.springframework.boot.jetty.servlet.JettyServletWebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
@@ -86,7 +87,20 @@ public class WebConfiguration implements ServletContextInitializer, EnvironmentA
       contextPath = environment.getProperty("server.servlet.context-path", "");
   }
 
+  @Bean
+  public WebServerFactoryCustomizer<JettyServletWebServerFactory> containerCustomizer() {
+    return factory -> {
+      if (!Strings.isNullOrEmpty(contextPath) && contextPath.startsWith("/")) {
+        factory.setContextPath(contextPath);
+      }
+    };
+  }
 
+  @Bean
+  public WebServerFactoryCustomizer<JettyServletWebServerFactory> jettySslCustomizer() {
+    return factory -> // call existing method in your class
+        factory.addServerCustomizers(this::customizeSsl);
+  }
 
   private void customizeSsl(Server server) {
     if (httpsPort <= 0) return;

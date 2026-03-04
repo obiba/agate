@@ -8,7 +8,7 @@
       <a href="${contextPath}/admin" title="<@message "administration"/>" class="border-end pe-2 me-2"><i class="fa-solid fa-lock"></i></a>
     </#if>
     <#if config??>
-      <strong><@message "copyright"/> &copy; 2025 <a href="${config.portalUrl!"#"}">${config.name!""}</a>.</strong> <@message "all-rights-reserved"/>
+      <strong><@message "copyright"/> &copy; 2026 <a href="${config.portalUrl!"#"}">${config.name!""}</a>.</strong> <@message "all-rights-reserved"/>
     </#if>
   </div>
 </footer>

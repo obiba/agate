@@ -1,7 +1,7 @@
 <script>
   <#if !authenticated>
-    agatejs.redirect('${postLogoutRedirectUri!"/"}');
+    agatejs.redirect('${postLogoutRedirectUri!"${contextPath}"}');
   <#elseif !confirm>
-    agatejs.signout('${postLogoutRedirectUri!"/"}');
+    agatejs.signout('${postLogoutRedirectUri!"${contextPath}"}');
   </#if>
 </script>
