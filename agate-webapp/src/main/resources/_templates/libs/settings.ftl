@@ -12,7 +12,7 @@
 <#assign brandImageSrc = "${assetsPath}/images/agate-logo.png"/>
 <#assign brandImageClass = "img-circle elevation-3"/>
 <#assign brandTextEnabled = true/>
-<#assign brandTextClass = "font-weight-light"/>
+<#assign brandTextClass = "fw-light"/>
 
 <!-- Theme -->
 <#assign adminLTEPath = "${assetsPath}/libs/node_modules/admin-lte"/>

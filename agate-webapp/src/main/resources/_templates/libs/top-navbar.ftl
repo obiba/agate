@@ -1,5 +1,5 @@
 <#include "navbar-menus.ftl">
-<nav class="app-header navbar navbar-expand-md bg-body py-0">
+<nav class="app-header navbar navbar-expand-md bg-body py-1">
   <div class="container">
     <#if config??>
     <a href="${portalLink}" class="navbar-brand">
