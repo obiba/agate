@@ -18,9 +18,9 @@ import java.util.Map;
  *
  * This keeps deployments using the old property working after an upgrade.
  */
-public class LegacyMongoEnvironmentPostProcessor implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+public class LegacyMongoPropertiesApplicationContextInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
-  private static final Logger log = LoggerFactory.getLogger(LegacyMongoEnvironmentPostProcessor.class);
+  private static final Logger log = LoggerFactory.getLogger(LegacyMongoPropertiesApplicationContextInitializer.class);
 
   @Override
   public void initialize(ConfigurableApplicationContext applicationContext) {
