@@ -15,11 +15,12 @@ spring:
         pool:
           size: 50
         thread-name-prefix: agate-executor-
+    web:
+      error:
+        whitelabel:
+          enabled: false
 
 server:
-  error:
-    whitelabel:
-      enabled: false
   servlet:
     session:
       cookie:
