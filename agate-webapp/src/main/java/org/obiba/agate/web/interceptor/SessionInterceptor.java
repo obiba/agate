@@ -66,6 +66,7 @@ public class SessionInterceptor implements HandlerInterceptor {
       modelAndView.getModel().put("otpSupport", otpSupport);
       modelAndView.getModel().put("realm", subject.getPrincipals().getRealmNames().stream().findFirst().orElse(null));
     }
+    modelAndView.getModel().put("otpEnforced", configurationService.getConfiguration().isEnforced2FA());
   }
 
 }

@@ -1,23 +1,25 @@
 <#macro homeModel>
 
-  <#if user?? && otpSupport && !user.otpEnabled>
-    <div class="alert alert-info">
-      <h5><i class="icon fa-solid fa-lock"></i> <@message "security-info"/></h5>
-      <@message "2fa-info"/>
-      <a href="${contextPath}/profile">
-        <@message "2fa-enable"/>
-      </a>
-    </div>
-  </#if>
+  <#if !otpEnforced>
+    <#if user?? && otpSupport && !user.otpEnabled>
+      <div class="alert alert-info">
+        <h5><i class="icon fa-solid fa-lock"></i> <@message "security-info"/></h5>
+        <@message "2fa-info"/>
+        <a href="${contextPath}/profile">
+          <@message "2fa-enable"/>
+        </a>
+      </div>
+    </#if>
 
-  <#if realm?? && realm == "agate-ini-realm" && !otpEnabled>
-    <div class="alert alert-info">
-      <h5><i class="icon fa-solid fa-lock"></i> <@message "security-info"/></h5>
-      <@message "2fa-info"/>
-      <a href="${contextPath}/profile">
-        <@message "2fa-enable"/>
-      </a>
-    </div>
+    <#if realm?? && realm == "agate-ini-realm" && !otpEnabled>
+      <div class="alert alert-info">
+        <h5><i class="icon fa-solid fa-lock"></i> <@message "security-info"/></h5>
+        <@message "2fa-info"/>
+        <a href="${contextPath}/profile">
+          <@message "2fa-enable"/>
+        </a>
+      </div>
+    </#if>
   </#if>
 
   <div class="row">
