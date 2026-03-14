@@ -14,16 +14,19 @@ import com.codahale.metrics.MetricRegistry;
 import com.google.common.base.Strings;
 import io.dropwizard.metrics.servlet.InstrumentedFilter;
 import io.dropwizard.metrics.servlets.MetricsServlet;
+import jakarta.inject.Inject;
 import jakarta.servlet.ServletContext;
 import org.apache.shiro.web.env.EnvironmentLoaderListener;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.obiba.agate.oidc.OIDCConfigurationFilter;
 import org.obiba.agate.security.OidcAuthConfigurationProvider;
 import org.obiba.agate.service.*;
-import org.obiba.agate.web.filter.*;
+import org.obiba.agate.web.filter.CachingHttpHeadersFilter;
+import org.obiba.agate.web.filter.ClickjackingHttpHeadersFilter;
+import org.obiba.agate.web.filter.ForbiddenUrlsFilter;
+import org.obiba.agate.web.filter.NoTraceFilter;
 import org.obiba.agate.web.filter.auth.oidc.AgateCallbackFilter;
 import org.obiba.agate.web.filter.auth.oidc.AgateSignInFilter;
 import org.obiba.agate.web.filter.auth.oidc.AgateSignUpFilter;
@@ -33,7 +36,6 @@ import org.obiba.shiro.web.filter.AuthenticationExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-
 import org.springframework.boot.jetty.servlet.JettyServletWebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -43,9 +45,7 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 
-import jakarta.inject.Inject;
 import java.util.Arrays;
-import java.util.Collections;
 
 /**
  * Configuration of web application with Servlet 3.0 APIs.

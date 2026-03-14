@@ -22,16 +22,17 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import org.apache.shiro.codec.CodecSupport;
-import org.apache.shiro.codec.Hex;
-import org.apache.shiro.crypto.AesCipherService;
-import org.apache.shiro.util.ByteSource;
+import org.apache.shiro.crypto.cipher.AesCipherService;
+import org.apache.shiro.crypto.cipher.ByteSourceBroker;
+import org.apache.shiro.lang.codec.CodecSupport;
+import org.apache.shiro.lang.codec.Hex;
+import org.apache.shiro.lang.util.ByteSource;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.obiba.agate.config.MetricsConfiguration;
 import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.LocalizedString;
@@ -47,25 +48,16 @@ import org.obiba.shiro.crypto.LegacyAesCipherService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-
-import jakarta.inject.Inject;
-
 import java.io.File;
 import java.io.IOException;
 import java.security.Key;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 import static com.jayway.jsonpath.Configuration.defaultConfiguration;
 
@@ -204,7 +196,7 @@ public class ConfigurationService {
    * @return
    */
   public String decrypt(String encrypted) {
-    ByteSource decrypted;
+    ByteSourceBroker decrypted;
     try {
       decrypted = cipherService.decrypt(Hex.decode(encrypted), getSecretKey());
     } catch (Exception e) {
@@ -213,7 +205,7 @@ public class ConfigurationService {
       }
       decrypted = legacyCipherService.decrypt(Hex.decode(encrypted), getSecretKey());
     }
-    return CodecSupport.toString(decrypted.getBytes());
+    return CodecSupport.toString(decrypted.getClonedBytes());
   }
 
   /**
