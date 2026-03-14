@@ -109,7 +109,7 @@ public class TicketsResource extends ApplicationAwareResource {
           otp = userService.applyTempSecret(user);
           if (getConfiguration().isEnforced2FAWithEmail()) {
             userService.applyAndSendOtp(user);
-            otp.append("email", true);
+            otp.put("email", true);
           }
         }
         Response.ResponseBuilder builder = Response.status(Response.Status.BAD_REQUEST).header("WWW-Authenticate", e.getOtpHeader());

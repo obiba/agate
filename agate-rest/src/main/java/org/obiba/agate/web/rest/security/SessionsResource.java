@@ -117,7 +117,7 @@ public class SessionsResource {
       if (configurationService.getConfiguration().isEnforced2FAWithEmail()) {
         // retry login with a code sent by email
         userService.applyAndSendOtp(user);
-        otp.append("email", true);
+        otp.put("email", true);
       }
       return otp;
     }
