@@ -162,8 +162,11 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
   private void initializeCacheManager(DefaultWebSecurityManager dsm) {
     if(dsm.getCacheManager() == null) {
       URL configUrl = getClass().getResource("/ehcache.xml");
+      if (configUrl == null) {
+        log.error("Unable to initialize cache manager for security manager: '/ehcache.xml' not found on the classpath.");
+        return;
+      }
       CachingProvider provider = Caching.getCachingProvider(); // picks up Ehcache 3
-      assert configUrl != null;
       try {
         javax.cache.CacheManager  jCacheManager = provider.getCacheManager(
             configUrl.toURI(), getClass().getClassLoader()
