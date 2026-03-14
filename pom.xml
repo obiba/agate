@@ -38,9 +38,10 @@
 
     <assertj-core.version>3.27.7</assertj-core.version>
     <awaitility.version>4.2.1</awaitility.version>
-    <dropwizard-metrics.version>4.2.23</dropwizard-metrics.version>
+    <cache-api.version>1.1.1</cache-api.version>
     <commons-io.version>2.15.1</commons-io.version>
     <commons-lang.version>3.18.0</commons-lang.version>
+    <dropwizard-metrics.version>4.2.23</dropwizard-metrics.version>
     <easymock.version>5.2.0</easymock.version>
     <ehcache.version>3.10.8</ehcache.version>
     <esapi.version>2.6.0.0</esapi.version>
@@ -67,13 +68,12 @@
     <nimbus-jose-jwt.version>10.0.2</nimbus-jose-jwt.version>
     <nosqlunit.version>0.7.9</nosqlunit.version>
     <oauth-oidc-sdk.version>11.12</oauth-oidc-sdk.version>
-    <obiba-commons.version>5.0.1</obiba-commons.version>
+    <obiba-commons.version>5.1.0</obiba-commons.version>
     <parsson.version>1.1.5</parsson.version>
     <postgres.version>42.7.2</postgres.version>
     <protobuf.version>3.25.5</protobuf.version>
     <protobuf-java-format.version>1.2.1-obiba</protobuf-java-format.version>
-    <shiro.version>1.13.0</shiro.version>
-    <shiro-ehcache3.version>1.0.0</shiro-ehcache3.version>
+    <shiro.version>2.1.0</shiro.version>
     <shiro-extras.version>1.1.0</shiro-extras.version>
     <totp.version>1.7.1</totp.version>
 
@@ -440,9 +440,14 @@
         <classifier>jakarta</classifier>
       </dependency>
       <dependency>
-        <groupId>org.ehcache.integrations.shiro</groupId>
-        <artifactId>shiro-ehcache3</artifactId>
-        <version>${shiro-ehcache3.version}</version>
+        <groupId>javax.cache</groupId>
+        <artifactId>cache-api</artifactId>
+        <version>${cache-api.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.shiro</groupId>
+        <artifactId>shiro-jcache</artifactId>
+        <version>${shiro.version}</version>
       </dependency>
 
       <dependency>

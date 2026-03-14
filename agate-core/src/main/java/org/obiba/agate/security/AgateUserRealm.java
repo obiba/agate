@@ -20,7 +20,7 @@ import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
-import org.apache.shiro.util.SimpleByteSource;
+import org.apache.shiro.lang.util.SimpleByteSource;
 import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.domain.UserCredentials;
