@@ -114,6 +114,9 @@ public class AgateUserRealm extends AuthorizingRealm implements InitializingBean
             // confirm secret
             user.confirmSecret();
             userService.save(user);
+          } else if (user.hasOtp()) {
+            if (!userService.validateOtp(user, code))
+              throw new AuthenticationException("Wrong TOTP");
           } else {
             // reset failing temp secret
             user.resetSecret(null);

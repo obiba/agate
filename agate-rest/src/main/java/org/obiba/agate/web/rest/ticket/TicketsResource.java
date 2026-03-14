@@ -105,10 +105,11 @@ public class TicketsResource extends ApplicationAwareResource {
       } catch (NoSuchOtpException e) {
         JSONObject otp = null;
         if (getConfiguration().isEnforced2FA() && !user.hasSecret()) {
+          // If 2FA is enforced and the user doesn't have a secret, we create a temporary one and return it in the response.
+          otp = userService.applyTempSecret(user);
           if (getConfiguration().isEnforced2FAWithEmail()) {
             userService.applyAndSendOtp(user);
-          } else {
-            otp = userService.applyTempSecret(user);
+            otp.put("email", true);
           }
         }
         Response.ResponseBuilder builder = Response.status(Response.Status.BAD_REQUEST).header("WWW-Authenticate", e.getOtpHeader());

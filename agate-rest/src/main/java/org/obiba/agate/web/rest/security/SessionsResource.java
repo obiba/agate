@@ -112,13 +112,14 @@ public class SessionsResource {
     if (!configurationService.getConfiguration().isEnforced2FA()) return null;
     User user = userService.findUser(username);
     if (user != null && !user.hasSecret()) {
+      // retry login with a code generated from the returned QR image
+      JSONObject otp = userService.applyTempSecret(user);
       if (configurationService.getConfiguration().isEnforced2FAWithEmail()) {
         // retry login with a code sent by email
         userService.applyAndSendOtp(user);
-      } else {
-        // retry login with a code generated from the returned QR image
-        return userService.applyTempSecret(user);
+        otp.put("email", true);
       }
+      return otp;
     }
     return null;
   }
