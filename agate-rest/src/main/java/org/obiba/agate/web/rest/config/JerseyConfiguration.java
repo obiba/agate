@@ -15,10 +15,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.server.spring.scope.RequestContextFilter;
 import org.obiba.agate.config.Constants;
-import org.obiba.agate.web.rest.security.AuditInterceptor;
-import org.obiba.agate.web.rest.security.AuthenticationInterceptor;
-import org.obiba.agate.web.rest.security.CSRFInterceptor;
-import org.obiba.agate.web.rest.security.CSRFTokenHelper;
+import org.obiba.agate.web.rest.security.*;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.Profiles;
@@ -35,7 +32,7 @@ public class JerseyConfiguration extends ResourceConfig {
   public JerseyConfiguration(Environment environment, CSRFTokenHelper csrfTokenHelper) {
     register(RequestContextFilter.class);
     packages("org.obiba.agate.web", "org.obiba.jersey", "com.fasterxml.jackson");
-    ///register(LoggingFilter.class);
+    register(ReAuthInterceptor.class);
     register(AuthenticationInterceptor.class);
     register(AuditInterceptor.class);
     register(new CSRFInterceptor(
