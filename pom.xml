@@ -12,7 +12,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.obiba.agate</groupId>
   <artifactId>agate</artifactId>
-  <version>4.3-SNAPSHOT</version>
+  <version>4.2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <parent>
