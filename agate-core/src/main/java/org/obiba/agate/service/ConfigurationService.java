@@ -196,16 +196,16 @@ public class ConfigurationService {
    * @return
    */
   public String decrypt(String encrypted) {
-    ByteSourceBroker decrypted;
     try {
-      decrypted = cipherService.decrypt(Hex.decode(encrypted), getSecretKey());
+      ByteSourceBroker decrypted = cipherService.decrypt(Hex.decode(encrypted), getSecretKey());
+      return CodecSupport.toString(decrypted.getClonedBytes());
     } catch (Exception e) {
       if (log.isDebugEnabled()) {
         log.warn("Falling back on legacy crypto service", e);
       }
-      decrypted = legacyCipherService.decrypt(Hex.decode(encrypted), getSecretKey());
+      ByteSourceBroker decrypted = legacyCipherService.decrypt(Hex.decode(encrypted), getSecretKey());
+      return CodecSupport.toString(decrypted.getClonedBytes());
     }
-    return CodecSupport.toString(decrypted.getClonedBytes());
   }
 
   /**
