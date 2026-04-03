@@ -38,6 +38,7 @@
 
     <assertj-core.version>3.27.7</assertj-core.version>
     <awaitility.version>4.2.1</awaitility.version>
+    <bouncycastle.version>1.79</bouncycastle.version>
     <cache-api.version>1.1.1</cache-api.version>
     <commons-io.version>2.15.1</commons-io.version>
     <commons-lang.version>3.18.0</commons-lang.version>
@@ -254,6 +255,17 @@
         <version>${postgres.version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>org.bouncycastle</groupId>
+        <artifactId>bcpkix-jdk18on</artifactId>
+        <version>${bouncycastle.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.bouncycastle</groupId>
+        <artifactId>bcprov-jdk18on</artifactId>
+        <version>${bouncycastle.version}</version>
+      </dependency>
+
       <!-- Test dependencies -->
       <dependency>
         <groupId>org.awaitility</groupId>
@@ -341,6 +353,12 @@
         <groupId>org.obiba.commons</groupId>
         <artifactId>obiba-core</artifactId>
         <version>${obiba-commons.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk16</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.obiba.commons</groupId>

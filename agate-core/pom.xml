@@ -241,6 +241,11 @@
       <artifactId>obiba-oidc</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcpkix-jdk18on</artifactId>
+    </dependency>
+
   </dependencies>
 
   <build>
