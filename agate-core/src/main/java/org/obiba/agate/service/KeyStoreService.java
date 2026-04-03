@@ -11,13 +11,13 @@
 package org.obiba.agate.service;
 
 import jakarta.annotation.Nonnull;
-import org.bouncycastle.openssl.PEMWriter;
+import jakarta.inject.Inject;
+import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 import org.obiba.security.KeyStoreManager;
 import org.obiba.security.KeyStoreRepository;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
-import jakarta.inject.Inject;
 import javax.security.auth.callback.CallbackHandler;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -73,7 +73,7 @@ public class KeyStoreService implements InitializingBean {
     if (certificates == null || certificates.length == 0) throw new IllegalArgumentException("Cannot find certificate for alias: " + alias);
 
     StringWriter writer = new StringWriter();
-    PEMWriter pemWriter = new PEMWriter(writer);
+    JcaPEMWriter pemWriter = new JcaPEMWriter(writer);
     for (Certificate certificate : certificates) {
       pemWriter.writeObject(certificate);
     }
