@@ -16,6 +16,7 @@
       v-model="config.systemUsername"
       :label="t('realm.ldap.system_username') + ' *'"
       :hint="t('realm.ldap.system_username_hint')"
+      autocomplete="nope"
       dense
       lazy-rules
       :rules="[(val) => !!val || t('required')]"
@@ -27,6 +28,7 @@
       :label="t('realm.ldap.system_password') + ' *'"
       :hint="t('realm.ldap.system_password_hint')"
       type="password"
+      autocomplete="new-password"
       dense
       lazy-rules
       :rules="[(val) => !!val || t('required')]"

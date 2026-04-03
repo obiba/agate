@@ -16,6 +16,7 @@
       v-model="config.username"
       :label="t('realm.jdbc.username') + ' *'"
       :hint="t('realm.jdbc.username_hint')"
+      autocomplete="nope"
       dense
       lazy-rules
       :rules="[(val) => !!val || t('required')]"
@@ -27,6 +28,7 @@
       :label="t('realm.jdbc.password') + ' *'"
       :hint="t('realm.jdbc.password_hint')"
       type="password"
+      autocomplete="new-password"
       dense
       lazy-rules
       :rules="[(val) => !!val || t('required')]"

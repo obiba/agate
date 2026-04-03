@@ -29,6 +29,7 @@
                 v-model="selected.email"
                 :label="t('email') + ' *'"
                 :hint="t('email_hint')"
+                autocomplete="nope"
                 dense
                 lazy-rules
                 :rules="[
@@ -74,6 +75,7 @@
                 v-model="password"
                 :label="t('user.password') + ' *'"
                 :type="passwordVisible ? 'text' : 'password'"
+                autocomplete="new-password"
                 dense
                 lazy-rules
                 :rules="[

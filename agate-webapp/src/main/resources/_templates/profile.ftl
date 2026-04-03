@@ -131,15 +131,15 @@
 
                     <form id="password-form" method="post">
                       <div class="input-group mb-3">
-                        <input name="password0" type="password" class="form-control" placeholder="<@message "current-password"/>">
+                        <input name="password0" type="password" autocomplete="new-password" class="form-control" placeholder="<@message "current-password"/>">
                         <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
                       </div>
                       <div class="input-group mb-3">
-                        <input name="password" type="password" class="form-control" placeholder="<@message "new-password"/>">
+                        <input name="password" type="password" autocomplete="new-password" class="form-control" placeholder="<@message "new-password"/>">
                         <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
                       </div>
                       <div class="input-group mb-3">
-                        <input name="password2" type="password" class="form-control" placeholder="<@message "repeat-new-password"/>">
+                        <input name="password2" type="password" autocomplete="new-password" class="form-control" placeholder="<@message "repeat-new-password"/>">
                         <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
                       </div>
                       <button type="submit" id="submit-password" class="d-none"></button>
