@@ -286,6 +286,18 @@
     }
 
     public User createUser(@Nonnull User user, @Nullable String password) {
+      return createUser(user, password, false);
+    }
+
+    /**
+     * Create a new user, informing it is a self-registration.
+     *
+     * @param user
+     * @param password
+     * @param join
+     * @return
+     */
+    public User createUser(@Nonnull User user, @Nullable String password, boolean join) {
       checkNameOrEmail(user.getName());
       checkName(user.getFirstName());
       checkName(user.getLastName());
@@ -295,8 +307,9 @@
         else {
           List<RealmConfig> foundConfigs = getRealmConfigs(user);
           if (foundConfigs.size() == 1) {
-            RealmConfig realmConfig = foundConfigs.get(0);
-            user.setStatus(UserStatus.ACTIVE);
+            RealmConfig realmConfig = foundConfigs.getFirst();
+            if (join && realmConfig.getStatus().equals(RealmStatus.ACTIVE))
+              user.setStatus(UserStatus.ACTIVE);
             user.addGroups(Sets.newHashSet(realmConfig.getGroups()));
           } else {
             user.setRealm(AgateRealm.AGATE_USER_REALM.getName());

@@ -252,7 +252,7 @@ public class UsersPublicResource {
       }
     }
 
-    userService.createUser(user, password);
+    userService.createUser(user, password, true);
 
     return Response
       .created(UriBuilder.fromPath(JerseyConfiguration.WS_ROOT).path(UserResource.class).build(user.getId())).build();
