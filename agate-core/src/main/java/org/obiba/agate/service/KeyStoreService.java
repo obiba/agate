@@ -11,14 +11,13 @@
 package org.obiba.agate.service;
 
 import jakarta.annotation.Nonnull;
-import org.bouncycastle.openssl.PEMWriter;
+import jakarta.inject.Inject;
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 import org.obiba.security.KeyStoreManager;
 import org.obiba.security.KeyStoreRepository;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
-import jakarta.inject.Inject;
 import javax.security.auth.callback.CallbackHandler;
 import java.io.ByteArrayInputStream;
 import java.io.File;
