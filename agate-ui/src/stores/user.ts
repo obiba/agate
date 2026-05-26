@@ -85,7 +85,7 @@ export const useUserStore = defineStore('user', () => {
     const upperCase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const lowerCase = 'abcdefghijklmnopqrstuvwxyz';
     const numbers = '0123456789';
-    const specialChars = '@#$%^&+=!';
+    const specialChars = '@#$%^&+=!-';
 
     const allChars = upperCase + lowerCase + numbers + specialChars;
 

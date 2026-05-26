@@ -78,7 +78,7 @@
         "^(?=.*[0-9])"       // a digit must occur at least once
             + "(?=.*[a-z])"      // a lower case alphabet must occur at least once
             + "(?=.*[A-Z])"      // a upper case alphabet must occur at least once
-            + "(?=.*[@#$%^&+=!])" // a special character that must occur at least once
+            + "(?=.*[@#$%^&+=!-])" // a special character that must occur at least once
             + "(?=\\S+$).{" + PWD_MINIMUM_LENGTH + "," + PWD_MAXIMUM_LENGTH + "}$");
 
 
