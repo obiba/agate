@@ -74,7 +74,7 @@
             <div>{{ t('application.scopes') }}</div>
             <div class="text-hint">{{ t('application.scopes_hint') }}</div>
             <q-list>
-              <q-item v-for="scope in selected.scopes" :key="scope.name" clickable>
+              <q-item v-for="(scope, idx) in selected.scopes" :key="idx" clickable>
                 <q-item-section>
                   <div class="row q-col-gutter-md">
                     <q-input v-model="scope.name" :label="t('name') + ' *'" :hint="t('name_hint')" dense />
