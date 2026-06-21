@@ -74,6 +74,9 @@ public class UserGroupSeed implements ApplicationListener<ContextRefreshedEvent>
       .applications("mica").build());
     save(Group.newBuilder().name("mica-user").description("Can submit data access requests in Mica").applications("mica").build());
     save(Group.newBuilder().name("opal-administrator").description("Administrate Opal").applications("opal").build());
+    save(Group.newBuilder().name("amber-administrator").description("Administrate Amber").applications("amber").build());
+    save(Group.newBuilder().name("amber-manager").description("Study manager in Amber").applications("amber").build());
+    save(Group.newBuilder().name("amber-interviewer").description("Study interviewer in Amber").applications("amber").build());
     config.setGroupsSeeded(true);
     configurationService.save(config);
   }
@@ -106,6 +109,15 @@ public class UserGroupSeed implements ApplicationListener<ContextRefreshedEvent>
     save(builder.build());
 
     builder = User.newBuilder() //
+        .name("amber-admin") //
+        .firstName("Amber") //
+        .lastName("Administrator") //
+        .email("amber@example.org") //
+        .groups("amber-administrator");
+
+    save(builder.build());
+
+    builder = User.newBuilder() //
       .name("agate-admin") //
       .firstName("Agate") //
       .lastName("Administrator") //
@@ -120,7 +132,7 @@ public class UserGroupSeed implements ApplicationListener<ContextRefreshedEvent>
       .lastName("Administrator") //
       .email("super@example.org") //
       .role(Roles.AGATE_ADMIN) //
-      .groups("opal-administrator", "mica-administrator");
+      .groups("opal-administrator", "mica-administrator", "amber-administrator");
 
     save(builder.build());
 

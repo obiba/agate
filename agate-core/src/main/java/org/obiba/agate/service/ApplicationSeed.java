@@ -41,10 +41,12 @@ public class ApplicationSeed implements ApplicationListener<ContextRefreshedEven
   public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
     Configuration config = configurationService.getConfiguration();
     if (!isDevProfile() && config.isApplicationsSeeded()) return;
+    save(Application.newBuilder().name("Amber").description("The data collection application.")
+        .key(applicationService.hashKey("changeit")).redirectURI("http://localhost:3030/oauth/agate/callback").build());
     save(Application.newBuilder().name("Opal").description("The data storage application.")
-        .key(applicationService.hashKey("changeit")).redirectURI("https://localhost:8443").build());
+        .key(applicationService.hashKey("changeit")).redirectURI("http://localhost:8080").build());
     save(Application.newBuilder().name("Mica").description("The study catalogue application.")
-        .key(applicationService.hashKey("changeit")).redirectURI("https://localhost:8445").build());
+        .key(applicationService.hashKey("changeit")).redirectURI("http://localhost:8082").build());
     config.setApplicationsSeeded(true);
     configurationService.save(config);
   }
