@@ -73,7 +73,7 @@
                       <input type="hidden" name="client_id" value="${clientId}">
                       <input type="hidden" name="redirect_uri" value="${redirectUri}">
                       <input type="hidden" name="response_type" value="${responseType}">
-                      <input type="hidden" name="state" value="${state}">
+                      <input type="hidden" name="state" value="${state!}">
                       <input type="hidden" name="scope" value="${scope}">
                       <button type="submit" name="grant" class="btn btn-secondary" value="false">
                         <span><@message "oauth.decline"/></span>

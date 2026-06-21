@@ -46,7 +46,7 @@ public class AuthorizeController {
                             @RequestParam(value = "client_id") String clientId,
                             @RequestParam(value = "redirect_uri") String redirectUri,
                             @RequestParam(value = "scope") String scope,
-                            @RequestParam(value = "state") String state) {
+                            @RequestParam(value = "state", required = false) String state) {
     Subject subject = SecurityUtils.getSubject();
     String qs = request.getQueryString();
 
@@ -74,7 +74,7 @@ public class AuthorizeController {
       if (application != null) {
         Map<String, ApplicationBundle> applicationScopes = Maps.newLinkedHashMap();
 
-        Set<String> scopeNames = Sets.newLinkedHashSet(Splitter.on(" ").split(scope));
+        Set<String> scopeNames = Sets.newLinkedHashSet(Splitter.onPattern("[, ]+").split(scope));
         Set<Application> applications = applicationNames.stream().map(n -> applicationService.getApplication(n))
           .collect(Collectors.toSet());
 

@@ -456,7 +456,7 @@ public final class OAuthUtils {
     public static Set<String> decodeScopes(String s) {
         Set<String> scopes = new HashSet<String>();
         if (!OAuthUtils.isEmpty(s)) {
-            StringTokenizer tokenizer = new StringTokenizer(s, " ");
+            StringTokenizer tokenizer = new StringTokenizer(s, " ,");
 
             while (tokenizer.hasMoreElements()) {
                 scopes.add(tokenizer.nextToken());

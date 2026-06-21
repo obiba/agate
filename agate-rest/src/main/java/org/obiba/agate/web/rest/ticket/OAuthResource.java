@@ -157,17 +157,20 @@ public class OAuthResource {
 
 
   @POST
+  @Consumes("application/x-www-form-urlencoded")
   @Path("/authz")
   @RequiresRoles("agate-user")
-  public Response authorize(@Context HttpServletRequest servletRequest, @FormParam("grant") Boolean grant)
+  public Response authorize(@Context HttpServletRequest servletRequest, MultivaluedMap<String, String> formParams)
       throws URISyntaxException, OAuthSystemException {
-    return tryBuildResponse(servletRequest, (data) -> {
+    Boolean grant = formParams.containsKey("grant") ? Boolean.parseBoolean(formParams.getFirst("grant")) : null;
+    HttpServletRequest requestWrapper = new OAuthServletRequest(servletRequest, formParams);
+    return tryBuildResponse(requestWrapper, (data) -> {
       try {
         if (grant != null && !grant) {
           return buildErrorResponse(OAuthProblemException.error("access_denied", "Owner denied authorization."), data.getRequest(), data.getRedirectUri());
         }
         Authorization authorization = doAuthorization(data);
-        return replyAuthorized(servletRequest, data, authorization);
+        return replyAuthorized(requestWrapper, data, authorization);
       } catch (URISyntaxException | OAuthSystemException | OAuthProblemException e) {
         throw Throwables.propagate(e);
       }
