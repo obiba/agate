@@ -239,6 +239,8 @@ public class OAuthResource {
     authorization.setCode(oAuthIssuer.authorizationCode());
     authorization.addScopes(data.getRequest().getScopes());
     authorization.addRedirectURI(data.getRedirectUri());
+    String nonce = data.getRequest().getParam("nonce");
+    if (!Strings.isNullOrEmpty(nonce)) authorization.setNonce(nonce);
     authorizationService.save(authorization);
     return authorization;
   }
@@ -253,6 +255,8 @@ public class OAuthResource {
     } else {
       // case multiple urls are allowed per application
       authorization.addRedirectURI(redirectURI);
+      String nonce = oAuthRequest.getParam("nonce");
+      if (!Strings.isNullOrEmpty(nonce)) authorization.setNonce(nonce);
       authorizationService.save(authorization);
     }
 

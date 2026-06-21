@@ -39,6 +39,8 @@ public class Authorization extends AbstractAuditableDocument {
 
   private String redirectURI;
 
+  private String nonce;
+
   public Authorization() {
   }
 
@@ -104,6 +106,18 @@ public class Authorization extends AbstractAuditableDocument {
 
   public List<String> getRedirectURIs() {
     return Strings.isNullOrEmpty(redirectURI) ? Lists.newArrayList() : Splitter.on(",").splitToList(redirectURI);
+  }
+
+  public String getNonce() {
+    return nonce;
+  }
+
+  public void setNonce(String nonce) {
+    this.nonce = nonce;
+  }
+
+  public boolean hasNonce() {
+    return !Strings.isNullOrEmpty(nonce);
   }
 
   public void addRedirectURI(String redirectURI) {

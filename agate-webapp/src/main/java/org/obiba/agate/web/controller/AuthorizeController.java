@@ -46,7 +46,8 @@ public class AuthorizeController {
                             @RequestParam(value = "client_id") String clientId,
                             @RequestParam(value = "redirect_uri") String redirectUri,
                             @RequestParam(value = "scope") String scope,
-                            @RequestParam(value = "state", required = false) String state) {
+                            @RequestParam(value = "state", required = false) String state,
+                            @RequestParam(value = "nonce", required = false) String nonce) {
     Subject subject = SecurityUtils.getSubject();
     String qs = request.getQueryString();
 
@@ -64,6 +65,7 @@ public class AuthorizeController {
       mv.getModel().put("redirectUri", redirectUri);
       mv.getModel().put("scope", scope);
       mv.getModel().put("state", state);
+      mv.getModel().put("nonce", nonce);
 
       Application application = applicationService.find(clientId);
       mv.getModel().put("application", application);

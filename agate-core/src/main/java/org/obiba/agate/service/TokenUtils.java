@@ -141,6 +141,7 @@ public class TokenUtils {
     claims.issuedAt(authorization.getCreatedDate().toDate()) //
         .expiration(expires.toDate());
     claims.add(Claims.AUDIENCE, authorization.getApplication());
+    if (authorization.hasNonce()) claims.add("nonce", authorization.getNonce());
 
     return Jwts.builder()
         .claims(claims.build())
