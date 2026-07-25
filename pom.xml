@@ -68,7 +68,7 @@
     <mysql-connector-j.version>9.7.0</mysql-connector-j.version>
     <nimbus-jose-jwt.version>10.9.1</nimbus-jose-jwt.version>
     <oauth-oidc-sdk.version>11.38.2</oauth-oidc-sdk.version>
-    <obiba-commons.version>5.2.0</obiba-commons.version>
+    <obiba-commons.version>5.2.1</obiba-commons.version>
     <parsson.version>1.1.9</parsson.version>
     <postgres.version>42.7.12</postgres.version>
     <protobuf.version>3.25.8</protobuf.version>
