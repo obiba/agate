@@ -11,13 +11,14 @@
 package org.obiba.agate.web.rest.config;
 
 import jakarta.ws.rs.ApplicationPath;
+import org.glassfish.jersey.internal.InternalProperties;
+import org.glassfish.jersey.jackson.internal.jackson.jaxrs.base.JsonMappingExceptionMapper;
+import org.glassfish.jersey.jackson.internal.jackson.jaxrs.base.JsonParseExceptionMapper;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.server.spring.scope.RequestContextFilter;
 import org.obiba.agate.config.Constants;
 import org.obiba.agate.web.rest.security.*;
-import org.obiba.jersey.protobuf.ProtobufJsonProvider;
-import org.obiba.jersey.protobuf.ProtobufNativeProvider;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.Profiles;
@@ -34,15 +35,16 @@ public class JerseyConfiguration extends ResourceConfig {
   public JerseyConfiguration(Environment environment, CSRFTokenHelper csrfTokenHelper) {
     register(RequestContextFilter.class);
     packages("org.obiba.agate.web", "org.obiba.jersey");
-    // Explicitly register the protobuf message body providers so they are treated as "custom" providers.
-    // Since Jersey 3.1.12 / Spring Boot 4.1, the auto-discovered Jackson provider (DefaultJacksonJaxbJsonProvider)
-    // and the package-scanned ProtobufJsonProvider both declare MessageBodyWriter<Object> for application/json,
-    // so Jersey's WorkerComparator breaks the tie on the isCustom() flag. Registering the protobuf providers here
-    // marks them custom, ensuring they win over the (non-custom) Jackson provider for protobuf Message types, while
-    // Jackson still handles plain POJO/Map JSON responses. Without this, serializing protobuf DTOs to JSON fails with
-    // "Direct self-reference leading to cycle" (protobuf UnknownFieldSet), surfacing as HTTP 400 on the admin UI.
-    register(ProtobufJsonProvider.class);
-    register(ProtobufNativeProvider.class);
+    // Opt out of JacksonFeature's auto-registered DefaultJacksonJaxbJsonProvider and use AgateJacksonJsonProvider
+    // instead: it does the same job but declines protobuf messages, which are the ProtobufJsonProvider's business.
+    // Both providers declare MessageBodyWriter<Object> for application/json, so Jersey cannot order them by type or
+    // media type distance and picks whichever comes first in an unordered set. When Jackson wins, writing a protobuf
+    // DTO fails with "Direct self-reference leading to cycle" (UnknownFieldSet) and the response turns into an error.
+    property(InternalProperties.JSON_FEATURE, AgateJacksonJsonProvider.class.getSimpleName());
+    register(AgateJacksonJsonProvider.class);
+    // exception mappers JacksonFeature would have registered along with its provider
+    register(JsonParseExceptionMapper.class);
+    register(JsonMappingExceptionMapper.class);
     register(ReAuthInterceptor.class);
     register(AuthenticationInterceptor.class);
     register(AuditInterceptor.class);
