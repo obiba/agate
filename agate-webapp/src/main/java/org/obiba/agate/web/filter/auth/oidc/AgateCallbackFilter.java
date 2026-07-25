@@ -116,10 +116,29 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    // The callback URL is not covered by org.obiba.shiro.web.filter.AuthenticationFilter (see
+    // org.obiba.shiro.authenticationFilter.requestPrefix), so nothing else will clean up the ThreadContext:
+    // both AuthenticationExecutor.login() and prepareSubjectSession() bind the authenticated subject to the
+    // executing thread and it must be restored here, otherwise the subject leaks to the next request served
+    // by that (pooled) thread.
+    Subject previousSubject = ThreadContext.getSubject();
     try {
       super.doFilterInternal(request, response, filterChain);
     } catch (OIDCException e) {
       sendRedirectOrSendError(makeErrorUrl(null), e.getMessage(), response);
+    } finally {
+      restoreSubject(previousSubject);
+    }
+  }
+
+  private void restoreSubject(Subject previousSubject) {
+    Subject currentSubject = ThreadContext.getSubject();
+    if (currentSubject == previousSubject) return;
+    log.trace("Unbinding subject {} from executing thread {}", currentSubject == null ? null : currentSubject.getPrincipal(), Thread.currentThread().getId());
+    if (previousSubject == null) {
+      ThreadContext.unbindSubject();
+    } else {
+      ThreadContext.bind(previousSubject);
     }
   }
 
