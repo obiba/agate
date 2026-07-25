@@ -52,7 +52,7 @@
     <jersey.version>3.1.12</jersey.version>
     <jetty.version>12.1.11</jetty.version>
     <jhipsterloaded.version>0.12</jhipsterloaded.version>
-    <jjwt.version>0.13.0</jjwt.version>
+    <jjwt.version>0.12.6</jjwt.version>
     <joda-time.version>2.14.2</joda-time.version>
     <json-api.version>2.1.3</json-api.version>
     <json-path.version>2.10.0</json-path.version>
@@ -522,6 +522,20 @@
         <groupId>io.jsonwebtoken</groupId>
         <artifactId>jjwt-api</artifactId>
         <version>${jjwt.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-impl</artifactId>
+        <version>${jjwt.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-jackson</artifactId>
+        <version>${jjwt.version}</version>
+        <scope>runtime</scope>
       </dependency>
 
       <dependency>

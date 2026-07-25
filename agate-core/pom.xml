@@ -232,6 +232,16 @@
     </dependency>
 
     <dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt-impl</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt-jackson</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.obiba.commons</groupId>
       <artifactId>obiba-mongodb</artifactId>
     </dependency>
