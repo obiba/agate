@@ -29,6 +29,7 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
 import org.joda.time.DateTime;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.obiba.agate.domain.Application;
@@ -151,7 +152,7 @@ public class OAuthResource {
   @Produces("application/json")
   public Response certs(@Context HttpServletRequest servletRequest) throws JSONException {
     JSONObject jwks = new JSONObject();
-    jwks.put("keys", new String[]{});
+    jwks.put("keys", new JSONArray().put(new JSONObject(tokenUtils.getIDTokenPublicJwk())));
     return Response.ok(jwks.toString(2)).build();
   }
 

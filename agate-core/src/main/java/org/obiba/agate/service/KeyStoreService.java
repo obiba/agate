@@ -23,6 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.security.KeyPair;
 import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.util.Optional;
@@ -31,6 +32,11 @@ import java.util.Optional;
 public class KeyStoreService implements InitializingBean {
 
   public static final String SYSTEM_KEY_STORE = "system";
+
+  /**
+   * Alias, in the system key store, of the key pair used to sign the OpenID Connect ID tokens.
+   */
+  public static final String OIDC_KEY_ALIAS = "oidc";
 
   private static final String PATH_KEYSTORE = "${AGATE_HOME}/data/keystores";
 
@@ -107,6 +113,24 @@ public class KeyStoreService implements InitializingBean {
     ksm.importKey(alias, new ByteArrayInputStream(privateKey.getBytes()),
       new ByteArrayInputStream(publicCertificate.getBytes()));
     saveKeyStore(ksm);
+  }
+
+  /**
+   * Get the key pair used to sign the OpenID Connect ID tokens, generating a self-signed one on first use. The public
+   * key is published as a JSON Web Key so that any OIDC client can verify the ID tokens.
+   *
+   * @return the OIDC signing key pair
+   */
+  @Nonnull
+  public synchronized KeyPair getOrCreateOIDCKeyPair() {
+    KeyStoreManager ksm = getSystemKeyStore();
+    if (!ksm.hasKeyPair(OIDC_KEY_ALIAS)) {
+      String hostname = Optional.ofNullable(configurationService.getConfiguration().getDomain()).orElse("localhost");
+      ksm.createOrUpdateKey(OIDC_KEY_ALIAS, "RSA", 2048,
+        String.format("CN=%s, OU=agate, O=%s, L=, ST=, C=", hostname, hostname));
+      saveKeyStore(ksm);
+    }
+    return ksm.getKeyPair(OIDC_KEY_ALIAS);
   }
 
   public void deleteKeyPair(String name, String alias) {
