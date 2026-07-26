@@ -14,7 +14,8 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.Jwks;
+import io.jsonwebtoken.security.RsaPublicJwk;
 import jakarta.annotation.Nonnull;
 import org.joda.time.DateTime;
 import org.obiba.agate.domain.Authorization;
@@ -23,6 +24,8 @@ import org.obiba.agate.domain.User;
 import org.springframework.stereotype.Component;
 
 import jakarta.inject.Inject;
+import java.security.KeyPair;
+import java.security.interfaces.RSAPublicKey;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -65,6 +68,9 @@ public class TokenUtils {
   @Inject
   private ConfigurationService configurationService;
 
+  @Inject
+  private KeyStoreService keyStoreService;
+
   /**
    * Make an access token (json web token) for the ticket.
    *
@@ -101,8 +107,33 @@ public class TokenUtils {
         .compact();
   }
 
+  /**
+   * The algorithm used to sign the access tokens, which are only verified by Agate itself.
+   *
+   * @return
+   */
   public String getSignatureAlgorithm() {
     return SignatureAlgorithm.HS256.name();
+  }
+
+  /**
+   * The algorithm used to sign the ID tokens. As opposed to the access tokens, the ID tokens are verified by the OIDC
+   * clients, which cannot share a symmetric key with Agate: they are signed with a private key, the matching public key
+   * being published as a JSON Web Key.
+   *
+   * @return
+   */
+  public String getIDTokenSignatureAlgorithm() {
+    return Jwts.SIG.RS256.getId();
+  }
+
+  /**
+   * The public JSON Web Key to be used by the OIDC clients to verify the ID tokens, as published by the JWKS endpoint.
+   *
+   * @return the JWK, as a JSON object string
+   */
+  public String getIDTokenPublicJwk() {
+    return Jwks.json(makeIDTokenPublicJwk(keyStoreService.getOrCreateOIDCKeyPair()));
   }
 
   /**
@@ -143,9 +174,11 @@ public class TokenUtils {
     claims.add(Claims.AUDIENCE, authorization.getApplication());
     if (authorization.hasNonce()) claims.add("nonce", authorization.getNonce());
 
+    KeyPair keyPair = keyStoreService.getOrCreateOIDCKeyPair();
     return Jwts.builder()
+        .header().keyId(makeIDTokenPublicJwk(keyPair).getId()).and()
         .claims(claims.build())
-        .signWith(configurationService.getSecretKeyJWT())
+        .signWith(keyPair.getPrivate(), Jwts.SIG.RS256)
         .compact();
   }
 
@@ -172,6 +205,20 @@ public class TokenUtils {
   // Private methods
   //
 
+  /**
+   * Describe the public part of the ID token signing key pair as a JSON Web Key, the key ID being derived from the key
+   * itself so that it stays stable as long as the key pair is not renewed.
+   *
+   * @param keyPair
+   * @return
+   */
+  private RsaPublicJwk makeIDTokenPublicJwk(KeyPair keyPair) {
+    return Jwks.builder().key((RSAPublicKey) keyPair.getPublic())
+        .algorithm(getIDTokenSignatureAlgorithm())
+        .publicKeyUse("sig")
+        .idFromThumbprint()
+        .build();
+  }
 
   /**
    * The context of the token contains some custom entries about the user and the scope of the authorization (if any).
