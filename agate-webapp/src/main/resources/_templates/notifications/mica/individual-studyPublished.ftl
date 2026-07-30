@@ -12,7 +12,7 @@
     <div
             style="margin-bottom: 21px;background-color: #ffffff;border-radius: 10px;-webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.05);box-shadow: 0 1px 1px rgba(0,0,0,0.05);">
       <div
-              style="padding: 20px 30px;border-top-right-radius: 10px;border-top-left-radius: 10px;background-color: gainsboro;">
+              style="padding: 20px 30px;border-top-right-radius: 10px;border-top-left-radius: 10px;background-color: #E6E6E6;">
         <div style="font-size:22px !important;font-weight: bold;color: inherit;margin-top: 0;margin-bottom: 0;font-size: 17px;">
           ${msg("mica.email.studyPublished.title", organization)}
         </div>
@@ -31,7 +31,7 @@
         <p style="margin: 0 0 30px;">
         </p><p style="margin: auto;text-align: center;">
           <a href="${publicUrl}/admin#/${documentType}/${documentId}" target="_blank"
-             style="color:#1f2d3d;font-weight:bold;background-color:#ffc107;padding:10px 20px;border-radius:15px;text-decoration:none;display: inline-block;margin-bottom: 0;font-weight: normal;text-align: center;vertical-align: middle;-ms-touch-action: manipulation;touch-action: manipulation;cursor: pointer;white-space: nowrap;padding: 10px 15px;border-radius: 10px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;">${msg("mica.email.studyPublished.link")}</a>
+             style="color:#ffffff;font-weight:bold;background-color:#6c9a00;padding:10px 20px;border-radius:15px;text-decoration:none;display: inline-block;margin-bottom: 0;font-weight: normal;text-align: center;vertical-align: middle;-ms-touch-action: manipulation;touch-action: manipulation;cursor: pointer;white-space: nowrap;padding: 10px 15px;border-radius: 10px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;">${msg("mica.email.studyPublished.link")}</a>
         </p>
       </div>
     </div>

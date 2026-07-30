@@ -12,7 +12,7 @@ spring:
     # Authentication type: smtp (default) or oauth2
     auth-type: smtp
     host: localhost
-    port: 25
+    port: 1025
     user:
     password:
     protocol: smtp
