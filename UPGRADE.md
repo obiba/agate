@@ -3,6 +3,32 @@
 Actions to perform when upgrading an Agate server. Go through every version between the
 one installed and the one being deployed.
 
+## 5.1.0
+
+### After upgrading
+
+1. **Overridden Mica notification templates** (skip if `AGATE_HOME/conf/templates/notifications/mica`
+   does not exist).
+
+   Some message keys were renamed:
+
+   - `mica.email.studyDatasetStatusChanged.*` is now `mica.email.collectedDatasetStatusChanged.*`
+   - `mica.email.harmonizationDatasetStatusChanged.*` is now `mica.email.harmonizedDatasetStatusChanged.*`
+
+   Find the overridden templates that still use the old keys:
+
+   ```sh
+   grep -rln 'studyDatasetStatusChanged\|harmonizationDatasetStatusChanged' $AGATE_HOME/conf/templates
+   ```
+
+   In those templates, replace the old keys with the new ones.
+
+   If `harmonization-studyStatusChanged.ftl` is overridden, it still uses the
+   `mica.email.studyStatusChanged.*` messages, which now say "Individual Study". Switch it to
+   `mica.email.harmonizationStudyStatusChanged.*`.
+
+   The templates for publication notifications (`*Published.ftl`) are new and need no action.
+
 ## 5.0.0
 
 ### Before upgrading
