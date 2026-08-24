@@ -179,7 +179,7 @@ public class TicketResource extends ApplicationAwareResource {
 
     return Response.ok().header(HttpHeaders.SET_COOKIE, getCookie(ticket))
         .entity(ticket.getUsername().getBytes(StandardCharsets.UTF_8))
-        .encoding("UTF-8").build();
+        .build();
   }
 
   @DELETE
