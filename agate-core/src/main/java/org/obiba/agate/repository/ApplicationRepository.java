@@ -22,8 +22,4 @@ public interface ApplicationRepository extends MongoRepository<Application, Stri
 
   List<Application> findByName(String name);
 
-  List<Application> findByNameAndKey(String name, String key);
-
-  List<Application> findByIdAndKey(String id, String key);
-
 }

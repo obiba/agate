@@ -25,7 +25,6 @@
   import org.apache.shiro.authc.AuthenticationInfo;
   import org.apache.shiro.authc.UsernamePasswordToken;
   import org.apache.shiro.authz.UnauthenticatedException;
-  import org.apache.shiro.crypto.hash.Sha512Hash;
   import org.apache.shiro.mgt.SessionsSecurityManager;
   import org.apache.shiro.realm.Realm;
   import org.joda.time.DateTime;
@@ -38,6 +37,7 @@
   import org.obiba.agate.repository.RealmConfigRepository;
   import org.obiba.agate.repository.UserCredentialsRepository;
   import org.obiba.agate.repository.UserRepository;
+import org.obiba.agate.security.PasswordHasher;
   import org.obiba.agate.service.support.MessageResolverMethod;
   import org.obiba.agate.validator.EmailValidator;
   import org.obiba.agate.validator.NameValidator;
@@ -107,6 +107,8 @@
 
     private final TotpService totpService;
 
+    private final PasswordHasher passwordHasher;
+
     @Inject
     public UserService(
         UserRepository userRepository,
@@ -118,7 +120,8 @@
         MessageSource messageSource, MailService mailService,
         ConfigurationService configurationService,
         RealmConfigRepository realmConfigRepository,
-        TotpService totpService) {
+        TotpService totpService,
+        PasswordHasher passwordHasher) {
       this.userRepository = userRepository;
       this.groupService = groupService;
       this.userCredentialsRepository = userCredentialsRepository;
@@ -130,6 +133,7 @@
       this.configurationService = configurationService;
       this.realmConfigRepository = realmConfigRepository;
       this.totpService = totpService;
+      this.passwordHasher = passwordHasher;
     }
 
     //
@@ -273,11 +277,10 @@
       validatePassword(password);
 
       UserCredentials userCredentials = findUserCredentials(user.getName());
-      String hashedPassword = hashPassword(password);
 
       if (userCredentials == null) {
         userCredentials = UserCredentials.newBuilder().name(user.getName()).password(hashPassword(password)).build();
-      } else if (userCredentials.getPassword().equals(hashedPassword)) {
+      } else if (passwordHasher.matches(password, userCredentials.getPassword())) {
         throw new PasswordNotChangedException();
       } else {
         userCredentials.setPassword(hashPassword(password));
@@ -290,8 +293,7 @@
       if (user == null) throw new BadRequestException("Invalid User");
       UserCredentials userCredentials = findUserCredentials(user.getName());
       if (userCredentials == null) throw new BadRequestException("Invalid User");
-      String hashedPassword0 = hashPassword(password0);
-      if (!userCredentials.getPassword().equals(hashedPassword0)) {
+      if (!passwordHasher.matches(password0, userCredentials.getPassword())) {
         throw new CurrentPasswordInvalidException();
       }
       updateUserPassword(user, password);
@@ -699,9 +701,15 @@
      * @param password
      * @return
      */
+    /**
+     * Hash a password for storage.
+     *
+     * @param password
+     * @return
+     * @see PasswordHasher
+     */
     public String hashPassword(String password) {
-      return new Sha512Hash(password, env.getProperty("shiro.password.salt"),
-          env.getProperty("shiro.password.nbHashIterations", Integer.class, 10000)).toString();
+      return passwordHasher.hash(password);
     }
 
     /**

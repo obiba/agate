@@ -439,6 +439,11 @@
         <version>${cache-api.version}</version>
       </dependency>
       <dependency>
+        <groupId>org.apache.shiro.crypto</groupId>
+        <artifactId>shiro-hashes-argon2</artifactId>
+        <version>${shiro.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-jcache</artifactId>
         <version>${shiro.version}</version>

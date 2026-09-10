@@ -12,15 +12,13 @@ package org.obiba.agate.security;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import org.apache.shiro.authc.*;
-import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
+import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.cache.MemoryConstrainedCacheManager;
-import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
-import org.apache.shiro.lang.util.SimpleByteSource;
 import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.domain.UserCredentials;
@@ -30,7 +28,6 @@ import org.obiba.agate.service.UserService;
 import org.obiba.shiro.NoSuchOtpException;
 import org.obiba.shiro.authc.UsernamePasswordOtpToken;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import jakarta.inject.Inject;
@@ -55,26 +52,12 @@ public class AgateUserRealm extends AuthorizingRealm implements InitializingBean
   private TotpService totpService;
 
   @Inject
-  private Environment env;
-
-  /**
-   * Number of times the user password is hashed for attack resiliency
-   */
-  private int nbHashIterations;
-
-  private String salt;
+  private PasswordHasher passwordHasher;
 
   @Override
   public void afterPropertiesSet() {
     setCacheManager(new MemoryConstrainedCacheManager());
-
-    nbHashIterations = env.getProperty("shiro.password.nbHashIterations", Integer.class, 10000);
-
-    HashedCredentialsMatcher credentialsMatcher = new HashedCredentialsMatcher(Sha512Hash.ALGORITHM_NAME);
-    credentialsMatcher.setHashIterations(nbHashIterations);
-    setCredentialsMatcher(credentialsMatcher);
-
-    salt = env.getProperty("shiro.password.salt");
+    setCredentialsMatcher(new UpgradingCredentialsMatcher());
   }
 
   @Override
@@ -130,9 +113,32 @@ public class AgateUserRealm extends AuthorizingRealm implements InitializingBean
       }
     }
 
-    SimpleAuthenticationInfo authInfo = new SimpleAuthenticationInfo(username, userCredentials.getPassword(), getName());
-    authInfo.setCredentialsSalt(new SimpleByteSource(salt));
-    return authInfo;
+    return new SimpleAuthenticationInfo(username, userCredentials.getPassword(), getName());
+  }
+
+  /**
+   * Verify the submitted password against the stored hash and, when the hash was produced by an earlier version,
+   * replace it with a current one now that the password is known.
+   */
+  private class UpgradingCredentialsMatcher implements CredentialsMatcher {
+
+    @Override
+    public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
+      if (!(token.getCredentials() instanceof char[])) return false;
+      String password = new String((char[]) token.getCredentials());
+      String stored = (String) info.getCredentials();
+      if (!passwordHasher.matches(password, stored)) return false;
+
+      if (passwordHasher.isLegacy(stored)) {
+        String username = (String) info.getPrincipals().getPrimaryPrincipal();
+        UserCredentials userCredentials = userService.findUserCredentials(username);
+        if (userCredentials != null) {
+          userCredentials.setPassword(passwordHasher.hash(password));
+          userService.save(userCredentials);
+        }
+      }
+      return true;
+    }
   }
 
   @Override
