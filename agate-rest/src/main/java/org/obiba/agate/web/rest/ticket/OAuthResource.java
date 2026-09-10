@@ -258,6 +258,8 @@ public class OAuthResource {
       authorization.addRedirectURI(redirectURI);
       String nonce = oAuthRequest.getParam("nonce");
       if (!Strings.isNullOrEmpty(nonce)) authorization.setNonce(nonce);
+      // codes are single-use: each authorization request gets a fresh one
+      authorization.setCode(new OAuthIssuerImpl(new MD5Generator()).authorizationCode());
       authorizationService.save(authorization);
     }
 
@@ -341,7 +343,22 @@ public class OAuthResource {
 
     String clientId = oAuthRequest.getClientId();
     String redirectURI = oAuthRequest.getParam(OAuth.OAUTH_REDIRECT_URI);
-    Authorization authorization = authorizationService.getByCode(oAuthRequest.getParam(OAuth.OAUTH_CODE));
+    Authorization authorization;
+    try {
+      authorization = authorizationService.getByCode(oAuthRequest.getParam(OAuth.OAUTH_CODE));
+    } catch (NoSuchAuthorizationException e) {
+      throw OAuthProblemException.error("invalid_grant", "The authorization code is not valid");
+    }
+    // a code can be exchanged only once: on replay, revoke what was granted with it (RFC 6749 section 4.1.2)
+    if (authorization.isCodeUsed()) {
+      log.warn("Authorization code replayed for user '{}' and application '{}' (requested by client '{}'): revoking tickets",
+          authorization.getUsername(), authorization.getApplication(), clientId);
+      ticketService.deleteAllAuthorizationTickets(authorization.getId());
+      throw OAuthProblemException.error("invalid_grant", "The authorization code has already been used");
+    }
+    if (authorizationService.isCodeInvalid(authorization)) {
+      throw OAuthProblemException.error("invalid_grant", "The authorization code has expired");
+    }
     // verify authorization
     if (!authorization.getApplication().equals(clientId)) {
       throw OAuthProblemException
@@ -355,6 +372,9 @@ public class OAuthResource {
     if (user == null) {
       throw OAuthProblemException.error("inactive_user", "The user of the authorization is not active");
     }
+
+    authorization.useCode();
+    authorizationService.save(authorization);
 
     Ticket ticket = ticketService.create(authorization);
     return getAccessResponse(ticket, authorization, clientId);

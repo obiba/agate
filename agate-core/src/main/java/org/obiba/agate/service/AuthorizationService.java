@@ -19,6 +19,7 @@ import org.obiba.agate.event.ApplicationDeletedEvent;
 import org.obiba.agate.event.AuthorizationDeletedEvent;
 import org.obiba.agate.event.UserDeletedEvent;
 import org.obiba.agate.repository.AuthorizationRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -44,6 +45,9 @@ public class AuthorizationService {
 
   @Inject
   private EventBus eventBus;
+
+  @Value("${oauth.codeTimeout:300}")
+  private int codeTimeout;
 
   /**
    * Persist the {@link Authorization}.
@@ -158,6 +162,17 @@ public class AuthorizationService {
     if(authorization == null) return;
     authorizationRepository.deleteById(authorization.getId());
     eventBus.post(new AuthorizationDeletedEvent(authorization));
+  }
+
+  /**
+   * Whether the authorization code cannot be exchanged for a token anymore: either it was already used or it was
+   * issued more than <code>oauth.codeTimeout</code> seconds ago.
+   *
+   * @param authorization
+   * @return
+   */
+  public boolean isCodeInvalid(Authorization authorization) {
+    return !authorization.hasCode() || authorization.isCodeUsed() || authorization.isCodeExpired(codeTimeout);
   }
 
   /**

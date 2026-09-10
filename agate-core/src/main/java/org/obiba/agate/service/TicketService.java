@@ -181,6 +181,15 @@ public class TicketService {
   }
 
   /**
+   * Delete all the {@link Ticket}s issued for an {@link Authorization}.
+   *
+   * @param authorizationId
+   */
+  public void deleteAllAuthorizationTickets(String authorizationId) {
+    deleteAll(ticketRepository.findByAuthorization(authorizationId));
+  }
+
+  /**
    * Insert or update the {@link Ticket}. Set the {@link Ticket}'s token if none.
    *
    * @param ticket
