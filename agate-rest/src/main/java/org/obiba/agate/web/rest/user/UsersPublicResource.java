@@ -135,9 +135,8 @@ public class UsersPublicResource {
 
     if (userCredentials == null) throw new BadRequestException("user has no credentials defined");
 
-    userCredentials.setPassword(userService.hashPassword(password));
-
-    userService.save(userCredentials);
+    // same realm, policy and not-changed checks as any other password update
+    userService.updateUserPassword(user, password);
 
     return Response.noContent().build();
   }
