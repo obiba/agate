@@ -423,7 +423,8 @@ public class OAuthResource {
 
   /**
    * Check that the application exists and is available for OAuth process (default redirect URI); check also that the
-   * provided redirect URI includes the default URI same host: (and port, if any), same path or is sub-path.
+   * provided redirect URI matches one of the registered ones: same scheme, host and port, same path or a sub-path
+   * (see {@link Application#matchesRedirectURI(String)}).
    *
    * @param clientId    Client ID is the {@link Application} name
    * @param redirectURI Optional: if null or empty default Application's redirect URI is used else it must be a valid redirect URI.
@@ -436,16 +437,14 @@ public class OAuthResource {
           .error("missing_application_redirect_uri", "Application does not have a default redirect URI");
     }
     // TODO? check user has access to this application
-    // Verify the validity of the given URI
-    String normalizedURI = redirectURI;
-    List<String> defaultURIs = application.getRedirectURIs();
     if (Strings.isNullOrEmpty(redirectURI)) {
-      normalizedURI = defaultURIs.get(0);
-    } else if (defaultURIs.stream().noneMatch(normalizedURI::startsWith)) {
+      return application.getRedirectURIs().get(0);
+    }
+    if (!application.matchesRedirectURI(redirectURI)) {
       throw OAuthProblemException
           .error("invalid_redirect_uri", "The redirect URI does not match the application's redirect URI");
     }
-    return normalizedURI;
+    return redirectURI;
   }
 
   /**
