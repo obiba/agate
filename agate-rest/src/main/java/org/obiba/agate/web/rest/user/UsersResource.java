@@ -13,6 +13,7 @@ package org.obiba.agate.web.rest.user;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import jakarta.inject.Inject;
 
@@ -28,6 +29,8 @@ import jakarta.ws.rs.core.UriBuilder;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.User;
@@ -38,6 +41,7 @@ import org.obiba.agate.web.model.Agate;
 import org.obiba.agate.web.model.Dtos;
 import org.obiba.agate.web.rest.config.JerseyConfiguration;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.google.common.collect.ImmutableList;
 
@@ -67,6 +71,26 @@ public class UsersResource {
     }
 
     return builder.build();
+  }
+
+  /**
+   * Check that a realm accepts the given credentials, without opening a session. Administrator only: this
+   * forwards credentials to the realm (LDAP, AD...) and is not subject to the login attempts limit.
+   *
+   * @param values provider (realm name), username, password
+   * @return 200 if credentials are valid, 404 if the realm is unknown; authentication errors are mapped to 403
+   */
+  @POST
+  @Path("/_test")
+  public Response test(@RequestBody Map<String, String> values) {
+    AuthenticationInfo authenticationInfo = userService.test(values.get("provider"),
+        new UsernamePasswordToken(values.get("username"), values.get("password"))); // will throw AuthenticationException
+
+    if (authenticationInfo == null) {
+      return Response.status(Response.Status.NOT_FOUND).build();
+    }
+
+    return Response.ok().build();
   }
 
   @GET

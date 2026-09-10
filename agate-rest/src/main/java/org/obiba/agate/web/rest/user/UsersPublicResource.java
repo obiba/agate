@@ -17,8 +17,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import org.apache.shiro.authc.AuthenticationInfo;
-import org.apache.shiro.authc.UsernamePasswordToken;
 import org.joda.time.DateTime;
 import org.obiba.agate.domain.*;
 import org.obiba.agate.security.AgateUserRealm;
@@ -30,7 +28,6 @@ import org.obiba.agate.web.rest.security.InvalidApplicationKeyException;
 import org.obiba.shiro.authc.HttpAuthorizationToken;
 import org.obiba.shiro.realm.ObibaRealm;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,7 +35,6 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.Response.Status;
 import jakarta.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.util.*;
@@ -144,18 +140,6 @@ public class UsersPublicResource {
     userService.save(userCredentials);
 
     return Response.noContent().build();
-  }
-
-  @POST
-  @Path("/_test")
-  public Response test(@RequestBody Map<String, String> values) {
-    AuthenticationInfo authenticationInfo = userService.test(values.get("provider"), new UsernamePasswordToken(values.get("username"), values.get("password"))); // will throw AuthenticationException
-
-    if (authenticationInfo == null) {
-      return Response.status(Status.NOT_FOUND).build();
-    }
-
-    return Response.ok().build();
   }
 
   @POST
