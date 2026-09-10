@@ -12,7 +12,7 @@ package org.obiba.agate.web.model;
 
 import com.google.common.base.Joiner;
 import jakarta.annotation.Nonnull;
-import org.apache.commons.lang.LocaleUtils;
+import org.apache.commons.lang3.LocaleUtils;
 import org.obiba.agate.domain.AttributeConfiguration;
 import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.Enforced2FAStrategy;
