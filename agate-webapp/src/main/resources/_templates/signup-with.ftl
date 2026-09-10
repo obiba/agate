@@ -11,7 +11,7 @@
     <script type="text/javascript">
       var onloadCallback = function() {
         grecaptcha.render('html_element', {
-          'sitekey' : '${authConfig.reCaptchaKey}'
+          'sitekey' : '${authConfig.reCaptchaKey?js_string?no_esc}'
         });
       };
     </script>
@@ -124,7 +124,7 @@
     </#if>
     <#list authConfig.userAttributes as attribute>
       <#if attribute.required>
-        { name: '${attribute.name}', title: "<@message attribute.name/>" },
+        { name: '${attribute.name?js_string?no_esc}', title: "<@message attribute.name/>" },
       </#if>
     </#list>
     <#if authConfig.reCaptchaEnabled>

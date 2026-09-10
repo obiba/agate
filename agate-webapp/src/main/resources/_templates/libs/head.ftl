@@ -1,8 +1,5 @@
-<!-- Spring utils for translations -->
-<#import "/spring.ftl" as spring/>
-<#macro message code>
-  <@spring.messageText code code/>
-</#macro>
+<!-- Translations: the message text is trusted markup, the code shown when there is no translation is not -->
+<#macro message code><#local text = springMacroRequestContext.getMessage(code, "")><#if text?has_content && text != code>${text?no_esc}<#else>${code}</#if></#macro>
 
 <#function messageWithFallback prefix attributeName>
   <#assign fullKey = prefix + attributeName>

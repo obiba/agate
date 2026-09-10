@@ -6,7 +6,7 @@
         <a id="userMenu" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle"> ${.lang?upper_case}</a>
         <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow">
           <#list config.locales as locale>
-            <li><a href="#" onclick="agatejs.changeLanguage('${locale.language}')" class="dropdown-item">${locale.language?upper_case}</a></li>
+            <li><a href="#" onclick="agatejs.changeLanguage('${locale.language?js_string}')" class="dropdown-item">${locale.language?upper_case}</a></li>
           </#list>
         </ul>
       </li>
@@ -31,7 +31,7 @@
         <a id="userMenu" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle"> ${.lang?upper_case}</a>
         <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow">
           <#list config.locales as locale>
-            <li><a id="lang-${locale.language}" href="#" onclick="agatejs.changeLanguage('${locale.language}')" class="dropdown-item">${locale.language?upper_case}</a></li>
+            <li><a id="lang-${locale.language}" href="#" onclick="agatejs.changeLanguage('${locale.language?js_string}')" class="dropdown-item">${locale.language?upper_case}</a></li>
           </#list>
         </ul>
       </li>

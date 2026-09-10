@@ -11,6 +11,7 @@
 package org.obiba.agate.service.support;
 
 import com.google.common.base.Strings;
+import freemarker.core.HTMLOutputFormat;
 import freemarker.template.TemplateMethodModel;
 import freemarker.template.TemplateModelException;
 import org.springframework.context.MessageSource;
@@ -18,6 +19,10 @@ import org.springframework.context.MessageSource;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Resolve a message for the templates: the message text is developer-authored HTML and is returned as markup, the
+ * arguments are HTML-escaped before being formatted into it.
+ */
 public class MessageResolverMethod implements TemplateMethodModel {
 
   private MessageSource messageSource;
@@ -41,9 +46,10 @@ public class MessageResolverMethod implements TemplateMethodModel {
     if (arguments.size()>1) {
       args = new Object[arguments.size() - 1];
       for (int i = 1; i<arguments.size(); i++) {
-        args[i - 1] = arguments.get(i);
+        Object arg = arguments.get(i);
+        args[i - 1] = arg == null ? null : HTMLOutputFormat.INSTANCE.escapePlainText(arg.toString());
       }
     }
-    return messageSource.getMessage(code, args, locale);
+    return HTMLOutputFormat.INSTANCE.fromMarkup(messageSource.getMessage(code, args, locale));
   }
 }

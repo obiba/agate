@@ -45,7 +45,6 @@
     <dropwizard-metrics.version>4.2.39</dropwizard-metrics.version>
     <easymock.version>5.6.0</easymock.version>
     <ehcache.version>3.10.8</ehcache.version>
-    <esapi.version>2.6.0.0</esapi.version>
     <freemarker.version>2.3.34</freemarker.version>
     <guava.version>33.6.0-jre</guava.version>
     <javax.inject.version>1</javax.inject.version>
@@ -318,22 +317,6 @@
         <groupId>com.jayway.jsonpath</groupId>
         <artifactId>json-path</artifactId>
         <version>${json-path.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.owasp.esapi</groupId>
-        <artifactId>esapi</artifactId>
-        <version>${esapi.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
 
       <dependency>
