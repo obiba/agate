@@ -58,6 +58,21 @@ var agatejs = (function() {
     });
   };
 
+  /**
+   * A reCaptcha token can only be verified once: after a server-side error
+   * (e.g. email already in use), the widget must be reset so that the user can
+   * obtain a fresh token before resubmitting the form.
+   */
+  const resetReCaptcha = function() {
+    if (typeof grecaptcha !== 'undefined' && typeof grecaptcha.reset === 'function') {
+      try {
+        grecaptcha.reset();
+      } catch (e) {
+        console.error('Unable to reset reCaptcha', e);
+      }
+    }
+  };
+
   const agateSignup = function(formId, requiredFields, onFailure) {
     const toggleSubmitButton = function(enable)  {
       const submitSelect = '#' + formId + ' button[type="submit"]';
@@ -123,6 +138,7 @@ var agatejs = (function() {
           })
           .catch(handle => {
             toggleSubmitButton(true);
+            resetReCaptcha();
             console.dir(handle);
             if (handle.response.data?.message === 'Invalid reCaptcha response') {
               onFailure('server.error.bad-captcha');
