@@ -16,6 +16,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+import org.obiba.agate.service.support.RedirectURIMatcher;
 import org.obiba.mongodb.domain.AbstractAuditableDocument;
 import org.springframework.data.mongodb.core.index.Indexed;
 
@@ -108,6 +109,17 @@ public class Application extends AbstractAuditableDocument {
 
   public void setRedirectURI(String redirectURI) {
     this.redirectURI = redirectURI;
+  }
+
+  /**
+   * Check whether the given URI is an acceptable redirect target for this application, i.e. it is one of the
+   * registered redirect URIs or a sub-path of one of them (same scheme, host and port).
+   *
+   * @param uri
+   * @return
+   */
+  public boolean matchesRedirectURI(String uri) {
+    return hasRedirectURI() && RedirectURIMatcher.matchesAny(getRedirectURIs(), uri);
   }
 
   public Map<String, List<String>> getRealmGroups() {

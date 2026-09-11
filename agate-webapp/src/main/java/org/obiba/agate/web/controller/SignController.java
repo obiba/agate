@@ -27,6 +27,7 @@ import org.obiba.agate.service.ApplicationService;
 import org.obiba.agate.service.ConfigurationService;
 import org.obiba.agate.service.NoSuchUserException;
 import org.obiba.agate.service.UserService;
+import org.obiba.agate.service.support.RedirectURIMatcher;
 import org.obiba.agate.web.controller.domain.AuthConfiguration;
 import org.obiba.agate.web.controller.domain.OidcProvider;
 import org.obiba.agate.web.support.URLUtils;
@@ -162,7 +163,7 @@ public class SignController {
         boolean redirectIsValid = false;
         for (String appName : appNames) {
           Application application = applicationService.findByIdOrName(appName);
-          if (application != null && application.getRedirectURIs().stream().anyMatch(postLogoutRedirectUri::startsWith)) {
+          if (application != null && application.matchesRedirectURI(postLogoutRedirectUri)) {
             redirectIsValid = true;
             break;
           }
@@ -258,13 +259,15 @@ public class SignController {
   }
 
   private String verifyRedirect(String redirect) {
-    if (Strings.isNullOrEmpty(redirect) || redirect.startsWith("/")) return redirect;
+    if (Strings.isNullOrEmpty(redirect)) return redirect;
+    // local path: a protocol-relative URL (//host/path) is not one
+    if (redirect.startsWith("/")) return redirect.startsWith("//") ? "" : redirect;
     if (!redirect.startsWith("http")) return "";
     // redirect to itself
     String publicUrl = configurationService.getPublicUrl();
-    if (redirect.startsWith(publicUrl)) return redirect;
+    if (RedirectURIMatcher.matches(publicUrl, redirect)) return redirect;
     // redirect to a registered application
-    boolean isAppRedirect = applicationService.findAll().stream().anyMatch((app) -> app.hasRedirectURI() && app.getRedirectURIs().stream().anyMatch(redirect::startsWith));
+    boolean isAppRedirect = applicationService.findAll().stream().anyMatch((app) -> app.matchesRedirectURI(redirect));
     if (isAppRedirect) return redirect;
     // redirect to a OIDC service, assumption is that host name is same as the one from the discovery url
     try {
