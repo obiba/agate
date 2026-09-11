@@ -34,9 +34,13 @@ Install the new version and restart as usual. No database migration runs at star
 
    1. If `libs/head.ftl` is overridden, replace it with the 4.3 version and re-apply your
       customisations. This one is required.
-   2. For each of `signup.ftl`, `signup-with.ftl`, `signout.ftl`, `libs/scripts.ftl`,
-      `libs/signout-scripts.ftl`, `libs/profile-scripts.ftl`, `libs/navbar-menus-right.ftl`
-      that is overridden: start from the 4.3 version and re-apply your customisations.
+   2. For each of `signin.ftl`, `signup.ftl`, `signup-with.ftl`, `signout.ftl`,
+      `libs/scripts.ftl`, `libs/signin-scripts.ftl`, `libs/signout-scripts.ftl`,
+      `libs/profile-scripts.ftl`, `libs/navbar-menus-right.ftl` that is overridden: start
+      from the 4.3 version and re-apply your customisations. For `signin.ftl` and
+      `libs/signin-scripts.ftl` this also brings the invalid-code message on the 2FA step
+      (see point 6); without it the page keeps working but shows the generic
+      authentication failure instead.
    3. In every other overridden template, find the interpolations written inside scripts:
 
       ```sh
@@ -71,6 +75,28 @@ Install the new version and restart as usual. No database migration runs at star
    it anonymously.
 
 5. Delete `AGATE_HOME/conf/ESAPI.properties` if such a file exists; it is no longer read.
+
+6. **Two-factor authentication.** The password is now verified before the 2FA code is
+   asked for (it was the other way around). Consequences to be aware of:
+
+   1. A wrong password is refused right away from the credentials form and counts toward
+      the login ban (`login.maxTry`, `login.trialTime`, `login.banTime` in
+      `application-prod.yml`); it used to be reported as a 2FA failure and never counted.
+      Expect a few more bans in the first days from users who had learnt to retry.
+   2. A wrong code keeps the 2FA step open and shows a dedicated message
+      (`sign-in-otp-failed`, bundled in English and French; add it to any other language
+      you provide).
+   3. If 2FA is enforced, users of external realms (LDAP, Active Directory, SQL) who never
+      finished enrolling an authenticator were let in without one. They are now asked to
+      scan the QR code and enter a code at their next sign-in. Warn them if you have such
+      users.
+   4. Applications that delegate authentication to Agate get the fix without any change.
+      Upgrade Agate before Mica 6.4.0 and Opal (see their own upgrade notes): their
+      sign-in pages assume the new order when labelling a failure on the 2FA step as a
+      wrong code.
+   5. Check with a test user for whom 2FA is enforced or activated: a wrong password is
+      refused from the credentials form without any QR code being shown; a wrong code
+      keeps the 2FA step open with the invalid-code message.
 
 ### In the following weeks
 
