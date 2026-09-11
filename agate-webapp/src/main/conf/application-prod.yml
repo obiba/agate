@@ -29,10 +29,14 @@ spring:
     mongodb:
         uri: mongodb://localhost:27017/agate
 
-shiro:
-    password:
-        nbHashIterations: 10000
-        salt: agate
+# Passwords and application keys are hashed with Argon2id and a random salt.
+# The settings below are only needed to verify hashes produced by Agate versions
+# before 4.3 (SHA-512 with this global salt), which are re-hashed on the next
+# successful authentication: when upgrading, keep the values that were in use.
+#shiro:
+#    password:
+#        nbHashIterations: 10000
+#        salt: agate
 
 registration:
     pendingForApprovalSubject: Account Registration

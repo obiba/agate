@@ -11,7 +11,6 @@
 package org.obiba.agate.service;
 
 import jakarta.annotation.Nonnull;
-import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.joda.time.DateTime;
 import org.obiba.agate.domain.Application;
 import org.obiba.agate.domain.Group;
@@ -19,9 +18,9 @@ import org.obiba.agate.domain.User;
 import org.obiba.agate.repository.ApplicationRepository;
 import org.obiba.agate.repository.GroupRepository;
 import org.obiba.agate.repository.UserRepository;
+import org.obiba.agate.security.PasswordHasher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,7 +47,7 @@ public class ApplicationService {
   private GroupRepository groupRepository;
 
   @Inject
-  private Environment env;
+  private PasswordHasher passwordHasher;
 
   public Application getApplication(@Nonnull String id) throws NoSuchApplicationException {
     Optional<Application> application = applicationRepository.findById(id);
@@ -81,11 +80,24 @@ public class ApplicationService {
   }
 
 
+  /**
+   * Check the application credentials. A key hashed by an earlier version is replaced with a current hash on
+   * successful check.
+   *
+   * @param idOrName
+   * @param key
+   * @return
+   */
   public boolean isValid(String idOrName, String key) {
-    List<Application> applications = applicationRepository.findByIdAndKey(idOrName, hashKey(key));
-    if(applications == null || applications.isEmpty())
-      applications = applicationRepository.findByNameAndKey(idOrName, hashKey(key));
-    return applications != null && !applications.isEmpty();
+    Application application = find(idOrName);
+    if (application == null) application = findByName(idOrName);
+    if (application == null || !passwordHasher.matches(key, application.getKey())) return false;
+
+    if (passwordHasher.isLegacy(application.getKey())) {
+      application.setKey(passwordHasher.hash(key));
+      save(application);
+    }
+    return true;
   }
 
   public void save(@Nonnull Application application) {
@@ -111,7 +123,7 @@ public class ApplicationService {
   }
 
   public String hashKey(String key) {
-    return new Sha512Hash(key, env.getProperty("shiro.password.salt"), env.getProperty("shiro.password.nbHashIterations", Integer.class, 10000)).toString();
+    return passwordHasher.hash(key);
   }
 
   //

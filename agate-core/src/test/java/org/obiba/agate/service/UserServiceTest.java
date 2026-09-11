@@ -18,6 +18,8 @@ import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
+import org.obiba.agate.security.PasswordHasher;
 import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.domain.UserStatus;
@@ -55,6 +57,9 @@ public class UserServiceTest {
 
   @Mock
   private RealmConfigRepository realmConfigRepository;
+
+  @Spy
+  private PasswordHasher passwordHasher = new PasswordHasher("salt", 1);
 
   @Rule
   public ExpectedException exception = ExpectedException.none();
