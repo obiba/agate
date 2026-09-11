@@ -4,6 +4,7 @@ Central authentication server for OBiBa applications.
 
 * See [download instructions](http://www.obiba.org/pages/products/agate/#download).
 * Read the [documentation](http://agatedoc.obiba.org).
+* Upgrading? See the [upgrade notes](UPGRADE.md).
 * Have a bug or a question? Please create an issue on [GitHub](https://github.com/obiba/agate/issues).
 * Continuous integration is on [Travis](https://travis-ci.org/obiba/agate).
 
