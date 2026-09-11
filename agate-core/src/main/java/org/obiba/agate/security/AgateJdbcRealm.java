@@ -38,12 +38,13 @@ public class AgateJdbcRealm extends JdbcRealm {
     setPermissionsLookupEnabled(false);
   }
 
+  /**
+   * Password first, one-time password second: the OTP challenge must not be reachable without valid credentials.
+   */
   @Override
-  protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-    AuthenticationInfo authInfo = super.doGetAuthenticationInfo(token);
-    if (authInfo != null)
-      helper.checkOTP(getName(), token, authInfo);
-    return authInfo;
+  protected void assertCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) throws AuthenticationException {
+    super.assertCredentialsMatch(token, info);
+    helper.checkOTP(getName(), token, info);
   }
 
   @Override

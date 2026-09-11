@@ -104,19 +104,20 @@ public class AgateIniRealm extends IniRealm {
     return "\"" + value.substring(0, commaIdx) + "\"" + value.substring(commaIdx);
   }
 
+  /**
+   * Password first, one-time password second: the OTP challenge must not be reachable without valid credentials.
+   */
   @Override
-  protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-    AuthenticationInfo authInfo = super.doGetAuthenticationInfo(token);
+  protected void assertCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) throws AuthenticationException {
+    super.assertCredentialsMatch(token, info);
 
     // check for administrator secret, 2FA code validation etc.
-    if (authInfo != null && getConfiguration().hasSecretOtp()) {
+    if (getConfiguration().hasSecretOtp()) {
       String code = token instanceof UsernamePasswordOtpToken ? ((UsernamePasswordOtpToken) token).getOtp() : null;
       if (Strings.isNullOrEmpty(code)) throw new NoSuchOtpException("X-Obiba-" + getConfiguration().getOtpStrategy());
       if (!totpService.validateCode(code, getConfiguration().getSecretOtp()))
         throw new AuthenticationException("Wrong TOTP");
     }
-
-    return authInfo;
   }
 
   @Override

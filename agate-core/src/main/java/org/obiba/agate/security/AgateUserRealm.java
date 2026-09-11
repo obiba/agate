@@ -84,6 +84,23 @@ public class AgateUserRealm extends AuthorizingRealm implements InitializingBean
     UserCredentials userCredentials = userService.findUserCredentials(username);
     if(userCredentials == null) throw new UnknownAccountException("No account found for user [" + username + "]");
 
+    return new SimpleAuthenticationInfo(username, userCredentials.getPassword(), getName());
+  }
+
+  /**
+   * Verify the password before anything related to the one-time password: the OTP challenge (and the temporary
+   * secret it may create) must not be reachable by someone who only knows the user name.
+   */
+  @Override
+  protected void assertCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) throws AuthenticationException {
+    super.assertCredentialsMatch(token, info);
+    checkOtp(token, info.getPrincipals().getPrimaryPrincipal().toString());
+  }
+
+  private void checkOtp(AuthenticationToken token, String username) {
+    User user = userService.findActiveUser(username);
+    if(user == null) throw new UnknownAccountException("No account found for user [" + username + "]");
+
     if (user.hasSecret() || configurationService.getConfiguration().isEnforced2FA()) {
       String strategy = configurationService.getConfiguration().getOtpStrategy();
       if (strategy.equals("TOTP")) {
@@ -112,8 +129,6 @@ public class AgateUserRealm extends AuthorizingRealm implements InitializingBean
         }
       }
     }
-
-    return new SimpleAuthenticationInfo(username, userCredentials.getPassword(), getName());
   }
 
   /**
