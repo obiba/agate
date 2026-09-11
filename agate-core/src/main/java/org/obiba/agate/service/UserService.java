@@ -733,6 +733,10 @@ import org.obiba.agate.security.PasswordHasher;
       return totpService.validateCode(code, user.getSecret());
     }
 
+    public boolean validateTempCode(User user, String code) {
+      return totpService.validateCode(code, user.getTempSecret());
+    }
+
     public boolean validateOtp(User user, String code) {
       JSONObject otp = new JSONObject(configurationService.decrypt(user.getOtp()));
       long now = DateTime.now().getMillis();

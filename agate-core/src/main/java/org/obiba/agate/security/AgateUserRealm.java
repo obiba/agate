@@ -9,7 +9,6 @@
  */
 package org.obiba.agate.security;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
@@ -23,10 +22,7 @@ import org.obiba.agate.domain.AgateRealm;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.domain.UserCredentials;
 import org.obiba.agate.service.ConfigurationService;
-import org.obiba.agate.service.TotpService;
 import org.obiba.agate.service.UserService;
-import org.obiba.shiro.NoSuchOtpException;
-import org.obiba.shiro.authc.UsernamePasswordOtpToken;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 
@@ -47,9 +43,6 @@ public class AgateUserRealm extends AuthorizingRealm implements InitializingBean
 
   @Inject
   private ConfigurationService configurationService;
-
-  @Inject
-  private TotpService totpService;
 
   @Inject
   private PasswordHasher passwordHasher;
@@ -100,35 +93,7 @@ public class AgateUserRealm extends AuthorizingRealm implements InitializingBean
   private void checkOtp(AuthenticationToken token, String username) {
     User user = userService.findActiveUser(username);
     if(user == null) throw new UnknownAccountException("No account found for user [" + username + "]");
-
-    if (user.hasSecret() || configurationService.getConfiguration().isEnforced2FA()) {
-      String strategy = configurationService.getConfiguration().getOtpStrategy();
-      if (strategy.equals("TOTP")) {
-        String code = token instanceof UsernamePasswordOtpToken ? ((UsernamePasswordOtpToken) token).getOtp() : null;
-        if (Strings.isNullOrEmpty(code)) throw new NoSuchOtpException("X-Obiba-" + strategy);
-        if (user.hasSecret()) {
-          if (!totpService.validateCode(code, user.getSecret()))
-            throw new AuthenticationException("Wrong TOTP");
-        } else if (user.hasTempSecret()) {
-          if (totpService.validateCode(code, user.getTempSecret())) {
-            // confirm secret
-            user.confirmSecret();
-            userService.save(user);
-          } else if (user.hasOtp()) {
-            if (!userService.validateOtp(user, code))
-              throw new AuthenticationException("Wrong TOTP");
-          } else {
-            // reset failing temp secret
-            user.resetSecret(null);
-            userService.save(user);
-            throw new AuthenticationException("Wrong TOTP");
-          }
-        } else if (user.hasOtp()) {
-          if (!userService.validateOtp(user, code))
-            throw new AuthenticationException("Wrong TOTP");
-        }
-      }
-    }
+    new AgateRealmHelper(configurationService, userService).checkOTP(token, user);
   }
 
   /**

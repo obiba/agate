@@ -23,13 +23,13 @@ import org.obiba.agate.domain.Enforced2FAStrategy;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.domain.UserCredentials;
 import org.obiba.agate.service.ConfigurationService;
-import org.obiba.agate.service.TotpService;
 import org.obiba.agate.service.UserService;
 import org.obiba.shiro.NoSuchOtpException;
 import org.obiba.shiro.authc.UsernamePasswordOtpToken;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 /**
@@ -46,9 +46,6 @@ class AgateUserRealmTest {
 
   @Mock
   private ConfigurationService configurationService;
-
-  @Mock
-  private TotpService totpService;
 
   @Mock
   private PasswordHasher passwordHasher;
@@ -83,7 +80,7 @@ class AgateUserRealmTest {
     assertThrows(IncorrectCredentialsException.class,
         () -> realm.getAuthenticationInfo(new UsernamePasswordToken(USERNAME, "wrong")));
 
-    verifyNoInteractions(totpService);
+    verifyNoCodeValidation();
     verify(userService, never()).save(any(User.class));
   }
 
@@ -94,14 +91,14 @@ class AgateUserRealmTest {
     assertThrows(IncorrectCredentialsException.class,
         () -> realm.getAuthenticationInfo(new UsernamePasswordOtpToken(USERNAME, "wrong", "123456")));
 
-    verifyNoInteractions(totpService);
+    verifyNoCodeValidation();
   }
 
   @Test
   void wrongPasswordDoesNotConfirmTemporarySecret() {
     configuration.setEnforced2FAStrategy(Enforced2FAStrategy.APP);
     user.resetSecret("tmp");
-    when(totpService.validateCode("123456", "tmp")).thenReturn(true);
+    when(userService.validateTempCode(user, "123456")).thenReturn(true);
 
     assertThrows(IncorrectCredentialsException.class,
         () -> realm.getAuthenticationInfo(new UsernamePasswordOtpToken(USERNAME, "wrong", "123456")));
@@ -122,7 +119,7 @@ class AgateUserRealmTest {
   @Test
   void rightPasswordWithWrongCodeFails() {
     user.setSecret("abc");
-    when(totpService.validateCode("000000", "abc")).thenReturn(false);
+    when(userService.validateCode(user, "000000")).thenReturn(false);
 
     AuthenticationException e = assertThrows(AuthenticationException.class,
         () -> realm.getAuthenticationInfo(new UsernamePasswordOtpToken(USERNAME, PASSWORD, "000000")));
@@ -134,7 +131,7 @@ class AgateUserRealmTest {
   void rightPasswordWithValidCodeConfirmsTemporarySecret() {
     configuration.setEnforced2FAStrategy(Enforced2FAStrategy.APP);
     user.resetSecret("tmp");
-    when(totpService.validateCode("123456", "tmp")).thenReturn(true);
+    when(userService.validateTempCode(user, "123456")).thenReturn(true);
 
     assertNotNull(realm.getAuthenticationInfo(new UsernamePasswordOtpToken(USERNAME, PASSWORD, "123456")));
 
@@ -144,8 +141,23 @@ class AgateUserRealmTest {
   }
 
   @Test
+  void rightPasswordWithCodeButNothingToVerifyAgainstChallengesAgain() {
+    configuration.setEnforced2FAStrategy(Enforced2FAStrategy.APP);
+    // e.g. the temporary secret was dropped after a wrong code
+
+    assertThrows(NoSuchOtpException.class,
+        () -> realm.getAuthenticationInfo(new UsernamePasswordOtpToken(USERNAME, PASSWORD, "123456")));
+  }
+
+  @Test
   void no2FAAuthenticatesWithPasswordOnly() {
     assertNotNull(realm.getAuthenticationInfo(new UsernamePasswordToken(USERNAME, PASSWORD)));
-    verifyNoInteractions(totpService);
+    verifyNoCodeValidation();
+  }
+
+  private void verifyNoCodeValidation() {
+    verify(userService, never()).validateCode(any(User.class), anyString());
+    verify(userService, never()).validateTempCode(any(User.class), anyString());
+    verify(userService, never()).validateOtp(any(User.class), anyString());
   }
 }

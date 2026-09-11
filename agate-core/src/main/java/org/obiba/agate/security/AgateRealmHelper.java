@@ -57,19 +57,43 @@ public class AgateRealmHelper {
     if (user == null || !user.isEnabled() || !user.getRealm().equals(realmName))
       throw new UnknownAccountException("No account found for user [" + username + "]");
 
-    if (user.hasSecret() || configurationService.getConfiguration().isEnforced2FA()) {
-      String strategy = configurationService.getConfiguration().getOtpStrategy();
-      if (strategy.equals("TOTP")) {
-        String code = token instanceof UsernamePasswordOtpToken ? ((UsernamePasswordOtpToken) token).getOtp() : null;
-        if (Strings.isNullOrEmpty(code)) throw new NoSuchOtpException("X-Obiba-" + strategy);
-        if (user.hasSecret()) {
-          if (!userService.validateCode(user, code))
-            throw new AuthenticationException("Wrong TOTP");
-        } else if (user.hasOtp()) {
-          if (!userService.validateOtp(user, code))
-            throw new AuthenticationException("Wrong TOTP");
-        }
+    checkOTP(token, user);
+  }
+
+  /**
+   * Validate the one-time password of an already password-authenticated user, if 2FA applies.
+   */
+  public void checkOTP(AuthenticationToken token, User user) {
+    if (!user.hasSecret() && !configurationService.getConfiguration().isEnforced2FA()) return; // 2FA not activated
+    String strategy = configurationService.getConfiguration().getOtpStrategy();
+    if (!"TOTP".equals(strategy)) return;
+
+    String code = token instanceof UsernamePasswordOtpToken ? ((UsernamePasswordOtpToken) token).getOtp() : null;
+    if (Strings.isNullOrEmpty(code)) throw new NoSuchOtpException("X-Obiba-" + strategy);
+    if (user.hasSecret()) {
+      if (!userService.validateCode(user, code))
+        throw new AuthenticationException("Wrong TOTP");
+    } else if (user.hasTempSecret()) {
+      if (userService.validateTempCode(user, code)) {
+        // confirm secret
+        user.confirmSecret();
+        userService.save(user);
+      } else if (user.hasOtp()) {
+        if (!userService.validateOtp(user, code))
+          throw new AuthenticationException("Wrong TOTP");
+      } else {
+        // reset failing temp secret
+        user.resetSecret(null);
+        userService.save(user);
+        throw new AuthenticationException("Wrong TOTP");
       }
+    } else if (user.hasOtp()) {
+      if (!userService.validateOtp(user, code))
+        throw new AuthenticationException("Wrong TOTP");
+    } else {
+      // 2FA is enforced but there is nothing to verify the code against (e.g. a failing temporary secret was
+      // just dropped): challenge again so that a new temporary secret gets issued
+      throw new NoSuchOtpException("X-Obiba-" + strategy);
     }
   }
 }
