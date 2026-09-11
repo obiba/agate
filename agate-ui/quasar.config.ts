@@ -68,7 +68,9 @@ export default defineConfig((ctx) => {
       // analyze: true,
       // exposed to the app as import.meta.env.*
       defineEnv: {
-        API: ctx.dev ? 'http://localhost:8081/ws' : '/ws',
+        // Always same-origin: in dev the devServer proxies /ws to the backend,
+        // so no CORS headers are needed on the server side.
+        API: '/ws',
       },
       // rawDefine: {}
       // ignorePublicFolder: true,
@@ -133,6 +135,15 @@ export default defineConfig((ctx) => {
     devServer: {
       // https: true,
       open: false, // opens browser window automatically
+      proxy: {
+        // The app is served under /admin, so API calls resolve to /admin/ws:
+        // strip that prefix and forward to the backend started with `make debug`.
+        '^/(admin/)?ws': {
+          target: 'http://localhost:8081',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/admin/, ''),
+        },
+      },
     },
 
     // https://quasar.dev/quasar-cli-vite/quasar-config-file#framework
