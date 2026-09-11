@@ -238,8 +238,8 @@ export default {
     },
   },
   system: {
-    inactive_timeout_hint: 'User account expiration timeout in days.',
-    inactive_timeout: 'Inactive timeout (days)',
+    inactive_timeout_hint: 'User account expiration timeout in hours (a user that has not signed in for that long is marked inactive).',
+    inactive_timeout: 'Inactive timeout (hours)',
     languages_hint: 'Possible notification email languages.',
     languages: 'Languages',
     long_timeout_hint: 'Ticket expiration timeout in hours when "remember me" option is selected.',

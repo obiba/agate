@@ -238,8 +238,8 @@ export default {
     },
   },
   system: {
-    inactive_timeout_hint: "Délai d'expiration du compte utilisateur en jours.",
-    inactive_timeout: "Délai d'expiration inactif (jours)",
+    inactive_timeout_hint: "Délai d'expiration du compte utilisateur en heures (un utilisateur qui ne s'est pas connecté depuis ce délai est marqué inactif).",
+    inactive_timeout: "Délai d'inactivité (heures)",
     languages_hint: 'Langues possibles pour les courriels de notification.',
     languages: 'Langues',
     long_timeout_hint: 'Délai d\'expiration du ticket en heures lorsque l\'option "se souvenir de moi" est sélectionnée.',
