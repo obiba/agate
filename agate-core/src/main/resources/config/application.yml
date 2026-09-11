@@ -50,6 +50,11 @@ authentication:
 # Security
 #
 
+oauth:
+  # Lifetime in seconds of an authorization code: it must be exchanged for a token
+  # within this delay, and can be exchanged only once.
+  codeTimeout: 300
+
 login:
   maxTry: 3
   trialTime: 300

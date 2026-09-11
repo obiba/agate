@@ -13,6 +13,7 @@ package org.obiba.agate.domain;
 import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import org.joda.time.DateTime;
 import org.obiba.mongodb.domain.AbstractAuditableDocument;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -34,6 +35,10 @@ public class Authorization extends AbstractAuditableDocument {
 
   @Indexed(unique = true)
   private String code;
+
+  private DateTime codeCreatedDate;
+
+  private boolean codeUsed;
 
   private Set<String> scopes;
 
@@ -69,8 +74,45 @@ public class Authorization extends AbstractAuditableDocument {
     return code;
   }
 
+  /**
+   * Set a freshly issued authorization code: it is single-use and valid for a limited time
+   * (see {@link #isCodeExpired(int)}).
+   *
+   * @param code
+   */
   public void setCode(String code) {
     this.code = code;
+    this.codeCreatedDate = Strings.isNullOrEmpty(code) ? null : DateTime.now();
+    this.codeUsed = false;
+  }
+
+  public boolean hasCode() {
+    return !Strings.isNullOrEmpty(code);
+  }
+
+  public DateTime getCodeCreatedDate() {
+    return codeCreatedDate;
+  }
+
+  public boolean isCodeUsed() {
+    return codeUsed;
+  }
+
+  /**
+   * Mark the code as exchanged for a token: any further use is a replay.
+   */
+  public void useCode() {
+    this.codeUsed = true;
+  }
+
+  /**
+   * A code with no known issue date (issued before this field existed) is considered expired.
+   *
+   * @param lifetimeSeconds
+   * @return
+   */
+  public boolean isCodeExpired(int lifetimeSeconds) {
+    return codeCreatedDate == null || codeCreatedDate.plusSeconds(lifetimeSeconds).isBefore(DateTime.now());
   }
 
   public boolean hasScopes() {
