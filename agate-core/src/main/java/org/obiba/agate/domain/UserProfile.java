@@ -1,10 +1,8 @@
 package org.obiba.agate.domain;
 
-import org.owasp.esapi.ESAPI;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Safe user profile.
@@ -38,19 +36,19 @@ public class UserProfile {
   }
 
   public String getFirstName() {
-    return ESAPI.encoder().encodeForHTML(user.getFirstName());
+    return user.getFirstName();
   }
 
   public String getLastName() {
-    return ESAPI.encoder().encodeForHTML(user.getLastName());
+    return user.getLastName();
   }
 
   public String getDisplayName() {
-    return ESAPI.encoder().encodeForHTML(user.getDisplayName());
+    return user.getDisplayName();
   }
 
   public String getPreferredLanguage() {
-    return ESAPI.encoder().encodeForHTML(user.getPreferredLanguage());
+    return user.getPreferredLanguage();
   }
 
   public boolean getOtpEnabled() {
@@ -66,8 +64,7 @@ public class UserProfile {
   }
 
   public Map<String, String> getAttributes() {
-    return user.getAttributes().entrySet().stream()
-        .collect(Collectors.toMap(Map.Entry::getKey, e -> ESAPI.encoder().encodeForHTML(e.getValue())));
+    return user.getAttributes();
   }
 
 }

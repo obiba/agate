@@ -20,7 +20,7 @@
   import freemarker.template.Template;
   import jakarta.annotation.Nonnull;
   import jakarta.ws.rs.BadRequestException;
-  import org.apache.commons.lang.LocaleUtils;
+  import org.apache.commons.lang3.LocaleUtils;
   import org.apache.shiro.SecurityUtils;
   import org.apache.shiro.authc.AuthenticationInfo;
   import org.apache.shiro.authc.UsernamePasswordToken;

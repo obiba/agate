@@ -4,7 +4,7 @@
     { name: 'lastname', title: "<@message "lastname"/>" },
     <#list authConfig.userAttributes as attribute>
     <#if attribute.required>
-    { name: '${attribute.name}', title: "<@message attribute.name/>" },
+    { name: '${attribute.name?js_string?no_esc}', title: "<@message attribute.name/>" },
     </#if>
     </#list>
   ];

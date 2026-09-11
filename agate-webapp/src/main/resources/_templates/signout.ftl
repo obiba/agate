@@ -19,7 +19,7 @@
       <div class="card-body login-card-body">
         <p class="login-box-msg"><@message "confirm-sign-out"/></p>
         <div>
-          <a class="btn btn-outline-danger" href="#" onclick="agatejs.signout('${postLogoutRedirectUri!""}');"><@message "sign-out"/></a>
+          <a class="btn btn-outline-danger" href="#" onclick="agatejs.signout('${(postLogoutRedirectUri!"")?js_string}');"><@message "sign-out"/></a>
           <a class="btn btn-outline-info ml-2" href="${postLogoutRedirectUri!"/"}"><@message "keep-signed-in"/></a>
         </div>
       </div>

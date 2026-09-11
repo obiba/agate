@@ -7,6 +7,9 @@ spring:
       request-context-attribute: rc
       settings:
         template_exception_handler: rethrow
+        # HTML auto-escaping of every interpolation; use ?no_esc for trusted markup
+        # and ?js_string for values written inside scripts.
+        output_format: HTMLOutputFormat()
       charset: UTF-8
       suffix: .ftl
       content-type: text/html;charset=UTF-8

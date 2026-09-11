@@ -17,7 +17,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
-import org.apache.commons.lang.LocaleUtils;
+import org.apache.commons.lang3.LocaleUtils;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.service.MailService;
 import org.obiba.agate.service.ReCaptchaService;

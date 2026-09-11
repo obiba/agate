@@ -17,7 +17,7 @@
 
 <!-- Global js variables -->
 <script>
-  const contextPath = "${contextPath}";
+  const contextPath = "${contextPath?js_string?no_esc}";
 </script>
 
 <!-- Custom js -->
