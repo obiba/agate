@@ -3,7 +3,7 @@
 Actions to perform when upgrading an Agate server. Go through every version between the
 one installed and the one being deployed.
 
-## 4.3.0
+## 5.0.0
 
 ### Before upgrading
 
