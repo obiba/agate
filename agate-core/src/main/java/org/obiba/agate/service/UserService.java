@@ -250,15 +250,27 @@
       log.debug("Changed information for User: {}", currentUser);
     }
 
-    public void updateUserPassword(@Nonnull User user, @Nonnull String password) {
-      if (user == null) throw new BadRequestException("Invalid User");
+    /**
+     * Check the password against the policy: not empty, length bounds and character classes.
+     *
+     * @param password
+     * @throws BadRequestException
+     * @throws PasswordTooShortException
+     * @throws PasswordTooLongException
+     * @throws PasswordTooWeakException
+     */
+    public void validatePassword(String password) {
       if (Strings.isNullOrEmpty(password)) throw new BadRequestException("User password cannot be empty");
-      if (!user.getRealm().equals(AgateRealm.AGATE_USER_REALM.getName()))
-        throw new BadRequestException("User password cannot be changed");
       if (password.length() < PWD_MINIMUM_LENGTH) throw new PasswordTooShortException(PWD_MINIMUM_LENGTH);
       if (password.length() > PWD_MAXIMUM_LENGTH) throw new PasswordTooLongException(PWD_MAXIMUM_LENGTH);
-
       if (!PWD_PATTERN.matcher(password).matches()) throw new PasswordTooWeakException();
+    }
+
+    public void updateUserPassword(@Nonnull User user, @Nonnull String password) {
+      if (user == null) throw new BadRequestException("Invalid User");
+      if (!user.getRealm().equals(AgateRealm.AGATE_USER_REALM.getName()))
+        throw new BadRequestException("User password cannot be changed");
+      validatePassword(password);
 
       UserCredentials userCredentials = findUserCredentials(user.getName());
       String hashedPassword = hashPassword(password);
@@ -439,7 +451,7 @@
         userCredentials = UserCredentials.newBuilder().name(user.getName()).build();
       }
 
-      if (!PWD_PATTERN.matcher(password).matches()) throw new PasswordTooWeakException();
+      validatePassword(password);
 
       userCredentials.setPassword(hashPassword(password));
       userCredentials.setLastModifiedDate(new DateTime());
