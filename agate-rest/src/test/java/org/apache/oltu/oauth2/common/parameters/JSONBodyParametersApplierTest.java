@@ -21,8 +21,8 @@
 
 package org.apache.oltu.oauth2.common.parameters;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +31,7 @@ import org.apache.oltu.oauth2.common.OAuth;
 import org.apache.oltu.oauth2.common.message.OAuthMessage;
 import org.apache.oltu.oauth2.common.utils.DummyOAuthMessage;
 import org.apache.oltu.oauth2.common.utils.JSONUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -61,7 +61,7 @@ public class JSONBodyParametersApplierTest {
 
         String msgBody = message.getBody();
         Map<String, Object> map = JSONUtils.parseJSON(msgBody);
-        assertEquals(3600L, map.get(OAuth.OAUTH_EXPIRES_IN));
+        assertEquals(3600L, ((Number) map.get(OAuth.OAUTH_EXPIRES_IN)).longValue());
         assertEquals("token_authz", map.get(OAuth.OAUTH_ACCESS_TOKEN));
         assertEquals("code_", map.get(OAuth.OAUTH_CODE));
         assertEquals("read", map.get(OAuth.OAUTH_SCOPE));

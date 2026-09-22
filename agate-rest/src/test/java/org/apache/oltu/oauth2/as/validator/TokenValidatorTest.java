@@ -26,8 +26,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.apache.oltu.oauth2.as.validator.TokenValidator;
 import org.apache.oltu.oauth2.common.OAuth;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import static org.easymock.EasyMock.*;
 
@@ -70,7 +70,7 @@ public class TokenValidatorTest {
 
         try {
             validator.validateMethod(request);
-            Assert.fail("Expected validation exception");
+            Assertions.fail("Expected validation exception");
         } catch (OAuthProblemException e) {
             //ok, expected
         }

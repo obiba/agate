@@ -27,8 +27,8 @@ import java.util.Map;
 import org.apache.oltu.oauth2.common.OAuth;
 import org.apache.oltu.oauth2.common.message.OAuthMessage;
 import org.apache.oltu.oauth2.common.utils.DummyOAuthMessage;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -56,14 +56,14 @@ public class QueryParameterApplierTest {
         app.applyOAuthParameters(message, params);
 
         String locationURI = message.getLocationUri();
-        Assert.assertTrue(locationURI.contains("3600"));
-        Assert.assertTrue(locationURI.contains("token_authz"));
-        Assert.assertTrue(locationURI.contains("code_"));
-        Assert.assertTrue(locationURI.contains("read"));
-        Assert.assertTrue(locationURI.contains("state"));
+        Assertions.assertTrue(locationURI.contains("3600"));
+        Assertions.assertTrue(locationURI.contains("token_authz"));
+        Assertions.assertTrue(locationURI.contains("code_"));
+        Assertions.assertTrue(locationURI.contains("read"));
+        Assertions.assertTrue(locationURI.contains("state"));
 
-        Assert.assertTrue(!locationURI.contains("empty_param"));
-        Assert.assertTrue(!locationURI.contains("null_param"));
+        Assertions.assertTrue(!locationURI.contains("empty_param"));
+        Assertions.assertTrue(!locationURI.contains("null_param"));
 
 
     }

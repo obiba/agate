@@ -5,8 +5,8 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
 import org.easymock.EasyMock;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.obiba.agate.service.ConfigurationService;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,7 +16,7 @@ public class CSRFTokenHelperTest {
 
   private final ConfigurationService mockConfigurationService = createMock(ConfigurationService.class);
 
-  @Before
+  @BeforeEach
   public void setUp() {
     expect(mockConfigurationService.getContextPath()).andReturn("/").anyTimes();
     replay(mockConfigurationService);

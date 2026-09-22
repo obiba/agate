@@ -10,10 +10,8 @@
 
 package org.obiba.agate.web.rest.user;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -38,10 +36,7 @@ public class UsersResourceTest {
   @Mock
   private ConfigurationService configurationService;
 
-  @Rule
-  public ExpectedException exception = ExpectedException.none();
-
-  @Before
+  @BeforeEach
   public void init() {
     MockitoAnnotations.initMocks(this);
     User user = User.newBuilder().name("toto").build();

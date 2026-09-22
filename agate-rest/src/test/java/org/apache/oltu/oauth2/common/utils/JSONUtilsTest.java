@@ -21,14 +21,14 @@
 
 package org.apache.oltu.oauth2.common.utils;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.oltu.oauth2.common.error.OAuthError;
 import org.apache.oltu.oauth2.common.utils.JSONUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *

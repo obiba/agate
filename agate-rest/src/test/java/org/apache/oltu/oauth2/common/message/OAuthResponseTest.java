@@ -20,10 +20,10 @@
  */
 package org.apache.oltu.oauth2.common.message;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.oltu.oauth2.common.message.OAuthResponse;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *

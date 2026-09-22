@@ -10,7 +10,7 @@
 
 package org.obiba.agate.web.model;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.obiba.agate.domain.Configuration;
 
 import static org.assertj.core.api.Assertions.assertThat;

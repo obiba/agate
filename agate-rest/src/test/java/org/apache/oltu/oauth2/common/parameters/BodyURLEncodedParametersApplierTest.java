@@ -27,8 +27,8 @@ import java.util.Map;
 import org.apache.oltu.oauth2.common.OAuth;
 import org.apache.oltu.oauth2.common.message.OAuthMessage;
 import org.apache.oltu.oauth2.common.utils.DummyOAuthMessage;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -58,14 +58,14 @@ public class BodyURLEncodedParametersApplierTest {
         app.applyOAuthParameters(message, params);
 
         String body = message.getBody();
-        Assert.assertTrue(body.contains("3600"));
-        Assert.assertTrue(body.contains("token_authz"));
-        Assert.assertTrue(body.contains("code_"));
-        Assert.assertTrue(body.contains("read"));
-        Assert.assertTrue(body.contains("state"));
+        Assertions.assertTrue(body.contains("3600"));
+        Assertions.assertTrue(body.contains("token_authz"));
+        Assertions.assertTrue(body.contains("code_"));
+        Assertions.assertTrue(body.contains("read"));
+        Assertions.assertTrue(body.contains("state"));
 
-        Assert.assertFalse(body.contains("empty_param"));
-        Assert.assertFalse(body.contains("null_param"));
+        Assertions.assertFalse(body.contains("empty_param"));
+        Assertions.assertFalse(body.contains("null_param"));
 
 
     }

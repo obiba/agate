@@ -27,8 +27,8 @@ import org.apache.oltu.oauth2.common.error.OAuthError;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.utils.JSONUtils;
 import org.apache.oltu.oauth2.common.utils.OAuthUtils;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
@@ -36,7 +36,7 @@ import java.io.InputStream;
 import java.util.*;
 
 import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 /**
  *
  *
@@ -47,7 +47,7 @@ public class OAuthUtilsTest {
     private static final String BASIC_PREFIX = "Basic ";
 
     @Test
-    @Ignore
+    @Disabled
     // TODO what are testing here?
     public void testBuildJSON() throws Exception {
         Map<String, Object> params = new HashMap<String, Object>();
