@@ -11,10 +11,8 @@
 package org.obiba.agate.service;
 
 import com.google.common.eventbus.EventBus;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -30,8 +28,8 @@ import org.obiba.agate.repository.UserCredentialsRepository;
 import org.obiba.agate.repository.UserRepository;
 import org.springframework.core.env.Environment;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -61,10 +59,7 @@ public class UserServiceTest {
   @Spy
   private PasswordHasher passwordHasher = new PasswordHasher("salt", 1);
 
-  @Rule
-  public ExpectedException exception = ExpectedException.none();
-
-  @Before
+  @BeforeEach
   public void init() {
     MockitoAnnotations.initMocks(this);
     when(environment.containsProperty(anyString())).thenReturn(true);

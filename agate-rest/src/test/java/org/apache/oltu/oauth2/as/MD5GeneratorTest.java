@@ -24,9 +24,10 @@ package org.apache.oltu.oauth2.as;
 import org.apache.oltu.oauth2.as.issuer.MD5Generator;
 import org.apache.oltu.oauth2.as.issuer.ValueGenerator;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MD5GeneratorTest {
 
@@ -42,8 +43,8 @@ public class MD5GeneratorTest {
         assertNotNull(g.generateValue("test"));
     }
 
-    @Test(expected = OAuthSystemException.class)
+    @Test
     public void testGenerateValueFailsWithParameterNull() throws Exception {
-        g.generateValue(null);
+        assertThrows(OAuthSystemException.class, () -> g.generateValue(null));
     }
 }

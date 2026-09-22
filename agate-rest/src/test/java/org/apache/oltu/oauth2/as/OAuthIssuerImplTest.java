@@ -24,9 +24,9 @@ package org.apache.oltu.oauth2.as;
 import org.apache.oltu.oauth2.as.issuer.MD5Generator;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class OAuthIssuerImplTest {
     private OAuthIssuer issuer = new OAuthIssuerImpl(new MD5Generator());

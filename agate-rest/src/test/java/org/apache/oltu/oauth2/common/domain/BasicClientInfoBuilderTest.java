@@ -22,8 +22,8 @@ package org.apache.oltu.oauth2.common.domain;
 
 import org.apache.oltu.oauth2.common.domain.client.BasicClientInfo;
 import org.apache.oltu.oauth2.common.domain.client.BasicClientInfoBuilder;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -51,14 +51,14 @@ public class BasicClientInfoBuilderTest {
             .setIssuedAt(ISSUED_AT)
             .build();
 
-        Assert.assertNotNull(basicClientInfo);
+        Assertions.assertNotNull(basicClientInfo);
 
-        Assert.assertEquals(CLIENT_ID, basicClientInfo.getClientId());
-        Assert.assertEquals(CLIENT_SECRET, basicClientInfo.getClientSecret());
-        Assert.assertEquals(REDIRECT_URI, basicClientInfo.getRedirectUri());
-        Assert.assertEquals(NAME, basicClientInfo.getName());
-        Assert.assertEquals(ICON_URI, basicClientInfo.getIconUri());
-        Assert.assertEquals(EXPIRES_IN, basicClientInfo.getExpiresIn());
-        Assert.assertEquals(ISSUED_AT, basicClientInfo.getIssuedAt());
+        Assertions.assertEquals(CLIENT_ID, basicClientInfo.getClientId());
+        Assertions.assertEquals(CLIENT_SECRET, basicClientInfo.getClientSecret());
+        Assertions.assertEquals(REDIRECT_URI, basicClientInfo.getRedirectUri());
+        Assertions.assertEquals(NAME, basicClientInfo.getName());
+        Assertions.assertEquals(ICON_URI, basicClientInfo.getIconUri());
+        Assertions.assertEquals(EXPIRES_IN, basicClientInfo.getExpiresIn());
+        Assertions.assertEquals(ISSUED_AT, basicClientInfo.getIssuedAt());
     }
 }

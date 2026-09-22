@@ -13,10 +13,8 @@ package org.obiba.agate.web.rest.user;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -33,7 +31,9 @@ import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.core.MultivaluedHashMap;
 import jakarta.ws.rs.core.MultivaluedMap;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 public class UsersJoinResourceTests {
@@ -50,10 +50,7 @@ public class UsersJoinResourceTests {
   @Mock
   private ConfigurationService configurationService;
 
-  @Rule
-  public ExpectedException exception = ExpectedException.none();
-
-  @Before
+  @BeforeEach
   public void init() {
     MockitoAnnotations.initMocks(this);
 
@@ -70,7 +67,7 @@ public class UsersJoinResourceTests {
       ((User) args[0]).setId("id");
 
       return null;
-    }).when(userService).createUser(any(User.class), any(String.class), true);
+    }).when(userService).createUser(any(User.class), any(String.class), eq(true));
   }
 
   @Test
@@ -84,7 +81,7 @@ public class UsersJoinResourceTests {
     params.put("att2", Lists.newArrayList("foo"));
 
     resource.create(request, params);
-    verify(userService).createUser(user.capture(), eq("password"), true);
+    verify(userService).createUser(user.capture(), eq("password"), eq(true));
     assertEquals("id", user.getValue().getId());
     assertEquals("test@localhost.domain", user.getValue().getEmail());
     assertEquals("fr", user.getValue().getPreferredLanguage());
@@ -97,12 +94,12 @@ public class UsersJoinResourceTests {
   public void testUsersJoinMissingAttribute() {
     HttpServletRequest request = mock(HttpServletRequest.class);
 
-    exception.expect(BadRequestException.class);
-    exception.expectMessage(Matchers.containsString("att1"));
-
     MultivaluedMap<String, String> params = getParameters();
     params.put("att2", Lists.newArrayList("foo"));
-    resource.create(request, params);
+
+    BadRequestException exception =
+        assertThrows(BadRequestException.class, () -> resource.create(request, params));
+    assertThat(exception.getMessage(), Matchers.containsString("att1"));
   }
 
   private MultivaluedMap<String, String> getParameters() {

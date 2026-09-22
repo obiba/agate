@@ -16,8 +16,8 @@ import jakarta.ws.rs.core.Response;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -32,8 +32,7 @@ import org.obiba.agate.web.rest.security.AuthorizationValidator;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import static org.easymock.EasyMock.anyObject;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
@@ -76,11 +75,11 @@ public class TicketsResourceTests {
   @Mock
   private PrincipalCollection principalColl;
 
-  @Before
+  @BeforeEach
   public void init() {
     MockitoAnnotations.initMocks(this);
     when(ticketService.findByUsername(anyString())).thenReturn(Lists.newArrayList());
-    when(tokenUtils.makeAccessToken(anyObject())).thenReturn("token123");
+    when(tokenUtils.makeAccessToken(any())).thenReturn("token123");
     when(applicationService.isValid(anyString(), anyString())).thenReturn(true);
     Configuration configuration = new Configuration();
     configuration.setLongTimeout(30000);
@@ -107,6 +106,8 @@ public class TicketsResourceTests {
     group.setApplications(Sets.newHashSet("mica"));
 
     when(userService.findActiveUser(anyString())).thenReturn(user);
+    // login() refreshes the user after a successful authentication
+    when(userService.getUser(user.getId())).thenReturn(user);
     when(groupService.findGroup("group1")).thenReturn(group);
 
     Response res = ticketsResource.login(httpServletRequest, false, false, "toto", "password", "Basic bWljYTpwYXNzd29yZA=="); //Basic mica:password

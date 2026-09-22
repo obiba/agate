@@ -25,13 +25,14 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.oltu.oauth2.common.OAuth;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.easymock.EasyMock.createStrictMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.reset;
 import static org.easymock.EasyMock.verify;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  *
@@ -62,7 +63,7 @@ public class AbstractValidatorTest {
         verify(request);
     }
 
-    @Test(expected = OAuthProblemException.class)
+    @Test
     public void testInvalidContentType() throws Exception {
         HttpServletRequest request = createStrictMock(HttpServletRequest.class);
 
@@ -70,7 +71,7 @@ public class AbstractValidatorTest {
         replay(request);
 
         AbstractValidator validator = new AbstractValidatorImpl();
-        validator.validateContentType(request);
+        assertThrows(OAuthProblemException.class, () -> validator.validateContentType(request));
         verify(request);
     }
 }

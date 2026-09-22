@@ -22,7 +22,7 @@
 package org.apache.oltu.oauth2.as.response;
 
 import static org.easymock.EasyMock.*;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -31,7 +31,7 @@ import org.apache.oltu.oauth2.common.OAuth;
 import org.apache.oltu.oauth2.common.error.OAuthError;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.message.OAuthResponse;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *

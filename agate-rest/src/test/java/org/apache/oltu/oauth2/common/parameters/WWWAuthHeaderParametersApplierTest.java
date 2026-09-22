@@ -21,8 +21,8 @@
 
 package org.apache.oltu.oauth2.common.parameters;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +31,7 @@ import org.apache.oltu.oauth2.common.OAuth;
 import org.apache.oltu.oauth2.common.message.OAuthResponse;
 import org.apache.oltu.oauth2.common.parameters.OAuthParametersApplier;
 import org.apache.oltu.oauth2.common.parameters.WWWAuthHeaderParametersApplier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *

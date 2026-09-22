@@ -21,8 +21,9 @@
 
 package org.apache.oltu.oauth2.as;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import org.apache.oltu.oauth2.as.issuer.UUIDValueGenerator;
 
@@ -31,12 +32,12 @@ import org.apache.oltu.oauth2.as.issuer.UUIDValueGenerator;
  *
  *
  */
-public class UUIDValueGeneratorTest extends Assert {
+public class UUIDValueGeneratorTest {
     @Test
     public void testGenerateValue() throws Exception {
         UUIDValueGenerator uvg = new UUIDValueGenerator();
-        Assert.assertNotNull(uvg.generateValue());
+        Assertions.assertNotNull(uvg.generateValue());
 
-        Assert.assertNotNull(uvg.generateValue("test"));
+        Assertions.assertNotNull(uvg.generateValue("test"));
     }
 }
