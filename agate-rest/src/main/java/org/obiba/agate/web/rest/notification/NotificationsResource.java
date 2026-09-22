@@ -33,6 +33,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import jakarta.inject.Inject;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -85,6 +86,14 @@ public class NotificationsResource extends ApplicationAwareResource {
 
     validateApplication(authHeader);
 
+    // when the caller provides a reCAPTCHA response, it must be a valid one: this is what makes the check
+    // effective for the public forms (contact us, ...) that are relayed to this endpoint by an application.
+    // Note that the presence of the response is the calling application's responsibility, and that
+    // ReCaptchaService.verify() returns true when reCAPTCHA is not configured server-side.
+    String reCaptcha = formParams.getFirst("reCaptcha");
+    if (reCaptcha != null && !reCaptchaService.verify(reCaptcha))
+      throw new BadRequestException("Invalid reCaptcha response");
+
     Set<User> recipients = Sets.newHashSet();
     if ((usernames == null || usernames.isEmpty()) && (groups == null || groups.isEmpty())) {
       // all users having access to the application
@@ -98,7 +107,7 @@ public class NotificationsResource extends ApplicationAwareResource {
 
     if (Strings.isNullOrEmpty(template)) sendPlainEmail(subject, body, recipients);
     else {
-      List<String> reservedKeys = Lists.newArrayList("username", "group", "subject", "body", "template");
+      List<String> reservedKeys = Lists.newArrayList("username", "group", "subject", "body", "template", "reCaptcha");
       Map<String, String[]> context = Maps.newHashMap();
       formParams.entrySet().stream()
           .filter(entry -> !reservedKeys.contains(entry.getKey()))
@@ -136,10 +145,6 @@ public class NotificationsResource extends ApplicationAwareResource {
         ctx.put(k, v);
       }
     });
-
-    if (ctx.containsKey("reCaptcha")) {
-      reCaptchaService.verify(ctx.get("reCaptcha").toString());
-    }
 
     for (User rec : recipients) {
       Locale locale = LocaleUtils.toLocale(rec.getPreferredLanguage());
