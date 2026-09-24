@@ -45,7 +45,7 @@
     <dropwizard-metrics.version>4.2.39</dropwizard-metrics.version>
     <easymock.version>5.6.0</easymock.version>
     <ehcache.version>3.10.8</ehcache.version>
-    <freemarker.version>2.3.34</freemarker.version>
+    <freemarker.version>2.3.35</freemarker.version>
     <guava.version>33.6.0-jre</guava.version>
     <javax.inject.version>1</javax.inject.version>
     <jersey.version>3.1.12</jersey.version>
