@@ -143,6 +143,13 @@ Install the new version and restart as usual. No database migration runs at star
    3. Customised `mica.email.studyStatusChanged.*` messages meant to cover harmonization
       initiatives too: repeat them under `mica.email.harmonizationStudyStatusChanged.*`.
 
+9. **Mica publication notifications.** New bundled templates for Mica's notification sent
+   when a study, harmonization initiative, network, dataset or project is published or
+   unpublished: `<type>Published.ftl` (`individual-study`, `harmonization-study`, `network`,
+   `collected-dataset`, `harmonized-dataset`, `project`), with `mica.email.*Published.*`
+   messages. An application with a complete folder of its own and no fallback (see 7) does
+   not get them: copy them into its folder, or set its fallback to `mica`.
+
 ### In the following weeks
 
 Passwords and application keys are re-hashed with Argon2id on the next successful
