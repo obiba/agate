@@ -25,6 +25,10 @@ export const useApplicationStore = defineStore('application', () => {
     return api.delete(`/application/${application.id}`);
   }
 
+  async function getNotificationTemplates(): Promise<string[]> {
+    return api.get('/applications/_notification-templates').then((response) => response.data);
+  }
+
   function getApplication(id: string | undefined) {
     return applications.value?.find((app) => app.id === id);
   }
@@ -65,6 +69,7 @@ export const useApplicationStore = defineStore('application', () => {
     init,
     save,
     remove,
+    getNotificationTemplates,
     generateKey,
     getApplicationName,
     getApplication,
