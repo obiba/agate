@@ -8,6 +8,14 @@ message SessionDto {
   required string realm = 3;
 }
 
+// Kept in sync by hand with the message of the same name in obiba-commons' OIDCDtos.proto: the agate-ui build
+// (agate-ui/Makefile, target "proto") only generates TypeScript from this file, not from other repos.
+message OIDCAuthProviderSummaryDto {
+  required string name = 1;
+  optional string title = 2;
+  optional string providerUrl = 3;
+}
+
 message AuthorizationDto {
   required string id = 1;
   required string username = 2;
@@ -151,6 +159,7 @@ message ApplicationDto {
   repeated ScopeDto scopes = 7;
   optional bool autoApproval = 8;
   repeated RealmGroupsDto realmGroups = 9;
+  optional string notificationsTemplate = 10;
 }
 
 message ConfirmForm {
