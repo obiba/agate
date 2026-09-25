@@ -14,7 +14,7 @@
       <div
               style="padding: 20px 30px;border-top-right-radius: 10px;border-top-left-radius: 10px;background-color: gainsboro;">
         <div style="font-size:22px !important;font-weight: bold;color: inherit;margin-top: 0;margin-bottom: 0;font-size: 17px;">
-          ${msg("mica.email.studyDatasetStatusChanged.title", organization)}
+          ${msg("mica.email.collectedDatasetStatusChanged.title", organization)}
         </div>
       </div>
       <div style="padding: 30px;">
@@ -24,22 +24,22 @@
         <p style="margin: 0 0 30px;">
           <#switch status>
             <#case "DRAFT">
-              ${msg("mica.email.studyDatasetStatusChanged.body.draft", documentId)}
+              ${msg("mica.email.collectedDatasetStatusChanged.body.draft", documentId)}
               <#break>
             <#case "UNDER_REVIEW">
-              ${msg("mica.email.studyDatasetStatusChanged.body.underReview", documentId)}
+              ${msg("mica.email.collectedDatasetStatusChanged.body.underReview", documentId)}
               <#break>
             <#case "DELETED">
-              ${msg("mica.email.studyDatasetStatusChanged.body.deleted", documentId)}
+              ${msg("mica.email.collectedDatasetStatusChanged.body.deleted", documentId)}
               <#break>
             <#default>
-              ${msg("mica.email.studyDatasetStatusChanged.body.other", documentId, status)}
+              ${msg("mica.email.collectedDatasetStatusChanged.body.other", documentId, status)}
           </#switch>
         </p>
         <p style="margin: 0 0 30px;">
         </p><p style="margin: auto;text-align: center;">
           <a href="${publicUrl}/admin#/${documentType}/${documentId}" target="_blank"
-             style="color:#1f2d3d;font-weight:bold;background-color:#ffc107;padding:10px 20px;border-radius:15px;text-decoration:none;display: inline-block;margin-bottom: 0;font-weight: normal;text-align: center;vertical-align: middle;-ms-touch-action: manipulation;touch-action: manipulation;cursor: pointer;white-space: nowrap;padding: 10px 15px;border-radius: 10px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;">${msg("mica.email.studyDatasetStatusChanged.link")}</a>
+             style="color:#1f2d3d;font-weight:bold;background-color:#ffc107;padding:10px 20px;border-radius:15px;text-decoration:none;display: inline-block;margin-bottom: 0;font-weight: normal;text-align: center;vertical-align: middle;-ms-touch-action: manipulation;touch-action: manipulation;cursor: pointer;white-space: nowrap;padding: 10px 15px;border-radius: 10px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;">${msg("mica.email.collectedDatasetStatusChanged.link")}</a>
         </p>
       </div>
     </div>

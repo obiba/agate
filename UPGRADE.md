@@ -122,6 +122,27 @@ Install the new version and restart as usual. No database migration runs at star
    5. Check: trigger one notification from each Mica (e.g. submit a data access request)
       and verify it is received.
 
+8. **Mica dataset status notifications.** The bundled templates are renamed to the dataset
+   type names Mica sends. Under the old names, Mica (3.0 and later) could not find them,
+   so dataset status notifications were not sent.
+
+   | Old | New |
+   |---|---|
+   | `study-datasetStatusChanged.ftl` | `collected-datasetStatusChanged.ftl` |
+   | `harmonization-datasetStatusChanged.ftl` | `harmonized-datasetStatusChanged.ftl` |
+   | `mica.email.studyDatasetStatusChanged.*` | `mica.email.collectedDatasetStatusChanged.*` |
+   | `mica.email.harmonizationDatasetStatusChanged.*` | `mica.email.harmonizedDatasetStatusChanged.*` |
+
+   Harmonization initiative status notifications now use their own
+   `mica.email.harmonizationStudyStatusChanged.*` keys instead of the individual study ones.
+
+   1. No overridden templates or messages: nothing to do.
+   2. An overridden `study-datasetStatusChanged.ftl` or `harmonization-datasetStatusChanged.ftl`
+      was never used: rename it to its new name if you still want it, and use the new keys in
+      it.
+   3. Customised `mica.email.studyStatusChanged.*` messages meant to cover harmonization
+      initiatives too: repeat them under `mica.email.harmonizationStudyStatusChanged.*`.
+
 ### In the following weeks
 
 Passwords and application keys are re-hashed with Argon2id on the next successful
