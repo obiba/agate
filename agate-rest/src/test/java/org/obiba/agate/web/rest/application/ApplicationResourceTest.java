@@ -57,4 +57,16 @@ public class ApplicationResourceTest {
     assertFalse(application.hasNotificationsTemplate());
     verify(applicationService).save(application);
   }
+
+  @Test
+  public void testUpdateKeepsNotificationsTemplateWhenNotProvided() {
+    Application application = new Application("mica-a");
+    application.setNotificationsTemplate("mica");
+    when(applicationService.getApplication("mica-a")).thenReturn(application);
+
+    resource.updateApplication("mica-a", Agate.ApplicationDto.newBuilder().setName("mica-a").build());
+
+    assertEquals("mica", application.getNotificationsTemplate());
+    verify(applicationService).save(application);
+  }
 }
