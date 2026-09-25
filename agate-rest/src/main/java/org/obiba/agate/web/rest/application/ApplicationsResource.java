@@ -17,11 +17,14 @@ import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.obiba.agate.domain.Application;
 import org.obiba.agate.service.ApplicationService;
+import org.obiba.agate.service.NotificationTemplateService;
 import org.obiba.agate.web.model.Agate;
 import org.obiba.agate.web.model.Dtos;
 import org.springframework.stereotype.Component;
@@ -38,6 +41,9 @@ public class ApplicationsResource {
   @Inject
   private Dtos dtos;
 
+  @Inject
+  private NotificationTemplateService notificationTemplateService;
+
   @GET
   public List<Agate.ApplicationDto> get() {
     ImmutableList.Builder<Agate.ApplicationDto> builder = ImmutableList.builder();
@@ -47,6 +53,18 @@ public class ApplicationsResource {
     }
 
     return builder.build();
+  }
+
+  /**
+   * Names of the notification template folders an application can fall back to.
+   *
+   * @return
+   */
+  @GET
+  @Path("/_notification-templates")
+  @Produces(MediaType.APPLICATION_JSON)
+  public List<String> getNotificationTemplates() {
+    return notificationTemplateService.getFolders();
   }
 
   @POST

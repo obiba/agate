@@ -91,7 +91,7 @@ import type { AxiosError } from 'axios';
 import { contextPath } from 'src/boot/api';
 import { Cookies } from 'quasar';
 import { locales } from 'src/boot/i18n';
-import type { OIDCAuthProviderSummaryDto } from 'src/models/Agate';
+import type { OIDCAuthProviderSummaryDto } from 'src/models/Oidc';
 import { baseUrl } from 'src/boot/api';
 import { notifyError } from 'src/utils/notify';
 

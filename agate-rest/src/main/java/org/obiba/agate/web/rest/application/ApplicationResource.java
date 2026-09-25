@@ -58,6 +58,7 @@ public class ApplicationResource {
     Application application = applicationService.getApplication(id);
     application.setDescription(dto.getDescription());
     application.setRedirectURI(dto.getRedirectURI());
+    if (dto.hasNotificationsTemplate()) application.setNotificationsTemplate(dto.getNotificationsTemplate());
     application.setScopes(Lists.newArrayList());
     dto.getScopesList().forEach(s -> application.addScope(s.getName(), s.getDescription()));
     if (dto.hasKey()) application.setKey(applicationService.hashKey(dto.getKey()));

@@ -18,7 +18,9 @@ import com.google.common.collect.Sets;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import org.apache.commons.lang3.LocaleUtils;
+import org.obiba.agate.domain.Application;
 import org.obiba.agate.domain.User;
+import org.obiba.agate.service.ApplicationService;
 import org.obiba.agate.service.MailService;
 import org.obiba.agate.service.ReCaptchaService;
 import org.obiba.agate.service.UserService;
@@ -39,6 +41,7 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.Response;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -54,6 +57,9 @@ public class NotificationsResource extends ApplicationAwareResource {
 
   @Inject
   private Configuration freemarkerConfiguration;
+
+  @Inject
+  private ApplicationService applicationService;
 
   @Inject
   private MessageSource messageSource;
@@ -125,7 +131,7 @@ public class NotificationsResource extends ApplicationAwareResource {
   /**
    * Send an email by processing a template with request form parameters and the recipient
    * {@link org.obiba.agate.domain.User} as a context. The Template is expected to be located in a folder having
-   * the application name.
+   * the application name, falling back to the default templates folder ({@link #resolveTemplate}) when missing.
    *
    * @param subject
    * @param templateName
@@ -134,8 +140,6 @@ public class NotificationsResource extends ApplicationAwareResource {
    */
   private void sendTemplateEmail(String subject, String templateName, Map<String, String[]> context,
                                  Set<User> recipients) {
-
-    String templateLocation = "notifications/" + getApplicationName() + "/" + templateName + ".ftl";
 
     Map<String, Object> ctx = Maps.newHashMap();
     context.forEach((k, v) -> {
@@ -151,13 +155,47 @@ public class NotificationsResource extends ApplicationAwareResource {
       ctx.put("user", rec);
       ctx.put("msg", new MessageResolverMethod(messageSource, locale));
       try {
-        Template template = freemarkerConfiguration.getTemplate(templateLocation, locale);
+        Template template = resolveTemplate(templateName, locale);
         mailService.sendEmail(rec.getEmail(), subject,
           FreeMarkerTemplateUtils.processTemplateIntoString(template, ctx));
       } catch (Exception e) {
-        log.error("Error while handling template {}", templateLocation, e);
+        log.error("Error while handling template {}", templateName, e);
       }
     }
+  }
+
+  /**
+   * Resolve the notification template of the requesting application, falling back to the application's fallback
+   * templates folder ({@link Application#getNotificationsTemplate()}) when this application has no template of
+   * that name. Not set: no fallback. The fallback applies only when the template file is missing: a template that
+   * fails to parse still fails.
+   *
+   * @param templateName
+   * @param locale
+   * @return
+   * @throws IOException when the template is not found in the application folder nor in the fallback folder
+   */
+  private Template resolveTemplate(String templateName, Locale locale) throws IOException {
+    String appFolder = getApplicationName();
+    String appLocation = "notifications/" + appFolder + "/" + templateName + ".ftl";
+    Template template = freemarkerConfiguration.getTemplate(appLocation, locale, freemarkerConfiguration.getEncoding(locale), true, true);
+    if (template != null) {
+      log.debug("Using template {}", appLocation);
+      return template;
+    }
+
+    Application application = applicationService.findByIdOrName(appFolder);
+    String defaultFolder = application == null ? null : application.getNotificationsTemplate();
+    if (!Strings.isNullOrEmpty(defaultFolder) && !defaultFolder.equals(appFolder)) {
+      String defaultLocation = "notifications/" + defaultFolder + "/" + templateName + ".ftl";
+      template = freemarkerConfiguration.getTemplate(defaultLocation, locale, freemarkerConfiguration.getEncoding(locale), true, true);
+      if (template != null) {
+        log.debug("Application {} has no template {}, using default {}", appFolder, appLocation, defaultLocation);
+        return template;
+      }
+    }
+
+    throw new IOException("Template not found: " + appLocation);
   }
 
   /**

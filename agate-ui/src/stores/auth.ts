@@ -1,7 +1,8 @@
 import type { AxiosResponse } from 'axios';
 import { defineStore } from 'pinia';
 import { api } from 'src/boot/api';
-import type { SessionDto, OIDCAuthProviderSummaryDto } from 'src/models/Agate';
+import type { SessionDto } from 'src/models/Agate';
+import type { OIDCAuthProviderSummaryDto } from 'src/models/Oidc';
 
 export const useAuthStore = defineStore('auth', () => {
   const sid = ref('');

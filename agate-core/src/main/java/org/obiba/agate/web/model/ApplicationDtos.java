@@ -29,6 +29,7 @@ class ApplicationDtos {
 
     if(application.hasDescription()) builder.setDescription(application.getDescription());
     if(application.hasRedirectURI() && !summary) builder.setRedirectURI(application.getRedirectURI());
+    if(application.hasNotificationsTemplate()) builder.setNotificationsTemplate(application.getNotificationsTemplate());
 
     if(application.hasScopes()) builder.addAllScopes(application.getScopes().stream().map(this::asDto)
       .collect(Collectors.toList()));
@@ -55,6 +56,7 @@ class ApplicationDtos {
     application.setDescription(dto.getDescription());
     if(dto.hasKey()) application.setKey(dto.getKey());
     application.setRedirectURI(dto.getRedirectURI());
+    if(dto.hasNotificationsTemplate()) application.setNotificationsTemplate(dto.getNotificationsTemplate());
     application.setScopes(dto.getScopesList().stream().map(this::fromDto).collect(Collectors.toList()));
 
     if (dto.hasAutoApproval()) application.setAutoApproval(dto.getAutoApproval());

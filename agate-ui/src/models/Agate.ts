@@ -162,6 +162,7 @@ export interface ApplicationDto {
   scopes: ApplicationDto_ScopeDto[];
   autoApproval?: boolean | undefined;
   realmGroups: ApplicationDto_RealmGroupsDto[];
+  notificationsTemplate?: string | undefined;
 }
 
 export interface ApplicationDto_ScopeDto {
@@ -240,10 +241,4 @@ export interface RealmConfigSummaryDto {
   description: LocalizedStringDto[];
   status?: RealmStatus | undefined;
   userCount?: number | undefined;
-}
-
-export interface OIDCAuthProviderSummaryDto {
-  name: string;
-  title?: string | undefined;
-  providerUrl?: string | undefined;
 }
