@@ -23,7 +23,8 @@ public class NotificationTemplateServiceTest {
   @Test
   public void testFoldersOfAllLocationsSortedWithoutDuplicates() {
     NotificationTemplateService service = new NotificationTemplateService(new PathMatchingResourcePatternResolver(),
-      "classpath:/notification-templates/first/, classpath:/notification-templates/second/, classpath:/notification-templates/missing/");
+      List.of("classpath:/notification-templates/first/", "classpath:/notification-templates/second/",
+        "classpath:/notification-templates/missing/"));
 
     // own.ftl, directly in notifications/, is an Agate email and not an application folder
     assertEquals(List.of("mica", "mica-a"), service.getFolders());
@@ -32,7 +33,7 @@ public class NotificationTemplateServiceTest {
   @Test
   public void testNoFolders() {
     NotificationTemplateService service = new NotificationTemplateService(new PathMatchingResourcePatternResolver(),
-      "classpath:/notification-templates/missing/");
+      List.of("classpath:/notification-templates/missing/"));
 
     assertTrue(service.getFolders().isEmpty());
   }

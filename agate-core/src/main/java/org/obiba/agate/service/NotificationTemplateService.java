@@ -10,11 +10,8 @@
 
 package org.obiba.agate.service;
 
-import com.google.common.base.Splitter;
-import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -38,31 +35,35 @@ public class NotificationTemplateService {
 
   private static final String NOTIFICATIONS_DIR = "notifications/";
 
+  /**
+   * The FreeMarker template locations holding notification templates, in order of precedence: the ones of the Agate
+   * home ({@code AGATE_HOME/conf} comes first in the classpath) and the bundled ones ({@code WEB-INF/classes}). Plain
+   * {@code classpath:} (not {@code classpath*:}): only the first classpath root is scanned, so that no jar can add a
+   * folder.
+   */
+  private static final List<String> LOCATIONS = List.of("classpath:/templates/", "classpath:/_templates/");
+
   private final ResourcePatternResolver resolver;
 
-  private final List<String> loaderPaths;
+  private final List<String> locations;
 
-  @Inject
-  public NotificationTemplateService(
-    @Value("${spring.freemarker.template-loader-path:classpath:/templates/}") String loaderPaths) {
-    this(new PathMatchingResourcePatternResolver(), loaderPaths);
+  public NotificationTemplateService() {
+    this(new PathMatchingResourcePatternResolver(), LOCATIONS);
   }
 
-  NotificationTemplateService(ResourcePatternResolver resolver, String loaderPaths) {
+  NotificationTemplateService(ResourcePatternResolver resolver, List<String> locations) {
     this.resolver = resolver;
-    this.loaderPaths = Splitter.on(",").trimResults().omitEmptyStrings().splitToList(loaderPaths);
+    this.locations = locations;
   }
 
   /**
-   * Names of the {@code notifications/<name>/} folders holding at least one template, in any of the FreeMarker
-   * template locations (bundled templates and the ones of the Agate home), sorted and without duplicates.
-   *
-   * @return
+   * Names of the {@code notifications/<name>/} folders holding at least one template, in any of the template
+   * locations (bundled templates and the ones of the Agate home), sorted and without duplicates.
    */
   public List<String> getFolders() {
     Set<String> folders = new TreeSet<>();
-    for (String path : loaderPaths) {
-      String pattern = asAllClasspathPattern(path) + NOTIFICATIONS_DIR + "*/*.ftl";
+    for (String location : locations) {
+      String pattern = location + NOTIFICATIONS_DIR + "*/*.ftl";
       try {
         for (Resource resource : resolver.getResources(pattern)) {
           String folder = folderOf(resource);
@@ -73,11 +74,6 @@ public class NotificationTemplateService {
       }
     }
     return new ArrayList<>(folders);
-  }
-
-  private static String asAllClasspathPattern(String path) {
-    String base = path.endsWith("/") ? path : path + "/";
-    return base.startsWith("classpath:") ? "classpath*:" + base.substring("classpath:".length()) : base;
   }
 
   private static String folderOf(Resource resource) throws IOException {
