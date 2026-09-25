@@ -98,6 +98,30 @@ Install the new version and restart as usual. No database migration runs at star
       refused from the credentials form without any QR code being shown; a wrong code
       keeps the 2FA step open with the invalid-code message.
 
+7. **Fallback notification templates.** Each application has a new "Fallback notification
+   templates" setting (administration UI, application dialog). A templated notification
+   (`POST /ws/notifications` with a `template`) is looked up in
+   `notifications/<application name>/<name>.ftl` first; when that file is missing, it is
+   taken from `notifications/<fallback>/<name>.ftl`. The choices are the template folders
+   Agate finds: the bundled `mica` one, and any folder under
+   `AGATE_HOME/conf/templates/notifications/`. The default is "None" (no fallback), for
+   new and existing applications alike, so nothing changes until you set it.
+
+   1. A single Mica whose application is named `mica`: nothing to do.
+   2. Several Micas sharing this Agate: for each application other than `mica`, set the
+      setting to `mica`. Without it, such an application sends no templated
+      notification unless it has a complete folder of its own. If you copied the whole
+      `notifications/mica/` folder under that application's name to work around this,
+      keep only the files you changed and delete the rest.
+   3. Other applications (Opal, Amber, ...) do not use templated notifications: leave
+      "None".
+   4. Overriding a single bundled template is unchanged: a file in
+      `AGATE_HOME/conf/templates/notifications/mica/` replaces the bundled file of the same
+      name, and only that one. It then also applies to every application that falls back
+      to `mica`.
+   5. Check: trigger one notification from each Mica (e.g. submit a data access request)
+      and verify it is received.
+
 ### In the following weeks
 
 Passwords and application keys are re-hashed with Argon2id on the next successful
