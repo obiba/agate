@@ -44,6 +44,12 @@ public class Application extends AbstractAuditableDocument {
 
   private Map<String, List<String>> realmGroups = new HashMap<>();
 
+  /**
+   * Notification templates folder ({@code notifications/<folder>/*.ftl}) used as a fallback for the templates missing
+   * from this application's own folder. Empty/not set: no fallback.
+   */
+  private String notificationsTemplate;
+
   public Application() {
   }
 
@@ -205,6 +211,18 @@ public class Application extends AbstractAuditableDocument {
 
   public void setAutoApproval(boolean autoApproval) {
     this.autoApproval = autoApproval;
+  }
+
+  public boolean hasNotificationsTemplate() {
+    return !Strings.isNullOrEmpty(notificationsTemplate);
+  }
+
+  public String getNotificationsTemplate() {
+    return notificationsTemplate;
+  }
+
+  public void setNotificationsTemplate(String notificationsTemplate) {
+    this.notificationsTemplate = notificationsTemplate;
   }
 
   @Override

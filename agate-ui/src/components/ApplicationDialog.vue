@@ -66,6 +66,16 @@
             dense
             class="q-mb-md"
           />
+          <q-select
+            v-model="selected.notificationsTemplate"
+            :label="t('application.notifications_template')"
+            :hint="t('application.notifications_template_hint')"
+            :options="notificationsTemplateOptions"
+            emit-value
+            map-options
+            dense
+            class="q-mb-md"
+          />
           <q-checkbox v-model="selected.autoApproval" :label="t('application.auto_approval')" dense class="q-mb-xs" />
           <div class="text-hint q-mb-md">
             {{ t('application.auto_approval_hint') }}
@@ -182,11 +192,22 @@ const showDialog = ref(props.modelValue);
 const selected = ref<ApplicationDto>(props.application ?? ({ autoApproval: true } as ApplicationDto));
 const editMode = ref(false);
 const key = ref('');
+const notificationsTemplates = ref<string[]>([]);
 
 const groupOptions = computed(() => groupStore.groups?.map((group) => ({ label: group.name, value: group.id })) ?? []);
 const realmOptions = computed(
   () => realmStore.realms?.map((realm) => ({ label: realm.name, value: realm.id || '' })) ?? [],
 );
+const notificationsTemplateOptions = computed(() => {
+  const folders = [...notificationsTemplates.value];
+  // keep a value whose folder is gone, so that saving does not silently drop it
+  const current = selected.value.notificationsTemplate;
+  if (current && !folders.includes(current)) folders.push(current);
+  return [
+    { label: t('application.notifications_template_none'), value: '' },
+    ...folders.map((folder) => ({ label: folder, value: folder })),
+  ];
+});
 const isValid = computed(
   () =>
     selected.value.name &&
@@ -204,8 +225,19 @@ watch(
   (value) => {
     showDialog.value = value;
     selected.value = props.application ? { ...props.application } : ({ autoApproval: true } as ApplicationDto);
+    selected.value.notificationsTemplate = selected.value.notificationsTemplate ?? '';
     editMode.value = props.application !== undefined;
     key.value = '';
+    if (value) {
+      applicationStore
+        .getNotificationTemplates()
+        .then((folders) => {
+          notificationsTemplates.value = folders;
+        })
+        .catch((err) => {
+          notifyError(err);
+        });
+    }
   },
 );
 
