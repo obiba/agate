@@ -195,7 +195,7 @@ public class NotificationsResourceTest {
     Application application = new Application("Mica-B");
     application.setId("mica-b");
     application.setNotificationsTemplate("mica");
-    when(applicationService.find("mica-b")).thenReturn(application);
+    when(applicationService.findByIdOrName("mica-b")).thenReturn(application);
     when(freemarkerConfiguration.getTemplate(eq("notifications/mica-b/contactUs.ftl"), any(Locale.class), nullable(String.class), eq(true), eq(true)))
       .thenReturn(null);
     when(freemarkerConfiguration.getTemplate(eq("notifications/mica/contactUs.ftl"), any(Locale.class), nullable(String.class), eq(true), eq(true)))
@@ -219,6 +219,20 @@ public class NotificationsResourceTest {
       .getTemplate(eq("notifications/mica/contactUs.ftl"), any(Locale.class), nullable(String.class), anyBoolean(), anyBoolean());
   }
 
+  @Test
+  public void testFallbackFoundWhenApplicationAuthenticatesWithDisplayName() throws IOException {
+    // the calling application sends its display name ("Mica B"), not its id ("mica-b")
+    mockApplication("Mica B");
+    when(freemarkerConfiguration.getTemplate(eq("notifications/Mica B/contactUs.ftl"), any(Locale.class), nullable(String.class), eq(true), eq(true)))
+      .thenReturn(null);
+    when(freemarkerConfiguration.getTemplate(eq("notifications/mica/contactUs.ftl"), any(Locale.class), nullable(String.class), eq(true), eq(true)))
+      .thenReturn(mock(Template.class));
+
+    assertEquals(204, resource.notify(formParams("contactUs", null), APP_AUTH).getStatus());
+
+    verify(mailService).sendEmail(anyString(), eq("subject"), anyString());
+  }
+
   private void mockApplication(String name) {
     mockApplication(name, "mica");
   }
@@ -229,7 +243,7 @@ public class NotificationsResourceTest {
       .thenReturn(Lists.newArrayList(User.newBuilder("user1").build()));
     Application application = new Application(name);
     application.setNotificationsTemplate(notificationsTemplate);
-    when(applicationService.find(name)).thenReturn(application);
+    when(applicationService.findByIdOrName(name)).thenReturn(application);
   }
 
   private MultivaluedMap<String, String> formParams(String template, String reCaptcha) {

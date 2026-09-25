@@ -184,7 +184,7 @@ public class NotificationsResource extends ApplicationAwareResource {
       return template;
     }
 
-    Application application = applicationService.find(appFolder);
+    Application application = applicationService.findByIdOrName(appFolder);
     String defaultFolder = application == null ? null : application.getNotificationsTemplate();
     if (!Strings.isNullOrEmpty(defaultFolder) && !defaultFolder.equals(appFolder)) {
       String defaultLocation = "notifications/" + defaultFolder + "/" + templateName + ".ftl";
