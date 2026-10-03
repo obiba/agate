@@ -19,32 +19,47 @@
           </template>
         </q-input>
       </template>
-      <template v-slot:body-cell-name="props">
-        <q-td :props="props">
-          <a href="javascript:void(0)" @click="onEdit(props.row)">{{ props.value }}</a>
-        </q-td>
-      </template>
-      <template v-slot:body-cell-state="props">
-        <q-td :props="props">
-          <q-badge
-            :color="stateColor(props.row)"
-            :label="t(`notification_templates.states.${stateOf(props.row)}`, { folder: props.row.inheritedFrom })"
-          />
-        </q-td>
-      </template>
-      <template v-slot:body-cell-actions="props">
-        <q-td :props="props" class="text-right">
-          <q-btn flat dense size="sm" icon="edit" :title="t('edit')" @click="onEdit(props.row)" />
-          <q-btn
-            v-if="props.row.custom"
-            flat
-            dense
-            size="sm"
-            :icon="props.row.bundled ? 'restore' : 'delete'"
-            :title="props.row.bundled ? t('notification_templates.revert') : t('delete')"
-            @click="onShowDelete(props.row)"
-          />
-        </q-td>
+      <template v-slot:body="props">
+        <q-tr
+          :props="props"
+          @mouseover="toolsVisible[props.row.name] = true"
+          @mouseleave="toolsVisible[props.row.name] = false"
+        >
+          <q-td key="name" :props="props">
+            <a href="javascript:void(0)" @click="onEdit(props.row)">{{ props.row.name }}</a>
+            <div class="float-right">
+              <q-btn
+                rounded
+                dense
+                flat
+                size="sm"
+                color="secondary"
+                :icon="toolsVisible[props.row.name] ? 'edit' : 'none'"
+                :title="t('edit')"
+                class="q-ml-xs"
+                @click="onEdit(props.row)"
+              />
+              <q-btn
+                v-if="props.row.custom"
+                rounded
+                dense
+                flat
+                size="sm"
+                color="secondary"
+                :icon="toolsVisible[props.row.name] ? (props.row.bundled ? 'restore' : 'delete') : 'none'"
+                :title="props.row.bundled ? t('notification_templates.revert') : t('delete')"
+                class="q-ml-xs"
+                @click="onShowDelete(props.row)"
+              />
+            </div>
+          </q-td>
+          <q-td key="state" :props="props">
+            <q-badge
+              :color="stateColor(props.row)"
+              :label="t(`notification_templates.states.${stateOf(props.row)}`, { folder: props.row.inheritedFrom })"
+            />
+          </q-td>
+        </q-tr>
       </template>
     </q-table>
 
@@ -149,6 +164,7 @@ const NAME_PATTERN = /^[A-Za-z0-9_-]+$/;
 const initialPagination = ref({ descending: false, page: 1, rowsPerPage: 10 });
 const templates = ref<NotificationTemplate[]>([]);
 const filter = ref('');
+const toolsVisible = ref<Record<string, boolean>>({});
 const showEdit = ref(false);
 const showDelete = ref(false);
 const isNew = ref(false);
@@ -164,7 +180,6 @@ const previewError = ref('');
 const columns = computed(() => [
   { name: 'name', label: t('name'), field: 'name', align: DefaultAlignment, sortable: true },
   { name: 'state', label: t('notification_templates.state'), field: 'name', align: DefaultAlignment },
-  { name: 'actions', label: '', field: 'name' },
 ]);
 
 function stateOf(tpl: NotificationTemplate) {
