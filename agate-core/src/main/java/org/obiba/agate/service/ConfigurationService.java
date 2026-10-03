@@ -362,6 +362,12 @@ public class ConfigurationService {
       configuration.setPublicUrl(publicUrl);
       modified = true;
     }
+    // seed portal URL from agate.portal-url (e.g. AGATE_PORTAL_URL env var) when not set
+    String portalUrl = env.getProperty("agate.portal-url");
+    if (!configuration.hasPortalUrl() && !Strings.isNullOrEmpty(portalUrl)) {
+      configuration.setPortalUrl(portalUrl);
+      modified = true;
+    }
     if (modified) agateConfigRepository.save(configuration);
     return configuration;
   }
