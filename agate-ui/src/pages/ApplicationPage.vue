@@ -17,7 +17,21 @@
           </div>
           <fields-list :dbobject="application" :items="items" />
         </div>
-        <div class="col-12 col-md-6"></div>
+        <div class="col-12 col-md-6">
+          <div class="text-h6">{{ t('notification_templates.title') }}</div>
+          <div class="text-help">
+            {{ t('notification_templates.application_hint', { folder: application?.id }) }}
+            <span v-if="application?.notificationsTemplate && application.notificationsTemplate !== application.id">
+              {{ t('notification_templates.fallback_hint', { folder: application.notificationsTemplate }) }}
+            </span>
+          </div>
+          <!-- folder is the name the application authenticates with when sending emails, i.e. its id -->
+          <notification-templates
+            v-if="application?.id"
+            :folder="application.id"
+            :fallback="application.notificationsTemplate"
+          />
+        </div>
       </div>
       <confirm-dialog
         v-model="showDelete"
@@ -35,6 +49,7 @@ import type { FieldItem } from 'src/components/FieldsList.vue';
 import ApplicationDialog from 'src/components/ApplicationDialog.vue';
 import ConfirmDialog from 'src/components/ConfirmDialog.vue';
 import FieldsList from 'src/components/FieldsList.vue';
+import NotificationTemplates from 'src/components/NotificationTemplates.vue';
 import { getDateLabel } from 'src/utils/dates';
 import type { ApplicationDto } from 'src/models/Agate';
 
@@ -49,6 +64,10 @@ const name = computed(() => application.value?.name || id.value);
 const showEdit = ref(false);
 const showDelete = ref(false);
 const selected = ref<ApplicationDto>();
+
+function escapeHtml(text: string) {
+  return text.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+}
 
 const items = computed<FieldItem[]>(() => [
   {
@@ -102,6 +121,14 @@ const items = computed<FieldItem[]>(() => [
         .map((rg) => `<span class="text-caption" title="${rg.groups.join(', ')}">${rg.realm}</span>`)
         .join(' | ');
     },
+  },
+  {
+    field: 'notificationsTemplate',
+    label: t('application.notifications_template'),
+    html: (val: ApplicationDto) =>
+      val?.notificationsTemplate
+        ? `<span class="q-badge flex inline items-center no-wrap q-badge--single-line bg-primary">${escapeHtml(val.notificationsTemplate)}</span>`
+        : '-',
   },
   {
     field: 'lastModified',

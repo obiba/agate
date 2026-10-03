@@ -131,7 +131,7 @@ public class NotificationsResource extends ApplicationAwareResource {
   /**
    * Send an email by processing a template with request form parameters and the recipient
    * {@link org.obiba.agate.domain.User} as a context. The Template is expected to be located in a folder having
-   * the application name, falling back to the default templates folder ({@link #resolveTemplate}) when missing.
+   * the application id, falling back to the default templates folder ({@link #resolveTemplate}) when missing.
    *
    * @param subject
    * @param templateName
@@ -176,7 +176,9 @@ public class NotificationsResource extends ApplicationAwareResource {
    * @throws IOException when the template is not found in the application folder nor in the fallback folder
    */
   private Template resolveTemplate(String templateName, Locale locale) throws IOException {
-    String appFolder = getApplicationName();
+    // the application may authenticate with its id or its name, templates are in the folder named after its id
+    Application application = applicationService.findByIdOrName(getApplicationName());
+    String appFolder = application == null ? getApplicationName() : application.getId();
     String appLocation = "notifications/" + appFolder + "/" + templateName + ".ftl";
     Template template = freemarkerConfiguration.getTemplate(appLocation, locale, freemarkerConfiguration.getEncoding(locale), true, true);
     if (template != null) {
@@ -184,7 +186,6 @@ public class NotificationsResource extends ApplicationAwareResource {
       return template;
     }
 
-    Application application = applicationService.findByIdOrName(appFolder);
     String defaultFolder = application == null ? null : application.getNotificationsTemplate();
     if (!Strings.isNullOrEmpty(defaultFolder) && !defaultFolder.equals(appFolder)) {
       String defaultLocation = "notifications/" + defaultFolder + "/" + templateName + ".ftl";
