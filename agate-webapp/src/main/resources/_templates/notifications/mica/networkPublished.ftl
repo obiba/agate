@@ -14,7 +14,7 @@
       <div
               style="padding: 20px 30px;border-top-right-radius: 10px;border-top-left-radius: 10px;background-color: gainsboro;">
         <div style="font-size:22px !important;font-weight: bold;color: inherit;margin-top: 0;margin-bottom: 0;font-size: 17px;">
-          ${msg("mica.email.harmonizationStudyStatusChanged.title", organization)}
+          ${msg("mica.email.networkPublished.title", organization)}
         </div>
       </div>
       <div style="padding: 30px;">
@@ -22,24 +22,16 @@
           ${msg("email.generic.presentation", user.firstName!"", user.lastName!"")}
         </p>
         <p style="margin: 0 0 30px;">
-          <#switch status>
-            <#case "DRAFT">
-              ${msg("mica.email.harmonizationStudyStatusChanged.body.draft", documentId)}
-              <#break>
-            <#case "UNDER_REVIEW">
-              ${msg("mica.email.harmonizationStudyStatusChanged.body.underReview", documentId)}
-              <#break>
-            <#case "DELETED">
-              ${msg("mica.email.harmonizationStudyStatusChanged.body.deleted", documentId)}
-              <#break>
-            <#default>
-              ${msg("mica.email.harmonizationStudyStatusChanged.body.other", documentId, status)}
-          </#switch>
+          <#if published == "published">
+            ${msg("mica.email.networkPublished.body.published", documentId)}
+          <#else>
+            ${msg("mica.email.networkPublished.body.unpublished", documentId)}
+          </#if>
         </p>
         <p style="margin: 0 0 30px;">
         </p><p style="margin: auto;text-align: center;">
           <a href="${publicUrl}/admin#/${documentType}/${documentId}" target="_blank"
-             style="color:#1f2d3d;font-weight:bold;background-color:#ffc107;padding:10px 20px;border-radius:15px;text-decoration:none;display: inline-block;margin-bottom: 0;font-weight: normal;text-align: center;vertical-align: middle;-ms-touch-action: manipulation;touch-action: manipulation;cursor: pointer;white-space: nowrap;padding: 10px 15px;border-radius: 10px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;">${msg("mica.email.harmonizationStudyStatusChanged.link")}</a>
+             style="color:#1f2d3d;font-weight:bold;background-color:#ffc107;padding:10px 20px;border-radius:15px;text-decoration:none;display: inline-block;margin-bottom: 0;font-weight: normal;text-align: center;vertical-align: middle;-ms-touch-action: manipulation;touch-action: manipulation;cursor: pointer;white-space: nowrap;padding: 10px 15px;border-radius: 10px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;">${msg("mica.email.networkPublished.link")}</a>
         </p>
       </div>
     </div>
