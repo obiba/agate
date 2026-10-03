@@ -223,7 +223,7 @@ public class NotificationsResourceTest {
   public void testFallbackFoundWhenApplicationAuthenticatesWithDisplayName() throws IOException {
     // the calling application sends its display name ("Mica B"), not its id ("mica-b")
     mockApplication("Mica B");
-    when(freemarkerConfiguration.getTemplate(eq("notifications/Mica B/contactUs.ftl"), any(Locale.class), nullable(String.class), eq(true), eq(true)))
+    when(freemarkerConfiguration.getTemplate(eq("notifications/mica-b/contactUs.ftl"), any(Locale.class), nullable(String.class), eq(true), eq(true)))
       .thenReturn(null);
     when(freemarkerConfiguration.getTemplate(eq("notifications/mica/contactUs.ftl"), any(Locale.class), nullable(String.class), eq(true), eq(true)))
       .thenReturn(mock(Template.class));
@@ -242,6 +242,7 @@ public class NotificationsResourceTest {
     when(userService.findActiveUsersByApplication(name))
       .thenReturn(Lists.newArrayList(User.newBuilder("user1").build()));
     Application application = new Application(name);
+    application.setNameAsId();
     application.setNotificationsTemplate(notificationsTemplate);
     when(applicationService.findByIdOrName(name)).thenReturn(application);
   }
