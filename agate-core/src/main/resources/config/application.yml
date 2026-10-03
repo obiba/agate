@@ -10,6 +10,9 @@ spring:
         # HTML auto-escaping of every interpolation; use ?no_esc for trusted markup
         # and ?js_string for values written inside scripts.
         output_format: HTMLOutputFormat()
+        # notification templates are editable by administrators: no class instantiation, no API access
+        new_builtin_class_resolver: safer
+        api_builtin_enabled: false
       charset: UTF-8
       suffix: .ftl
       content-type: text/html;charset=UTF-8

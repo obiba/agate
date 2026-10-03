@@ -18,6 +18,7 @@
     "InjectionKey": true,
     "MaybeRef": true,
     "MaybeRefOrGetter": true,
+    "NotificationTemplate": true,
     "PiniaCustomProperties": true,
     "PropType": true,
     "Ref": true,

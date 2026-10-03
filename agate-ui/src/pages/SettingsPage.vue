@@ -29,6 +29,17 @@
           <system-user-attributes />
         </div>
       </div>
+      <div class="row q-mt-md">
+        <div class="col-md-6 col-sm-12">
+          <div class="text-h6">
+            {{ t('notification_templates.title') }}
+          </div>
+          <div class="text-help">
+            {{ t('notification_templates.agate_hint') }}
+          </div>
+          <notification-templates />
+        </div>
+      </div>
     </q-page>
   </div>
 </template>
@@ -37,6 +48,7 @@
 import SystemProperties from 'src/components/SystemProperties.vue';
 import SystemUserAttributes from 'src/components/SystemUserAttributes.vue';
 import SystemCustomTranslations from 'src/components/SystemCustomTranslations.vue';
+import NotificationTemplates from 'src/components/NotificationTemplates.vue';
 
 const systemStore = useSystemStore();
 const { t } = useI18n();
