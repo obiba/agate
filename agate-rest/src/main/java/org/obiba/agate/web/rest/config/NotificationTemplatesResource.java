@@ -109,15 +109,19 @@ public class NotificationTemplatesResource {
 
   /**
    * Render a (not necessarily saved) template content, with the current user as the recipient and sample values.
+   *
+   * @param locale language of the rendering, defaults to the template name suffix (e.g. _fr), else English
    */
   @POST
   @Path("/{name}/_preview")
   @Consumes(MediaType.TEXT_PLAIN)
   @Produces(MediaType.TEXT_HTML)
-  public Response preview(@QueryParam("folder") String folder, @PathParam("name") String name, String content) {
+  public Response preview(@QueryParam("folder") String folder, @PathParam("name") String name,
+                          @QueryParam("locale") String localeParam, String content) {
     return handle(() -> {
       Matcher matcher = LOCALE_SUFFIX.matcher(name);
-      Locale locale = matcher.find() ? LocaleUtils.toLocale(matcher.group(1)) : Locale.ENGLISH;
+      Locale locale = !Strings.isNullOrEmpty(localeParam) ? LocaleUtils.toLocale(localeParam)
+        : matcher.find() ? LocaleUtils.toLocale(matcher.group(1)) : Locale.ENGLISH;
       User user = currentOrSampleUser();
       Map<String, Object> model = new HashMap<>();
       model.put("msg", new MessageResolverMethod(messageSource, locale));

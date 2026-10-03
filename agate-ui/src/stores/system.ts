@@ -110,10 +110,15 @@ export const useSystemStore = defineStore('system', () => {
     });
   }
 
-  async function previewNotificationTemplate(name: string, content: string, folder?: string): Promise<string> {
+  async function previewNotificationTemplate(
+    name: string,
+    content: string,
+    folder?: string,
+    locale?: string,
+  ): Promise<string> {
     return api
       .post(`/config/notification-templates/${name}/_preview`, content, {
-        params: { folder },
+        params: { folder, locale },
         headers: { 'Content-Type': 'text/plain' },
         responseType: 'text',
       })

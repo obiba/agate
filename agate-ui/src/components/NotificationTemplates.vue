@@ -81,6 +81,16 @@
               <div class="text-help q-mt-sm">{{ t('notification_templates.content_hint') }}</div>
             </q-tab-panel>
             <q-tab-panel name="preview" class="q-px-none">
+              <q-btn-toggle
+                v-if="languages.length > 1"
+                v-model="previewLocale"
+                :options="languages.map((lang) => ({ label: lang.toUpperCase(), value: lang }))"
+                dense
+                no-caps
+                unelevated
+                toggle-color="primary"
+                class="q-mb-sm"
+              />
               <q-banner v-if="previewError" dense class="bg-red-1 text-negative q-mb-xs" style="white-space: pre-wrap">
                 {{ previewError }}
               </q-banner>
@@ -146,6 +156,8 @@ const editName = ref('');
 const editContent = ref('');
 const selected = ref<NotificationTemplate>();
 const tab = ref('edit');
+const languages = computed<string[]>(() => systemStore.configuration.languages || []);
+const previewLocale = ref('');
 const previewHtml = ref('');
 const previewError = ref('');
 
@@ -177,6 +189,7 @@ function onAdd() {
   editName.value = '';
   editContent.value = '';
   tab.value = 'edit';
+  previewLocale.value = defaultPreviewLocale();
   showEdit.value = true;
 }
 
@@ -188,6 +201,7 @@ function onEdit(tpl: NotificationTemplate) {
       editName.value = tpl.name;
       editContent.value = content;
       tab.value = 'edit';
+      previewLocale.value = defaultPreviewLocale();
       showEdit.value = true;
     })
     .catch(notifyError);
@@ -210,6 +224,7 @@ function preview() {
       NAME_PATTERN.test(editName.value) ? editName.value : 'preview',
       editContent.value,
       props.folder,
+      previewLocale.value,
     )
     .then((html) => {
       previewHtml.value = html;
@@ -225,9 +240,15 @@ function preview() {
     });
 }
 
-watch(tab, (value) => {
-  if (value === 'preview') preview();
+watch([tab, previewLocale], () => {
+  if (tab.value === 'preview') preview();
 });
+
+// language of the template name suffix (e.g. confirmationEmail_fr), else the default one
+function defaultPreviewLocale() {
+  const suffix = editName.value.match(/_([a-z]{2})(_[A-Z]{2})?$/)?.[1];
+  return suffix && languages.value.includes(suffix) ? suffix : systemStore.defaultLanguage;
+}
 
 function onShowDelete(tpl: NotificationTemplate) {
   selected.value = tpl;
@@ -240,4 +261,9 @@ function onDelete() {
 }
 
 watch([() => props.folder, () => props.fallback], refresh, { immediate: true });
+
+onMounted(() => {
+  // languages, not loaded by the application page
+  if (!systemStore.configuration.languages) systemStore.init();
+});
 </script>
