@@ -123,6 +123,9 @@ declare global {
   // @ts-ignore
   export type { PiniaCustomProperties } from './stores/index'
   import('./stores/index')
+  // @ts-ignore
+  export type { NotificationTemplate } from './stores/system'
+  import('./stores/system')
 }
 
 // for vue template auto import

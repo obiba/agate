@@ -7,6 +7,14 @@ import type {
   LocalizedStringDto,
 } from 'src/models/Agate';
 
+export interface NotificationTemplate {
+  name: string;
+  bundled: boolean;
+  custom: boolean;
+  // fallback folder, when the template is only there
+  inheritedFrom?: string;
+}
+
 export const useSystemStore = defineStore('system', () => {
   const configurationPublic = ref<PublicConfigurationDto>({} as PublicConfigurationDto);
   const configuration = ref<ConfigurationDto>({} as ConfigurationDto);
@@ -85,6 +93,42 @@ export const useSystemStore = defineStore('system', () => {
     });
   }
 
+  async function getNotificationTemplates(folder?: string): Promise<NotificationTemplate[]> {
+    return api.get('/config/notification-templates', { params: { folder } }).then((response) => response.data);
+  }
+
+  async function getNotificationTemplate(name: string, folder?: string): Promise<string> {
+    return api
+      .get(`/config/notification-templates/${name}`, { params: { folder }, responseType: 'text' })
+      .then((response) => response.data);
+  }
+
+  async function saveNotificationTemplate(name: string, content: string, folder?: string) {
+    return api.put(`/config/notification-templates/${name}`, content, {
+      params: { folder },
+      headers: { 'Content-Type': 'text/plain' },
+    });
+  }
+
+  async function previewNotificationTemplate(
+    name: string,
+    content: string,
+    folder?: string,
+    locale?: string,
+  ): Promise<string> {
+    return api
+      .post(`/config/notification-templates/${name}/_preview`, content, {
+        params: { folder, locale },
+        headers: { 'Content-Type': 'text/plain' },
+        responseType: 'text',
+      })
+      .then((response) => response.data);
+  }
+
+  async function deleteNotificationTemplate(name: string, folder?: string) {
+    return api.delete(`/config/notification-templates/${name}`, { params: { folder } });
+  }
+
   return {
     configuration,
     userAttributes,
@@ -98,5 +142,10 @@ export const useSystemStore = defineStore('system', () => {
     removeAttribute,
     updateTranslation,
     save,
+    getNotificationTemplates,
+    getNotificationTemplate,
+    saveNotificationTemplate,
+    previewNotificationTemplate,
+    deleteNotificationTemplate,
   };
 });
