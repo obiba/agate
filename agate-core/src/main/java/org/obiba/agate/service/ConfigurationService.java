@@ -351,10 +351,18 @@ public class ConfigurationService {
       return getConfiguration();
     }
     Configuration configuration = agateConfigRepository.findAll().get(0);
+    boolean modified = false;
     if (configuration.getSecretKeyJWT() == null) {
       configuration.setSecretKeyJWT(generateJWTSecretKeyString());
-      agateConfigRepository.save(configuration);
+      modified = true;
     }
+    // seed public URL from agate.public-url (e.g. AGATE_PUBLIC_URL env var) when not set
+    String publicUrl = env.getProperty("agate.public-url");
+    if (!configuration.hasPublicUrl() && !Strings.isNullOrEmpty(publicUrl)) {
+      configuration.setPublicUrl(publicUrl);
+      modified = true;
+    }
+    if (modified) agateConfigRepository.save(configuration);
     return configuration;
   }
 
