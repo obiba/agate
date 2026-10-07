@@ -259,6 +259,7 @@ export default {
     preview: 'Preview',
     preview_hint: 'Rendered with you as the recipient and sample values; statements using variables that only the sender provides are skipped.',
     saved: 'Template saved',
+    saved_with_warning: 'Template saved, but it contains an error and will likely not render as expected: {message}',
     revert: 'Revert to default',
     revert_confirm: 'Please confirm reverting the template {name} to its default content',
     overwrite_confirm: 'A custom template {name} already exists, please confirm overwriting it',
