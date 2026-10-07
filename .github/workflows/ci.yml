@@ -48,7 +48,7 @@ jobs:
 
       - name: Deploy Snapshot
         if: github.ref == 'refs/heads/snapshot' && github.event_name == 'push'
-        run: mvn -U -B deploy
+        run: mvn -U -B -Daether.remoteRepositoryFilter.prefixes=false deploy
         env:
           GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
@@ -56,7 +56,7 @@ jobs:
 
       - name: Deploy Release
         if: startsWith(github.ref, 'refs/tags/')
-        run: mvn -B -Prelease deploy
+        run: mvn -B -Prelease -Daether.remoteRepositoryFilter.prefixes=false deploy
         env:
           GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
@@ -64,4 +64,4 @@ jobs:
 
       - name: Maven Install (non-snapshot, non-tag)
         if: github.ref != 'refs/heads/snapshot' && !startsWith(github.ref, 'refs/tags/')
-        run: mvn -U -B install
+        run: mvn -U -B -Daether.remoteRepositoryFilter.prefixes=false install
