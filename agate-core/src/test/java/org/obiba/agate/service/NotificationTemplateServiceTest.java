@@ -23,6 +23,8 @@ import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -33,7 +35,9 @@ public class NotificationTemplateServiceTest {
 
   private NotificationTemplateService service(List<String> locations) {
     return new NotificationTemplateService(new PathMatchingResourcePatternResolver(), locations,
-      "classpath:/notification-templates/second/", home, new Configuration(Configuration.VERSION_2_3_34));
+      "classpath:/notification-templates/second/", home,
+      // Agate runtime default incompatible_improvements, the most lenient parser
+      new Configuration(Configuration.VERSION_2_3_0));
   }
 
   @Test
@@ -95,8 +99,20 @@ public class NotificationTemplateServiceTest {
   @Test
   public void testInvalidTemplateRejected() {
     NotificationTemplateService service = service(List.of());
-    assertThrows(IllegalArgumentException.class, () -> service.write("mica", "two", "<#if>"));
+    for (String content : List.of("<#if\n<p>text</p>", "<#if x", "<#if true>unclosed"))
+      assertThrows(IllegalArgumentException.class, () -> service.write("mica", "two", content), content);
     assertFalse(Files.exists(home.resolve("notifications/mica/two.ftl")));
+  }
+
+  @Test
+  public void testStrictSyntaxErrorSavedWithWarning() throws Exception {
+    NotificationTemplateService service = service(List.of());
+    // parsed as static text by the runtime configuration, rejected by the strict one
+    for (String content : List.of("<#if>", "<#list>", "<#if")) {
+      assertNotNull(service.write("mica", "two", content), content);
+      assertEquals(content, service.read("mica", "two"));
+    }
+    assertNull(service.write("mica", "two", "Hello ${user}"));
   }
 
   @Test

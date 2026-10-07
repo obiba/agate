@@ -151,6 +151,7 @@
 import type { NotificationTemplate } from 'src/stores/system';
 import { DefaultAlignment } from 'src/components/models';
 import ConfirmDialog from 'src/components/ConfirmDialog.vue';
+import { Notify } from 'quasar';
 import { notifyError, notifySuccess } from 'src/utils/notify';
 import { VAceEditor } from 'vue3-ace-editor';
 
@@ -239,9 +240,20 @@ function onTrySave() {
 function onSave() {
   systemStore
     .saveNotificationTemplate(editName.value, editContent.value, props.folder)
-    .then(() => {
+    .then((response) => {
       showEdit.value = false;
-      notifySuccess(t('notification_templates.saved'));
+      if (response.data?.warning) {
+        // kept open: the template is saved but will likely not render as expected
+        Notify.create({
+          type: 'warning',
+          message: t('notification_templates.saved_with_warning', { message: response.data.warning }),
+          multiLine: true,
+          timeout: 0,
+          actions: [{ icon: 'close', color: 'dark' }],
+        });
+      } else {
+        notifySuccess(t('notification_templates.saved'));
+      }
       refresh();
     })
     .catch(notifyError);

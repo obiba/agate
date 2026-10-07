@@ -102,8 +102,9 @@ public class NotificationTemplatesResource {
   @Consumes(MediaType.TEXT_PLAIN)
   public Response save(@QueryParam("folder") String folder, @PathParam("name") String name, String content) {
     return handle(() -> {
-      notificationTemplateService.write(folder, name, content);
-      return Response.ok().build();
+      String warning = notificationTemplateService.write(folder, name, content);
+      return warning == null ? Response.ok().build()
+        : Response.ok(Map.of("warning", warning)).type(MediaType.APPLICATION_JSON).build();
     });
   }
 

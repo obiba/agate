@@ -91,6 +91,13 @@ public class NotificationTemplateService {
 
   private final Configuration freemarkerConfiguration;
 
+  /**
+   * Copy of the FreeMarker configuration used to validate templates only: Agate runs with the default
+   * {@code incompatible_improvements} (2.3.0), in which some syntax errors (such as {@code <#if>}) parse as static
+   * text instead of being rejected.
+   */
+  private final Configuration validationConfiguration;
+
   @Inject
   public NotificationTemplateService(Configuration freemarkerConfiguration) {
     this(new PathMatchingResourcePatternResolver(), LOCATIONS, BUNDLED_LOCATION,
@@ -104,6 +111,8 @@ public class NotificationTemplateService {
     this.bundledLocation = bundledLocation;
     this.homeNotifications = homeTemplates.resolve(NOTIFICATIONS_DIR).toAbsolutePath().normalize();
     this.freemarkerConfiguration = freemarkerConfiguration;
+    this.validationConfiguration = (Configuration) freemarkerConfiguration.clone();
+    this.validationConfiguration.setIncompatibleImprovements(Configuration.VERSION_2_3_34);
   }
 
   /**
@@ -210,18 +219,28 @@ public class NotificationTemplateService {
   /**
    * Save a custom template in the Agate home, after having verified it is a valid FreeMarker template.
    *
+   * @return a warning when the template parses but not with the strict validation configuration (e.g. {@code <#if>}
+   * is output as text), null otherwise
    * @throws IllegalArgumentException when the name is not valid or the template does not parse
    */
-  public void write(String folder, String name, String content) throws IOException {
+  public String write(String folder, String name, String content) throws IOException {
     Path file = resolveFile(folder, name);
+    String text = content == null ? "" : content;
     try {
-      new Template(name + EXT, new StringReader(content == null ? "" : content), freemarkerConfiguration);
+      new Template(name + EXT, new StringReader(text), freemarkerConfiguration);
     } catch (IOException e) {
       throw new IllegalArgumentException(e.getMessage(), e);
     }
+    String warning = null;
+    try {
+      validate(name, text);
+    } catch (IllegalArgumentException e) {
+      warning = e.getMessage();
+    }
     Files.createDirectories(file.getParent());
-    Files.writeString(file, content == null ? "" : content, StandardCharsets.UTF_8);
+    Files.writeString(file, text, StandardCharsets.UTF_8);
     freemarkerConfiguration.clearTemplateCache();
+    return warning;
   }
 
   /**
@@ -231,12 +250,8 @@ public class NotificationTemplateService {
    * @throws IllegalArgumentException when the template does not parse
    */
   public String preview(String name, String content, Map<String, Object> model) throws IOException {
-    Template template;
-    try {
-      template = new Template(name + EXT, new StringReader(content == null ? "" : content), freemarkerConfiguration);
-    } catch (IOException e) {
-      throw new IllegalArgumentException(e.getMessage(), e);
-    }
+    validate(name, content);
+    Template template = new Template(name + EXT, new StringReader(content == null ? "" : content), freemarkerConfiguration);
     StringWriter out = new StringWriter();
     try {
       Environment env = template.createProcessingEnvironment(model, out);
@@ -247,6 +262,19 @@ public class NotificationTemplateService {
       throw new IllegalArgumentException(e.getMessage(), e);
     }
     return out.toString();
+  }
+
+  /**
+   * Verify that the template content parses with the strict validation configuration.
+   *
+   * @throws IllegalArgumentException when the template does not parse
+   */
+  private void validate(String name, String content) {
+    try {
+      new Template(name + EXT, new StringReader(content == null ? "" : content), validationConfiguration);
+    } catch (IOException e) {
+      throw new IllegalArgumentException(e.getMessage(), e);
+    }
   }
 
   /**

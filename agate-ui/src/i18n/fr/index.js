@@ -259,6 +259,7 @@ export default {
     preview: 'Aperçu',
     preview_hint: "Rendu avec vous comme destinataire et des valeurs d'exemple ; les instructions utilisant des variables fournies uniquement par l'expéditeur sont ignorées.",
     saved: 'Modèle enregistré',
+    saved_with_warning: 'Modèle enregistré, mais il contient une erreur et ne sera probablement pas rendu comme prévu : {message}',
     revert: 'Revenir au modèle par défaut',
     revert_confirm: 'Veuillez confirmer le retour du modèle {name} à son contenu par défaut',
     overwrite_confirm: 'Un modèle personnalisé {name} existe déjà, veuillez confirmer son remplacement',
