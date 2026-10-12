@@ -48,6 +48,8 @@
     <freemarker.version>2.3.35</freemarker.version>
     <guava.version>33.6.0-jre</guava.version>
     <javax.inject.version>1</javax.inject.version>
+    <jackson-2-bom.version>2.21.7</jackson-2-bom.version>
+    <jackson-bom.version>3.1.7</jackson-bom.version>
     <jersey.version>3.1.12</jersey.version>
     <jetty.version>12.1.11</jetty.version>
     <jhipsterloaded.version>0.12</jhipsterloaded.version>
