@@ -72,6 +72,10 @@ login:
       - POST:/users
       - PUT:/user/*
       - PUT:/user/*/password
+      - PUT:/user/*/_profile
+      - PUT:/user/*/otp
+      - DELETE:/user/*/otp
+      - PUT:/user/*/role
 
 csrf:
   allowed-agents: curl,python,java,HTTP.jl
