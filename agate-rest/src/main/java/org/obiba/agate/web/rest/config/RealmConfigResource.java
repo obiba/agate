@@ -1,5 +1,6 @@
 package org.obiba.agate.web.rest.config;
 
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.obiba.agate.domain.RealmConfig;
 import org.obiba.agate.service.RealmConfigService;
 import org.obiba.agate.web.model.Agate;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 @Component
 @Scope("request")
 @Path("/config/realm/{name}")
+@RequiresRoles("agate-administrator")
 public class RealmConfigResource {
 
   private final RealmConfigService realmConfigService;

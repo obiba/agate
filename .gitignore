@@ -22,3 +22,4 @@ agate-webapp/src/main/webapp/assets/css/agate.min.css*
 .agent-sandbox
 AGENTS.md
 SECURITY-AUDIT.md
+strix_runs/
