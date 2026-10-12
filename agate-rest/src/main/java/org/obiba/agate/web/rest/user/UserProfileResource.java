@@ -11,10 +11,12 @@
 package org.obiba.agate.web.rest.user;
 
 import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.core.Context;
 
 import org.obiba.agate.domain.User;
 import org.obiba.agate.service.NoSuchUserException;
@@ -36,11 +38,12 @@ public class UserProfileResource extends ApplicationAwareResource {
   private UserService userService;
 
   @GET
-  public AuthDtos.SubjectDto getProfile(@PathParam("username") String username,
+  public AuthDtos.SubjectDto getProfile(@Context HttpServletRequest servletRequest, @PathParam("username") String username,
     @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) {
     validateApplication(authHeader);
     User user = userService.findActiveUser(username);
-    if (user == null) NoSuchUserException.withName(username);
+    if (user == null) throw NoSuchUserException.withName(username);
+    authorizationValidator.validateApplication(servletRequest, user, getApplicationName());
     return dtos.asDto(user, true);
   }
 }

@@ -30,6 +30,7 @@ import org.obiba.agate.web.model.Agate;
 import org.obiba.agate.web.rest.application.ApplicationAwareResource;
 import org.obiba.agate.web.rest.config.JerseyConfiguration;
 import org.obiba.agate.web.rest.security.ClientIPUtils;
+import org.obiba.agate.web.rest.security.InvalidUserApplicationException;
 import org.obiba.shiro.NoSuchOtpException;
 import org.obiba.shiro.authc.UsernamePasswordOtpToken;
 import org.obiba.shiro.realm.ObibaRealm;
@@ -157,12 +158,20 @@ public class TicketsResource extends ApplicationAwareResource {
 
   @GET
   @Path("/subject/{username}")
-  public AuthDtos.SubjectDto get(@PathParam("username") String username, @QueryParam("application") String application,
+  public AuthDtos.SubjectDto get(@Context HttpServletRequest servletRequest, @PathParam("username") String username, @QueryParam("application") String application,
                                  @QueryParam("key") String key, @HeaderParam(ObibaRealm.APPLICATION_AUTH_HEADER) String authHeader) {
     validateApplication(authHeader);
 
     User user = userService.findActiveUser(username);
     if (user == null) user = userService.findActiveUserByEmail(username);
+    if (user != null) {
+      // a user the application has no access to is reported as unknown
+      try {
+        authorizationValidator.validateApplication(servletRequest, user, getApplicationName());
+      } catch (InvalidUserApplicationException e) {
+        user = null;
+      }
+    }
     AuthDtos.SubjectDto subject;
     if (user != null) {
       subject = dtos.asDto(user, true);
