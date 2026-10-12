@@ -145,7 +145,13 @@ const items = computed<FieldItem[]>(() => [
   },
   {
     field: 'attributes',
-    html: (val: UserDto) => val.attributes?.map((attr) => `<code>${attr.name}: ${attr.value}</code>`).join(' '),
+    html: (val: UserDto) =>
+      val.attributes
+        ?.map((attr) => {
+          const esc = (text?: string) => (text ?? '').replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+          return `<code>${esc(attr.name)}: ${esc(attr.value)}</code>`;
+        })
+        .join(' '),
   },
   {
     field: 'created',
