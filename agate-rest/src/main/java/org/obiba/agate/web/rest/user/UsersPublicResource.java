@@ -107,9 +107,8 @@ public class UsersPublicResource {
     if (user == null) user = userService.findUserByEmail(username);
     UserCredentials userCredentials = user != null ? userService.findUserCredentials(user.getName()) : null;
 
+    // same response whether or not the account exists, to prevent account enumeration
     if (user != null && userCredentials != null) userService.resetPassword(user);
-
-    if (user == null || userCredentials == null) throw new BadRequestException("User not found");
 
     return Response.ok().build();
   }
