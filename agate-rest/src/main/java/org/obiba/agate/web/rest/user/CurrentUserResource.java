@@ -38,7 +38,16 @@ public class CurrentUserResource extends AbstractUserResource {
   public Response updateUser(Agate.UserDto userDto) {
     User current = getUser();
     if (!current.getId().equals(userDto.getId())) return Response.status(Response.Status.FORBIDDEN).build();
-    return super.updateUser(userDto);
+    // Self-service profile update: privileged attributes are kept from the persisted account and cannot be set by the caller.
+    Agate.UserDto safeUserDto = Agate.UserDto.newBuilder(userDto)
+      .setName(current.getName())
+      .setRealm(current.getRealm())
+      .setRole(current.getRole())
+      .setStatus(current.getStatus().toString())
+      .clearGroups().addAllGroups(current.getGroups())
+      .clearApplications().addAllApplications(current.getApplications())
+      .build();
+    return super.updateUser(safeUserDto);
   }
 
   @PUT
