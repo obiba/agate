@@ -11,6 +11,20 @@ var agatejs = (function() {
     return contextPath + url;
   };
 
+  // re-authentication required: the session is still valid, so sign out before going to the sign-in page,
+  // that will bring the user back to the current page
+  axios.interceptors.response.use(undefined, (error) => {
+    const data = error.response && error.response.data;
+    if (error.response && error.response.status === 401 && data && data.messageTemplate === 'server.error.reauthentication_required') {
+      const redirect = normalizeUrl('/signin?redirect=') + encodeURIComponent(window.location.pathname + window.location.search);
+      axios.delete(normalizeUrl('/ws/auth/session/_current'))
+        .catch(() => {})
+        .finally(() => { window.location = redirect; });
+      return new Promise(() => {}); // page is leaving, skip the caller's error handling
+    }
+    return Promise.reject(error);
+  });
+
   const agateSignin = function(formId, otpId, onFailure) {
     const toggleSubmitButton = (enable) => {
       const btn = document.querySelector(`#${formId} button[type="submit"]`);
