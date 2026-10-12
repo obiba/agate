@@ -86,8 +86,9 @@ public class UsersJoinResourceTests {
     assertEquals("test@localhost.domain", user.getValue().getEmail());
     assertEquals("fr", user.getValue().getPreferredLanguage());
     assertEquals("fn", user.getValue().getFirstName());
-    assertEquals(Sets.newHashSet("g1", "g2"), user.getValue().getGroups());
-    assertEquals(Sets.newHashSet("app"), user.getValue().getApplications());
+    // direct self join: requested groups and applications are not granted
+    assertEquals(Sets.newHashSet(), user.getValue().getGroups());
+    assertEquals(Sets.newHashSet(), user.getValue().getApplications());
   }
 
   @Test

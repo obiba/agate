@@ -163,8 +163,8 @@ public class UsersPublicResource {
     String preferredLanguage = formParams.getFirst("locale");
     String password = formParams.getFirst("password");
     String realm = formParams.getFirst("realm");
-    List<String> applications = formParams.containsKey("application") ? formParams.get("application") : Lists.newArrayList();
-    List<String> groups = formParams.containsKey("group") ? formParams.get("group") : Lists.newArrayList();
+    // groups can only be requested by an authenticated application, a direct self join gets none
+    List<String> groups = formParams.containsKey("group") && !Strings.isNullOrEmpty(applicationName) ? formParams.get("group") : Lists.newArrayList();
     String reCaptchaResponse = formParams.getFirst("g-recaptcha-response");
     String reCaptchaResponse2 = formParams.getFirst("reCaptchaResponse");
 
@@ -218,7 +218,8 @@ public class UsersPublicResource {
     user = User.newBuilder().name(name).realm(userRealm).role(Roles.AGATE_USER).pending()
       .firstName(firstName).lastName(lastName).email(email).preferredLanguage(preferredLanguage).build();
     user.setGroups(Sets.newHashSet(groups));
-    user.setApplications(Sets.newHashSet(applications));
+    // the only application that can be granted is the requesting one (see below)
+    user.setApplications(Sets.newHashSet());
     user.setAttributes(extractAttributes(formParams));
 
     if (!Strings.isNullOrEmpty(applicationName)) {
