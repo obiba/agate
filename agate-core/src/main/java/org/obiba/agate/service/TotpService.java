@@ -12,8 +12,11 @@ import dev.samstevens.totp.time.TimeProvider;
 import dev.samstevens.totp.util.Utils;
 import org.springframework.stereotype.Component;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import jakarta.inject.Inject;
-import java.util.Random;
+import java.security.SecureRandom;
+import java.time.Duration;
 
 @Component
 public class TotpService {
@@ -27,6 +30,12 @@ public class TotpService {
   private static final String DEFAULT_HASH_ALGORITHM = "SHA1";
 
   private final ConfigurationService configurationService;
+
+  // codes already accepted, kept longer than the verifier's window (previous, current and next period) so each is single-use
+  // ponytail: in-memory, per node; a shared store is needed if several Agate instances serve logins
+  private final Cache<String, Boolean> usedCodes = CacheBuilder.newBuilder()
+      .expireAfterWrite(Duration.ofSeconds(DEFAULT_PERIOD * 4L))
+      .build();
 
   @Inject
   public TotpService(ConfigurationService configurationService) {
@@ -67,11 +76,12 @@ public class TotpService {
     TimeProvider timeProvider = new SystemTimeProvider();
     CodeGenerator codeGenerator = new DefaultCodeGenerator(HashingAlgorithm.valueOf(DEFAULT_HASH_ALGORITHM), DEFAULT_DIGITS);
     CodeVerifier verifier = new DefaultCodeVerifier(codeGenerator, timeProvider);
-    return verifier.isValidCode(configurationService.decrypt(secret), code);
+    return verifier.isValidCode(configurationService.decrypt(secret), code)
+        && usedCodes.asMap().putIfAbsent(secret + ":" + code, Boolean.TRUE) == null;
   }
 
   public String generateRandomCode() {
-    Random random = new Random();
+    SecureRandom random = new SecureRandom();
     // Generates a random integer between 100000 and 999999
     int code = random.nextInt(900000) + 100000;
     return String.valueOf(code);
