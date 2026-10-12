@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PUT;
@@ -23,6 +24,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.Response;
 
+import org.obiba.agate.domain.Authorization;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.service.AuthorizationService;
 import org.obiba.agate.service.UserService;
@@ -67,13 +69,17 @@ public abstract class AbstractUserResource {
   @Path("/authorization/{auth}")
   public Agate.AuthorizationDto getAutorization(@PathParam("auth") String auth) {
     if(Strings.isNullOrEmpty(auth)) throw new BadRequestException("Missing authorization ID");
-    return dtos.asDto(authorizationService.get(auth));
+        Authorization authorization = authorizationService.get(auth);
+    if(!getUser().getName().equals(authorization.getUsername())) throw new ForbiddenException();
+    return dtos.asDto(authorization);
   }
 
   @DELETE
   @Path("/authorization/{auth}")
   public Response deleteAutorization(@PathParam("auth") String auth) {
     if(Strings.isNullOrEmpty(auth)) throw new BadRequestException("Missing authorization ID");
+    Authorization authorization = authorizationService.get(auth);
+    if(!getUser().getName().equals(authorization.getUsername())) throw new ForbiddenException();
     authorizationService.delete(auth);
     return Response.ok().build();
   }
