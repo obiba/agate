@@ -260,6 +260,8 @@ public class SignController {
 
   private String verifyRedirect(String redirect) {
     if (Strings.isNullOrEmpty(redirect)) return redirect;
+    // browsers read a backslash as a slash and drop tabs/newlines, so /\host or /\t/host would leave the origin
+    if (redirect.chars().anyMatch(c -> c == '\\' || Character.isISOControl(c))) return "";
     // local path: a protocol-relative URL (//host/path) is not one
     if (redirect.startsWith("/")) return redirect.startsWith("//") ? "" : redirect;
     if (!redirect.startsWith("http")) return "";
