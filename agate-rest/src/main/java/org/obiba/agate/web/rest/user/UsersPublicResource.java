@@ -135,6 +135,11 @@ public class UsersPublicResource {
 
     if (userCredentials == null) throw new BadRequestException("user has no credentials defined");
 
+    // bind the key to the credentials state it was issued for: once the password has been changed
+    // (by this redemption or by any other means) the same key is rejected, so the link is single-use
+    if (!userCredentials.getPassword().equals(data.get("hash")))
+      throw new BadRequestException("Invalid key");
+
     // same realm, policy and not-changed checks as any other password update
     userService.updateUserPassword(user, password);
 

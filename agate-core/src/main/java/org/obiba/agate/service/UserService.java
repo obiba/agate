@@ -484,9 +484,11 @@ import org.obiba.agate.security.PasswordHasher;
 
     public void resetPassword(User user) throws IOException {
       ObjectMapper mapper = new ObjectMapper();
+      UserCredentials credentials = findUserCredentials(user.getName());
       String keyData = mapper.writeValueAsString(new HashMap<String, String>() {{
         put("username", user.getName());
         put("expire", DateTime.now().plusHours(1).toString());
+        put("hash", credentials == null ? "" : credentials.getPassword());
       }});
 
       String key = configurationService.encrypt(keyData);
