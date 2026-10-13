@@ -184,6 +184,7 @@ watch(
     } else {
       selected.value = {
         type: typeOptions.value.find((rlm) => rlm.value === 'agate-oidc-realm')?.value,
+        content: '',
         userInfoMappings: OIDCUserInfoDefaultMappings,
         status: 'INACTIVE',
         forSignup: false,

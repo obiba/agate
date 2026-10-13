@@ -20,6 +20,7 @@ import org.mockito.Spy;
 import org.obiba.agate.security.PasswordHasher;
 import org.obiba.agate.domain.Configuration;
 import org.obiba.agate.domain.User;
+import org.obiba.agate.domain.UserCredentials;
 import org.obiba.agate.domain.UserStatus;
 import org.obiba.agate.event.UserApprovedEvent;
 import org.obiba.agate.event.UserJoinedEvent;
@@ -28,7 +29,9 @@ import org.obiba.agate.repository.UserCredentialsRepository;
 import org.obiba.agate.repository.UserRepository;
 import org.springframework.core.env.Environment;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -81,6 +84,21 @@ public class UserServiceTest {
     assertFalse(UserService.PWD_PATTERN.matcher("P@0rd").matches());
     assertTrue(UserService.PWD_PATTERN.matcher("P@ssw0rd").matches());
     assertTrue(UserService.PWD_PATTERN.matcher("Pa$$w0rd").matches());
+  }
+
+  @Test
+  public void testPasswordDigest() {
+    String digest = UserService.getPasswordDigest(new UserCredentials("toto", "hash"));
+    assertFalse(digest.isEmpty());
+    assertFalse(digest.contains("hash"));
+    assertEquals(digest, UserService.getPasswordDigest(new UserCredentials("toto", "hash")));
+    assertNotEquals(digest, UserService.getPasswordDigest(new UserCredentials("toto", "other-hash")));
+  }
+
+  @Test
+  public void testPasswordDigestWithoutCredentials() {
+    assertEquals("", UserService.getPasswordDigest(null));
+    assertEquals("", UserService.getPasswordDigest(new UserCredentials("toto", null)));
   }
 
   @Test

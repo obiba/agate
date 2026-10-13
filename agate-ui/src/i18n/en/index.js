@@ -355,6 +355,9 @@ export default {
       'duplicate-key': 'Duplicate item ID.',
       'bad-request': 'Bad server request, please contact your Agate administrator.',
       realm: {
+        'already-exists': "A realm named '{0}' already exists.",
+        'content-required': 'The realm connection settings are required, please fill in the realm type specific form.',
+        'invalid-name': "Realm name '{0}' is not valid: only letters, digits, hyphens and underscores are allowed.",
         'not-orphan': 'Cannot delete a realm having associated users.',
       },
       group: {

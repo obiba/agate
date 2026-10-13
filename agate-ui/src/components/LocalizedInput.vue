@@ -1,7 +1,8 @@
 <template>
   <div>
     <q-tab-panels v-model="tab">
-      <q-tab-panel v-for="lang in languages" :key="lang" :name="lang" style="padding: 0">
+      <!-- the panel only wraps the input: keep it out of the tab order so Tab lands on the input -->
+      <q-tab-panel v-for="lang in languages" :key="lang" :name="lang" tabindex="-1" style="padding: 0">
         <q-input
           v-model="values[lang]"
           :label="label + (required ? ' *' : '')"

@@ -69,7 +69,7 @@ public abstract class AbstractUserResource {
   @Path("/authorization/{auth}")
   public Agate.AuthorizationDto getAutorization(@PathParam("auth") String auth) {
     if(Strings.isNullOrEmpty(auth)) throw new BadRequestException("Missing authorization ID");
-        Authorization authorization = authorizationService.get(auth);
+    Authorization authorization = authorizationService.get(auth);
     if(!getUser().getName().equals(authorization.getUsername())) throw new ForbiddenException();
     return dtos.asDto(authorization);
   }

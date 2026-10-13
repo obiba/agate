@@ -355,6 +355,9 @@ export default {
       'duplicate-key': "L'ID de l'item est en duplicata.",
       'bad-request': 'Requête de serveur incorrecte, veuillez contacter votre administrateur Agate.',
       realm: {
+        'already-exists': "Un domaine nommé '{0}' existe déjà.",
+        'content-required': 'Les paramètres de connexion du domaine sont requis, veuillez remplir le formulaire propre au type de domaine.',
+        'invalid-name': "Le nom de domaine '{0}' n'est pas valide : seuls les lettres, chiffres, tirets et soulignés sont permis.",
         'not-orphan': 'Impossible de supprimer un domaine ayant des utilisateurs.',
       },
       group: {

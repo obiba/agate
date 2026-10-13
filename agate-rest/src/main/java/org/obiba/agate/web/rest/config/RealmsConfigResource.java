@@ -2,6 +2,7 @@ package org.obiba.agate.web.rest.config;
 
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.obiba.agate.domain.RealmConfig;
+import org.obiba.agate.service.InvalidRealmConfigException;
 import org.obiba.agate.service.RealmConfigService;
 import org.obiba.agate.web.model.Agate;
 import org.obiba.agate.web.model.Dtos;
@@ -9,7 +10,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import jakarta.inject.Inject;
-import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -49,8 +49,9 @@ public class RealmsConfigResource {
   public Response create(Agate.RealmConfigDto dto) {
     RealmConfig config = realmConfigService.findConfig(dto.getName());
 
-    if(config != null) throw new BadRequestException("Config already exists: " + dto.getName());
-    if(Pattern.compile("[^0-9A-Za-z-_]").matcher(dto.getName()).find()) throw new BadRequestException("Name should avoid special characters. Use alphanumerical characters instead (hyphens and underscores are allowed).");
+    if(config != null) throw InvalidRealmConfigException.alreadyExists(dto.getName());
+    if(Pattern.compile("[^0-9A-Za-z-_]").matcher(dto.getName()).find()) throw InvalidRealmConfigException.invalidName(dto.getName());
+    if(!dto.hasContent() || dto.getContent().trim().isEmpty()) throw InvalidRealmConfigException.contentRequired(dto.getName());
 
     RealmConfig saved = realmConfigService.save(dtos.fromDto(dto));
 

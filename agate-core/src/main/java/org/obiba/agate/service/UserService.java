@@ -16,6 +16,7 @@
   import com.google.common.collect.Sets;
   import com.google.common.eventbus.EventBus;
   import com.google.common.eventbus.Subscribe;
+  import com.google.common.hash.Hashing;
   import freemarker.template.Configuration;
   import freemarker.template.Template;
   import jakarta.annotation.Nonnull;
@@ -55,6 +56,7 @@ import org.obiba.agate.security.PasswordHasher;
   import jakarta.annotation.Nullable;
   import jakarta.inject.Inject;
   import java.io.IOException;
+  import java.nio.charset.StandardCharsets;
   import java.util.*;
   import java.util.function.Function;
   import java.util.regex.Pattern;
@@ -482,13 +484,25 @@ import org.obiba.agate.security.PasswordHasher;
       });
     }
 
+    /**
+     * Digest of the stored password hash, used to bind a password reset key to the credentials state it was issued for
+     * without exposing the hash itself.
+     *
+     * @param credentials
+     * @return empty string when there are no credentials
+     */
+    public static String getPasswordDigest(@Nullable UserCredentials credentials) {
+      if (credentials == null || Strings.isNullOrEmpty(credentials.getPassword())) return "";
+      return Hashing.sha256().hashString(credentials.getPassword(), StandardCharsets.UTF_8).toString();
+    }
+
     public void resetPassword(User user) throws IOException {
       ObjectMapper mapper = new ObjectMapper();
       UserCredentials credentials = findUserCredentials(user.getName());
       String keyData = mapper.writeValueAsString(new HashMap<String, String>() {{
         put("username", user.getName());
         put("expire", DateTime.now().plusHours(1).toString());
-        put("hash", credentials == null ? "" : credentials.getPassword());
+        put("hash", getPasswordDigest(credentials));
       }});
 
       String key = configurationService.encrypt(keyData);
