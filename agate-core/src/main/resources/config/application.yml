@@ -66,6 +66,11 @@ login:
   trialTime: 300
   banTime: 300
   otpTimeout: 600
+  # Sensitive operations that require a recent sign-in: if the session is older than
+  # 'timeout' (seconds), the request is rejected and the user must sign in again.
+  # Each endpoint is METHOD:/path, where '*' matches one path segment (a user ID or '_current').
+  # When overriding 'endpoints' in your own configuration, list ALL of them: your list
+  # replaces this one, it is not merged.
   re-auth:
     timeout: 300
     endpoints:

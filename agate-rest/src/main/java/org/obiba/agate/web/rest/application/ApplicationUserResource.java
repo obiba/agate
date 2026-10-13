@@ -45,7 +45,7 @@ public class ApplicationUserResource extends ApplicationAwareResource {
       ? userService.findActiveUserByApplication(username, getApplicationName())
       : userService.findActiveUserByApplicationAndGroup(username, getApplicationName(), group);
 
-    if (users.isEmpty()) NoSuchUserException.withName(username);
+    if (users.isEmpty()) throw NoSuchUserException.withName(username);
     return dtos.asDto(users.get(0), true);
   }
 }
