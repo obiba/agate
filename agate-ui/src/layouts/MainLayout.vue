@@ -1,9 +1,10 @@
 <template>
   <q-layout v-show="authStore.isAuthenticated" view="lHh Lpr lFf">
-    <q-header elevated class="bg-dark text-white">
+    <q-header class="bg-dark text-white">
       <q-toolbar>
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
-        <q-btn flat to="/" no-caps size="lg">
+        <q-btn flat to="/" no-caps size="lg" class="brand-title">
+          <img :src="agateMark" alt="" class="brand-mark q-mr-sm" />
           {{ appName }}
         </q-btn>
         <q-space />
@@ -61,6 +62,7 @@ import { locales } from 'boot/i18n';
 import { contextPath } from 'src/boot/api';
 import ReSigninDialog from 'src/components/ReSigninDialog.vue';
 import MainDrawer from 'src/components/MainDrawer.vue';
+import agateMark from 'src/assets/agate-mark-negative.svg';
 
 const { t } = useI18n();
 const router = useRouter();
