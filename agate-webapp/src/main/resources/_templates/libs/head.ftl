@@ -27,7 +27,8 @@
 <script>document.documentElement.setAttribute("data-lte-color-mode", "off");</script>
 
 <!-- Favicon -->
-<link rel="shortcut icon" href="${faviconPath}" />
+<link rel="icon" href="${faviconPath}" sizes="any" />
+<link rel="icon" href="${contextPath}/favicon.svg" type="image/svg+xml" />
 
 <!-- Font Awesome Icons -->
 <link rel="stylesheet" href="${bootstrapPath}/css/bootstrap.min.css">
