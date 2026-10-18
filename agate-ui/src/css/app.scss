@@ -16,6 +16,10 @@
   width: 28px;
 }
 
+body {
+  font-weight: 450;
+}
+
 a {
   color: $primary;
   text-decoration: none;
@@ -36,7 +40,8 @@ p:last-of-type {
 
 .q-table {
   th {
-    background-color: #f2f7f6;
+    background-color: $grey-3;
+    font-weight: bold;
   }
   tr:nth-child(even) {
     background-color: #f2f7f6;
@@ -102,7 +107,7 @@ code {
 
 .text-hint {
   color: $secondary;
-  font-size: 0.8em;
+  font-size: 0.9em;
 }
 
 .table-values {
