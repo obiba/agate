@@ -64,7 +64,7 @@
     <logstash-logback.version>7.4</logstash-logback.version>
     <mariabd.version>3.5.9</mariabd.version>
     <metrics-spring.version>3.0.0</metrics-spring.version>
-    <mongodb.version>5.9.1</mongodb.version>
+    <mongodb.version>5.13.0</mongodb.version>
     <mysql.version>9.7.0</mysql.version>
     <mysql-connector-j.version>9.7.0</mysql-connector-j.version>
     <nimbus-jose-jwt.version>10.9.1</nimbus-jose-jwt.version>
