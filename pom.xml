@@ -69,12 +69,12 @@
     <mysql-connector-j.version>9.7.0</mysql-connector-j.version>
     <nimbus-jose-jwt.version>10.9.1</nimbus-jose-jwt.version>
     <oauth-oidc-sdk.version>11.38.2</oauth-oidc-sdk.version>
-    <obiba-commons.version>5.2.3</obiba-commons.version>
+    <obiba-commons.version>5.3.0</obiba-commons.version>
     <parsson.version>1.1.9</parsson.version>
     <postgres.version>42.7.12</postgres.version>
     <protobuf.version>3.25.8</protobuf.version>
     <protobuf-java-format.version>1.2.1-obiba</protobuf-java-format.version>
-    <shiro.version>2.2.1</shiro.version>
+    <shiro.version>3.0.1</shiro.version>
     <shiro-extras.version>2.0.0</shiro-extras.version>
     <totp.version>1.7.1</totp.version>
 
@@ -455,19 +455,16 @@
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-core</artifactId>
         <version>${shiro.version}</version>
-        <classifier>jakarta</classifier>
       </dependency>
       <dependency>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-web</artifactId>
         <version>${shiro.version}</version>
-        <classifier>jakarta</classifier>
       </dependency>
       <dependency>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-spring</artifactId>
         <version>${shiro.version}</version>
-        <classifier>jakarta</classifier>
         <exclusions>
           <exclusion>
             <groupId>org.apache.shiro</groupId>
