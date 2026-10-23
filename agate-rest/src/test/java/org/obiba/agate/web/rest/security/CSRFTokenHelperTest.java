@@ -7,6 +7,7 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
 import org.easymock.EasyMock;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.obiba.agate.service.ConfigurationService;
@@ -22,6 +23,13 @@ public class CSRFTokenHelperTest {
   public void setUp() {
     expect(mockConfigurationService.getContextPath()).andReturn("/").anyTimes();
     replay(mockConfigurationService);
+  }
+
+  @AfterEach
+  public void tearDown() {
+    // do not leak the bound subject / security manager to other tests on this thread
+    ThreadContext.unbindSubject();
+    SecurityUtils.setSecurityManager(null);
   }
 
 
