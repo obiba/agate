@@ -24,7 +24,6 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.ThreadContext;
 import org.json.JSONObject;
 import org.obiba.agate.domain.User;
 import org.obiba.agate.service.ConfigurationService;
@@ -132,8 +131,7 @@ public class SessionsResource {
   }
 
   private boolean isUserAuthenticated() {
-    Subject subject = ThreadContext.getSubject();
-    return subject != null && subject.isAuthenticated();
+    return SecurityUtils.getSubject().isAuthenticated();
   }
 
   private void invalidateSession() {
