@@ -51,6 +51,9 @@ public class User extends AbstractAuditableDocument {
 
   private Set<String> groups = Sets.newHashSet();
 
+  // groups granted by the realm's ID provider at the last login
+  private Set<String> realmGroups = Sets.newHashSet();
+
   private Set<String> applications = Sets.newHashSet();
 
   private DateTime lastLogin;
@@ -232,6 +235,30 @@ public class User extends AbstractAuditableDocument {
       this.groups = Sets.newHashSet();
     }
     this.groups.addAll(groupsToAdd);
+  }
+
+  public Set<String> getRealmGroups() {
+    return realmGroups == null ? Sets.newHashSet() : realmGroups;
+  }
+
+  public void setRealmGroups(Set<String> realmGroups) {
+    this.realmGroups = realmGroups;
+  }
+
+  /**
+   * Apply the groups granted by the realm's ID provider: groups granted at the previous login and no longer granted
+   * are removed, newly granted ones are added, groups assigned otherwise (by an administrator or realm defaults) are kept.
+   *
+   * @return true if the user's groups changed
+   */
+  public boolean syncRealmGroups(Set<String> granted) {
+    Set<String> updated = Sets.newHashSet(getGroups());
+    updated.removeAll(Sets.difference(getRealmGroups(), granted));
+    updated.addAll(granted);
+    boolean changed = !updated.equals(getGroups()) || !granted.equals(getRealmGroups());
+    setGroups(updated);
+    setRealmGroups(Sets.newHashSet(granted));
+    return changed;
   }
 
   public Set<String> getApplications() {

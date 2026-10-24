@@ -51,6 +51,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * This filter is used upon a successful OIDC authentication. Clients are signed-in to Agate via a <code>obibasid</code> or
@@ -297,13 +298,9 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
       // groups to be retrieved from user info claims
       for (Object principal : subject.getPrincipals()) {
         if (principal instanceof Map) {
-          Set<String> groups = user.getGroups();
-          int count = groups.size();
-          new DefaultOIDCGroupsExtractor().extractGroups(oidcConfig, (Map<String, Object>) principal).stream().map(String::trim).filter(g -> !g.isEmpty()).forEach(groups::add);
-          if (count < groups.size()) {
-            user.setGroups(groups);
-            userService.save(user);
-          }
+          Set<String> granted = new DefaultOIDCGroupsExtractor().extractGroups(oidcConfig, (Map<String, Object>) principal).stream()
+              .map(String::trim).filter(g -> !g.isEmpty()).collect(Collectors.toSet());
+          if (user.syncRealmGroups(granted)) userService.save(user);
         }
       }
     }
