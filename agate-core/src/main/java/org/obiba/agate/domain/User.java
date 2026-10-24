@@ -252,7 +252,7 @@ public class User extends AbstractAuditableDocument {
    * @return true if the user's groups changed
    */
   public boolean syncRealmGroups(Set<String> granted) {
-    Set<String> updated = Sets.newHashSet(getGroups());
+    Set<String> updated = hasGroups() ? Sets.newHashSet(groups) : Sets.newHashSet();
     updated.removeAll(Sets.difference(getRealmGroups(), granted));
     updated.addAll(granted);
     boolean changed = !updated.equals(getGroups()) || !granted.equals(getRealmGroups());

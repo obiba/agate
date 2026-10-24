@@ -40,6 +40,14 @@ public class UserTest {
     assertEquals(Sets.newHashSet("idp-b"), user.getRealmGroups());
     // nothing changed
     assertFalse(user.syncRealmGroups(Sets.newHashSet("idp-b")));
+    // idp revoked everything, admin-assigned group kept
+    assertTrue(user.syncRealmGroups(Sets.newHashSet()));
+    assertEquals(Sets.newHashSet("admin-assigned"), user.getGroups());
+    // legacy user without recorded realm groups and null groups: nothing removed, no NPE
+    user = User.newBuilder().name("bar").build();
+    user.setGroups(null);
+    assertTrue(user.syncRealmGroups(Sets.newHashSet("idp-a")));
+    assertEquals(Sets.newHashSet("idp-a"), user.getGroups());
   }
 
   @Test
