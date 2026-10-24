@@ -366,7 +366,7 @@ import org.obiba.agate.security.PasswordHasher;
           prevStatus = saved.getStatus();
           updateUserCredentials(saved, user);
           BeanUtils.copyProperties(user, saved, "id", "name", "version", "createdBy", "createdDate", "lastModifiedBy",
-              "lastModifiedDate");
+              "lastModifiedDate", "realmGroups");
         }
       }
 

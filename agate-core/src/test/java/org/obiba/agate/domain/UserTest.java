@@ -10,6 +10,7 @@
 
 package org.obiba.agate.domain;
 
+import com.google.common.collect.Sets;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -27,6 +28,26 @@ public class UserTest {
     user = User.newBuilder().name("foo").groups("group1", "group2").build();
     assertTrue(user.hasGroup(null));
     assertTrue(user.hasGroup(""));
+  }
+
+  @Test
+  public void testSyncRealmGroups() {
+    User user = User.newBuilder().name("foo").groups("admin-assigned", "idp-a").build();
+    user.setRealmGroups(Sets.newHashSet("idp-a"));
+    // idp revoked idp-a, granted idp-b
+    assertTrue(user.syncRealmGroups(Sets.newHashSet("idp-b")));
+    assertEquals(Sets.newHashSet("admin-assigned", "idp-b"), user.getGroups());
+    assertEquals(Sets.newHashSet("idp-b"), user.getRealmGroups());
+    // nothing changed
+    assertFalse(user.syncRealmGroups(Sets.newHashSet("idp-b")));
+    // idp revoked everything, admin-assigned group kept
+    assertTrue(user.syncRealmGroups(Sets.newHashSet()));
+    assertEquals(Sets.newHashSet("admin-assigned"), user.getGroups());
+    // legacy user without recorded realm groups and null groups: nothing removed, no NPE
+    user = User.newBuilder().name("bar").build();
+    user.setGroups(null);
+    assertTrue(user.syncRealmGroups(Sets.newHashSet("idp-a")));
+    assertEquals(Sets.newHashSet("idp-a"), user.getGroups());
   }
 
   @Test

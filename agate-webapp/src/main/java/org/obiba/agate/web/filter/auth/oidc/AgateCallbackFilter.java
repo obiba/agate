@@ -28,6 +28,7 @@ import org.obiba.agate.web.support.URLUtils;
 import org.obiba.oidc.*;
 import org.obiba.oidc.shiro.authc.OIDCAuthenticationToken;
 import org.obiba.oidc.shiro.realm.DefaultOIDCGroupsExtractor;
+import org.obiba.oidc.shiro.realm.OIDCRealm;
 import org.obiba.oidc.web.J2EContext;
 import org.obiba.oidc.web.filter.OIDCCallbackFilter;
 import org.obiba.shiro.web.filter.AuthenticationExecutor;
@@ -51,6 +52,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * This filter is used upon a successful OIDC authentication. Clients are signed-in to Agate via a <code>obibasid</code> or
@@ -297,16 +299,24 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
       // groups to be retrieved from user info claims
       for (Object principal : subject.getPrincipals()) {
         if (principal instanceof Map) {
-          Set<String> groups = user.getGroups();
-          int count = groups.size();
-          new DefaultOIDCGroupsExtractor().extractGroups(oidcConfig, (Map<String, Object>) principal).stream().map(String::trim).filter(g -> !g.isEmpty()).forEach(groups::add);
-          if (count < groups.size()) {
-            user.setGroups(groups);
-            userService.save(user);
-          }
+          Map<String, Object> userInfo = (Map<String, Object>) principal;
+          Set<String> granted = new DefaultOIDCGroupsExtractor().extractGroups(oidcConfig, userInfo).stream()
+              .map(String::trim).filter(g -> !g.isEmpty()).collect(Collectors.toSet());
+          // the extractor returns an empty set both when the IdP granted no group and when it could not tell
+          // (script error, missing engine, unparsable claim): only revoke when the claim is present and empty.
+          // ponytail: a groups JS script that fails is indistinguishable from one returning nothing, so an empty JS
+          // result never revokes; have the extractor report failures if revoking down to zero groups via JS matters.
+          if (granted.isEmpty() && (!Strings.isNullOrEmpty(oidcConfig.getCustomParam(OIDCRealm.GROUPS_JS_PARAM))
+              || !userInfo.containsKey(groupsClaim(oidcConfig)))) continue;
+          if (user.syncRealmGroups(granted)) userService.save(user);
         }
       }
     }
+  }
+
+  private String groupsClaim(OIDCConfiguration oidcConfig) {
+    String claim = oidcConfig.getCustomParam(OIDCRealm.GROUPS_CLAIM_PARAM);
+    return Strings.isNullOrEmpty(claim) ? "groups" : claim;
   }
 
   /**
