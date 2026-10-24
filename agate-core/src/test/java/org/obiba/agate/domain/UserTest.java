@@ -35,19 +35,24 @@ public class UserTest {
     User user = User.newBuilder().name("foo").groups("admin-assigned", "idp-a").build();
     user.setRealmGroups(Sets.newHashSet("idp-a"));
     // idp revoked idp-a, granted idp-b
-    assertTrue(user.syncRealmGroups(Sets.newHashSet("idp-b")));
+    assertTrue(user.syncRealmGroups(Sets.newHashSet("idp-b"), Sets.newHashSet()));
     assertEquals(Sets.newHashSet("admin-assigned", "idp-b"), user.getGroups());
     assertEquals(Sets.newHashSet("idp-b"), user.getRealmGroups());
     // nothing changed
-    assertFalse(user.syncRealmGroups(Sets.newHashSet("idp-b")));
+    assertFalse(user.syncRealmGroups(Sets.newHashSet("idp-b"), Sets.newHashSet()));
     // idp revoked everything, admin-assigned group kept
-    assertTrue(user.syncRealmGroups(Sets.newHashSet()));
+    assertTrue(user.syncRealmGroups(Sets.newHashSet(), Sets.newHashSet()));
     assertEquals(Sets.newHashSet("admin-assigned"), user.getGroups());
     // legacy user without recorded realm groups and null groups: nothing removed, no NPE
     user = User.newBuilder().name("bar").build();
     user.setGroups(null);
-    assertTrue(user.syncRealmGroups(Sets.newHashSet("idp-a")));
+    assertTrue(user.syncRealmGroups(Sets.newHashSet("idp-a"), Sets.newHashSet()));
     assertEquals(Sets.newHashSet("idp-a"), user.getGroups());
+    // realm default group also granted by the idp survives the idp dropping it
+    user = User.newBuilder().name("baz").groups("default", "idp-a").build();
+    user.setRealmGroups(Sets.newHashSet("default", "idp-a"));
+    assertTrue(user.syncRealmGroups(Sets.newHashSet(), Sets.newHashSet("default")));
+    assertEquals(Sets.newHashSet("default"), user.getGroups());
   }
 
   @Test

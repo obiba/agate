@@ -247,13 +247,14 @@ public class User extends AbstractAuditableDocument {
 
   /**
    * Apply the groups granted by the realm's ID provider: groups granted at the previous login and no longer granted
-   * are removed, newly granted ones are added, groups assigned otherwise (by an administrator or realm defaults) are kept.
+   * are removed unless they are in the kept set (realm defaults, application realm groups), newly granted ones are
+   * added, groups assigned otherwise (by an administrator) are kept.
    *
    * @return true if the user's groups changed
    */
-  public boolean syncRealmGroups(Set<String> granted) {
+  public boolean syncRealmGroups(Set<String> granted, Set<String> kept) {
     Set<String> updated = hasGroups() ? Sets.newHashSet(groups) : Sets.newHashSet();
-    updated.removeAll(Sets.difference(getRealmGroups(), granted));
+    updated.removeAll(Sets.difference(Sets.difference(getRealmGroups(), granted), kept));
     updated.addAll(granted);
     boolean changed = !updated.equals(getGroups()) || !granted.equals(getRealmGroups());
     setGroups(updated);

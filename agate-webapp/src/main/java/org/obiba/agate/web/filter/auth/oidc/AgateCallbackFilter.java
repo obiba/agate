@@ -10,6 +10,7 @@
 package org.obiba.agate.web.filter.auth.oidc;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
 import com.google.common.eventbus.Subscribe;
 import jakarta.ws.rs.ext.RuntimeDelegate;
 import org.apache.shiro.SecurityUtils;
@@ -296,6 +297,14 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
     // do it only when the realm is OIDC
     OIDCConfiguration oidcConfig = oidcAuthConfigurationProvider.getConfiguration(user.getRealm());
     if (oidcConfig != null) {
+      // groups granted by the realm config or by the user's applications are not the IdP's to revoke
+      Set<String> kept = Sets.newHashSet();
+      RealmConfig realmConfig = realmConfigService.findConfig(user.getRealm());
+      if (realmConfig != null) kept.addAll(realmConfig.getGroups());
+      for (String appId : user.getApplications()) {
+        Application application = applicationService.findByIdOrName(appId);
+        if (application != null) application.getRealmGroups(user.getRealm()).forEach(kept::add);
+      }
       // groups to be retrieved from user info claims
       for (Object principal : subject.getPrincipals()) {
         if (principal instanceof Map) {
@@ -308,7 +317,7 @@ public class AgateCallbackFilter extends OIDCCallbackFilter {
           // result never revokes; have the extractor report failures if revoking down to zero groups via JS matters.
           if (granted.isEmpty() && (!Strings.isNullOrEmpty(oidcConfig.getCustomParam(OIDCRealm.GROUPS_JS_PARAM))
               || !userInfo.containsKey(groupsClaim(oidcConfig)))) continue;
-          if (user.syncRealmGroups(granted)) userService.save(user);
+          if (user.syncRealmGroups(granted, kept)) userService.save(user);
         }
       }
     }
