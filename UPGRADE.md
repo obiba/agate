@@ -3,6 +3,18 @@
 Actions to perform when upgrading an Agate server. Go through every version between the
 one installed and the one being deployed.
 
+## 5.1.2
+
+### After upgrading
+
+1. **Mail server settings** (no action required). New optional `spring.mail` settings:
+   `ssl.enabled` for implicit SSL (usually port 465, same as `protocol: smtps`), and
+   `connection-timeout` and `timeout` in milliseconds (10000 and 30000 by default). A mail
+   server that does not answer within these delays now makes the e-mail fail instead of
+   blocking the sending forever; raise them if your server is slow. TLS 1.3 is now allowed
+   along with TLS 1.2 unless `spring.mail.properties.mail.smtp.ssl.protocols` is set. With
+   `protocol: smtps`, the `spring.mail` settings are now applied, they used to be ignored.
+
 ## 5.1.0
 
 ### After upgrading
