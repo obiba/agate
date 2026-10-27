@@ -2,6 +2,13 @@
 spring:
     messageSource:
         cacheSeconds: 1
+    mail:
+      # Implicit SSL (usually port 465), same as protocol: smtps
+      ssl:
+        enabled: false
+      # Connection and read/write timeouts in milliseconds
+      connection-timeout: 10000
+      timeout: 30000
     freemarker:
       template-loader-path: classpath:/web/,classpath:/static/templates/,classpath:/public/templates/,classpath:/templates/,classpath:/_templates/
       request-context-attribute: rc
