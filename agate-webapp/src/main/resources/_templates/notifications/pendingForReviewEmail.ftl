@@ -21,7 +21,7 @@
         </p>
         <p style="margin: auto;text-align: center;">
           <!-- Agate link -->
-          <a href="${publicUrl}/admin#/users/requests" target="_blank"
+          <a href="${publicUrl}/admin#/users" target="_blank"
             style="color:#1f2d3d;font-weight:bold;background-color:#ffc107;padding:10px 20px;border-radius:15px;text-decoration:none;display: inline-block;margin-bottom: 0;font-weight: normal;text-align: center;vertical-align: middle;-ms-touch-action: manipulation;touch-action: manipulation;cursor: pointer;white-space: nowrap;padding: 10px 15px;border-radius: 10px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;">
             ${msg("email.pendingForReview.link")}
           </a>
