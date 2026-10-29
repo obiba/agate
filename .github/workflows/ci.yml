@@ -4,9 +4,10 @@ on:
   push:
     branches:
       - '**'
-    tags:
-      - '*'
   pull_request:
+
+permissions:
+  contents: read
 
 jobs:
   build-and-deploy:
@@ -54,14 +55,6 @@ jobs:
           ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
           ARTIFACTORY_PWD: ${{ secrets.ARTIFACTORY_PWD }}
 
-      - name: Deploy Release
-        if: startsWith(github.ref, 'refs/tags/')
-        run: mvn -B -Prelease -Daether.remoteRepositoryFilter.prefixes=false deploy
-        env:
-          GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
-          ARTIFACTORY_PWD: ${{ secrets.ARTIFACTORY_PWD }}
-
-      - name: Maven Install (non-snapshot, non-tag)
-        if: github.ref != 'refs/heads/snapshot' && !startsWith(github.ref, 'refs/tags/')
+      - name: Maven Install (non-snapshot)
+        if: github.ref != 'refs/heads/snapshot' || github.event_name != 'push'
         run: mvn -U -B -Daether.remoteRepositoryFilter.prefixes=false install
