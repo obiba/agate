@@ -46,7 +46,7 @@
     <easymock.version>5.6.0</easymock.version>
     <ehcache.version>3.10.8</ehcache.version>
     <freemarker.version>2.3.35</freemarker.version>
-    <guava.version>33.6.0-jre</guava.version>
+    <guava.version>33.7.1-jre</guava.version>
     <javax.inject.version>1</javax.inject.version>
     <jackson-2-bom.version>2.21.7</jackson-2-bom.version>
     <jackson-bom.version>3.1.7</jackson-bom.version>
