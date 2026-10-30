@@ -25,6 +25,7 @@ import org.obiba.agate.service.MailService;
 import org.obiba.agate.service.ReCaptchaService;
 import org.obiba.agate.service.UserService;
 import org.obiba.agate.service.support.MessageResolverMethod;
+import org.obiba.agate.validator.EmailValidator;
 import org.obiba.agate.web.rest.application.ApplicationAwareResource;
 import org.obiba.shiro.realm.ObibaRealm;
 import org.slf4j.Logger;
@@ -228,10 +229,13 @@ public class NotificationsResource extends ApplicationAwareResource {
 
       if (user != null && applicationUsernames.contains(user.getName()))
         recipients.add(user);
-      else if (user == null && username.contains("@")) {
+      else if (user == null && EmailValidator.isValid(username)) {
         // this is an email address of a user that has not registered yet
         recipients.add(User.newBuilder(username).inactive().build());
       }
+      else if (user == null)
+        // not logged as is: it is the caller input
+        log.warn("Skipping a notification recipient that is neither a user nor a valid email address");
     });
   }
 

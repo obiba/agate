@@ -122,6 +122,26 @@ public class NotificationsResourceTest {
   }
 
   @Test
+  public void testUnregisteredEmailRecipientIsNotified() {
+    MultivaluedMap<String, String> formParams = formParams(null, null);
+    formParams.putSingle("username", "bob@example.org");
+
+    assertEquals(204, resource.notify(formParams, APP_AUTH).getStatus());
+
+    verify(mailService).sendEmail("bob@example.org", "subject", "body");
+  }
+
+  @Test
+  public void testInvalidEmailRecipientIsSkipped() {
+    MultivaluedMap<String, String> formParams = formParams(null, null);
+    formParams.put("username", Lists.newArrayList("\"<a href=https://evil.example>click</a>\"@x.org", "Bob <bob@x.org>", "@", "bob@x.org, eve@x.org"));
+
+    assertEquals(204, resource.notify(formParams, APP_AUTH).getStatus());
+
+    verifyNoInteractions(mailService);
+  }
+
+  @Test
   public void testApplicationTemplateUsedWhenPresent() throws IOException {
     mockApplication("mica-a");
     when(freemarkerConfiguration.getTemplate(eq("notifications/mica-a/contactUs.ftl"), any(Locale.class), nullable(String.class), eq(true), eq(true)))
