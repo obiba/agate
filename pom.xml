@@ -62,7 +62,7 @@
     <lang-tag.version>1.7</lang-tag.version>
     <logback.version>1.6.0</logback.version>
     <logstash-logback.version>7.4</logstash-logback.version>
-    <mariabd.version>3.5.9</mariabd.version>
+    <mariabd.version>3.5.11</mariabd.version>
     <metrics-spring.version>3.0.0</metrics-spring.version>
     <mongodb.version>5.13.0</mongodb.version>
     <mysql.version>9.7.0</mysql.version>
