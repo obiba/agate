@@ -3,6 +3,24 @@
 Actions to perform when upgrading an Agate server. Go through every version between the
 one installed and the one being deployed.
 
+## 5.1.3
+
+### After upgrading
+
+1. **Overridden templates** (skip if `AGATE_HOME/conf/templates` is empty).
+
+   `<@message>` prints the translation as is: in a script or an attribute, a quote in it
+   breaks the script or the tag. If `libs/head.ftl` is overridden, copy the `messageJs` and
+   `messageAttr` functions from the 5.1.3 version into it. Then, in every overridden template,
+   print a translation written in a script or in a script attribute (`onclick`) with
+   `${messageJs("code")}`, and in another attribute (`title`, `placeholder`) with
+   `${messageAttr("code")}`. Find them with:
+
+   ```sh
+   cd $AGATE_HOME/conf/templates
+   grep -rn -e '"<@message' -e "'<@message" --include='*.ftl' .
+   ```
+
 ## 5.1.2
 
 ### After upgrading
