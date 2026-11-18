@@ -7,9 +7,9 @@
           $("#qr-panel").show();
           $("#disable-otp").show();
           $("#enable-otp").hide();
-          toastr.success("<@message "2fa-enable-success"/>");
+          toastr.success("${messageJs("2fa-enable-success")}");
       }, () => {
-          toastr.error("<@message "2fa-enable-failed"/>");
+          toastr.error("${messageJs("2fa-enable-failed")}");
       });
   }
 
@@ -18,9 +18,9 @@
           $("#qr-panel").hide();
           $("#disable-otp").hide();
           $("#enable-otp").show();
-          toastr.success("<@message "2fa-disable-success"/>");
+          toastr.success("${messageJs("2fa-disable-success")}");
       }, () => {
-          toastr.error("<@message "2fa-disable-failed"/>");
+          toastr.error("${messageJs("2fa-disable-failed")}");
       });
   }
 </script>

@@ -1,5 +1,15 @@
 <!-- Translations: the message text is trusted markup, the code shown when there is no translation is not -->
 <#macro message code><#local text = springMacroRequestContext.getMessage(code, "")><#if text?has_content && text != code>${text?no_esc}<#else>${code}</#if></#macro>
+<#-- Translation of a code in a JavaScript string, in a script or in a script attribute (onclick):
+     ${messageJs("code")}, or ${messageJs("code", "text")} to show another text than the code when there is no
+     translation. Functions, not macros: ${} escapes the text for where it is written (HTML in an attribute) -->
+<#function messageJs code default=code>
+  <#return springMacroRequestContext.getMessage(code, default)?js_string/>
+</#function>
+<#-- Translation of a code in an HTML attribute (title, placeholder...): ${messageAttr("code")}, HTML-escaped -->
+<#function messageAttr code default=code>
+  <#return springMacroRequestContext.getMessage(code, default)/>
+</#function>
 
 <#function messageWithFallback prefix attributeName>
   <#assign fullKey = prefix + attributeName>

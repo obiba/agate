@@ -1,25 +1,25 @@
 <script>
   const requiredFields = [
-    { name: 'firstname', title: "<@message "firstname"/>" },
-    { name: 'lastname', title: "<@message "lastname"/>" },
+    { name: 'firstname', title: "${messageJs("firstname")}" },
+    { name: 'lastname', title: "${messageJs("lastname")}" },
     <#list authConfig.userAttributes as attribute>
     <#if attribute.required>
-    { name: '${attribute.name?js_string?no_esc}', title: "<@message attribute.name/>" },
+    { name: '${attribute.name?js_string?no_esc}', title: "${messageJs(attribute.name)}" },
     </#if>
     </#list>
   ];
 
   const errorMessages = {
-      'server.error.password.current-invalid': "<@message "server.error.password.current-invalid"/>",
-      'server.error.password.not-changed': "<@message "server.error.password.not-changed"/>",
-      'server.error.password.too-weak': "<@message "server.error.password.too-weak"/>"
+      'server.error.password.current-invalid': "${messageJs("server.error.password.current-invalid")}",
+      'server.error.password.not-changed': "${messageJs("server.error.password.not-changed")}",
+      'server.error.password.too-weak': "${messageJs("server.error.password.too-weak")}"
   };
 
   agatejs.updateProfile("#profile-form", requiredFields, function (message) {
     var alertId = "#alertProfileFailure";
     var msg = message;
     if (Array.isArray(message)) {
-      msg = "<@message "sign-up-fields-required"/>: " + message.join(", ");
+      msg = "${messageJs("sign-up-fields-required")}: " + message.join(", ");
     } else if (errorMessages[msg]) {
       msg = errorMessages[msg];
     }
@@ -52,9 +52,9 @@
           $("#qr-panel").show();
           $("#disable-otp").show();
           $("#enable-otp").hide();
-          toastr.success("<@message "2fa-enable-success"/>");
+          toastr.success("${messageJs("2fa-enable-success")}");
       }, () => {
-          toastr.error("<@message "2fa-enable-failed"/>");
+          toastr.error("${messageJs("2fa-enable-failed")}");
       });
   }
 
@@ -63,9 +63,9 @@
           $("#qr-panel").hide();
           $("#disable-otp").hide();
           $("#enable-otp").show();
-          toastr.success("<@message "2fa-disable-success"/>");
+          toastr.success("${messageJs("2fa-disable-success")}");
       }, () => {
-          toastr.error("<@message "2fa-disable-failed"/>");
+          toastr.error("${messageJs("2fa-disable-failed")}");
       });
   }
 </script>
